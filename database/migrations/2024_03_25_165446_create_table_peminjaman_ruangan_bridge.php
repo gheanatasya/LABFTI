@@ -1,0 +1,37 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('peminjaman_ruangan_bridge', function (Blueprint $table) {
+            $table->bigIncrements('Peminjaman_Ruangan_ID');
+            $table->unsignedBigInteger('PeminjamanID');
+            $table->unsignedBigInteger('RuanganID');
+            $table->date('Tanggal_pakai_awal');
+            $table->date('Tanggal_pakai_akhir');
+            $table->time('Waktu_pakai');
+            $table->time('Waktu_selesai');
+            $table->timestamps();
+
+            $table->foreign('PeminjamanID')->references('PeminjamanID')->on('peminjaman');
+            $table->foreign('RuanganID')->references('RuanganID')->on('ruangan');
+
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('peminjaman_ruangan_bridge');
+    }
+};
