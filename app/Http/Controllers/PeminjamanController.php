@@ -12,11 +12,13 @@ class PeminjamanController extends Controller
     {
         return Peminjaman::all();
     }
+
     //ambil data sesuai id
     public function show($PeminjamanID)
     {
         return Peminjaman::find($PeminjamanID);
     }
+
     //tambah data
     public function store(StorePeminjamanRequest $request)
     {
@@ -27,12 +29,14 @@ class PeminjamanController extends Controller
             return response()->json(['message' => 'Peminjaman gagal ditambahkan'], 500);
         }
     }
+
     //mengubah data
     public function update(UpdatePeminjamanRequest $request, Peminjaman $PeminjamanID)
     {
         $PeminjamanID->update($request->all());
         return response()->json(['message' => 'Peminjaman berhasil diperbarui', 'data' => $PeminjamanID]);
     }
+
     //hapus data
     public function delete($PeminjamanID)
     {
@@ -40,5 +44,26 @@ class PeminjamanController extends Controller
         $peminjaman->delete();
         return response()->json(['message' => 'Peminjaman berhasil dihapus'], 204);
     }
-    
+
+    //ambil ID dari PeminjamID
+    public function getIDByPeminjamID($PeminjamID)
+    {
+        $peminjaman = Peminjaman::where('PeminjamID', $PeminjamID)->pluck('PeminjamanID');
+        if ($peminjaman->isEmpty()) {
+            return null;
+        } else {
+            return $peminjaman;
+        }
+    }
+
+    //ambil data peminjaman berdasarkan PeminjamID
+    public function getAllPeminjamanByPeminjam($PeminjamID)
+    {
+        $peminjaman = Peminjaman::where('PeminjamID', $PeminjamID)->get();
+        if ($peminjaman->isEmpty()) {
+            return null;
+        } else {
+            return $peminjaman;
+        }
+    }
 }

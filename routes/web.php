@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\PDFController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,6 +17,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/generate-pdf/{UserID}/{desiredPeminjamanID}', [PDFController::class, 'generatePDF']);
+
 Route::get('/{pathMatch}', function(){
     return view('welcome');
 })->where('pathMatch', ".*");
+

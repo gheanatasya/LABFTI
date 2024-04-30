@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 
 class LoginController extends Controller
@@ -16,19 +16,32 @@ class LoginController extends Controller
             'password' => 'required',
         ]);
 
-        if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json(['message' => 'Invalid login details'], 401);
+        $User = User::where('Email', $request->email)->first();
+
+        if (!$User || !Hash::check($request->password, $User->Password)) {
+            return response([
+                'success'   => false,
+                'message' => ['These credentials do not match our records.']
+            ], 404);
         }
 
-        $user = $request->user();
-        $token = $user->createToken('authToken')->plainTextToken;
-        return response()->json(['user' => $user, 'token' => $token]);
+        $token = $User->createToken('ApiToken')->plainTextToken;
+
+        $response = [
+            'success'   => true,
+            'user'      => $User,
+            'token'     => $token,
+            'UserID'    => $User->UserID
+        ];
+
+        return response($response, 201);
     }
 
-    public function logout(Request $request)
+    public function logout()
     {
-        $request->user()->tokens()->delete();
-
-        return response()->json(['message' => 'Logged out'], 200);
+        auth()->logout();
+        return response()->json([
+            'success'    => true
+        ], 200);
     }
 }

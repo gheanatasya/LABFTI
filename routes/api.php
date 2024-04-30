@@ -1,5 +1,18 @@
 <?php
 
+use App\Http\Controllers\AlatController;
+use App\Http\Controllers\DetailAlatController;
+use App\Http\Controllers\FakultasController;
+use App\Http\Controllers\InstansiController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PeminjamanAlatBridgeController;
+use App\Http\Controllers\PeminjamanRuanganBridgeController;
+use App\Http\Controllers\PeminjamanController;
+use App\Http\Controllers\PeminjamController;
+use App\Http\Controllers\ProgramStudiController;
+use App\Http\Controllers\RuanganController;
+use App\Http\Controllers\UserController;
+use App\Models\Instansi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +30,107 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+//route login
+Route::post('/login', [LoginController::class, 'login']);
+Route::get('/logout', [LoginController::class, 'logout']);
+
+// route untuk fakultas
+Route::get('/fakultas', [FakultasController::class, 'getAllFakultas']);
+Route::get('/fakultas/{FakultasID}', [FakultasController::class, 'show']);
+Route::post('/fakultas', [FakultasController::class, 'store']);
+Route::put('/fakultas/{FakultasID}', [FakultasController::class, 'update']);
+Route::delete('/fakultas/{FakultasID}', [FakultasController::class, 'delete']);
+Route::get('/fakultas/getIdByName/{Nama_fakultas}', [FakultasController::class, 'getFakultasIDByName']);
+
+// route untuk prodi
+Route::get('/prodi', [ProgramStudiController::class, 'getAllProdi']);
+Route::get('/prodi/{ProdiID}', [ProgramStudiController::class, 'show']);
+Route::post('/prodi', [ProgramStudiController::class, 'store']);
+Route::put('/prodi/{ProdiID}', [ProgramStudiController::class, 'update']);
+Route::delete('/prodi/{ProdiID}', [ProgramStudiController::class, 'delete']);
+Route::get('/prodi/getNameByFakultas/{FakultasID}', [ProgramStudiController::class, 'getProdiNameByFakultas']);
+Route::get('/prodi/getProdiNameByID/{ProdiID}', [ProgramStudiController::class, 'getProdiNameByID']);
+Route::get('/prodi/getFakultasNameByID/{FakultasID}', [ProgramStudiController::class, 'getFakultasNameByID']);
+
+
+// route untuk instansi
+Route::get('/instansi', [InstansiController::class, 'getAllInstansi']);
+Route::get('/instansi/{InstansiID}', [InstansiController::class, 'show']);
+Route::post('/instansi', [InstansiController::class, 'store']);
+Route::put('/instansi/{InstansiID}', [InstansiController::class, 'update']);
+Route::delete('/instansi/{InstansiID}', [InstansiController::class, 'delete']);
+Route::get('/instansi/getIdByName/{Nama_instansi}', [InstansiController::class, 'getInstansiIDByName']);
+Route::get('/instansi/getInstansiNameByID/{InstansiID}', [InstansiController::class, 'getInstansiNameByID']);
+
+// route untuk user
+Route::get('/user', [UserController::class, 'getAllUser']);
+Route::get('/user/{UserID}', [UserController::class, 'show']);
+Route::post('/user', [UserController::class, 'store']);
+Route::put('/user/{UserID}', [UserController::class, 'update']);
+Route::delete('/user/{UserID}', [UserController::class, 'delete']);
+
+// route untuk peminjam
+Route::get('/peminjam', [PeminjamController::class, 'getAllPeminjam']);
+Route::get('/peminjam/{PeminjamID}', [PeminjamController::class, 'show']);
+Route::post('/peminjam', [PeminjamController::class, 'store']);
+Route::put('/peminjam/{PeminjamID}', [PeminjamController::class, 'update']);
+Route::delete('/peminjam/{PeminjamID}', [PeminjamController::class, 'delete']);
+Route::get('/peminjam/getIDByUserID/{UserID}', [PeminjamController::class, 'getIDByUserID']);
+Route::get('/peminjam/byUserID/{UserID}', [PeminjamController::class, 'byUserID']);
+
+
+// route untuk alat
+Route::get('/alat', [AlatController::class, 'getAllAlat']);
+Route::get('/alat/{AlatID}', [AlatController::class, 'show']);
+Route::post('/alat', [AlatController::class, 'store']);
+Route::put('/alat/{AlatID}', [AlatController::class, 'update']);
+Route::delete('/alat/{AlatID}', [AlatController::class, 'delete']);
+
+// route untuk detail alat
+Route::get('/detail', [DetailAlatController::class, 'getAllDetailAlat']);
+Route::get('/detail/{DetailAlatID}', [DetailAlatController::class, 'show']);
+Route::post('/detail', [DetailAlatController::class, 'store']);
+Route::put('/detail/{DetailAlatID}', [DetailAlatController::class, 'update']);
+Route::delete('/detail/{DetailAlatID}', [DetailAlatController::class, 'delete']);
+
+// route untuk ruangan
+Route::get('/ruangan', [RuanganController::class, 'getAllRuangan']);
+Route::get('/ruangan/{DetailAlatID}', [RuanganController::class, 'show']);
+Route::post('/ruangan', [RuanganController::class, 'store']);
+Route::put('/ruangan/{DetailAlatID}', [RuanganController::class, 'update']);
+Route::delete('/ruangan/{DetailAlatID}', [RuanganController::class, 'delete']);
+
+//route untuk peminjaman
+Route::get('/peminjaman', [PeminjamanController::class, 'getAllPeminjaman']);
+Route::get('/peminjaman/{PeminjamanID}', [PeminjamanController::class, 'show']);
+Route::post('/peminjaman', [PeminjamanController::class, 'store']);
+Route::put('/peminjaman/{PeminjamanID}', [PeminjamanController::class, 'update']);
+Route::delete('/peminjaman/{PeminjamanID}', [PeminjamanController::class, 'delete']);
+Route::get('/peminjaman/getIDByPeminjamID/{PeminjamID}', [PeminjamanController::class, 'getIDByPeminjamID'])->middleware('throttle:500,1');
+Route::get('/peminjaman/getAllPeminjamanByPeminjam/{PeminjamID}', [PeminjamanController::class, 'getAllPeminjamanByPeminjam'])->middleware('throttle:500,1');
+
+//route untuk peminjaman alat bridge
+Route::get('/peminjamanAlat', [PeminjamanAlatBridgeController::class, 'getAllPeminjamanAlat']);
+Route::get('/peminjamanAlat/{Peminjaman_Alat_ID}', [PeminjamanAlatBridgeController::class, 'show']);
+Route::post('/peminjamanAlat', [PeminjamanAlatBridgeController::class, 'store']);
+Route::put('/peminjamanAlat/{Peminjaman_Alat_ID}', [PeminjamanAlatBridgeController::class, 'update']);
+Route::delete('/peminjamanAlat/{Peminjaman_Alat_ID}', [PeminjamanAlatBridgeController::class, 'delete']);
+Route::get('/peminjamanAlat/getNameByID/{AlatID}', [PeminjamanAlatBridgeController::class, 'getNameByID']);
+Route::get('/peminjamanAlat/getKeterangan/{PeminjamanID}', [PeminjamanAlatBridgeController::class, 'getKeterangan'])->middleware('throttle:500,1');
+Route::get('/peminjamanAlat/checkRelation/{PeminjamanID}', [PeminjamanAlatBridgeController::class, 'checkRelation']);
+Route::get('/peminjamanAlat/getAllPeminjamanAlatByPeminjamanID/{PeminjamanID}', [PeminjamanAlatBridgeController::class, 'getAllPeminjamanAlatByPeminjamanID'])->middleware('throttle:500,1');
+Route::get('/peminjamanAlat/getPeminjamanAlat/{UserID}', [PeminjamanAlatBridgeController::class, 'getPeminjamanAlat']);
+
+//route untuk peminjaman ruangan bridge
+Route::get('/peminjamanRuangan', [PeminjamanRuanganBridgeController::class, 'getAllPeminjamanRuangan']);
+Route::get('/peminjamanRuangan/{Peminjaman_Ruangan_ID}', [PeminjamanRuanganBridgeController::class, 'show']);
+Route::post('/peminjamanRuangan', [PeminjamanRuanganBridgeController::class, 'store']);
+Route::put('/peminjamanRuangan/{Peminjaman_Ruangan_ID}', [PeminjamanRuanganBridgeController::class, 'update']);
+Route::delete('/peminjamanRuangan/{Peminjaman_Ruangan_ID}', [PeminjamanRuanganBridgeController::class, 'delete']);
+Route::get('/peminjamanRuangan/getAllPeminjamanRuanganByPeminjamanID/{PeminjamanID}', [PeminjamanRuanganBridgeController::class, 'getAllPeminjamanRuanganByPeminjamanID'])->middleware('throttle:500,1');
+Route::get('/peminjamanRuangan/getNameByID/{RuanganID}', [PeminjamanRuanganBridgeController::class, 'getNameByID'])->middleware('throttle:500,1');
+Route::get('/peminjamanRuangan/getKeterangan/{PeminjamanID}', [PeminjamanRuanganBridgeController::class, 'getKeterangan'])->middleware('throttle:500,1');
+Route::get('/peminjamanRuangan/checkRelation/{PeminjamanID}', [PeminjamanRuanganBridgeController::class, 'checkRelation']);
+Route::get('/peminjamanRuangan/jadwalPeminjaman/{Tanggal_pakai_awal}/{Tanggal_pakai_akhir}/{Waktu_pakai}/{Waktu_selesai}', [PeminjamanRuanganBridgeController::class, 'jadwalPeminjaman'])->middleware('throttle:500,1');
+Route::get('/peminjamanRuangan/getPeminjamanRuangan/{UserID}', [PeminjamanRuanganBridgeController::class, 'getPeminjamanRuangan']);

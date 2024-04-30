@@ -7,8 +7,17 @@
 import axios from 'axios';
 window.axios = axios;
 
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+axios.defaults.baseURL = 'http://127.0.0.1:8000/api/'
+axios.defaults.headers.common = {
+    'X-Requested-With': 'XMLHttpRequest',
+    'X-CSRF-TOKEN': window.csrf_token
+};
 
+axios.defaults.withCredentials = true
+
+
+/* window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+ */
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting

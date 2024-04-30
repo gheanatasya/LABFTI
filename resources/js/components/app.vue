@@ -2,6 +2,10 @@
     <router-view></router-view>
 </template>
 
+
+<script>
+</script>
+
 <style>
 @font-face {
     font-family: "Lexend-Black";

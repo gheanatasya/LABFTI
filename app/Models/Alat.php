@@ -10,14 +10,14 @@ class Alat extends Model
 {
     use HasFactory;
 
-    public function peminjaman_alat_bridge(): HasMany
-    {
-        return $this->hasMany(Peminjaman_Alat_Bridge::class);
-    }
+    /* public function peminjaman_alat_bridge(): HasMany */
+    /* { */
+    /*     return $this->hasMany(Peminjaman_Alat_Bridge::class, 'AlatID','AlatID'); */
+    /* } */
 
     public function detail_alat(): HasMany
     {
-        return $this->hasMany(Detail_Alat::class);
+        return $this->hasMany(Detail_Alat::class, 'AlatID','AlatID');
     }
 
     public $timestamps = false;

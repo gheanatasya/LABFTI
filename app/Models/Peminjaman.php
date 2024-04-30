@@ -13,7 +13,7 @@ class Peminjaman extends Model
 
     public function peminjam(): BelongsTo
     {
-        return $this->belongsTo(Peminjam::class);
+        return $this->belongsTo(Peminjam::class,'PeminjamID','PeminjamID');
     }
 
     public function dokumen()
@@ -33,11 +33,16 @@ class Peminjaman extends Model
 
     public function peminjaman_ruangan_bridge(): HasMany
     {
-        return $this->hasMany(Peminjaman_Ruangan_Bridge::class);
+        return $this->hasMany(Peminjaman_Ruangan_Bridge::class, 'PeminjamanID','PeminjamanID');
     }
 
     public function peminjaman_alat_bridge(): HasMany
     {
-        return $this->hasMany(Peminjaman_Alat_Bridge::class);
+        return $this->hasMany(Peminjaman_Alat_Bridge::class,'PeminjamanID','PeminjamanID');
     }
+
+    public $timestamps = false;
+    protected $table = 'peminjaman';
+    protected $primaryKey = 'PeminjamanID';
+    protected $fillable = ['DokumenID', 'Tanggal_pinjam', 'Is_Personal', 'Is_Organisation', 'Is_Eksternal'];
 }

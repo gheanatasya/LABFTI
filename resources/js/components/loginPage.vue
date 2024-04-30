@@ -9,20 +9,26 @@
                 <router-link to="/"><v-icon style="font-size: 30px;">mdi-keyboard-backspace</v-icon></router-link>
                 <div style="font-family:Lexend-Medium; margin-left:250px; margin-top: 150px; font-size: 25px;">Selamat
                     datang di LAB FTI UKDW!</div>
+                <div v-if="loginFailed" class="alert alert-danger"
+                    style="font-family: Lexend-Regular; color:red; margin-left: 350px; margin-top: 10px;">Email atau
+                    Password Anda salah.</div>
                 <v-form @submit.prevent="login" method="post">
                     <v-sheet
                         style="font-family:Lexend-Regular; margin-left: 200px; margin-right: 200px; margin-top: 30px;"
                         height="200px" class="px-4 py-3">
-                        <v-text-field variant="outlined" v-model="formData.email" label="Email" type="email"
+                        <v-text-field variant="outlined" v-model="email" label="Email" type="email"
                             required></v-text-field>
-                        <p class="text-danger" v-text="errors.email"></p>
-                        <v-text-field variant="outlined" v-model="formData.password" label="Password" type="password"
-                            required></v-text-field>
-                        <p class="text-danger" v-text="errors.password"></p>
+                        <div v-if="validation.email" style="margin-top: -15px; margin-bottom: 20px; color:red;"
+                            class="alert alert-danger">Email required!</div>
+                        <v-text-field variant="outlined" v-model="password" label="Password"
+                            :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'" :type="show ? 'text' : 'password'"
+                            @click:append="show = !show" required></v-text-field>
+                        <div v-if="validation.password" style="margin-top: -15px; margin-bottom: 20px; color:red;"
+                            class="alert alert-danger">Password required!</div>
                     </v-sheet>
 
                     <v-btn :loading="loading" type="submit" @click="login"
-                        style="margin-top: 0px; margin-left: 370px; font-family: Lexend-Medium; background-color: rgb(2, 39, 10, 0.9); color: white; width: 200px; border-radius: 20px; font-size: 17px;">
+                        style="margin-top: 30px; margin-left: 370px; font-family: Lexend-Medium; background-color: rgb(2, 39, 10, 0.9); color: white; width: 200px; border-radius: 20px; font-size: 17px;">
                         <span v-if="!loading">Login</span>
                         <span v-else>Loading...</span>
                     </v-btn>
@@ -46,40 +52,85 @@ export default {
     name: "loginPage",
     data() {
         return {
-            formData: {
-                email: "",
-                password: "",
-            },
+            loggedIn: localStorage.getItem('loggedIn'),
+            token: localStorage.getItem('token'),
+            UserID: localStorage.getItem('UserID'),
+            email: "",
+            password: "",
+            validation: [],
+            loginFailed: null,
             loading: false,
-            errors: {}
+            show: true,
         }
     },
     methods: {
-        /*  login() {  */
-        /*  this.loading = true; */
-        /*  axios.post('api/login', this.formData).then((response) => { */
-        /*      localStorage.setItem('token', response.data) */
-        /*      this.$router.push('beranda') */
-        /*  }).catch((errors) => { */
-        /*      this.errors = errors.response.data.errors */
-        /*      this.loading = false */
-        /*  }) } */
-        async login() {
-            try {
-                this.loading = true;
-                const response = await axios.post("http://127.0.0.1:8000/api/login", this.formData);
-                if (response.data.token) {
-                    localStorage.setItem('token', response.data.token);
-                    this.$route.commit('LOGIN');
-                    this.$route.push('/beranda')
-                }
-            } catch (error) {
-                console.error("Error login")
-                this.loading = false;
+        login() {
+            this.loading = true
+            if (this.email && this.password) {
+                axios.get('http://localhost:8000/sanctum/csrf-cookie')
+                    .then(response => {
+
+                        //debug cookie
+                        console.log(response)
+
+                        axios.post('http://localhost:8000/api/login', {
+                            email: this.email,
+                            password: this.password
+                        }).then(res => {
+                            //debug user login
+                            console.log(res)
+
+                            if (res.data.success) {
+                                //set localStorage
+                                localStorage.setItem("loggedIn", "true")
+
+                                //set localStorage Token
+                                localStorage.setItem("token", res.data.token)
+
+                                //save UserID
+                                localStorage.setItem("UserID", res.data.UserID);
+
+                                //change state
+                                this.loggedIn = true
+
+                                //redirect dashboard
+                                return this.$router.push({ name: 'berandaUser' })
+                            } else {
+                                //set state login failed
+                                this.loginFailed = true
+                                this.loading = false
+                            }
+                        }).catch(error => {
+                            console.log(error)
+                            this.loading = false
+                            this.loginFailed = true
+                        })
+                    })
+            } else {
+                this.loading = false
+                this.loginFailed = true
             }
+
+            this.validation = []
+
+            if (!this.email) {
+                this.validation.email = true
+            }
+
+            if (!this.password) {
+                this.validation.password = true
+            }
+
+        }
+    },
+    //check user already logged in
+    mounted() {
+        if (this.loggedIn) {
+            return this.$router.push({ name: 'berandaUser' })
         }
     }
-};
+}
+    ;
 </script>
 
 <style scoped></style>

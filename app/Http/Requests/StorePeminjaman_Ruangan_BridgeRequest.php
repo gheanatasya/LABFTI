@@ -11,7 +11,7 @@ class StorePeminjaman_Ruangan_BridgeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**

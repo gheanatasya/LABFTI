@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Detail_Alat extends Model
 {
@@ -11,7 +12,12 @@ class Detail_Alat extends Model
 
     public function alat()
     {
-        return $this->belongsTo(Alat::class);
+        return $this->belongsTo(Alat::class, 'AlatID', 'AlatID');
+    }
+
+    public function peminjaman_alat_bridge(): HasMany
+    {
+        return $this->hasMany(Peminjaman_Alat_Bridge::class, 'DetailAlatID', 'DetailAlatID');
     }
 
     public $timestamps = false;

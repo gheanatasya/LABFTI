@@ -12,7 +12,7 @@ class Ruangan extends Model
 
     public function peminjaman_ruangan_bridge(): HasMany
     {
-        return $this->hasMany(Peminjaman_Ruangan_Bridge::class);
+        return $this->hasMany(Peminjaman_Ruangan_Bridge::class, 'RuanganID','RuanganID');
     }
 
     public $timestamps = false;

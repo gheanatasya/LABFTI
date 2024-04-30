@@ -6,6 +6,7 @@ use App\Models\Program_Studi;
 use App\Http\Requests\StoreProgram_StudiRequest;
 use App\Http\Requests\UpdateProgram_StudiRequest;
 use App\Http\Controllers\FakultasController;
+use App\Models\Fakultas;
 
 class ProgramStudiController extends Controller
 {
@@ -67,8 +68,23 @@ class ProgramStudiController extends Controller
         }
     }
 
+    public function getProdiNameByID($ProdiID){
+        $prodi = Program_Studi::where('ProdiID', $ProdiID)->first();
+        if ($prodi) {
+            return response()->json(['Nama_prodi' => $prodi->Nama_prodi, 'FakultasID' => $prodi->FakultasID]);
+        } else {
+            return response()->json(['Error' => 'Prodi not found'], 404);
+        }
+    }
 
-
+    public function getFakultasNameByID($FakultasID){
+        $fakultas = Fakultas::where('FakultasID', $FakultasID)->first();
+        if ($fakultas) {
+            return response()->json(['Nama_fakultas' => $fakultas->Nama_fakultas]);
+        } else {
+            return response()->json(['Error' => 'Fakultas not found'], 404);
+        }
+    }
 
     public function create()
     {

@@ -11,7 +11,7 @@ class UpdatePeminjaman_Alat_BridgeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**

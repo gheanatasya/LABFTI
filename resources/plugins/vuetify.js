@@ -3,14 +3,15 @@ import '@mdi/font/css/materialdesignicons.css'
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
+import { VCalendar } from 'vuetify/labs/VCalendar'
 
 const customeTheme = {
     dark: false,
     colors: {
-        primary: "#673AB7",
+        primary: "rgb(2,39, 10, 0.9)",
         secondary: "#424242",
         accent: "#82B1FF",
-        error: "#FF5252",
+        error: "rgb(206, 0, 0, 0.91)",
         info: "#2196F3",
         success: "#4CAF50",
         warning: "#FFC107",
@@ -34,6 +35,7 @@ const customeTheme = {
 
 const vuetify = createVuetify({
     components,
+    VCalendar,
     directives,
     theme: {
         defaultTheme: "customeTheme",

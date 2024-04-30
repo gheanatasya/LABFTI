@@ -10,6 +10,8 @@ import profil from '../components/profil.vue'
 import registrationPage from '../components/registrationPage.vue'
 import ruangan from '../components/ruangan.vue'
 import landingPage from '../components/landingPage.vue'
+import editProfil from '../components/editProfil.vue'
+
 
 const routes = [
     {
@@ -66,6 +68,11 @@ const routes = [
         path: '/ruangan',
         name: 'ruangan',
         component: ruangan
+    },
+    {
+        path: '/editProfil',
+        name: 'editProfil',
+        component: editProfil
     },
 ]
 

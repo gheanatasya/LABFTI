@@ -28,7 +28,7 @@ class Peminjam extends Model
 
     public function peminjaman(): HasMany
     {
-        return $this->hasMany(Peminjaman::class);
+        return $this->hasMany(Peminjaman::class, 'PeminjamID','PeminjamID');
     }
 
     public $timestamps = false;

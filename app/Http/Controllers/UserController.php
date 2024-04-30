@@ -35,8 +35,8 @@ class UserController extends Controller
 
         return response()->json(['status' => true, 'message' => "Registration Success", 'UserID' => $userID, 'user' => $user]);
     }
-    //mengubah data
-    public function update(UpdateUserRequest $request, User $UserID)
+    //mengubah data semua row
+    public function updateSemuaRow(UpdateUserRequest $request, User $UserID)
     {
         $UserID->update($request->all());
         return response()->json(['message' => 'User berhasil diperbarui', 'data' => $UserID]);
@@ -47,5 +47,29 @@ class UserController extends Controller
         $user = User::find($UserID);
         $user->delete();
         return response()->json(['message' => 'User berhasil dihapus'], 204);
+    }
+
+    //mengubah data user yang login
+    public function update(UpdateUserRequest $request, $UserID)
+    {
+        $user = User::find($UserID);
+
+        // Pastikan user yang ingin diperbarui adalah user yang sedang login
+        if ($user->id !== auth()->id()) {
+            return response()->json(['message' => 'Anda tidak memiliki izin untuk memperbarui pengguna lain'], 403);
+        }
+
+        // Validasi data masukan
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        // Update email dan password
+        $user->Email = $request->email;
+        $user->Password = bcrypt($request->password);
+        $user->save();
+
+        return response()->json(['message' => 'Email dan password berhasil diperbarui', 'data' => $user]);
     }
 }

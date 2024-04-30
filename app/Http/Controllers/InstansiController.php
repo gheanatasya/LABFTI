@@ -53,4 +53,13 @@ class InstansiController extends Controller
             return response()->json(['Error' => 'Instansi not found'], 404);
         }
     }
+
+    public function getInstansiNameByID($InstansiID){
+        $instansi = Instansi::where('InstansiID', $InstansiID)->first();
+        if ($instansi) {
+            return response()->json(['Nama_instansi' => $instansi->Nama_instansi]);
+        } else {
+            return response()->json(['Error' => 'Instansi not found'], 404);
+        }
+    }
 }

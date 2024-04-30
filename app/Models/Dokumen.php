@@ -13,4 +13,9 @@ class Dokumen extends Model
     {
         return $this->hasOne(Peminjaman::class);
     }
+
+    public $timestamps = false;
+    protected $table = 'dokumen';
+    protected $primaryKey = 'DokumenID';
+    protected $fillable = ['Nama_dokumen'];
 }

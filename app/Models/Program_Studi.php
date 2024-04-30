@@ -13,7 +13,7 @@ class Program_Studi extends Model
 
     public function fakultas(): BelongsTo
     {
-        return $this->belongsTo(Fakultas::class);
+        return $this->belongsTo(Fakultas::class, 'FakultasID');
     }
 
     public function peminjam(): HasMany

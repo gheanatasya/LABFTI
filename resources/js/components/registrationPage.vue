@@ -42,7 +42,7 @@
                         <v-select variant="outlined" v-model="selectedInstansi" label="Instansi" :items="Instansi"
                             style="margin-right: 20px; height: 30px;"></v-select>
                         <v-spacer></v-spacer>
-                        <v-text-field variant="outlined" v-model="this.user_role" label="Role" :disabled="true"
+                        <v-text-field variant="outlined" v-model="this.user_role" label="Role" :readonly="true"
                             style="grid-column: span 1; height: 50px; margin-right: 50px;"></v-text-field>
                     </v-sheet>
                     <v-btn @click="addUser" :loading="loading" type="submit"
