@@ -20,7 +20,8 @@ return [
     'paths' => ['*', 
                 'sanctum/csrf-cookie',
                 '/login',
-                '/logout'],
+                '/logout',
+            '/api/peminjamanRuangan/*'],
 
     'allowed_methods' => ['*'],
 

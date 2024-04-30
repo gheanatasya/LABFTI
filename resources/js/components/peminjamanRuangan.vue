@@ -213,6 +213,7 @@ export default {
           'Content-Type' : 'application/json'
         }
       })
+
       /* axios.post("http://127.0.0.1:8000/api/peminjamanRuangan/", form) */
       /* .then(response => { */
       /*   console.log(response.data); */
