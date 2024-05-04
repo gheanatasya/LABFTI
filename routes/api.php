@@ -132,5 +132,5 @@ Route::get('/peminjamanRuangan/getAllPeminjamanRuanganByPeminjamanID/{Peminjaman
 Route::get('/peminjamanRuangan/getNameByID/{RuanganID}', [PeminjamanRuanganBridgeController::class, 'getNameByID'])->middleware('throttle:500,1');
 Route::get('/peminjamanRuangan/getKeterangan/{PeminjamanID}', [PeminjamanRuanganBridgeController::class, 'getKeterangan'])->middleware('throttle:500,1');
 Route::get('/peminjamanRuangan/checkRelation/{PeminjamanID}', [PeminjamanRuanganBridgeController::class, 'checkRelation']);
-Route::get('/peminjamanRuangan/jadwalPeminjaman/{Tanggal_pakai_awal}/{Tanggal_pakai_akhir}/{Waktu_pakai}/{Waktu_selesai}', [PeminjamanRuanganBridgeController::class, 'jadwalPeminjaman'])->middleware('throttle:500,1');
+Route::get('/peminjamanRuangan/jadwalPeminjaman/{Tanggal_pakai_awal}/{Tanggal_pakai_akhir}', [PeminjamanRuanganBridgeController::class, 'jadwalPeminjaman'])->middleware('throttle:500,1');
 Route::get('/peminjamanRuangan/getPeminjamanRuangan/{UserID}', [PeminjamanRuanganBridgeController::class, 'getPeminjamanRuangan']);

@@ -24,8 +24,16 @@ class Peminjaman_Alat_Bridge extends Model
         return $this->belongsTo(Detail_Alat::class, 'DetailAlatID', 'DetailAlatID');
     }
 
+    public function dokumen()
+    {
+        return $this->belongsTo(Dokumen::class);
+    }
+
     public $timestamps = false;
     protected $table = 'peminjaman_alat_bridge';
     protected $primaryKey = 'Peminjaman_Alat_ID';
-    protected $fillable = ['PeminjamanID', 'DetailAlatID', 'Tanggal_pakai_awal', 'Tanggal_pakai_akhir', 'Waktu_pakai', 'Waktu_selesai', 'Waktu_pengambilan', 'Tanggal_pengembalian', 'Waktu_pengembalian', 'Jumlah_pinjam'];
+    protected $fillable = [
+        'PeminjamanID', 'DetailAlatID', 'Tanggal_pakai_awal', 'Tanggal_pakai_akhir', 'Waktu_pakai', 'Waktu_selesai', 'Waktu_pengambilan', 'Tanggal_pengembalian', 'Waktu_pengembalian', 'Jumlah_pinjam',
+        'Is_Personal', 'Is_Organisation', 'Is_Eksternal', 'Keterangan', 'DokumenID'
+    ];
 }

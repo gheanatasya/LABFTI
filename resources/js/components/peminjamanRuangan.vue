@@ -2,22 +2,25 @@
   <v-app>
     <headerUser></headerUser>
 
-    <router-link to="/berandaUser" style="width: 200px; font-size:17px; color: rgb(2,39, 10, 0.9); margin-left: 20px; margin-top: 10px; font-family: 'Lexend-Regular'"><v-icon style="font-size: 25px;">mdi-keyboard-backspace</v-icon> Beranda</router-link>
+    <router-link to="/berandaUser"
+      style="width: 200px; font-size:17px; color: rgb(2,39, 10, 0.9); margin-left: 20px; margin-top: 10px; font-family: 'Lexend-Regular'"><v-icon
+        style="font-size: 25px;">mdi-keyboard-backspace</v-icon> Beranda</router-link>
 
     <div style="height: 100%; display: flex;">
       <v-container style="font-family: Lexend-Regular; width: 50%; margin-left:-250px; margin-right: 30px;">
         <div>
           <v-form @submit.prevent="saveItem" ref="peminjamanForm" method="post">
-            
+
             <div v-for="item, index in form" :key="item">
               <div
                 style="font-size: 25px; font-family: Lexend-Medium; margin-top: 20px; margin-left: 300px; margin-right: 200px; margin-bottom: -80px;width: 60%">
                 Peminjaman Ruangan {{ index + 1 }}</div>
               <div style="display: flex; align-items: center; grid-column: span 2; width: 110%;">
-                <v-text-field type="date" label="Tanggal Pakai Awal" v-model="item.tanggalAwal" variant="outlined"
+                <v-text-field type="datetime-local" label="Tanggal Pakai Awal" v-model="item.tanggalAwal"
+                  variant="outlined"
                   style="width: 280px; margin-left: 300px; margin-top: 100px; margin-right: 80px;"></v-text-field>
-                <v-text-field type="date" label="Tanggal Selesai" v-model="item.tanggalSelesai" variant="outlined"
-                  style="width: 300px; margin-left: -75px; margin-top: 100px;"></v-text-field>
+                <v-text-field type="datetime-local" label="Tanggal Selesai" v-model="item.tanggalSelesai"
+                  variant="outlined" style="width: 300px; margin-left: -75px; margin-top: 100px;"></v-text-field>
               </div>
 
               <div style="display: flex; align-items: center; grid-column: span 2; width: 110%;">
@@ -27,8 +30,8 @@
                   style="width: 300px; margin-left: -75px; margin-top: 5px;"></v-text-field>
               </div>
 
-              <v-select v-model="item.selectedRuangan" :items="item.Ruangan" label="Ruangan" variant="outlined" clearable
-                style="width: 300px; margin-left: 303px; margin-top: 8px;"></v-select>
+              <v-select v-model="item.selectedRuangan" :items="item.Ruangan" label="Ruangan" variant="outlined"
+                clearable style="width: 300px; margin-left: 303px; margin-top: 8px;"></v-select>
 
               <div style="margin-left: 303px; margin-right: -80px;">
                 <label for="isPersonal">Apakah peminjaman dilakukan untuk keperluan pribadi (belajar, skripsian, kerja
@@ -36,10 +39,10 @@
                 <v-radio-group v-model="item.selectedOptionPersonal" id="isPersonal">
                   <v-row>
                     <v-col cols="auto">
-                      <v-radio label="Ya" value="Ya"></v-radio>
+                      <v-radio label="Ya" value="True"></v-radio>
                     </v-col>
                     <v-col cols="auto">
-                      <v-radio label="Tidak" value="Tidak"></v-radio>
+                      <v-radio label="Tidak" value="False"></v-radio>
                     </v-col>
                   </v-row>
                 </v-radio-group>
@@ -48,10 +51,10 @@
                 <v-radio-group v-model="item.selectedOptionOrganisation" id="isOrganisation">
                   <v-row>
                     <v-col cols="auto">
-                      <v-radio label="Ya" value="Ya"></v-radio>
+                      <v-radio label="Ya" value="True"></v-radio>
                     </v-col>
                     <v-col cols="auto">
-                      <v-radio label="Tidak" value="Tidak"></v-radio>
+                      <v-radio label="Tidak" value="False"></v-radio>
                     </v-col>
                   </v-row>
                 </v-radio-group>
@@ -61,10 +64,10 @@
                 <v-radio-group v-model="item.selectedOptionEksternal" id="isEksternal">
                   <v-row>
                     <v-col cols="auto">
-                      <v-radio label="Ya" value="Ya"></v-radio>
+                      <v-radio label="Ya" value="True"></v-radio>
                     </v-col>
                     <v-col cols="auto">
-                      <v-radio label="Tidak" value="Tidak"></v-radio>
+                      <v-radio label="Tidak" value="False"></v-radio>
                     </v-col>
                   </v-row>
                 </v-radio-group>
@@ -87,9 +90,10 @@
                 </template>
               </v-combobox>
 
-              <v-file-input v-if="item.selectedOptionOrganisation === 'Ya' || item.selectedOptionEksternal === 'Ya'" type="file" accept="file/pdf"
-              :no-icon="true" v-model="item.dokumen"
-              style="width: 505px; margin-left: 303px; margin-top: 5px;" variant="outlined" label="Surat Peminjaman"></v-file-input>
+              <v-file-input v-if="item.selectedOptionOrganisation === 'True' || item.selectedOptionEksternal === 'True'"
+                type="file" accept="file/pdf" :no-icon="true" v-model="item.dokumen"
+                style="width: 505px; margin-left: 303px; margin-top: 5px;" variant="outlined"
+                label="Surat Peminjaman"></v-file-input>
 
               <div
                 style="display: flex; justify-content: space-between; margin-left: 320px; margin-right: 20px; margin-bottom: 50px;">
@@ -168,7 +172,7 @@ export default {
         alat: [],
         selectedItems: '',
         keterangan: '',
-        dokumen: ''
+        dokumen: null
       }
     ])
 
@@ -176,9 +180,9 @@ export default {
       form.push({
         dateDialogAwal: false,
         dateDialogAkhir: false,
-        tanggalAwal: new Date(),
+        tanggalAwal: '',
         modal: false,
-        tanggalSelesai: new Date(),
+        tanggalSelesai: '',
         waktuPakai: '',
         waktuSelesai: '',
         Ruangan: [],
@@ -193,7 +197,7 @@ export default {
         alat: [],
         selectedItems: '',
         keterangan: '',
-        dokumen: ''
+        dokumen: null
       })
     }
 
@@ -204,20 +208,62 @@ export default {
     }
 
     const saveItem = async () => {
-      await axios({
-        method: 'POST',
-        url: 'http://127.0.0.1:8000/api/peminjamanRuangan/',
-        data: form,
-        headers: {
-          'Access-Control-Allow-Origin' : '*',
-          'Content-Type' : 'application/json'
-        }
-      })
+      const savedItems = [];
+      const dataSend = [];
 
-      /* axios.post("http://127.0.0.1:8000/api/peminjamanRuangan/", form) */
-      /* .then(response => { */
-      /*   console.log(response.data); */
-      /* }) */
+      const UserID = localStorage.getItem('UserID');
+
+      for (const formData of form) {
+        const dataToSave = {
+          tanggalSelesai: formData.tanggalSelesai,
+          tanggalAwal: formData.tanggalAwal,
+          waktuSelesai: formData.waktuSelesai,
+          waktuPakai: formData.waktuPakai,
+          selectedRuangan: formData.selectedRuangan,
+          selectedOptionPersonal: formData.selectedOptionPersonal,
+          selectedOptionEksternal: formData.selectedOptionEksternal,
+          selectedOptionOrganisation: formData.selectedOptionOrganisation,
+          alat: formData.alat,
+          keterangan: formData.keterangan,
+          dokumen: formData.dokumen,
+          UserID: UserID
+        };
+        dataSend.push(dataToSave);
+      }
+
+      for (const formData of form) {
+        const dataToSave = {
+          tanggalSelesai: formData.tanggalSelesai,
+          tanggalAwal: formData.tanggalAwal,
+          waktuSelesai: formData.waktuSelesai,
+          waktuPakai: formData.waktuPakai,
+          selectedRuangan: formData.selectedRuangan,
+          selectedOptionPersonal: formData.selectedOptionPersonal,
+          selectedOptionEksternal: formData.selectedOptionEksternal,
+          selectedOptionOrganisation: formData.selectedOptionOrganisation,
+          alat: formData.alat,
+          keterangan: formData.keterangan,
+          dokumen: formData.dokumen,
+          UserID: UserID
+        };
+
+        console.log(dataToSave);
+        try {
+          const response = await axios({
+            method: 'POST',
+            url: 'http://localhost:8000/api/peminjamanRuangan/',
+            data: dataSend,
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+              'Content-Type': 'application/json'
+            },
+          });
+          savedItems.push(response.data);
+          console.log('Peminjaman saved successfully:', response.data);
+        } catch (error) {
+          console.error('Error menyimpan data peminjaman ruangan', error);
+        }
+      }
     }
 
     const fetchRuangan = () => {
@@ -246,86 +292,57 @@ export default {
         });
     }
 
-   /*  const fetchRuanganAfter = async () => {
-      const allFilled = form.every(
-        item =>
-          item.tanggalAwal &&
-          item.tanggalSelesai &&
-          item.waktuPakai &&
-          item.waktuSelesai
-      );
-      if (allFilled) {
-        try {
-          // Dapatkan jadwal peminjaman
-          const promises = form.map(async item => {
-            const firstdate = item.tanggalAwal;
-            const seconddate = item.tanggalSelesai;
-            const firsttime = item.waktuPakai;
-            const secondtime = item.waktuSelesai;
+    const fetchRuanganAfter = async () => {
 
-            const res = await axios.get(`http://127.0.0.1:8000/api/peminjamanRuangan/jadwalPeminjaman/${firstdate}/${seconddate}/${firsttime}/${secondtime}`);
-            return res.data;
-          });
-
-          const jadwalPeminjaman = await Promise.all(promises);
-
-          // Dapatkan daftar ruangan
-          const response = await axios.get("http://127.0.0.1:8000/api/ruangan/");
-          const ruangan = response.data.map(ruangan => ruangan.Nama_ruangan);
-
-          // Filter ruangan yang tersedia
-          for (let i = 0; i < form.length; i++) {
-            const item = form[i];
-            const room = ruangan.filter(r => !jadwalPeminjaman[i].includes(r));
-            item.Ruangan = room;
-            console.log(item.Ruangan);
-          }
-        } catch (error) {
-          console.error("Error gagal mengambil data Ruangan tabrakan", error);
-        }
+      for ($i = 0; $i < count(form); $i++) {
+        console.log(count(form));
       }
-    };
- */
 
-    /* const fetchRuanganAfter = async () => {
-      const allFilled = form.every(
-        item =>
-          item.tanggalAwal &&
-          item.tanggalSelesai &&
-          item.waktuPakai &&
-          item.waktuSelesai
-      );
-      if (allFilled) {
-        try {
-          const response = await axios.get("http://127.0.0.1:8000/api/ruangan/");
-          for (const item of form) {
-            const firstdate = item.tanggalAwal;
-            const seconddate = item.tanggalSelesai;
-            const firsttime = item.waktuPakai;
-            const secondtime = item.waktuSelesai;
-            console.log(firstdate, seconddate, firsttime, secondtime);
-            const res = await axios.get(`http://127.0.0.1:8000/api/peminjamanRuangan/jadwalPeminjaman/${firstdate}/${seconddate}/${firsttime}/${secondtime}`);
-            const room = response.data.map(ruangan => ruangan.Nama_ruangan);
-            item.Ruangan = room.filter(r => !res.data.includes(r));
-            console.log(item.Ruangan);
-            await new Promise(resolve => setTimeout(resolve, 10000)); // Delay for 1 second between requests
-          }
-        } catch (error) {
-          console.error("Error gagal mengambil data Ruangan tabrakan", error);
-        }
-      }
+      /* const allFilled = form.every( */
+      /*   item => */
+      /*     item.tanggalAwal && */
+      /*     item.tanggalSelesai  */
+      /* ); */
+      /* if (allFilled) { */
+      /*   try { */
+      // Dapatkan jadwal peminjaman
+      /* const promises = form.map(async item => {
+        const firstdate = item.tanggalAwal;
+        const seconddate = item.tanggalSelesai;
+
+        const res = await axios.get(`http://127.0.0.1:8000/api/peminjamanRuangan/jadwalPeminjaman/${firstdate}/${seconddate}`);
+        return item.Ruangan = res.data;
+      });
+
+      const jadwalPeminjaman = await Promise.all(promises);
+*/
+      // daftar ruangan
+      //const response = await axios.get("http://127.0.0.1:8000/api/ruangan/");
+      //const ruangan = response.data.map(ruangan => ruangan.Nama_ruangan);
+
+      // filter ruangan yang tersedia
+      //for (let i = 0; i < form.length; i++) {
+      // const item = form[i];
+      //const room = ruangan.filter(r => !jadwalPeminjaman[i].includes(r));
+      //item.Ruangan = room;
+      //console.log(item.Ruangan);
+      //}
+      /* } catch (error) {
+        console.error("Error gagal mengambil data Ruangan tabrakan", error);
+      } */
+      //}
     };
- */
+
     onMounted(() => {
       fetchRuangan();
       fetchAlat();
     });
 
-   /*  watch(() => form, () => { */
-   /*    fetchRuanganAfter(); */
-   /*  }, { deep: true }); */
+    watch([form.tanggalawal, form.tanggalselesai], () => {
+      fetchRuanganAfter();
+    }, { deep: true });
 
-    return { form, addNewForm, removeForm, fetchRuangan, fetchAlat, saveItem }
+    return { form, addNewForm, removeForm, fetchRuangan, fetchAlat, saveItem, fetchRuanganAfter }
   },
 };
 </script>

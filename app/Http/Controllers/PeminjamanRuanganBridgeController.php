@@ -30,36 +30,73 @@ class PeminjamanRuanganBridgeController extends Controller
     //tambah data
     public function store(StorePeminjaman_Ruangan_BridgeRequest $request)
     {
-        dd($request);
         setlocale(LC_ALL, 'id_ID');
         $input = $request->all();
+        //dd($input);
 
-        $ruanganid = Ruangan::where('Nama_ruangan', $input['selectedRuangan'])->first();
-        $idroom = $ruanganid->RuanganID;
+        $user = Peminjam::where('UserID', $request[0]['UserID'])->first();
+        $peminjamID = $user->PeminjamID;
 
         $peminjaman = Peminjaman::create([
-            'DokumenID' => $input['dokumen'],
-            'Tanggal_pinjam' => date('l, d-m-Y') ,
-            'Keterangan' => $input['keterangan'],
-            'Is_Personal' => $input['selectedOptionPersonal'],
-            'Is_Organisation' => $input['selectedOptionOrganisation'],
-            'Is_Eksternal' => $input['selectedOptionEksternal'],
+            'PeminjamID' => $peminjamID,
+            'Tanggal_pinjam' => date('d-m-Y')
         ]);
+        //dd($peminjaman);
         $peminjamanid = $peminjaman->PeminjamanID;
+        $semuapeminjaman = [];
 
-        $peminjaman_ruangan = Peminjaman_Ruangan_Bridge::create([
-            'PeminjamanID' => $peminjamanid,
-            'RuanganID' => $idroom,
-            'Tanggal_pakai_awal' => $input['tanggalAwal'],
-            'Tanggal_pakai_akhir' => $input['tanggalSelesai'],
-            'Waktu_pakai' => $input['waktuPakai'],
-            'Waktu_selesai' => $input['waktuSelesai']
+        for ($i = 0; $i < count($input); $i++) {
+            $ruanganid = Ruangan::where('Nama_ruangan', $input[$i]['selectedRuangan'])->first();
+            $idroom = $ruanganid->RuanganID;
+
+            $peminjaman_ruangan = Peminjaman_Ruangan_Bridge::create([
+                'PeminjamanID' => $peminjamanid,
+                'RuanganID' => $idroom,
+                'Tanggal_pakai_awal' => $input[$i]['tanggalAwal'],
+                'Tanggal_pakai_akhir' => $input[$i]['tanggalSelesai'],
+                'Waktu_pakai' => $input[$i]['waktuPakai'],
+                'Waktu_selesai' => $input[$i]['waktuSelesai'],
+                'Keterangan' => $input[$i]['keterangan'],
+                'Is_Personal' => $input[$i]['selectedOptionPersonal'],
+                'Is_Organisation' => $input[$i]['selectedOptionOrganisation'],
+                'Is_Eksternal' => $input[$i]['selectedOptionEksternal'],
+                'DokumenID' => $input[$i]['dokumen']
+            ]);
+
+            $peminjaman_ruangan_ID = $peminjaman_ruangan->Peminjaman_Ruangan_ID;
+            $semuapeminjaman[] = $peminjaman_ruangan;
+
+            $jumlahpinjam = 1;
+            $totalpinjamalat = [];
+
+            foreach ($input[$i]['alat'] as $tool) {
+                $detail = Detail_Alat::where('Nama_alat', $tool)->first();
+                $alatID = $detail->DetailAlatID;
+
+                $peminjaman_alat = Peminjaman_Alat_Bridge::create([
+                    'PeminjamanID' => $peminjamanid,
+                    'DetailAlatID' => $alatID,
+                    'Tanggal_pakai_awal' => $input[$i]['tanggalAwal'],
+                    'Tanggal_pakai_akhir' => $input[$i]['tanggalSelesai'],
+                    'Waktu_pakai' => $input[$i]['waktuPakai'],
+                    'Waktu_selesai' => $input[$i]['waktuSelesai'],
+                    'Tanggal_pengembalian' => $input[$i]['tanggalSelesai'],
+                    'Waktu_pengambilan' => $input[$i]['waktuPakai'],
+                    'Waktu_pengembalian' => $input[$i]['waktuSelesai'],
+                    'Jumlah_pinjam' => $jumlahpinjam,
+                    'Is_Personal' => $input[$i]['selectedOptionPersonal'],
+                    'Is_Organisation' => $input[$i]['selectedOptionOrganisation'],
+                    'Is_Eksternal' => $input[$i]['selectedOptionEksternal'],
+                    'DokumenID' => $input[$i]['dokumen']
+                ]);
+                $totalpinjamalat[] = $peminjaman_alat;
+            };
+        }
+
+        return response()->json([
+            'status' => true, 'message' => "Registration Success", 'peminjaman_ruangan_bridge' => $semuapeminjaman,
+            'peminjaman' => $peminjaman, 'peminjaman_alat_bridge' => $totalpinjamalat
         ]);
-
-        $peminjaman_ruangan_ID = $peminjaman_ruangan->Peminjaman_Ruangan_ID;
-
-        
-        return response()->json(['status' => true, 'message' => "Registration Success", 'Peminjaman_Ruangan_ID' => $peminjaman_ruangan_ID, 'peminjaman_ruangan_bridge' => $peminjaman_ruangan]);
     }
 
     //mengubah data semua row
@@ -117,18 +154,18 @@ class PeminjamanRuanganBridgeController extends Controller
     }
 
     //mengambil data-data peminjaman ruangan
-    public function getPeminjamanRuangan($UserID){
+    public function getPeminjamanRuangan($UserID)
+    {
         $peminjam = Peminjam::where('UserID', $UserID)->first();
         $peminjamID = $peminjam->PeminjamID;
         $peminjaman = Peminjaman::where('PeminjamID', $peminjamID)->get();
         $allroombooking = [];
 
-        foreach ($peminjaman as $booking){
-            $keterangan = $booking->Keterangan;
+        foreach ($peminjaman as $booking) {
             $peminjamanID = $booking->PeminjamanID;
             $datapinjamruangan = Peminjaman_Ruangan_Bridge::where('PeminjamanID', $peminjamanID)->get();
 
-            foreach ($datapinjamruangan as $data){
+            foreach ($datapinjamruangan as $data) {
                 $peminjamanruanganid = $data->Peminjaman_Ruangan_ID;
                 $ruanganid = $data->RuanganID;
                 $tanggalawal = $data->Tanggal_pakai_awal;
@@ -138,6 +175,7 @@ class PeminjamanRuanganBridgeController extends Controller
                 $cariroom = Ruangan::where('RuanganID', $ruanganid)->first();
                 $namaruangan = $cariroom->Nama_ruangan;
                 $peminjamanid = $data->PeminjamanID;
+                $keterangan = $data->Keterangan;
 
                 $recordData = [
                     'peminjamanruanganid' => $peminjamanruanganid,
@@ -195,72 +233,22 @@ class PeminjamanRuanganBridgeController extends Controller
         }
     }
 
-    //melihat ruangan dan alat yang kosong (menghindari tabrakan jadwal)
-    public function jadwalPeminjaman($Tanggal_pakai_awal, $Tanggal_pakai_akhir, $Waktu_pakai, $Waktu_selesai)
+    public function jadwalPeminjaman($Tanggal_pakai_awal, $Tanggal_pakai_akhir)
     {
-        /* $ruangan = Peminjaman_Ruangan_Bridge::whereNot('Tanggal_pakai_awal', $Tanggal_pakai_awal) */
-        /*     ->whereNot('Waktu_pakai', $Waktu_pakai) */
-        /*     ->whereNot('Tanggal_pakai_akhir', $Tanggal_pakai_akhir) */
-        /*     ->whereNot('Waktu_selesai', $Waktu_selesai) */
-        /*     ->pluck('RuanganID'); */
+        $peminjamanruangan = Peminjaman_Ruangan_Bridge::where('Tanggal_pakai_awal', "<=", $Tanggal_pakai_awal)
+            ->where('Tanggal_pakai_akhir', ">=", $Tanggal_pakai_akhir)
+            ->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
+                $query->where('Tanggal_pakai_awal', '>', $Tanggal_pakai_awal)
+                    ->where('Tanggal_pakai_akhir', '<=', $Tanggal_pakai_akhir);
+            })->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
+                $query->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_awal)
+                    ->where('Tanggal_pakai_akhir', '>', $Tanggal_pakai_akhir);
+            })->pluck('RuanganID')->unique();
 
-        /* $alat = Peminjaman_Alat_Bridge::whereNot('Tanggal_pakai_awal', $Tanggal_pakai_awal) */
-        /*     ->whereNot('Waktu_pakai', $Waktu_pakai) */
-        /*     ->whereNot('Tanggal_pakai_akhir', $Tanggal_pakai_akhir) */
-        /*     ->whereNot('Waktu_selesai', $Waktu_selesai) */
-        /*     ->pluck('AlatID'); */
+        $dataruangan = Ruangan::pluck('RuanganID', 'Nama_ruangan');
+        $ruangan = $dataruangan->diff($peminjamanruangan);
 
-        $ruangan = Peminjaman_Ruangan_Bridge::where('Tanggal_pakai_awal', $Tanggal_pakai_awal)
-            ->where('Waktu_pakai', $Waktu_pakai)
-            ->where('Tanggal_pakai_akhir', $Tanggal_pakai_akhir)
-            ->where('Waktu_selesai', $Waktu_selesai)
-            ->pluck('RuanganID');
-
-       /*  $alat = Peminjaman_Alat_Bridge::where('Tanggal_pakai_awal', $Tanggal_pakai_awal) */
-       /*      ->where('Waktu_pakai', $Waktu_pakai) */
-       /*      ->where('Tanggal_pakai_akhir', $Tanggal_pakai_akhir) */
-       /*      ->where('Waktu_selesai', $Waktu_selesai) */
-       /*      ->pluck('AlatID'); */
-
-        $RUANGAN = [];
-
-        if ($ruangan) {
-            foreach ($ruangan as $room) {
-                $ruang = Ruangan::where('RuanganID', $room)->first();
-                $namaRuangan = $ruang->Nama_ruangan;
-                $RUANGAN[] = $namaRuangan;
-
-                return ['RUANGAN' => $RUANGAN];
-            }
-
-        }
-
-        /* $RUANGAN = []; */
-        /* $ALAT = []; */
-
-        /* if ($ruangan || $alat) { */
-
-        /*     foreach ($ruangan as $roomname) { */
-        /*         $room = Ruangan::where('RuanganID', $roomname)->first(); */
-        /*         $namaRuangan = $room->Nama_ruangan; */
-        /*         $RUANGAN[] = $namaRuangan; */
-        /*     } */
-
-        /*     foreach ($alat as $toolname) { */
-        /*         $tools = Detail_Alat::where('AlatID', $toolname)->get(); */
-        /*         foreach ($tools as $tool) { */
-        /*             $namaAlat = $tool->Nama_alat; */
-        /*             $ALAT[] = $namaAlat; */
-        /*         } */
-        /*     } */
-
-        /*     $RUANGAN = array_unique($RUANGAN); */
-        /*     $ALAT = array_unique($ALAT); */
-
-        /*     return [ */
-        /*         'RUANGAN' => $RUANGAN, */
-        /*         'ALAT' => $ALAT */
-        /*     ]; */
-        /* } */
+        return $ruangan->toArray();
+        //return response()->json(['data tabrak' => $peminjamanruangan, 'list ruangan' => $dataruangan, 'ruangan tersedia' => $ruangan]);
     }
 }

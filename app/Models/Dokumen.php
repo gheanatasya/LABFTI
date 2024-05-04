@@ -9,9 +9,14 @@ class Dokumen extends Model
 {
     use HasFactory;
 
-    public function peminjaman()
+    public function peminjaman_alat_bridge()
     {
-        return $this->hasOne(Peminjaman::class);
+        return $this->hasOne(Peminjaman_Alat_Bridge::class);
+    }
+
+    public function peminjaman_ruangan_bridge()
+    {
+        return $this->hasOne(Peminjaman_Ruangan_Bridge::class);
     }
 
     public $timestamps = false;

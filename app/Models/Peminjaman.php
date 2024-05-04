@@ -16,11 +16,6 @@ class Peminjaman extends Model
         return $this->belongsTo(Peminjam::class,'PeminjamID','PeminjamID');
     }
 
-    public function dokumen()
-    {
-        return $this->belongsTo(Dokumen::class);
-    }
-
     public function persetujuan()
     {
         return $this->hasOne(Persetujuan::class);
@@ -44,5 +39,5 @@ class Peminjaman extends Model
     public $timestamps = false;
     protected $table = 'peminjaman';
     protected $primaryKey = 'PeminjamanID';
-    protected $fillable = ['DokumenID', 'Tanggal_pinjam', 'Is_Personal', 'Is_Organisation', 'Is_Eksternal'];
+    protected $fillable = ['Tanggal_pinjam', 'PeminjamID'];
 }
