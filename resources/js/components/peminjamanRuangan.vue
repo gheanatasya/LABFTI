@@ -1,9 +1,34 @@
 <template>
   <v-app>
-    <headerUser></headerUser>
+    <headerUser style="z-index: 1"></headerUser>
+
+    <v-dialog v-model="confirmBefore" style="justify-content: center; background-color: rgb(2, 39, 10, 0.7); z-index: 0;" persistent max-width="500">
+      <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 500px; height: 250px;">
+        <v-card-title style="font-family: 'Lexend-Medium'; text-align: center; margin-top: 20px;">
+          Apakah ingin meminjam ruangan <br>secara manual atau dengan <br>bantuan Rekomendasi Ruangan?
+          </v-card-title>
+        <v-card-text>
+          <v-radio-group v-model="selectedConfirmBefore" id="confirmBefore" style="margin-left: 40px; margin-top: 5px;">
+            <v-row>
+              <v-col cols="auto">
+                <v-radio label="Manual" value="true" @change="closeDialog"></v-radio>
+              </v-col>
+              <v-col cols="auto">
+                <v-radio label="Rekomendasi Ruangan" value="false" @change="navigateToRekomendasi"></v-radio>
+              </v-col>
+            </v-row>
+          </v-radio-group>
+        </v-card-text>
+        <v-card-actions style="position: absolute; top: 0; right: 0; margin-right: -15px;">
+          <v-btn @click="navigateToBeranda"><v-icon style="font-size: 30px;">mdi-close-circle</v-icon></v-btn>
+        </v-card-actions>
+      </v-card>
+
+      
+    </v-dialog>
 
     <router-link to="/berandaUser"
-      style="width: 200px; font-size:17px; color: rgb(2,39, 10, 0.9); margin-left: 20px; margin-top: 10px; font-family: 'Lexend-Regular'"><v-icon
+      style="width: 200px; font-size:17px; color: rgb(2,39, 10, 0.9); margin-left: 20px; margin-top: 70px; font-family: 'Lexend-Regular'"><v-icon
         style="font-size: 25px;">mdi-keyboard-backspace</v-icon> Beranda</router-link>
 
     <div style="height: 100%; display: flex;">
@@ -137,18 +162,22 @@
         </div>
       </v-container>
     </div>
+
+    <footerPage></footerPage>
   </v-app>
 </template>
 
 <script>
 import { reactive, onMounted, watch } from 'vue';
 import headerUser from '../components/headerUser.vue'
+import footerPage from '../components/footerPage.vue'
 import axios from 'axios';
 
 export default {
   name: 'berandaUser',
   components: {
-    headerUser
+    headerUser,
+    footerPage
   },
   setup() {
     const form = reactive([
@@ -344,5 +373,24 @@ export default {
 
     return { form, addNewForm, removeForm, fetchRuangan, fetchAlat, saveItem, fetchRuanganAfter }
   },
+  data() {
+    return {
+      confirmBefore: true,
+      selectedConfirmBefore: true
+    }
+  },
+  methods: {
+    closeDialog() {
+      this.confirmBefore = false; 
+    },
+    navigateToRekomendasi() {
+      this.confirmBefore = false; 
+      this.$router.push('/rekomendasiRuangan'); 
+    },
+    navigateToBeranda() {
+      this.confirmBefore = false;
+      this.$router.push('/berandaUser')
+    }
+  }
 };
 </script>

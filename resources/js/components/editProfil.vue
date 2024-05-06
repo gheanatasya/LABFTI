@@ -1,7 +1,7 @@
 <template>
-    <headerUser></headerUser>
+    <headerUser style="z-index: 1"></headerUser>
 
-    <div>
+    <div style="margin-top: 70px;">
         <p style="font-family: Lexend-Medium; font-size: 28px; margin-left: 40px; margin-top: 20px;">Profil</p>
 
         <div style="width: 100%; display: flex;">

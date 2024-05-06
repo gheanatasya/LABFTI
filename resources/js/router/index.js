@@ -11,6 +11,7 @@ import registrationPage from '../components/registrationPage.vue'
 import ruangan from '../components/ruangan.vue'
 import landingPage from '../components/landingPage.vue'
 import editProfil from '../components/editProfil.vue'
+import rekomendasiRuangan from '../components/rekomendasiRuangan.vue'
 
 
 const routes = [
@@ -73,6 +74,11 @@ const routes = [
         path: '/editProfil',
         name: 'editProfil',
         component: editProfil
+    },
+    {
+        path: '/rekomendasiRuangan',
+        name: 'rekomendasiRuangan',
+        component: rekomendasiRuangan
     },
 ]
 

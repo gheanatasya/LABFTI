@@ -1,5 +1,5 @@
 <template>
-    <headerUser></headerUser>
+    <headerUser style="z-index: 1"></headerUser>
 
     <div style="margin-top: 100px;">
         <p style="font-family: 'Lexend-Medium'; font-size: 25px; margin-top: -20px; margin-left: 30px">Ruangan</p>
@@ -36,51 +36,60 @@
 
         <div id="cardRuangan">
             <v-row>
-                <v-col cols="11">
+                <v-col cols="15">
                     <v-row>
-                        <v-col v-for="(room, index) in allRoomsData" :key="index" cols="4">
-                            <v-card style="font-family: 'Lexend-Regular'; height: 100%; margin-left: 60px; margin-bottom: 100px; margin-right: -70px;
+                        <v-col v-for="(room, index) in filteredData" :key="index" cols="5">
+                            <v-card style="font-family: 'Lexend-Regular'; height: 80%; margin-left: 100px; margin-bottom: 100px; margin-right: -100px;
                             background-color: rgb(30, 30, 30, 0.15); border-radius: 0px;">
                                 <div
                                     style="display: flex; align-items: center; grid-column: span 2; width: 100%; height: 100%;">
-                                    <div style="font-family: Lexend-Regular'; width: 70%; margin-left: 20px; margin-top: -80px;"
+                                    <div style="font-family: Lexend-Regular'; width: 60%; margin-left: 20px; margin-top: -80px;"
                                         id="detailRuangan">
                                         <p style="text-align: center; font-size: 18px; font-family: 'Lexend-Medium';">{{
                                             room.Nama_ruangan }}</p>
                                         <p style="font-family: Lexend-Regular';">Lokasi : {{ room.Lokasi }}</p>
                                         <p style="font-family: Lexend-Regular';">Kapasitas : {{ room.Kapasitas }}</p>
                                         <p style="font-family: Lexend-Regular';">Kategori : {{ room.Kategori }}</p>
-                                        <p style="font-family: Lexend-Regular';">Fasilitas : {{ room.Fasilitas }}</p>
+
+                                        <div>
+                                            Fasilitas:
+                                            <p v-for="(facilit, index) in room.fasilitas" :key="index"
+                                                style="font-family: Lexend-Regular;">
+                                                {{ index + 1 }}. {{ facilit }}
+                                            </p>
+                                        </div>
 
                                         <div style="position: absolute; bottom: 0; left: 0; margin-bottom: 10px;">
                                             <v-btn style="background-color: rgb(2,39, 10, 0.9); color: white; border-radius: 20px; margin-left: 90px;
-                                            font-size: 12px;">Pinjam Ruangan</v-btn>
+                                            font-size: 12px;" @click="pinjamRuang">Pinjam Ruangan</v-btn>
                                             <br>
-                                            <v-btn @click="showImageDialog = true"
-                                                style="color: rgb(2,39, 10, 0.9); margin-left: 90px; background: none;
+                                            <v-btn @click="morePicture(room.Nama_ruangan, room.Lokasi)" style="color: rgb(2,39, 10, 0.9); margin-left: 90px; background: none;
                                                 text-decoration: underline; box-shadow: none; 
                                                 ">L<p style="text-transform: lowercase;">ihat lebih banyak
-                                                gambar>></p></v-btn>
+                                                    gambar>></p></v-btn>
                                         </div>
                                     </div>
-                                    <v-img src="../picture/regis-login.jpeg" style="width: 30%; height: 100%;"></v-img>
+                                    <v-img src="../picture/regis-login.jpeg" style="width: 40%; height: 100%;" cover></v-img>
                                 </div>
                             </v-card>
                         </v-col>
                     </v-row>
                 </v-col>
             </v-row>
+
             <v-dialog v-model="showImageDialog">
-                <v-card>
-                    <v-card-title>Gambar Tambahan</v-card-title>
-                    <v-card-text>
-                        <img src="https://picsum.photos/200" alt="Gambar tambahan">
-                    </v-card-text>
-                    <v-card-actions>
-                        <v-btn @click="showImageDialog = false">Tutup</v-btn>
-                    </v-card-actions>
-                </v-card>
+                <v-container fluid>
+                    <v-carousel height="600" show-arrows="hover" cycle hide-delimiter-background>
+                        <v-carousel-item v-for="(picture, index) in pictures" :key="index" :src="picture">
+                        </v-carousel-item>
+                    </v-carousel>
+                    <v-btn icon small style="position: absolute; top: 20px; right:20px;"
+                        @click="showImageDialog = false">
+                        <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                </v-container>
             </v-dialog>
+
         </div>
     </div>
 
@@ -108,22 +117,71 @@ export default {
             kategori: ['Ruang Diskusi/Rapat', 'Ruang Perkuliahan', 'Ruang Bebas'],
             allRoomsData: [],
             showImageDialog: false,
+            itemToShow: null,
+            pictures: [
+                "./picture/regis-login.jpeg",
+                "./picture/fti-ukdw.png",
+            ],
+            dataLoaded: false,
         }
     },
     methods: {
-        getAllDataofRoom() {
-            axios.get("http://127.0.0.1:8000/api/ruangan/")
-                .then(response => {
-                    this.allRoomsData = response.data;
-                    console.log(this.allRoomsData);
-                })
-                .catch(error => {
-                    console.error("Error gagal mengambil data total ruangan", error);
-                });
-        }
+        async getAllDataofRoom() {
+            try {
+                await axios.get("http://127.0.0.1:8000/api/ruangan/")
+                    .then(response => {
+                        this.allRoomsData = response.data.map(room => {
+                            if (room.fasilitas) {
+                                const cleanedString = room.fasilitas.slice(1, -1);
+                                const facilitiesArray = cleanedString.split(/"(.*?)",|,/).filter(facilit => facilit);
+                                room.fasilitas = facilitiesArray;
+                            }
+                            return room;
+                        });
+                        console.log(this.allRoomsData);
+                    })
+                    .catch(error => {
+                        console.error("Error gagal mengambil data total ruangan", error);
+                    });
+            } catch {
+                console.error()
+            }
+        },
+        morePicture(Nama_ruangan, Lokasi) {
+            this.showImageDialog = true;
+            this.itemToShow = {
+                Nama_ruangan,
+                Lokasi
+            }
+        },
+        pinjamRuang(){
+            this.$router.push('/peminjamanRuangan');
+        },
     },
     mounted() {
         this.getAllDataofRoom()
+    },
+    computed: {
+        filteredData() {
+            let filteredData = this.allRoomsData;
+
+            //filter berdasarkan lokasi
+            if (this.selectedLokasi) {
+                filteredData = filteredData.filter((room) => room.Lokasi === this.selectedLokasi);
+            }
+
+            //filter berdasarkan kategori
+            if (this.selectedKategori) {
+                filteredData = filteredData.filter((room) => room.Kategori === this.selectedKategori);
+            }
+
+            //filter berdasarkan kapasitas
+            if (this.selectedKapasitas) {
+                filteredData = filteredData.filter((room) => room.Kapasitas === this.selectedKapasitas);
+            }
+
+            return filteredData;
+        }
     }
 }
 </script>
