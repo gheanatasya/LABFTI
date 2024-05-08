@@ -12,6 +12,7 @@ import ruangan from '../components/ruangan.vue'
 import landingPage from '../components/landingPage.vue'
 import editProfil from '../components/editProfil.vue'
 import rekomendasiRuangan from '../components/rekomendasiRuangan.vue'
+import afterRegistration from '../components/afterRegistration.vue'
 
 
 const routes = [
@@ -79,6 +80,11 @@ const routes = [
         path: '/rekomendasiRuangan',
         name: 'rekomendasiRuangan',
         component: rekomendasiRuangan
+    },
+    {
+        path: '/afterRegistration',
+        name: 'afterRegistration',
+        component: afterRegistration
     },
 ]
 

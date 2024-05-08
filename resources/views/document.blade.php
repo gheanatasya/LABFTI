@@ -38,8 +38,6 @@
             <th>No.</th>
             <th>Tanggal Pakai Awal</th>
             <th>Tanggal Pakai Akhir</th>
-            <th>Waktu Pakai</th>
-            <th>Waktu Selesai</th>
             <th>Ruangan</th>
         </tr>
         @foreach ($record['peminjamanRuang'] as $booking)
@@ -47,8 +45,6 @@
             <td>{{ $loop->index + 1 }}</td>
             <td>{{ $booking['tanggalawal'] }}</td>
             <td>{{ $booking['tanggalakhir'] }}</td>
-            <td>{{ $booking['waktupakai'] }}</td>
-            <td>{{ $booking['waktuselesai'] }}</td>
             <td>{{ $booking['namaruangan'] }}</td>
         </tr>
         @endforeach
@@ -62,8 +58,6 @@
             <th>No.</th>
             <th>Tanggal Pakai Awal</th>
             <th>Tanggal Pakai Akhir</th>
-            <th>Waktu Pakai</th>
-            <th>Waktu Selesai</th>
             <th>Alat</th>
         </tr>
         @foreach ($record['peminjamanAlat'] as $booking)
@@ -71,8 +65,6 @@
             <td>{{ $loop->index + 1 }}</td>
             <td>{{ $booking['tanggalawal'] }}</td>
             <td>{{ $booking['tanggalakhir'] }}</td>
-            <td>{{ $booking['waktupakai'] }}</td>
-            <td>{{ $booking['waktuselesai'] }}</td>
             <td>{{ $booking['namaalat'] }}</td>
         </tr>
         @endforeach

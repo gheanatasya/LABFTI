@@ -2,11 +2,12 @@
   <v-app>
     <headerUser style="z-index: 1"></headerUser>
 
-    <v-dialog v-model="confirmBefore" style="justify-content: center; background-color: rgb(2, 39, 10, 0.7); z-index: 0;" persistent max-width="500">
+    <v-dialog v-model="confirmBefore"
+      style="justify-content: center; background-color: rgb(2, 39, 10, 0.7); z-index: 0;" persistent max-width="500">
       <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 500px; height: 250px;">
         <v-card-title style="font-family: 'Lexend-Medium'; text-align: center; margin-top: 20px;">
           Apakah ingin meminjam ruangan <br>secara manual atau dengan <br>bantuan Rekomendasi Ruangan?
-          </v-card-title>
+        </v-card-title>
         <v-card-text>
           <v-radio-group v-model="selectedConfirmBefore" id="confirmBefore" style="margin-left: 40px; margin-top: 5px;">
             <v-row>
@@ -23,8 +24,6 @@
           <v-btn @click="navigateToBeranda"><v-icon style="font-size: 30px;">mdi-close-circle</v-icon></v-btn>
         </v-card-actions>
       </v-card>
-
-      
     </v-dialog>
 
     <router-link to="/berandaUser"
@@ -46,13 +45,6 @@
                   style="width: 280px; margin-left: 300px; margin-top: 100px; margin-right: 80px;"></v-text-field>
                 <v-text-field type="datetime-local" label="Tanggal Selesai" v-model="item.tanggalSelesai"
                   variant="outlined" style="width: 300px; margin-left: -75px; margin-top: 100px;"></v-text-field>
-              </div>
-
-              <div style="display: flex; align-items: center; grid-column: span 2; width: 110%;">
-                <v-text-field type="time" label="Waktu Pakai" v-model="item.waktuPakai" variant="outlined"
-                  style="width: 280px; margin-left: 300px; margin-top: 5px; margin-right: 80px;"></v-text-field>
-                <v-text-field type="time" label="Waktu Selesai" v-model="item.waktuSelesai" variant="outlined"
-                  style="width: 300px; margin-left: -75px; margin-top: 5px;"></v-text-field>
               </div>
 
               <v-select v-model="item.selectedRuangan" :items="item.Ruangan" label="Ruangan" variant="outlined"
@@ -187,8 +179,8 @@ export default {
         tanggalAwal: '',
         modal: false,
         tanggalSelesai: '',
-        waktuPakai: '',
-        waktuSelesai: '',
+        waktuPakai: null,
+        waktuSelesai: null,
         Ruangan: [],
         selectedRuangan: '',
         isPersonal: '',
@@ -212,8 +204,8 @@ export default {
         tanggalAwal: '',
         modal: false,
         tanggalSelesai: '',
-        waktuPakai: '',
-        waktuSelesai: '',
+        waktuPakai: null,
+        waktuSelesai: null,
         Ruangan: [],
         selectedRuangan: '',
         isPersonal: '',
@@ -322,52 +314,51 @@ export default {
     }
 
     const fetchRuanganAfter = async () => {
+      for (const item of form) {
+        const firstDate = item.tanggalAwal;
+        const secondDate = item.tanggalSelesai;
 
-      for ($i = 0; $i < count(form); $i++) {
-        console.log(count(form));
+        if (firstDate && secondDate) {
+          try {
+            const response = await axios.get(
+              `http://127.0.0.1:8000/api/peminjamanRuangan/jadwalPeminjaman/${firstDate}/${secondDate}`
+            );
+            item.Ruangan = response.data; 
+            console.log(`Updated Ruangan for form[${form.indexOf(item)}]:`, item.Ruangan);
+          } catch (error) {
+            console.error("Error fetching available rooms:", error);
+          }
+        } else {
+          console.warn("Both tanggalAwal and tanggalSelesai are required to fetch available rooms.");
+        }
       }
-
-      /* const allFilled = form.every( */
-      /*   item => */
-      /*     item.tanggalAwal && */
-      /*     item.tanggalSelesai  */
-      /* ); */
-      /* if (allFilled) { */
-      /*   try { */
-      // Dapatkan jadwal peminjaman
-      /* const promises = form.map(async item => {
-        const firstdate = item.tanggalAwal;
-        const seconddate = item.tanggalSelesai;
-
-        const res = await axios.get(`http://127.0.0.1:8000/api/peminjamanRuangan/jadwalPeminjaman/${firstdate}/${seconddate}`);
-        return item.Ruangan = res.data;
-      });
-
-      const jadwalPeminjaman = await Promise.all(promises);
-*/
-      // daftar ruangan
-      //const response = await axios.get("http://127.0.0.1:8000/api/ruangan/");
-      //const ruangan = response.data.map(ruangan => ruangan.Nama_ruangan);
-
-      // filter ruangan yang tersedia
-      //for (let i = 0; i < form.length; i++) {
-      // const item = form[i];
-      //const room = ruangan.filter(r => !jadwalPeminjaman[i].includes(r));
-      //item.Ruangan = room;
-      //console.log(item.Ruangan);
-      //}
-      /* } catch (error) {
-        console.error("Error gagal mengambil data Ruangan tabrakan", error);
-      } */
-      //}
     };
+
+    /* const fetchRuanganAfter = async () => { */
+    /*   const allFilled = form.every( */
+    /*     item => { */
+    /*       const firstdate = item.tanggalAwal; */
+    /*       const seconddate = item.tanggalSelesai; */
+    /*       console.log(firstdate, seconddate); */
+
+    /*       axios.get(`http://127.0.0.1:8000/api/peminjamanRuangan/jadwalPeminjaman/${firstdate}/${seconddate}`). */
+    /*       then(res => { */
+    /*         item.Ruangan = res.data; */
+    /*         console.log(item.Ruangan); */
+    /*       }) */
+
+    /*       console.log(item) */
+    /*     } */
+    /*   ) */
+    /*   console.log(allFilled); */
+    /* } */
 
     onMounted(() => {
       fetchRuangan();
       fetchAlat();
     });
 
-    watch([form.tanggalawal, form.tanggalselesai], () => {
+    watch(form, () => {
       fetchRuanganAfter();
     }, { deep: true });
 
@@ -381,11 +372,11 @@ export default {
   },
   methods: {
     closeDialog() {
-      this.confirmBefore = false; 
+      this.confirmBefore = false;
     },
     navigateToRekomendasi() {
-      this.confirmBefore = false; 
-      this.$router.push('/rekomendasiRuangan'); 
+      this.confirmBefore = false;
+      this.$router.push('/rekomendasiRuangan');
     },
     navigateToBeranda() {
       this.confirmBefore = false;

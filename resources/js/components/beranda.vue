@@ -33,8 +33,8 @@
                             <td style="width: 500px;"> {{ item.keterangan }} </td>
 
                             <td style="text-align: center;">
-                                <v-chip style="background-color: rgb(234, 8, 8, 0.91); color: white;"
-                                    @click="openInformationRoom">Halo</v-chip>
+                                <v-chip style="background-color: rgb(2, 39, 10, 1); color: white;"
+                                    @click="openInformationRoom">Disetujui</v-chip>
                             </td>
 
                             <td style="width: 110px; font-size: 25px;"> <v-icon
@@ -122,8 +122,8 @@
                             <td style="width: 500px; "> {{ item.keterangan }} </td>
 
                             <td style="text-align: center;">
-                                <v-chip style="background-color: rgb(234, 8, 8, 0.91); color: white;"
-                                    @click="openInformationTool">Halo</v-chip>
+                                <v-chip style="background-color: rgb(2, 39, 10, 1); color: white;"
+                                    @click="openInformationTool">Disetujui</v-chip>
                             </td>
 
                             <td style="width: 110px; font-size: 25px;"> <v-icon

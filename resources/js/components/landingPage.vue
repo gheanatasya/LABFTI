@@ -1,5 +1,5 @@
 <template>
-    <div style="background-color: #34743B;">
+    <div style="background-color: #34743B; height: 100%">
         <v-container style="background-color: #10511B; display: flex; justify-content: space-between; width: 30%;">
             <v-img :width="90" :height="70" src="../picture/logo-ukdw.png" ></v-img>
             <v-img :width="20" :height="70" src="../picture/fti-ukdw.png" ></v-img>
@@ -11,8 +11,8 @@
         </div>
 
         <v-container>
-            <ejs-schedule height="550px"></ejs-schedule>
-        </v-container>
+<!--             <ejs-schedule height="550px"></ejs-schedule>
+ -->        </v-container>
     </div>
 </template>
 

@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Peminjam;
 use App\Http\Requests\StorePeminjamRequest;
 use App\Http\Requests\UpdatePeminjamRequest;
+use App\Models\Fakultas;
+use App\Models\Instansi;
+use App\Models\Program_Studi;
+use App\Models\User;
 use Illuminate\Support\Str;
 
 
@@ -87,5 +91,31 @@ class PeminjamController extends Controller
         } else {
             return response()->json(['Error' => 'Peminjam not found'], 404);
         }
+    }
+
+    //ambil data untuk profil
+    public function getDataforProfil($UserID)
+    {
+        $user = User::where('UserID', $UserID)->first();
+        $nim = $user->NIM_NIDN;
+        $email = $user->Email;
+        $role = $user->User_role;
+
+        $peminjam = Peminjam::where('UserID', $UserID)->first();
+        $nama = $peminjam->Nama;
+        $prodiID = $peminjam->ProdiID;
+        $instansiID = $peminjam->InstansiID;
+
+        $prodi = Program_Studi::where('ProdiID', $prodiID)->first();
+        $namaprodi = $prodi->Nama_prodi;
+        $fakultasID = $prodi->FakultasID;
+
+        $instansi = Instansi::where('InstansiID', $instansiID)->first();
+        $namainstansi = $instansi->Nama_instansi;
+
+        $fakultas = Fakultas::where('FakultasID', $fakultasID)->first();
+        $namafakultas = $fakultas->Nama_fakultas;
+
+        return response()->json(['NIM_NIDN' => $nim, 'Email' => $email, 'Role' => $role, 'Nama' => $nama, 'Prodi' => $namaprodi, 'Fakultas' => $namafakultas, 'Instansi' => $namainstansi]);
     }
 }

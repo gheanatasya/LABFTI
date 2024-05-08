@@ -191,6 +191,7 @@ export default {
                                         try {
                                             const UserID = data.UserID;
                                             const peminjamDataWithUserID = { ...peminjamData, UserID: UserID };
+                                            console.log(peminjamDataWithUserID);
                                             axios.post("http://127.0.0.1:8000/api/peminjam/", peminjamDataWithUserID)
                                                 .then(peminjamResponse => {
                                                     this.$router.push({ name: 'afterRegistration' });

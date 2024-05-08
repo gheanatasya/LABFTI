@@ -27,26 +27,48 @@
             <v-card-actions style="justify-content:center;">
                 <v-btn style="position: absolute; top: 0; left: 0; margin-top: 17px;" @click="navigateBack"><v-icon
                         style="font-size: 30px;">mdi-arrow-left</v-icon></v-btn>
-                <v-btn style="position: absolute; bottom: 30px; right: 35px; background-color: rgb(2,39, 10, 0.9); color: white;
+                <v-btn @click="navigateToFilteredRooms(filteredData())" style="position: absolute; bottom: 30px; right: 35px; background-color: rgb(2,39, 10, 0.9); color: white;
                 border-radius: 20px; width: 150px;">Terapkan</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
 
-    <v-dialog v-model="roomAfterSelected">
-        <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 700px; height: 480px;">
+    <v-dialog v-model="roomAfterSelected" max-width="850" persistent>
+        <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; width: 880px; height: 450px;">
             <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;">
-                Terdapat .. rekomendasi ruangan yang sesuai</v-card-title>
+                Terdapat {{ filteredRoom.length }} rekomendasi ruangan yang sesuai</v-card-title>
             <v-card-text style="text-align: center;">
-                <v-card v-for="(room, index) in filteredData" :key="index">
+                <v-row cols="10">
+                    <v-col v-for="(room, index) in filteredRoom" :key="index" cols="5" style="margin-left: 0px;">
+                        <v-card style="width: 300px; background-color: rgb(3, 138, 33, 0.3); border-radius: 20px; margin-left: 25px;">
+                            <v-img :src="this.picture" style="width: 40%; height: 100%; margin-left: 90px;"
+                                cover></v-img>
+                            <v-card-text style="font-size: 18px;">
+                                <p>{{ room.Nama_ruangan }}</p>
+                                <p>{{ room.Lokasi }}</p>
+                            </v-card-text>
+                            <v-card-actions>
+                                <div style="position: absolute; bottom: 0; right: 60px; margin-bottom: 0px;">
+                                    <v-btn style="background-color: rgb(2,39, 10, 0.9); color: white; border-radius: 20px; margin-left: 90px; width: 130px; height: 25px; margin-bottom: -10px;
+                            font-size: 10px;" @click="pinjamRuang">Pinjam Ruangan</v-btn>
+                                    <br>
+                                    <v-btn @click="navigateToRuangan" style="color: rgb(2,39, 10, 0.9); margin-left: 90px; background: none;
+                                text-decoration: underline; box-shadow: none; font-size: 12px;
+                                ">L<p style="text-transform: lowercase;">ihat detail ruangan>>
+                                        </p></v-btn>
+                                </div>
+                            </v-card-actions>
+                        </v-card>
+                    </v-col>
+                </v-row>
 
-                </v-card>
             </v-card-text>
             <v-card-actions style="justify-content:center;">
                 <v-btn style="position: absolute; top: 0; left: 0; margin-top: 17px;" @click="navigateBack"><v-icon
                         style="font-size: 30px;">mdi-arrow-left</v-icon></v-btn>
-                <v-btn style="position: absolute; bottom: 30px; right: 35px; background-color: rgb(2,39, 10, 0.9); color: white;
-                border-radius: 20px; width: 150px;">Terapkan</v-btn>
+                <v-btn @click="navigateToPeminjaman"
+                    style="position: absolute; top: 0; right: 0; margin-top: 17px;"><v-icon
+                        style="font-size: 30px;">mdi-close-circle</v-icon></v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -73,12 +95,23 @@ export default {
             selectedLokasi: '',
             allRoomsData: [],
             roomAfterSelected: false,
+            picture: './picture/regis-login.jpeg',
+            filteredRoom: []
         }
     },
     methods: {
         navigateBack() {
-            this.showRekomendasi = false;
-            this.$router.push('/peminjamanRuangan');
+            this.roomAfterSelected = false;
+            this.showRekomendasi = true;
+            this.$router.push('/peminjamanRuangan')
+        },
+        navigateToPeminjaman() {
+            this.roomAfterSelected = false;
+            this.$router.push('/peminjamanRuangan')
+        },
+        navigateToRuangan() {
+            this.roomAfterSelected = false;
+            this.$router.push('/ruangan')
         },
         async getAllDataofRoom() {
             try {
@@ -120,11 +153,21 @@ export default {
             }
 
             //filter berdasarkan fasilitas
-            if (this.selectedFasilitas) {
-                filteredData = filteredData.filter((room) => room.fasilitas.some(facilitas => facilitas === this.selectedFasilitas));
-            }
+            /* if (this.selectedFasilitas) { */
+            /*     filteredData = filteredData.filter((room) => room.fasilitas.some(facilitas => facilitas === this.selectedFasilitas)); */
+            /* } */
 
+            console.log(filteredData);
             return filteredData;
+        },
+        navigateToFilteredRooms(filteredRooms) {
+            this.showRekomendasi = false;
+            this.roomAfterSelected = true;
+            this.filteredRoom = filteredRooms;
+            console.log(this.filteredRoom);
+        },
+        pinjamRuang() {
+            this.$router.push('/peminjamanRuangan');
         },
     },
     mounted() {

@@ -52,6 +52,7 @@ Route::delete('/prodi/{ProdiID}', [ProgramStudiController::class, 'delete']);
 Route::get('/prodi/getNameByFakultas/{FakultasID}', [ProgramStudiController::class, 'getProdiNameByFakultas']);
 Route::get('/prodi/getProdiNameByID/{ProdiID}', [ProgramStudiController::class, 'getProdiNameByID']);
 Route::get('/prodi/getFakultasNameByID/{FakultasID}', [ProgramStudiController::class, 'getFakultasNameByID']);
+Route::get('/prodi/getIdByName/{Nama_prodi}', [ProgramStudiController::class, 'getProdiIDByName']);
 
 
 // route untuk instansi
@@ -78,7 +79,7 @@ Route::put('/peminjam/{PeminjamID}', [PeminjamController::class, 'update']);
 Route::delete('/peminjam/{PeminjamID}', [PeminjamController::class, 'delete']);
 Route::get('/peminjam/getIDByUserID/{UserID}', [PeminjamController::class, 'getIDByUserID']);
 Route::get('/peminjam/byUserID/{UserID}', [PeminjamController::class, 'byUserID']);
-
+Route::get('/peminjam/getDataforProfil/{UserID}', [PeminjamController::class, 'getDataforProfil']);
 
 // route untuk alat
 Route::get('/alat', [AlatController::class, 'getAllAlat']);
