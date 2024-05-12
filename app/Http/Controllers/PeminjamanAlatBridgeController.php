@@ -105,27 +105,28 @@ class PeminjamanAlatBridgeController extends Controller
     }
 
     //mengambil data-data peminjaman alat
-    public function getPeminjamanAlat($UserID){
+    public function getPeminjamanAlat($UserID)
+    {
         $peminjam = Peminjam::where('UserID', $UserID)->first();
         $peminjamID = $peminjam->PeminjamID;
         $peminjaman = Peminjaman::where('PeminjamID', $peminjamID)->get();
         $alltoolsbooking = [];
 
-        foreach ($peminjaman as $booking){
+        foreach ($peminjaman as $booking) {
             $keterangan = $booking->Keterangan;
             $peminjamanID = $booking->PeminjamanID;
             $datapinjamalat = Peminjaman_Alat_Bridge::where('PeminjamanID', $peminjamanID)->get();
 
-            foreach ($datapinjamalat as $data){
+            foreach ($datapinjamalat as $data) {
                 $peminjamanalatid = $data->Peminjaman_Alat_ID;
-                $detailalatid = $data->DetailAlatID;
+                $alatid = $data->AlatID;
                 $tanggalawal = $data->Tanggal_pakai_awal;
                 $tanggalakhir = $data->Tanggal_pakai_akhir;
                 $waktupakai = $data->Waktu_pakai;
                 $waktuselesai = $data->Waktu_selesai;
                 $peminjamanid = $data->PeminjamanID;
-                $detailalat = Detail_Alat::where('DetailAlatID', $detailalatid)->first();
-                $namaalat = $detailalat->Nama_alat;
+                $alat = Alat::where('AlatID', $alatid)->first();
+                $namaalat = $alat->Nama;
 
                 $recordData = [
                     'peminjamanalatid' => $peminjamanalatid,
@@ -141,8 +142,32 @@ class PeminjamanAlatBridgeController extends Controller
                 $alltoolsbooking[] = $recordData;
             }
         }
-        
+
         return $alltoolsbooking;
     }
 
+    //cek jadwal tabrakan
+    public function jadwalAlat($Tanggal_pakai_awal, $Tanggal_pakai_akhir)
+    {
+        $peminjamanalat = Peminjaman_Alat_Bridge::where('Tanggal_pakai_awal', "<=", $Tanggal_pakai_awal)
+            ->where('Tanggal_pakai_akhir', ">=", $Tanggal_pakai_akhir)
+            ->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
+                $query->where('Tanggal_pakai_awal', '>', $Tanggal_pakai_awal)
+                    ->where('Tanggal_pakai_akhir', '<=', $Tanggal_pakai_akhir);
+            })->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
+                $query->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_awal)
+                    ->where('Tanggal_pakai_akhir', '>', $Tanggal_pakai_akhir);
+            })->pluck('AlatID')->unique();
+        $dataalat = Alat::pluck('AlatID', 'Nama', 'Jumlah_ketersediaan');
+        $alat = $dataalat->diff($peminjamanalat);
+        $tool = $alat->toArray();
+        $array = array_keys($tool);
+        $detailTool = [];
+
+        foreach ($array as $availableTool) {
+            $ambildata = Alat::where('Nama', $availableTool)->first();
+            $detailTool[] = $ambildata;
+        }
+        return response()->json(['availableTool' => $array, 'detailAlat' => $detailTool]);
+    }
 }

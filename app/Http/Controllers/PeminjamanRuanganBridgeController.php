@@ -45,6 +45,7 @@ class PeminjamanRuanganBridgeController extends Controller
         $peminjamanid = $peminjaman->PeminjamanID;
         $semuapeminjaman = [];
 
+
         for ($i = 0; $i < count($input); $i++) {
             $ruanganid = Ruangan::where('Nama_ruangan', $input[$i]['selectedRuangan'])->first();
             $idroom = $ruanganid->RuanganID;
@@ -64,29 +65,30 @@ class PeminjamanRuanganBridgeController extends Controller
             $peminjaman_ruangan_ID = $peminjaman_ruangan->Peminjaman_Ruangan_ID;
             $semuapeminjaman[] = $peminjaman_ruangan;
 
-            $jumlahpinjam = 1;
             $totalpinjamalat = [];
 
-            foreach ($input[$i]['alat'] as $tool) {
-                $detail = Detail_Alat::where('Nama_alat', $tool)->first();
-                $alatID = $detail->DetailAlatID;
-
-                $peminjaman_alat = Peminjaman_Alat_Bridge::create([
-                    'PeminjamanID' => $peminjamanid,
-                    'DetailAlatID' => $alatID,
-                    'Tanggal_pakai_awal' => $input[$i]['tanggalAwal'],
-                    'Tanggal_pakai_akhir' => $input[$i]['tanggalSelesai'],
-                    'Tanggal_pengembalian' => $input[$i]['tanggalSelesai'],
-                    'Waktu_pengambilan' => $input[$i]['waktuPakai'],
-                    'Waktu_pengembalian' => $input[$i]['waktuSelesai'],
-                    'Jumlah_pinjam' => $jumlahpinjam,
-                    'Is_Personal' => $input[$i]['selectedOptionPersonal'],
-                    'Is_Organisation' => $input[$i]['selectedOptionOrganisation'],
-                    'Is_Eksternal' => $input[$i]['selectedOptionEksternal'],
-                    'DokumenID' => $input[$i]['dokumen']
-                ]);
-                $totalpinjamalat[] = $peminjaman_alat;
-            };
+            if (count($input[$i]['alat']) > 0) {
+                foreach ($input[$i]['alat'] as $tool) {
+                    if (!empty($tool['nama']) && $tool['jumlahPinjam'] > 0) {
+                        $detail = Alat::where('Nama', $tool['nama'])->first();
+                        $jumlahpinjam = $tool['jumlahPinjam'];
+                        $alatID = $detail->AlatID;
+                        $peminjaman_alat = Peminjaman_Alat_Bridge::create([
+                            'PeminjamanID' => $peminjamanid,
+                            'AlatID' => $alatID,
+                            'Tanggal_pakai_awal' => $input[$i]['tanggalAwal'],
+                            'Tanggal_pakai_akhir' => $input[$i]['tanggalSelesai'],
+                            'Jumlah_pinjam' => $jumlahpinjam,
+                            'Is_Personal' => $input[$i]['selectedOptionPersonal'],
+                            'Is_Organisation' => $input[$i]['selectedOptionOrganisation'],
+                            'Is_Eksternal' => $input[$i]['selectedOptionEksternal'],
+                            'DokumenID' => $input[$i]['dokumen'],
+                            'Keterangan' => $input[$i]['keterangan']
+                        ]);
+                        $totalpinjamalat[] = $peminjaman_alat;
+                    }
+                };
+            }
         }
 
         return response()->json([
@@ -244,7 +246,15 @@ class PeminjamanRuanganBridgeController extends Controller
         $dataruangan = Ruangan::pluck('RuanganID', 'Nama_ruangan');
         $ruangan = $dataruangan->diff($peminjamanruangan);
 
-        return $ruangan->toArray();
-        //return response()->json(['data tabrak' => $peminjamanruangan, 'list ruangan' => $dataruangan, 'ruangan tersedia' => $ruangan]);
+        $room = $ruangan->toArray();
+        $array = array_keys($room);
+        $detailRoom = [];
+
+        foreach ($array as $availableRoom) {
+            $ambildata = Ruangan::where('Nama_ruangan', $availableRoom)->first();
+            $detailRoom[] = $ambildata;
+        }
+
+        return response()->json(['availableRoom' => $array, 'detailRuangan' => $detailRoom]);
     }
 }

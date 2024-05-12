@@ -13,6 +13,8 @@ import landingPage from '../components/landingPage.vue'
 import editProfil from '../components/editProfil.vue'
 import rekomendasiRuangan from '../components/rekomendasiRuangan.vue'
 import afterRegistration from '../components/afterRegistration.vue'
+import alat from '../components/alat.vue'
+
 
 
 const routes = [
@@ -85,6 +87,11 @@ const routes = [
         path: '/afterRegistration',
         name: 'afterRegistration',
         component: afterRegistration
+    },
+    {
+        path: '/alat',
+        name: 'alat',
+        component: alat
     },
 ]
 

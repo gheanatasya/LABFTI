@@ -15,10 +15,10 @@ class Detail_Alat extends Model
         return $this->belongsTo(Alat::class, 'AlatID', 'AlatID');
     }
 
-    public function peminjaman_alat_bridge(): HasMany
-    {
-        return $this->hasMany(Peminjaman_Alat_Bridge::class, 'DetailAlatID', 'DetailAlatID');
-    }
+    /* public function peminjaman_alat_bridge(): HasMany */
+    /* { */
+    /*     return $this->hasMany(Peminjaman_Alat_Bridge::class, 'DetailAlatID', 'DetailAlatID'); */
+    /* } */
 
     public $timestamps = false;
     protected $table = 'detail_alat';

@@ -34,17 +34,21 @@
       <v-container style="font-family: Lexend-Regular; width: 50%; margin-left:-250px; margin-right: 30px;">
         <div>
           <v-form @submit.prevent="saveItem" ref="peminjamanForm" method="post">
-
             <div v-for="item, index in form" :key="item">
               <div
                 style="font-size: 25px; font-family: Lexend-Medium; margin-top: 20px; margin-left: 300px; margin-right: 200px; margin-bottom: -80px;width: 60%">
                 Peminjaman Ruangan {{ index + 1 }}</div>
-              <div style="display: flex; align-items: center; grid-column: span 2; width: 110%;">
+              <div style="display: flex; align-items: center; grid-column: span 4; width: 130%;">
                 <v-text-field type="datetime-local" label="Tanggal Pakai Awal" v-model="item.tanggalAwal"
                   variant="outlined"
                   style="width: 280px; margin-left: 300px; margin-top: 100px; margin-right: 80px;"></v-text-field>
                 <v-text-field type="datetime-local" label="Tanggal Selesai" v-model="item.tanggalSelesai"
-                  variant="outlined" style="width: 300px; margin-left: -75px; margin-top: 100px;"></v-text-field>
+                  variant="outlined"
+                  style="width: 300px; margin-left: -75px; margin-top: 100px; margin-right: 20px;"></v-text-field>
+                <v-btn @click="availableRoom(item.tanggalAwal, item.tanggalSelesai)"
+                  style="width: 100px; margin-left: 10px; margin-top: 80px; font-size: 11px; border-radius: 20px; margin-right:20px;"
+                  color="primary">
+                  Cek ruangan</v-btn>
               </div>
 
               <v-select v-model="item.selectedRuangan" :items="item.Ruangan" label="Ruangan" variant="outlined"
@@ -90,22 +94,28 @@
                 </v-radio-group>
               </div>
 
-              <v-textarea v-model="item.keterangan" style="margin-left: 303px; margin-right: -80px;" label="Keterangan"
+              <v-textarea v-model="item.keterangan" style="margin-left: 303px; margin-right: -90px;" label="Keterangan"
                 row-height="25" rows="5" variant="outlined" auto-grow shaped></v-textarea>
 
               <p style="margin-left: 303px; margin-right: -80px;">Tambahkan Add-on</p>
 
-              <v-combobox v-model="item.alat" :items="item.items" label="Alat yang ingin dipinjam" multiple clearable
-                variant="outlined" style="margin-left: 303px; margin-right: -80px;">
-                <template v-slot:selection="{ item: selectedAlat, index }">
-                  <v-chip v-if="index < 2">
-                    <span>{{ selectedAlat.title }}</span>
-                  </v-chip>
-                  <span v-if="index === 2" class="text-grey text-caption align-self-center">
-                    (+{{ item.alat.length - 2 }} others)
-                  </span>
-                </template>
-              </v-combobox>
+              <div v-for="(alatItem, alatIndex) in item.alat" :key="alatIndex"
+                style="display: flex; align-items: center; grid-column: span 4; width: 145%;">
+                <v-combobox v-model="alatItem.nama" :items="item.items" label="Alat yang ingin dipinjam" clearable
+                  variant="outlined" style="margin-left: 303px; margin-right: -5px; width: 50px;">
+                </v-combobox>
+
+                <v-text-field type="number" label="Jumlah" v-model="alatItem.jumlahPinjam" variant="outlined" clearable
+                  style="margin-right: -35px; width: 40px; margin-left: 10px;"></v-text-field>
+
+                <v-btn @click="tambahAlat(index)" style="font-size: 18px; margin-left: 45px; margin-right: 90px; border-radius: 50%; width: 60px; height: 60px; background-color: none; box-shadow: none;
+                margin-top: -18px;"><v-icon>mdi-plus-circle</v-icon></v-btn>
+
+                <v-btn @click="hapusAlat(index, alatIndex)" style="font-size: 18px; margin-left: -90px; margin-right: 100px; border-radius: 50%; width: 60px; height: 60px; background-color: none; box-shadow: none;
+                margin-top: -18px;">
+                  <v-icon>mdi-minus-circle</v-icon></v-btn>
+
+              </div>
 
               <v-file-input v-if="item.selectedOptionOrganisation === 'True' || item.selectedOptionEksternal === 'True'"
                 type="file" accept="file/pdf" :no-icon="true" v-model="item.dokumen"
@@ -129,27 +139,45 @@
         </div>
       </v-container>
 
-      <v-container style="font-family: Lexend-Regular; width: 45%; margin-left: 300px; margin-right: 20px;">
+      <v-container
+        style="font-family: Lexend-Regular; width: 45%; margin-left: 300px; margin-right: 20px; margin-bottom: 0px; height: 600px;">
         <div v-for="(item, index) in form" :key="'ruangantersedia-' + index" :id="'ruangantersedia-' + index"
-          style="border-radius: 10px; border: 1px solid; padding: 30px; margin-bottom: 750px;">
-          <p style="font-size: 20px; font-family: Lexend-Medium; margin-bottom: 20px;">Ruangan Tersedia</p>
-          <v-card
-            style="border-radius: 10px; background-color: rgb(3, 138, 33, 0.3); box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3)">
-            <v-row align="center">
-              <v-col cols="auto">
-                <v-img :width="200" cover src="../picture/fti-ukdw.png"></v-img>
-              </v-col>
-              <v-col>
-                <div class="sebelah">
-                  <p>Firewall</p>
-                  <p>Lab FTI 3 <v-icon icon="mdi-account"></v-icon> 8 <v-icon icon="mdi-projector"></v-icon> Proyektor
-                  </p>
-                  <p> Kategori : Ruang Rapat/Diskusi </p>
-                  <p> Pemakaian Selanjutnya : 13.00 - 16.00 </p>
-                  <router-link to="/loginPage">Lihat detail</router-link>
+          style="border-radius: 10px; border: 1px solid; padding: 30px; margin-bottom: 750px; height: 600px; overflow-y: auto; margin-bottom: 320px;">
+          <p v-if="item.detailRuangan.length > 0"
+            style="font-size: 25px; font-family: Lexend-Medium; margin-bottom: 20px;">
+            Ruangan Tersedia ( {{
+              item.detailRuangan.length }} )</p>
+          <p v-else
+            style="font-size: 25px; font-family: Lexend-Medium; margin-bottom: 20px; text-align: center; margin-top: 200px;">
+            Silahkan masukkan tanggal penggunaan ruangan untuk melihat
+            ruangan yang tersedia.
+          </p>
+          <v-card v-for="(ruangan, i) in item.detailRuangan" :key="i"
+            style="border-radius: 10px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); margin-bottom: 20px;">
+            <v-hover>
+              <template v-slot:default="{ isHovering, props }">
+                <div v-bind="props"
+                  :style="{ backgroundColor: isHovering ? 'rgba(3, 138, 33, 0.4)' : 'rgb(3, 138, 33, 0.3)' }">
+                  <v-row align="center">
+                    <v-col cols="auto">
+                      <v-img :width="200" cover src="../picture/fti-ukdw.png"></v-img>
+                    </v-col>
+                    <v-col>
+                      <div class="sebelah">
+                        <p>{{ ruangan.Nama_ruangan }}</p>
+                        <p>{{ ruangan.Lokasi }} <v-icon icon="mdi-account"></v-icon> {{ ruangan.Kapasitas }} <v-icon
+                            icon="mdi-projector"></v-icon> Proyektor
+                        </p>
+                        <p> {{ ruangan.Kategori }} </p>
+                        <p> Pemakaian Selanjutnya : 13.00 - 16.00 </p>
+                        <router-link to="/ruangan">Lihat detail</router-link>
+                      </div>
+                    </v-col>
+                  </v-row>
                 </div>
-              </v-col>
-            </v-row>
+              </template>
+            </v-hover>
+
           </v-card>
         </div>
       </v-container>
@@ -160,10 +188,11 @@
 </template>
 
 <script>
-import { reactive, onMounted, watch } from 'vue';
+import { reactive, onMounted} from 'vue';
 import headerUser from '../components/headerUser.vue'
 import footerPage from '../components/footerPage.vue'
 import axios from 'axios';
+
 
 export default {
   name: 'berandaUser',
@@ -190,10 +219,14 @@ export default {
         selectedOptionEksternal: '',
         selectedOptionOrganisation: '',
         items: [],
-        alat: [],
+        alat: reactive([{
+          nama: '',
+          jumlahPinjam: 0,
+        }]),
         selectedItems: '',
         keterangan: '',
-        dokumen: null
+        dokumen: null,
+        detailRuangan: [],
       }
     ])
 
@@ -215,10 +248,14 @@ export default {
         selectedOptionEksternal: '',
         selectedOptionOrganisation: '',
         items: [],
-        alat: [],
+        alat: reactive([{
+          nama: '',
+          jumlahPinjam: 0,
+        }]),
         selectedItems: '',
         keterangan: '',
-        dokumen: null
+        dokumen: null,
+        detailRuangan: [],
       })
     }
 
@@ -238,8 +275,6 @@ export default {
         const dataToSave = {
           tanggalSelesai: formData.tanggalSelesai,
           tanggalAwal: formData.tanggalAwal,
-          waktuSelesai: formData.waktuSelesai,
-          waktuPakai: formData.waktuPakai,
           selectedRuangan: formData.selectedRuangan,
           selectedOptionPersonal: formData.selectedOptionPersonal,
           selectedOptionEksternal: formData.selectedOptionEksternal,
@@ -256,8 +291,6 @@ export default {
         const dataToSave = {
           tanggalSelesai: formData.tanggalSelesai,
           tanggalAwal: formData.tanggalAwal,
-          waktuSelesai: formData.waktuSelesai,
-          waktuPakai: formData.waktuPakai,
           selectedRuangan: formData.selectedRuangan,
           selectedOptionPersonal: formData.selectedOptionPersonal,
           selectedOptionEksternal: formData.selectedOptionEksternal,
@@ -287,24 +320,11 @@ export default {
       }
     }
 
-    const fetchRuangan = () => {
-      axios.get("http://127.0.0.1:8000/api/ruangan/")
-        .then(response => {
-          form.forEach(item => {
-            item.Ruangan = response.data.map(ruangan => ruangan.Nama_ruangan);
-            console.log(item.Ruangan);
-          });
-        })
-        .catch(error => {
-          console.error("Error gagal mengambil data Ruangan", error);
-        });
-    };
-
     const fetchAlat = () => {
-      axios.get("http://127.0.0.1:8000/api/detail/")
+      axios.get("http://127.0.0.1:8000/api/alat/")
         .then(response => {
           form.forEach(item => {
-            item.items = response.data.map(detail_alat => detail_alat.Nama_alat);
+            item.items = response.data.map(alat => alat.Nama);
             console.log(item.items);
           });
         })
@@ -313,56 +333,63 @@ export default {
         });
     }
 
-    const fetchRuanganAfter = async () => {
-      for (const item of form) {
-        const firstDate = item.tanggalAwal;
-        const secondDate = item.tanggalSelesai;
+    const availableRoom = async (tanggalAwal, tanggalSelesai) => {
+      if (tanggalAwal && tanggalSelesai) {
+        try {
+          const response = await axios.get(
+            `http://127.0.0.1:8000/api/peminjamanRuangan/jadwalPeminjaman/${tanggalAwal}/${tanggalSelesai}`
+          );
+          const availableRuangan = response.data.availableRoom;
+          const roomdetail = response.data.detailRuangan;
 
-        if (firstDate && secondDate) {
-          try {
-            const response = await axios.get(
-              `http://127.0.0.1:8000/api/peminjamanRuangan/jadwalPeminjaman/${firstDate}/${secondDate}`
-            );
-            item.Ruangan = response.data; 
-            console.log(`Updated Ruangan for form[${form.indexOf(item)}]:`, item.Ruangan);
-          } catch (error) {
-            console.error("Error fetching available rooms:", error);
+          console.log(availableRuangan);
+          console.log(roomdetail);
+
+          const index = form.findIndex(item => item.tanggalAwal === tanggalAwal && item.tanggalSelesai === tanggalSelesai);
+          if (index > -1) {
+            form[index].Ruangan = availableRuangan;
+            form[index].detailRuangan = roomdetail;
+          } else {
+            console.warn("Could not find matching form item for fetched available rooms.");
           }
-        } else {
-          console.warn("Both tanggalAwal and tanggalSelesai are required to fetch available rooms.");
+
+        } catch (error) {
+          console.error("Error fetching available rooms:", error);
         }
       }
     };
 
-    /* const fetchRuanganAfter = async () => { */
-    /*   const allFilled = form.every( */
-    /*     item => { */
-    /*       const firstdate = item.tanggalAwal; */
-    /*       const seconddate = item.tanggalSelesai; */
-    /*       console.log(firstdate, seconddate); */
+    const tambahAlat = (index) => {
+      console.log('Index:', index);
+      console.log('Form length:', form.length);
+      console.log('Form', form[index])
 
-    /*       axios.get(`http://127.0.0.1:8000/api/peminjamanRuangan/jadwalPeminjaman/${firstdate}/${seconddate}`). */
-    /*       then(res => { */
-    /*         item.Ruangan = res.data; */
-    /*         console.log(item.Ruangan); */
-    /*       }) */
+      const alat = form[index].alat;
+      const newAlat = {
+        nama: '',
+        jumlahPinjam: 0,
+      };
 
-    /*       console.log(item) */
-    /*     } */
-    /*   ) */
-    /*   console.log(allFilled); */
-    /* } */
+      alat.push(newAlat);
+    };
+
+    const hapusAlat = (index, alatIndex) => {
+      if (form.length > 0 && form[index].alat.length > 1) {
+        form[index].alat.splice(alatIndex, 1);
+        console.log('Form', form[index]);
+      } else {
+        // kalau tinggal 1 peminjaman
+        console.warn('Cannot remove the last alat or form.');
+      }
+    }
+
+    
 
     onMounted(() => {
-      fetchRuangan();
       fetchAlat();
     });
 
-    watch(form, () => {
-      fetchRuanganAfter();
-    }, { deep: true });
-
-    return { form, addNewForm, removeForm, fetchRuangan, fetchAlat, saveItem, fetchRuanganAfter }
+    return { form, addNewForm, removeForm, fetchAlat, saveItem, availableRoom, tambahAlat, hapusAlat }
   },
   data() {
     return {

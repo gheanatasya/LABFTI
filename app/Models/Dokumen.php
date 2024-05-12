@@ -11,12 +11,12 @@ class Dokumen extends Model
 
     public function peminjaman_alat_bridge()
     {
-        return $this->hasOne(Peminjaman_Alat_Bridge::class);
+        return $this->hasMany(Peminjaman_Alat_Bridge::class);
     }
 
     public function peminjaman_ruangan_bridge()
     {
-        return $this->hasOne(Peminjaman_Ruangan_Bridge::class);
+        return $this->hasMany(Peminjaman_Ruangan_Bridge::class);
     }
 
     public $timestamps = false;

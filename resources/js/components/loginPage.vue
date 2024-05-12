@@ -21,7 +21,7 @@
                         <div v-if="validation.email" style="margin-top: -15px; margin-bottom: 20px; color:red;"
                             class="alert alert-danger">Email required!</div>
                         <v-text-field variant="outlined" v-model="password" label="Password"
-                            :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'" :type="show ? 'text' : 'password'"
+                            :append-inner-icon="show ? 'mdi-eye' : 'mdi-eye-off'" :type="show ? 'text' : 'password'"
                             @click:append="show = !show" required></v-text-field>
                         <div v-if="validation.password" style="margin-top: -15px; margin-bottom: 20px; color:red;"
                             class="alert alert-danger">Password required!</div>

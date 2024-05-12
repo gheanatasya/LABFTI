@@ -51,10 +51,11 @@ export default {
     data() {
         return {
             menusCenter: [
-                { title: 'Beranda', to: 'berandaUser' },
-                { title: 'Peminjaman Ruangan', to: 'peminjamanRuangan' },
-                { title: 'Peminjaman Alat', to: 'peminjamanAlat' },
                 { title: 'Ruangan', to: 'ruangan'},
+                { title: 'Alat', to: 'alat'},
+                { title: 'Beranda', to: 'berandaUser' },
+                { title: 'Peminjaman Ruangan & Alat', to: 'peminjamanRuangan' },
+                { title: 'Peminjaman Alat', to: 'peminjamanAlat' },
             ],
 
             menusLeft: [
