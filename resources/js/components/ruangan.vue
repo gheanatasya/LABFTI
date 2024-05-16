@@ -1,5 +1,11 @@
 <template>
-    <headerUser style="z-index: 1"></headerUser>
+    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1">
+    </headerUser>
+    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1">
+    </headerSuperAdmin>
+    <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1"></headerAdmin>
+    <headerDekanat v-if="User_role === 'Dekan' || User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'"
+        style="z-index: 1"></headerDekanat>
 
     <div style="margin-top: 100px;">
         <p style="font-family: 'Lexend-Medium'; font-size: 25px; margin-top: -20px; margin-left: 30px">Ruangan</p>
@@ -69,7 +75,8 @@
                                                     gambar>></p></v-btn>
                                         </div>
                                     </div>
-                                    <v-img src="../picture/regis-login.jpeg" style="width: 40%; height: 100%;" cover></v-img>
+                                    <v-img src="../picture/regis-login.jpeg" style="width: 40%; height: 100%;"
+                                        cover></v-img>
                                 </div>
                             </v-card>
                         </v-col>
@@ -100,12 +107,18 @@
 import axios from 'axios'
 import headerUser from '../components/headerUser.vue'
 import footerPage from '../components/footerPage.vue'
+import headerAdmin from './headerAdmin.vue'
+import headerDekanat from './headerDekanat.vue'
+import headerSuperAdmin from './headerSuperAdmin.vue'
 
 export default {
     name: "ruangan",
     components: {
         headerUser,
-        footerPage
+        footerPage,
+        headerAdmin,
+        headerDekanat,
+        headerSuperAdmin
     },
     data() {
         return {
@@ -123,6 +136,7 @@ export default {
                 "./picture/fti-ukdw.png",
             ],
             dataLoaded: false,
+            User_role: localStorage.getItem('User_role'),
         }
     },
     methods: {
@@ -154,7 +168,7 @@ export default {
                 Lokasi
             }
         },
-        pinjamRuang(){
+        pinjamRuang() {
             this.$router.push('/peminjamanRuangan');
         },
     },

@@ -28,13 +28,22 @@
 
                             <td style="width: 50px;"> {{ item.namaruangan }} </td>
 
-                            <td style="width: 50px;"> {{ item.tanggalawal }} , {{ item.waktupakai }} </td>
+                            <td style="width: 50px;"> {{ item.tanggalawal }} </td>
 
                             <td style="width: 500px;"> {{ item.keterangan }} </td>
 
                             <td style="text-align: center;">
-                                <v-chip style="background-color: rgb(2, 39, 10, 1); color: white;"
-                                    @click="openInformationRoom">Disetujui</v-chip>
+                                <v-chip v-if="item.status === 'Diterima'"
+                                    style="background-color: rgb(2, 39, 10, 1); color: white;"
+                                    @click="openInformationRoom">{{ item.status }}</v-chip>
+
+                                <v-chip v-if="item.status === 'Ditolak'"
+                                    style="background-color: rgb(234, 8, 8, 0.91); color: white;"
+                                    @click="openInformationRoom">{{ item.status }}</v-chip>
+
+                                <v-chip v-if="item.status === 'Diproses'"
+                                    style="background-color: rgb(0, 0, 0, 0.5); color: white;"
+                                    @click="openInformationRoom">{{ item.status }}</v-chip>
                             </td>
 
                             <td style="width: 110px; font-size: 25px;"> <v-icon
@@ -70,7 +79,7 @@
                 <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;">Konfirmasi
                     Penghapusan</v-card-title>
                 <v-card-text style="text-align: center;">Yakin ingin menghapus peminjaman ruangan <strong>{{
-                        itemToDelete.namaruangan }}</strong>?</v-card-text>
+                    itemToDelete.namaruangan }}</strong>?</v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
                         style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
@@ -100,6 +109,9 @@
                                 Waktu Penggunaan
                             </th>
                             <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">
+                                Jumlah Pinjam
+                            </th>
+                            <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">
                                 Keterangan
                             </th>
                             <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">
@@ -117,13 +129,22 @@
 
                             <td style="width: 50px; "> {{ item.namaalat }} </td>
 
-                            <td style="width: 50px; "> {{ item.tanggalawal }} , {{ item.waktupakai }} </td>
+                            <td style="width: 50px; "> {{ item.tanggalawal }} </td>
+
+                            <td style="width: 50px; "> {{ item.jumlahPinjam }} </td>
 
                             <td style="width: 500px; "> {{ item.keterangan }} </td>
 
                             <td style="text-align: center;">
-                                <v-chip style="background-color: rgb(2, 39, 10, 1); color: white;"
-                                    @click="openInformationTool">Disetujui</v-chip>
+                                <v-chip v-if="item.status === 'Diterima'"
+                                    style="background-color: rgb(2, 39, 10, 1); color: white;"
+                                    @click="openInformationRoom">{{ item.status }}</v-chip>
+                                <v-chip v-if="item.status === 'Ditolak'"
+                                    style="background-color: rgb(234, 8, 8, 0.91); color: white;"
+                                    @click="openInformationRoom">{{ item.status }}</v-chip>
+                                <v-chip v-if="item.status === 'Diproses'"
+                                    style="background-color: rgb(0, 0, 0, 0.5); color: white;"
+                                    @click="openInformationRoom">{{ item.status }}</v-chip>
                             </td>
 
                             <td style="width: 110px; font-size: 25px;"> <v-icon
@@ -158,7 +179,7 @@
                 <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;">Konfirmasi
                     Penghapusan</v-card-title>
                 <v-card-text style="text-align: center;">Yakin ingin menghapus peminjaman alat <strong>{{
-                        itemToDeleteAlat.namaalat }}</strong>?</v-card-text>
+                    itemToDeleteAlat.namaalat }}</strong>?</v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
                         style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"

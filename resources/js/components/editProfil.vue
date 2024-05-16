@@ -1,5 +1,11 @@
 <template>
-    <headerUser style="z-index: 1"></headerUser>
+    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1">
+    </headerUser>
+    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1">
+    </headerSuperAdmin>
+    <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1"></headerAdmin>
+    <headerDekanat v-if="User_role === 'Dekan' || User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'"
+        style="z-index: 1"></headerDekanat>
 
     <div style="margin-top: 70px;">
         <p style="font-family: Lexend-Medium; font-size: 28px; margin-left: 40px; margin-top: 20px;">Profil</p>
@@ -21,7 +27,8 @@
             <v-container style="width:55%;">
                 <v-sheet
                     style=" background-color: rgb(3, 138, 33, 0.1); font-family: Lexend-Regular; margin-right: 80px;margin-top: -50px; border-radius: 10px;">
-                    <v-text-field label="Nama Lengkap" v-model="this.namaNew" :placeholder="this.peminjam.Nama" variant="outlined"
+                    <v-text-field label="Nama Lengkap" v-model="this.namaNew" :placeholder="this.peminjam.Nama"
+                        variant="outlined"
                         style="margin-right: 50px; margin-left:40px; padding-top: 30px;"></v-text-field>
 
                     <div v-if="this.user.User_role === 'Mahasiswa' || 'Petugas'">
@@ -42,7 +49,7 @@
                         @click:append="show = !show" style="margin-right: 50px; margin-left:40px;"></v-text-field>
 
                     <div v-if="this.user.User_role === 'Staff'">
-                        <v-text-field label="Instansi" :model-value="this.instansi" variant="outlined" readonly 
+                        <v-text-field label="Instansi" :model-value="this.instansi" variant="outlined" readonly
                             style="margin-right: 50px; margin-left:40px;"></v-text-field>
                     </div>
 
@@ -74,11 +81,17 @@
 
 <script>
 import headerUser from '../components/headerUser.vue'
+import headerSuperAdmin from '../components/headerSuperAdmin.vue'
+import headerDekanat from '../components/headerDekanat.vue'
+import headerAdmin from '../components/headerAdmin.vue'
 
 export default {
     name: "editProfil",
     components: {
         headerUser,
+        headerSuperAdmin,
+        headerDekanat,
+        headerAdmin
     },
     data() {
         return {
@@ -92,6 +105,7 @@ export default {
             prodi: "",
             fakultas: "",
             loading: false,
+            User_role: localStorage.getItem('User_role'),
         }
     },
     mounted() {
@@ -109,7 +123,7 @@ export default {
                             console.log(res.data)
                             this.peminjam = res.data
                             this.getProdi(),
-                            this.getInstansi()
+                                this.getInstansi()
                         }).catch(error => {
                             console.error('Error fetching data pada tabel Peminjam', error);
                         })
@@ -167,13 +181,13 @@ export default {
                         .then(res => {
                             console.log('User data updated successfully:', res.data);
                             axios.put(`http://127.0.0.1:8000/api/peminjam/${this.peminjam.Nama}`, updatedNama)
-                            .then(rsp => {
-                                this.loading = false;
-                                this.$router.push({ name: 'profil' });
-                            }).catch(error => {
-                                console.log('Error updating peminjam data:', error);
-                                this.loading = false;
-                            })
+                                .then(rsp => {
+                                    this.loading = false;
+                                    this.$router.push({ name: 'profil' });
+                                }).catch(error => {
+                                    console.log('Error updating peminjam data:', error);
+                                    this.loading = false;
+                                })
                         })
                         .catch(error => {
                             console.error('Error updating user data:', error);

@@ -1,5 +1,8 @@
 <template>
-    <headerUser style="z-index: 1;"></headerUser>
+    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1"></headerUser>
+    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1"></headerSuperAdmin>
+    <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1"></headerAdmin>
+    <headerDekanat v-if="User_role === 'Dekan'|| User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'" style="z-index: 1"></headerDekanat>
 
     <div style="margin-top: 80px; height: 80%">
         <router-link to="/berandaUser"
@@ -9,7 +12,7 @@
         <div style="display: flex; height: 100%;">
             <v-container style="font-family: Lexend-Regular; width: 50%; margin-left:-250px; margin-right: 30px;">
                 <div>
-                    <v-form ref="peminjamanForm" method="post">
+                    <v-form @submit.prevent="saveItem" ref="peminjamanForm" method="post">
                         <div v-for="item, index in form" :key="item">
                             <div
                                 style="font-size: 25px; font-family: Lexend-Medium; margin-top: 20px; margin-left: 300px; margin-right: 200px; margin-bottom: -80px;width: 60%">
@@ -81,8 +84,8 @@
 
                             <div v-for="(alatItem, alatIndex) in item.alat" :key="alatIndex"
                                 style="display: flex; align-items: center; grid-column: span 4; width: 145%;">
-                                <v-combobox v-model="alatItem.nama" :items="item.items" label="Alat yang ingin dipinjam"
-                                    clearable variant="outlined"
+                                <v-combobox v-model="alatItem.nama" :items="item.daftarAlat"
+                                    label="Alat yang ingin dipinjam" clearable variant="outlined"
                                     style="margin-left: 303px; margin-right: -5px; width: 50px;">
                                 </v-combobox>
 
@@ -128,8 +131,8 @@
             </v-container>
 
             <v-container style="font-family: Lexend-Regular; width: 45%; margin-left: 300px; margin-right: 20px;">
-                <div v-for="(item, index) in form" :key="'alattersedia-' + index" :id="'alattersedia-' + index" 
-                style="border-radius: 10px; border: 1px solid; padding: 30px; margin-bottom: 750px;">
+                <div v-for="(item, index) in form" :key="'alattersedia-' + index" :id="'alattersedia-' + index"
+                    style="border-radius: 10px; border: 1px solid; padding: 30px; margin-bottom: 750px;">
                     <p style="font-size: 20px; font-family: Lexend-Medium; margin-bottom: 20px;">Daftar Peralatan FTI
                         UKDW</p>
                     <v-card
@@ -146,13 +149,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="(alat, index) in item.items" :key="index"
+                                <tr v-for="(alat, index) in item.items.slice(1)" :key="index"
                                     style="background-color: white; font-family: 'Lexend-Regular; font-size: 15px;">
                                     <td style="width: 20px; text-align: center;"> {{ index + 1 }}
                                     </td>
-
-                                    <td style="width: 50px; "> {{ alat }} </td>
-                                    <td style="width: 50px; "> 3 </td>
+                                    <td style="width: 50px; "> {{ alat.nama }} </td>
+                                    <td style="width: 50px; "> {{ alat.jumlahKetersediaan }} </td>
                                 </tr>
                             </tbody>
                         </v-table>
@@ -170,12 +172,18 @@
 import { reactive, onMounted } from 'vue';
 import headerUser from '../components/headerUser.vue'
 import footerPage from '../components/footerPage.vue'
+import headerSuperAdmin from '../components/headerSuperAdmin.vue'
+import headerDekanat from '../components/headerDekanat.vue'
+import headerAdmin from '../components/headerAdmin.vue'
 
 export default {
     name: "peminjamanAlat",
     components: {
         headerUser,
-        footerPage
+        footerPage,
+        headerSuperAdmin,
+        headerDekanat,
+        headerAdmin
     },
     setup() {
         const form = reactive([
@@ -189,12 +197,12 @@ export default {
                 selectedOptionPersonal: '',
                 selectedOptionEksternal: '',
                 selectedOptionOrganisation: '',
-                items: [],
+                items: [{}],
+                daftarAlat: [],
                 alat: reactive([{
                     nama: '',
-                    jumlahPinjam: 0,
+                    jumlahKetersediaan: 0,
                 }]),
-                selectedItems: '',
                 keterangan: '',
                 dokumen: null,
             }
@@ -211,14 +219,14 @@ export default {
                 selectedOptionPersonal: '',
                 selectedOptionEksternal: '',
                 selectedOptionOrganisation: '',
-                items: [],
+                items: [{}],
                 alat: reactive([{
                     nama: '',
                     jumlahPinjam: 0,
                 }]),
-                selectedItems: '',
                 keterangan: '',
                 dokumen: null,
+                daftarAlat: [],
             })
         }
 
@@ -238,7 +246,6 @@ export default {
                 const dataToSave = {
                     tanggalSelesai: formData.tanggalSelesai,
                     tanggalAwal: formData.tanggalAwal,
-                    selectedRuangan: formData.selectedRuangan,
                     selectedOptionPersonal: formData.selectedOptionPersonal,
                     selectedOptionEksternal: formData.selectedOptionEksternal,
                     selectedOptionOrganisation: formData.selectedOptionOrganisation,
@@ -254,8 +261,6 @@ export default {
                 const dataToSave = {
                     tanggalSelesai: formData.tanggalSelesai,
                     tanggalAwal: formData.tanggalAwal,
-                    waktuSelesai: formData.waktuSelesai,
-                    waktuPakai: formData.waktuPakai,
                     selectedRuangan: formData.selectedRuangan,
                     selectedOptionPersonal: formData.selectedOptionPersonal,
                     selectedOptionEksternal: formData.selectedOptionEksternal,
@@ -270,7 +275,7 @@ export default {
                 try {
                     const response = await axios({
                         method: 'POST',
-                        url: 'http://localhost:8000/api/peminjamanRuangan/',
+                        url: 'http://localhost:8000/api/peminjamanAlat/',
                         data: dataSend,
                         headers: {
                             'Access-Control-Allow-Origin': '*',
@@ -280,7 +285,7 @@ export default {
                     savedItems.push(response.data);
                     console.log('Peminjaman saved successfully:', response.data);
                 } catch (error) {
-                    console.error('Error menyimpan data peminjaman ruangan', error);
+                    console.error('Error menyimpan data peminjaman alat', error);
                 }
             }
         }
@@ -289,8 +294,15 @@ export default {
             axios.get("http://127.0.0.1:8000/api/alat/")
                 .then(response => {
                     form.forEach(item => {
-                        item.items = response.data.map(alat => alat.Nama);
-                        console.log(item.items);
+                        const dataAlat = response.data;
+                        dataAlat.forEach(alat => {
+                            item.items.push({
+                                nama: alat.Nama,
+                                jumlahKetersediaan: alat.Jumlah_ketersediaan
+                            })
+                        })
+                        item.daftarAlat = response.data.map(alat => alat.Nama);
+                        console.log("item", item.items);
                     });
                 })
                 .catch(error => {
@@ -357,6 +369,7 @@ export default {
     data() {
         return {
             ketentuan: false,
+            User_role: localStorage.getItem('User_role'),
         }
     }
 }

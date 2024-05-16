@@ -10,6 +10,7 @@ use App\Models\Detail_Alat;
 use App\Models\Peminjam;
 use App\Models\Peminjaman;
 use App\Models\Peminjaman_Ruangan_Bridge;
+use App\Models\Persetujuan;
 use Illuminate\Support\Facades\DB;
 
 
@@ -28,21 +29,48 @@ class PeminjamanAlatBridgeController extends Controller
     //tambah data
     public function store(StorePeminjaman_Alat_BridgeRequest $request)
     {
+        setlocale(LC_ALL, 'id_ID');
         $input = $request->all();
-        $peminjaman_alat = Peminjaman_Alat_Bridge::create([
-            'PeminjamanID' => $input['PeminjamanID'],
-            'AlatID' => $input['AlatID'],
-            'Tanggal_pakai_awal' => $input['Tanggal_pakai_awal'],
-            'Tanggal_pakai_akhir' => $input['Tanggal_pakai_akhir'],
-            'Waktu_pakai' => $input['Waktu_pakai'],
-            'Waktu_selesai' => $input['Waktu_selesai'],
-            'Waktu_pengambilan' => $input['Waktu_pengambilan'],
-            'Tanggal_pengembalian' => $input['Tanggal_pengembalian'],
-            'Waktu_pengembalian' => $input['Waktu_pengembalian'],
-            'Jumlah_pinjam' => $input['Jumlah_pinjam']
+        //dd($input);
+        $user = Peminjam::where('UserID', $request[0]['UserID'])->first();
+        $peminjamID = $user->PeminjamID;
+        $peminjaman = Peminjaman::create([
+            'PeminjamID' => $peminjamID,
+            'Tanggal_pinjam' => date('d-m-Y')
         ]);
-        $peminjaman_alat_ID = $peminjaman_alat->Peminjaman_Alat_ID;
-        return response()->json(['status' => true, 'message' => "Registration Success", 'Peminjaman_Alat_ID' => $peminjaman_alat_ID, 'peminjaman_alat_bridge' => $peminjaman_alat]);
+        //dd($peminjaman);
+        $peminjamanid = $peminjaman->PeminjamanID;
+        $totalpinjamalat = [];
+
+        for ($i = 0; $i < count($input); $i++) {
+            if (count($input[$i]['alat']) > 0) {
+                foreach ($input[$i]['alat'] as $tool) {
+                    if (!empty($tool['nama']) && $tool['jumlahPinjam'] > 0) {
+                        $detail = Alat::where('Nama', $tool['nama'])->first();
+                        $jumlahpinjam = $tool['jumlahPinjam'];
+                        $alatID = $detail->AlatID;
+                        $peminjaman_alat = Peminjaman_Alat_Bridge::create([
+                            'PeminjamanID' => $peminjamanid,
+                            'AlatID' => $alatID,
+                            'Tanggal_pakai_awal' => $input[$i]['tanggalAwal'],
+                            'Tanggal_pakai_akhir' => $input[$i]['tanggalSelesai'],
+                            'Jumlah_pinjam' => $jumlahpinjam,
+                            'Is_Personal' => $input[$i]['selectedOptionPersonal'],
+                            'Is_Organisation' => $input[$i]['selectedOptionOrganisation'],
+                            'Is_Eksternal' => $input[$i]['selectedOptionEksternal'],
+                            'DokumenID' => $input[$i]['dokumen'],
+                            'Keterangan' => $input[$i]['keterangan']
+                        ]);
+                        $stokSedia = $detail->Jumlah_ketersediaan;
+                        $stokAkhir = $stokSedia - $jumlahpinjam;
+                        $currentStok = Alat::where('AlatID', $alatID)->update(['Jumlah_ketersediaan' => $stokAkhir]);
+                        $totalpinjamalat[] = $peminjaman_alat;
+                    }
+                };
+            }
+        }
+
+        return response()->json(['status' => true, 'message' => "Registration Success", 'peminjaman_alat_bridge' => $totalpinjamalat]);
     }
     //mengubah data semua row
     public function updateSemuaRow(UpdatePeminjaman_Alat_BridgeRequest $request, Peminjaman_Alat_Bridge $Peminjaman_Alat_ID)
@@ -122,21 +150,68 @@ class PeminjamanAlatBridgeController extends Controller
                 $alatid = $data->AlatID;
                 $tanggalawal = $data->Tanggal_pakai_awal;
                 $tanggalakhir = $data->Tanggal_pakai_akhir;
-                $waktupakai = $data->Waktu_pakai;
-                $waktuselesai = $data->Waktu_selesai;
                 $peminjamanid = $data->PeminjamanID;
                 $alat = Alat::where('AlatID', $alatid)->first();
                 $namaalat = $alat->Nama;
+                $jumlahPinjam = $data->Jumlah_pinjam;
+                $keterangan = $data->Keterangan;
+                $isPersonal = $data->Is_Personal;
+                $isOrganisation = $data->Is_Organisation;
+                $isEksternal = $data->Is_Eksternal;
+                $persetujuan = Persetujuan::where('PeminjamanID', $peminjamanID)->first();
+                $dekan = $persetujuan->Dekan_Approve ?? null;
+                $wd2 = $persetujuan->WD2_Approve ?? null;
+                $wd3 = $persetujuan->WD3_Approve ?? null;
+                $kepala = $persetujuan->Kepala_Approve ?? null;
+                $petugas = $persetujuan->Petugas_Approve ?? null;
+                $koord = $persetujuan->Koordinator_Approve ?? null;
+                $namastatus = 'Diproses';
+
+                if (!empty($persetujuan)) {
+                    if ($isOrganisation) {
+                        if ($wd3 && $kepala && $koord && $petugas) {
+                            $namastatus = 'Diterima';
+                        } elseif ($wd3 === null || $kepala === null || $koord === null || $petugas === null) {
+                            $namastatus = 'Diproses';
+                        } elseif ($wd3 === false || $kepala === false || $koord === false || $petugas === false) {
+                            $namastatus = 'Ditolak';
+                        }
+                    } elseif ($isEksternal) {
+                        if ($dekan && $kepala && $koord && $petugas) {
+                            $namastatus = 'Diterima';
+                        } elseif ($dekan === null || $kepala === null || $koord === null || $petugas === null) {
+                            $namastatus = 'Diproses';
+                        } elseif ($dekan === false || $kepala === false || $koord === false || $petugas === false) {
+                            $namastatus = 'Ditolak';
+                        }
+                    } elseif ($isPersonal) {
+                        if ($petugas) {
+                            $namastatus = 'Diterima';
+                        } elseif ($petugas === null) {
+                            $namastatus = 'Diproses';
+                        } elseif ($petugas === false) {
+                            $namastatus = 'Ditolak';
+                        }
+                    } else {
+                        if ($wd2 && $kepala && $koord && $petugas) {
+                            $namastatus = 'Diterima';
+                        } elseif ($wd2 === null || $kepala === null || $koord === null || $petugas === null) {
+                            $namastatus = 'Diproses';
+                        } elseif ($wd2 === false || $kepala === false || $koord === false || $petugas === false) {
+                            $namastatus = 'Ditolak';
+                        }
+                    }
+                }
 
                 $recordData = [
                     'peminjamanalatid' => $peminjamanalatid,
                     'peminjamanid' => $peminjamanid,
                     'tanggalawal' => $tanggalawal,
                     'tanggalakhir' => $tanggalakhir,
-                    'waktupakai' => $waktupakai,
-                    'waktuselesai' => $waktuselesai,
                     'keterangan' => $keterangan,
-                    'namaalat' => $namaalat
+                    'namaalat' => $namaalat,
+                    'status' => $namastatus,
+                    'jumlahPinjam' => $jumlahPinjam
                 ];
 
                 $alltoolsbooking[] = $recordData;

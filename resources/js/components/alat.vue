@@ -1,5 +1,8 @@
 <template>
-    <headerUser style="z-index: 1"></headerUser>
+    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1"></headerUser>
+    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1"></headerSuperAdmin>
+    <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1"></headerAdmin>
+    <headerDekanat v-if="User_role === 'Dekan'|| User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'" style="z-index: 1"></headerDekanat>
 
     <div style="margin-top: 100px;">
         <p style="font-family: 'Lexend-Medium'; font-size: 25px; margin-top: -20px; margin-left: 30px">Alat</p>
@@ -13,7 +16,7 @@
             <v-row>
                 <v-col cols="12">
                     <v-row style="margin-left: -60px; margin-right: 150px;">
-                        <v-col v-for="(tool, index) in allToolsData" :key="index" cols="4">
+                        <v-col v-for="(tool, index) in filteredTools" :key="index" cols="4">
                             <v-card style="font-family: 'Lexend-Regular'; height: 80%; margin-left: 100px; margin-bottom: 100px; margin-right: -100px;
                             background-color: rgb(30, 30, 30, 0.15); border-radius: 0px;">
                                 <div
@@ -22,8 +25,7 @@
                                         id="detailRuangan">
                                         <p
                                             style="text-align: center; font-size: 20px; font-family: 'Lexend-Medium'; margin-top: 40px;">
-                                            {{
-                                                tool.Nama }}</p>
+                                            {{ tool.Nama }}</p>
 
                                         <div style="position: absolute; bottom: 0; left: 0; margin-bottom: 10px;">
                                             <v-btn style="background-color: rgb(2,39, 10, 0.9); color: white; border-radius: 20px; margin-left: 50px;
@@ -67,12 +69,18 @@
 import axios from 'axios'
 import headerUser from '../components/headerUser.vue'
 import footerPage from '../components/footerPage.vue'
+import headerSuperAdmin from '../components/headerSuperAdmin.vue'
+import headerDekanat from '../components/headerDekanat.vue'
+import headerAdmin from '../components/headerAdmin.vue'
 
 export default {
     name: "alat",
     components: {
         headerUser,
-        footerPage
+        footerPage,
+        headerSuperAdmin,
+        headerDekanat,
+        headerAdmin
     },
     data() {
         return {
@@ -85,6 +93,7 @@ export default {
             ],
             dataLoaded: false,
             searchAlat: '',
+            User_role: localStorage.getItem('User_role'),
         }
     },
     methods: {
@@ -117,9 +126,8 @@ export default {
     },
     computed: {
         filteredTools() {
-            const searchTerm = this.searchAlat.toLowerCase();
             return this.allToolsData.filter(tool => {
-                return tool.Nama.toLowerCase().includes(searchTerm);
+                return tool.Nama.toLowerCase().includes(this.searchAlat.toLowerCase());
             });
         }
     },

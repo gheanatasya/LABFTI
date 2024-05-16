@@ -1,5 +1,11 @@
 <template>
-    <headerUser style="z-index: 1"></headerUser>
+    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1">
+    </headerUser>
+    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1">
+    </headerSuperAdmin>
+    <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1"></headerAdmin>
+    <headerDekanat v-if="User_role === 'Dekan' || User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'"
+        style="z-index: 1"></headerDekanat>
 
     <div style="margin-top: 70px;">
         <p style="font-family: Lexend-Medium; font-size: 28px; margin-left: 40px; margin-top: 20px;">Profil</p>
@@ -9,9 +15,12 @@
                 <v-icon style="font-size: 250px;">mdi-account-circle</v-icon>
                 <v-icon style="font-size:30px;margin-top: 180px; margin-left: -50px;">mdi-pencil</v-icon>
 
-                <p style="font-family: Lexend-Regular; font-size: 30px; justify-content: center;"> {{ this.user.Nama }} </p>
-                <p style="font-family: Lexend-Regular; font-size: 30px; justify-content: center;"> {{ this.user.NIM_NIDN }}</p>
-                <p style="font-family: Lexend-Regular; font-size: 30px; justify-content: center;"> {{ this.user.Role }}</p>
+                <p style="font-family: Lexend-Regular; font-size: 30px; justify-content: center;"> {{ this.user.Nama }}
+                </p>
+                <p style="font-family: Lexend-Regular; font-size: 30px; justify-content: center;"> {{ this.user.NIM_NIDN
+                    }}</p>
+                <p style="font-family: Lexend-Regular; font-size: 30px; justify-content: center;"> {{ this.user.Role }}
+                </p>
 
             </v-container>
 
@@ -50,7 +59,8 @@
                     <v-text-field label="Role" :model-value="this.user.Role" variant="outlined" readonly
                         style="margin-right: 50px; margin-left:40px;"></v-text-field>
 
-                    <v-btn @click="editprofil" style="margin-top: 10px; margin-left: 420px; margin-bottom: 50px; font-family: Lexend-Medium; 
+                    <v-btn @click="editprofil"
+                        style="margin-top: 10px; margin-left: 420px; margin-bottom: 50px; font-family: Lexend-Medium; 
                     background-color: rgb(2, 39, 10, 0.9); color: white; width: 150px; border-radius: 20px; font-size: 17px;">Edit</v-btn>
 
                 </v-sheet>
@@ -61,11 +71,17 @@
 
 <script>
 import headerUser from '../components/headerUser.vue'
+import headerSuperAdmin from '../components/headerSuperAdmin.vue'
+import headerDekanat from '../components/headerDekanat.vue'
+import headerAdmin from '../components/headerAdmin.vue'
 
 export default {
     name: "profil",
     components: {
         headerUser,
+        headerSuperAdmin,
+        headerDekanat,
+        headerAdmin
     },
     data() {
         return {
@@ -75,6 +91,7 @@ export default {
             prodi: "",
             fakultas: "",
             loading: false,
+            User_role: localStorage.getItem('User_role'),
         }
     },
     mounted() {
@@ -84,10 +101,10 @@ export default {
         async getUserData() {
             const UserID = localStorage.getItem('UserID');
             await axios.get(`http://127.0.0.1:8000/api/peminjam/getDataforProfil/${UserID}`)
-            .then(response => {
-                this.user = response.data;
-                console.log(this.user);
-            })
+                .then(response => {
+                    this.user = response.data;
+                    console.log(this.user);
+                })
             /* await axios.get(`http://127.0.0.1:8000/api/user/${UserID}`)
                 .then(response => {
                     console.log(response.data)
@@ -130,9 +147,9 @@ export default {
                     console.error('Error fetching data pada tabel Instansi', error);
                 })
         },
-        editprofil(){
+        editprofil() {
             this.loading = true;
-            this.$router.push({ name: 'editProfil' })        
+            this.$router.push({ name: 'editProfil' })
         }
     }
 }

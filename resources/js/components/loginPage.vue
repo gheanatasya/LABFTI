@@ -55,6 +55,7 @@ export default {
             loggedIn: localStorage.getItem('loggedIn'),
             token: localStorage.getItem('token'),
             UserID: localStorage.getItem('UserID'),
+            User_role: localStorage.getItem('User_role'),
             email: "",
             password: "",
             validation: [],
@@ -90,11 +91,22 @@ export default {
                                 //save UserID
                                 localStorage.setItem("UserID", res.data.UserID);
 
+                                //save user role
+                                localStorage.setItem("User_role", res.data.User_role);
+
                                 //change state
                                 this.loggedIn = true
 
                                 //redirect dashboard
-                                return this.$router.push({ name: 'berandaUser' })
+                                if (res.data.User_role === 'Mahasiswa' || res.data.User_role === 'Dosen' || res.data.User_role === 'Staff') {
+                                    return this.$router.push({ name: 'berandaUser' })
+                                } else if (res.data.User_role === 'Petugas') {
+
+                                } else if (res.data.User_role === 'Kepala Lab' || res.data.User_role === 'Koordinator Lab') {
+                                    return this.$router.push({ name: 'berandaSuperAdmin' })
+                                } else if (res.data.User_role === 'Dekan' || res.data.User_role === 'Wakil Dekan 2' || res.data.User_role === 'Wakil Dekan 3') {
+
+                                }
                             } else {
                                 //set state login failed
                                 this.loginFailed = true
@@ -123,6 +135,7 @@ export default {
 
         }
     },
+    
     //check user already logged in
     mounted() {
         if (this.loggedIn) {

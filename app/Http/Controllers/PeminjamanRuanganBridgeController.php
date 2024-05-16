@@ -11,6 +11,9 @@ use App\Models\Peminjam;
 use App\Models\Ruangan;
 use App\Models\Peminjaman;
 use App\Models\Peminjaman_Alat_Bridge;
+use App\Models\Persetujuan;
+use App\Models\Status;
+use App\Models\Status_Peminjaman;
 use App\Models\User;
 
 class PeminjamanRuanganBridgeController extends Controller
@@ -85,6 +88,11 @@ class PeminjamanRuanganBridgeController extends Controller
                             'DokumenID' => $input[$i]['dokumen'],
                             'Keterangan' => $input[$i]['keterangan']
                         ]);
+
+                        $stokSedia = $detail->Jumlah_ketersediaan;
+                        $stokAkhir = $stokSedia - $jumlahpinjam;
+                        $currentStok = Alat::where('AlatID', $alatID)->update(['Jumlah_ketersediaan' => $stokAkhir]);
+
                         $totalpinjamalat[] = $peminjaman_alat;
                     }
                 };
@@ -168,22 +176,66 @@ class PeminjamanRuanganBridgeController extends Controller
                 $ruanganid = $data->RuanganID;
                 $tanggalawal = $data->Tanggal_pakai_awal;
                 $tanggalakhir = $data->Tanggal_pakai_akhir;
-                $waktupakai = $data->Waktu_pakai;
-                $waktuselesai = $data->Waktu_selesai;
                 $cariroom = Ruangan::where('RuanganID', $ruanganid)->first();
                 $namaruangan = $cariroom->Nama_ruangan;
                 $peminjamanid = $data->PeminjamanID;
                 $keterangan = $data->Keterangan;
+                $isPersonal = $data->Is_Personal;
+                $isOrganisation = $data->Is_Organisation;
+                $isEksternal = $data->Is_Eksternal;
+                $persetujuan = Persetujuan::where('PeminjamanID', $peminjamanID)->first();
+                $dekan = $persetujuan->Dekan_Approve ?? null;
+                $wd2 = $persetujuan->WD2_Approve ?? null;
+                $wd3 = $persetujuan->WD3_Approve ?? null;
+                $kepala = $persetujuan->Kepala_Approve ?? null;
+                $petugas = $persetujuan->Petugas_Approve ?? null;
+                $koord = $persetujuan->Koordinator_Approve ?? null;
+                $namastatus = 'Diproses'; 
+
+                if (!empty($persetujuan)) {
+                    if ($isOrganisation) {
+                        if ($wd3 && $kepala && $koord && $petugas) {
+                            $namastatus = 'Diterima';
+                        } elseif ($wd3 === null || $kepala === null || $koord === null || $petugas === null) {
+                            $namastatus = 'Diproses';
+                        } elseif ($wd3 === false || $kepala === false || $koord === false || $petugas === false) {
+                            $namastatus = 'Ditolak';
+                        }
+                    } elseif ($isEksternal) {
+                        if ($dekan && $kepala && $koord && $petugas) {
+                            $namastatus = 'Diterima';
+                        } elseif ($dekan === null || $kepala === null || $koord === null || $petugas === null) {
+                            $namastatus = 'Diproses';
+                        } elseif ($dekan === false || $kepala === false || $koord === false || $petugas === false) {
+                            $namastatus = 'Ditolak';
+                        }
+                    } elseif ($isPersonal) {
+                        if ($petugas) {
+                            $namastatus = 'Diterima';
+                        } elseif ($petugas === null) {
+                            $namastatus = 'Diproses';
+                        } elseif ($petugas === false){
+                            $namastatus = 'Ditolak';
+                        }
+                    } else {
+                        if ($wd2 && $kepala && $koord && $petugas) {
+                            $namastatus = 'Diterima';
+                        } elseif ($wd2 === null || $kepala === null || $koord === null || $petugas === null) {
+                            $namastatus = 'Diproses';
+                        } elseif ($wd2 === false || $kepala === false || $koord === false || $petugas === false) {
+                            $namastatus = 'Ditolak';
+                        }
+                    }
+                }
 
                 $recordData = [
                     'peminjamanruanganid' => $peminjamanruanganid,
                     'peminjamanid' => $peminjamanid,
                     'tanggalawal' => $tanggalawal,
                     'tanggalakhir' => $tanggalakhir,
-                    'waktupakai' => $waktupakai,
-                    'waktuselesai' => $waktuselesai,
                     'keterangan' => $keterangan,
-                    'namaruangan' => $namaruangan
+                    'namaruangan' => $namaruangan,
+                    'status' => $namastatus
                 ];
 
                 $allroombooking[] = $recordData;
@@ -253,6 +305,26 @@ class PeminjamanRuanganBridgeController extends Controller
         foreach ($array as $availableRoom) {
             $ambildata = Ruangan::where('Nama_ruangan', $availableRoom)->first();
             $detailRoom[] = $ambildata;
+        }
+
+        $peminjamanalat = Peminjaman_Alat_Bridge::where('Tanggal_pakai_awal', "<=", $Tanggal_pakai_awal)
+            ->where('Tanggal_pakai_akhir', ">=", $Tanggal_pakai_akhir)
+            ->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
+                $query->where('Tanggal_pakai_awal', '>', $Tanggal_pakai_awal)
+                    ->where('Tanggal_pakai_akhir', '<=', $Tanggal_pakai_akhir);
+            })->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
+                $query->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_awal)
+                    ->where('Tanggal_pakai_akhir', '>', $Tanggal_pakai_akhir);
+            })->pluck('AlatID')->unique();
+        $dataalat = Alat::pluck('AlatID', 'Nama', 'Jumlah_ketersediaan');
+        $alat = $dataalat->diff($peminjamanalat);
+        $tool = $alat->toArray();
+        $array = array_keys($tool);
+
+        $detailTool = [];
+        foreach ($array as $availableTool) {
+            $ambildata = Alat::where('Nama', $availableTool)->first();
+            $detailTool[] = $ambildata;
         }
 
         return response()->json(['availableRoom' => $array, 'detailRuangan' => $detailRoom]);

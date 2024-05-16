@@ -13,4 +13,9 @@ class Persetujuan extends Model
     {
         return $this->belongsTo(Peminjaman::class);
     }
+
+    public $timestamps = false;
+    protected $table = 'persetujuan';
+    protected $primaryKey = 'PersetujuanID';
+    protected $fillable = ['PeminjamanID', 'Dekan_Approve', 'WD2_Approve', 'WD3_Approve', 'Kepala_Approve', 'Koordinator_Approve', 'Petugas_Approve'];
 }

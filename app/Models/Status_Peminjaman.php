@@ -24,4 +24,9 @@ class Status_Peminjaman extends Model
     {
         return $this->hasMany(Activity_Log::class);
     }
+
+    public $timestamps = false;
+    protected $table = 'status_peminjaman';
+    protected $primaryKey = 'Status_PeminjamanID';
+    protected $fillable = ['PeminjamanID', 'StatusID', 'Tanggal_Acc'];
 }

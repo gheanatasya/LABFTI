@@ -34,15 +34,18 @@
             <template v-for="menu1 in menusLeft" :key="menu1.title">
                 <v-menu v-if="menu1.title === 'Pengaturan'">
                     <template v-slot:activator="{ on, props }">
-                        <v-btn :to="menu1.route" flat v-on="on" v-bind="props">
+                        <v-btn flat v-on="on" v-bind="props">
                             <v-icon left dark>{{ menu1.icon }}</v-icon>
                         </v-btn>
                     </template>
                     <v-list>
                         <v-list-item v-for="(item, i) in menu1.submenus" :key="i">
                             <v-list-item-title>
-                                <v-icon>{{item.icon}}</v-icon>
-                                <v-btn :to="menu1.route" flat>
+                                <v-icon>{{ item.icon }}</v-icon>
+                                <v-btn flat @click="logout" v-if="item.title === 'Logout'">
+                                    {{ item.title }}
+                                </v-btn>
+                                <v-btn :to="item.to" v-else flat>
                                     {{ item.title }}
                                 </v-btn>
                             </v-list-item-title>
@@ -65,11 +68,12 @@ export default {
     data() {
         return {
             menusCenter: [
-                { title: 'Beranda', route: '/beranda' },
-                { title: 'Peminjaman', submenus:[{title: 'Peminjaman Ruangan', route: '/peminjamanRuangan'}, {title: 'Peminjaman Alat', route: '/peminjamanAlat'}], isOpen: false, },
+                { title: 'Ruangan', route: 'ruangan' },
+                { title: 'Alat', route: 'alat' },
+                { title: 'Beranda', route: '/berandaSuperAdmin' },
+                { title: 'Peminjaman', submenus:[{title: 'Peminjaman Ruangan & Alat', route: '/peminjamanRuangan'}, {title: 'Peminjaman Alat', route: '/peminjamanAlat'}], isOpen: false, },
                 { title: 'Daftar Alat', route: '/daftarAlat' },
                 { title: 'Daftar Peminjaman', route: '/daftarPeminjaman' },
-                { title: 'Ruangan', route: 'ruangan' },
             ],
 
             menusLeft: [
@@ -78,6 +82,20 @@ export default {
             ]
         }
     },
+    methods: {
+    logout() {
+        axios.get('http://localhost:8000/api/logout')
+            .then(() => {
+                // Remove localStorage
+                localStorage.removeItem("loggedIn");
+                // Redirect
+                return this.$router.push({ name: 'loginPage' });
+            })
+            .catch(error => {
+                console.error('Logout failed:', error);
+            });
+    }
+}
 };
 </script>
 

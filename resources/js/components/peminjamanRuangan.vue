@@ -1,6 +1,12 @@
 <template>
   <v-app>
-    <headerUser style="z-index: 1"></headerUser>
+    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1">
+    </headerUser>
+    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1">
+    </headerSuperAdmin>
+    <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1"></headerAdmin>
+    <headerDekanat v-if="User_role === 'Dekan' || User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'"
+      style="z-index: 1"></headerDekanat>
 
     <v-dialog v-model="confirmBefore"
       style="justify-content: center; background-color: rgb(2, 39, 10, 0.7); z-index: 0;" persistent max-width="500">
@@ -46,7 +52,7 @@
                   variant="outlined"
                   style="width: 300px; margin-left: -75px; margin-top: 100px; margin-right: 20px;"></v-text-field>
                 <v-btn @click="availableRoom(item.tanggalAwal, item.tanggalSelesai)"
-                  style="width: 100px; margin-left: 10px; margin-top: 80px; font-size: 11px; border-radius: 20px; margin-right:20px;"
+                  style="width: 120px; margin-left: 10px; margin-top: 80px; font-size: 11px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
                   color="primary">
                   Cek ruangan</v-btn>
               </div>
@@ -188,17 +194,22 @@
 </template>
 
 <script>
-import { reactive, onMounted} from 'vue';
+import { reactive, onMounted } from 'vue';
 import headerUser from '../components/headerUser.vue'
 import footerPage from '../components/footerPage.vue'
 import axios from 'axios';
-
+import headerAdmin from './headerAdmin.vue'
+import headerDekanat from './headerDekanat.vue'
+import headerSuperAdmin from './headerSuperAdmin.vue'
 
 export default {
   name: 'berandaUser',
   components: {
     headerUser,
-    footerPage
+    footerPage,
+    headerAdmin,
+    headerDekanat,
+    headerSuperAdmin
   },
   setup() {
     const form = reactive([
@@ -383,7 +394,7 @@ export default {
       }
     }
 
-    
+
 
     onMounted(() => {
       fetchAlat();
@@ -394,7 +405,8 @@ export default {
   data() {
     return {
       confirmBefore: true,
-      selectedConfirmBefore: true
+      selectedConfirmBefore: true,
+      User_role: localStorage.getItem('User_role'),
     }
   },
   methods: {

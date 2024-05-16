@@ -17,6 +17,7 @@ class LoginController extends Controller
         ]);
 
         $User = User::where('Email', $request->email)->first();
+        $role = $User->User_role;
 
         if (!$User || !Hash::check($request->password, $User->Password)) {
             return response([
@@ -31,7 +32,8 @@ class LoginController extends Controller
             'success'   => true,
             'user'      => $User,
             'token'     => $token,
-            'UserID'    => $User->UserID
+            'UserID'    => $User->UserID,
+            'User_role' => $role
         ];
 
         return response($response, 201);

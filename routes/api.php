@@ -54,7 +54,6 @@ Route::get('/prodi/getProdiNameByID/{ProdiID}', [ProgramStudiController::class, 
 Route::get('/prodi/getFakultasNameByID/{FakultasID}', [ProgramStudiController::class, 'getFakultasNameByID']);
 Route::get('/prodi/getIdByName/{Nama_prodi}', [ProgramStudiController::class, 'getProdiIDByName']);
 
-
 // route untuk instansi
 Route::get('/instansi', [InstansiController::class, 'getAllInstansi']);
 Route::get('/instansi/{InstansiID}', [InstansiController::class, 'show']);

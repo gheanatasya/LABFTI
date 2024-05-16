@@ -13,4 +13,9 @@ class Status extends Model
     {
         return $this->hasOne(Status_Peminjaman::class);
     }
+
+    public $timestamps = false;
+    protected $table = 'status';
+    protected $primaryKey = 'StatusID';
+    protected $fillable = ['Nama_status'];
 }

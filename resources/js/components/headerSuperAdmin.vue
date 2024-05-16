@@ -9,7 +9,7 @@
             <template v-for="menu in menusCenter" :key="menu.title">
                 <v-menu v-if="menu.title === 'Peminjaman'">
                     <template v-slot:activator="{ on, props }">
-                        <v-btn flat v-on="on" v-bind="props" @click="menu.isOpen = !menu.isOpen">
+                        <v-btn :to="menu.route" flat v-on="on" v-bind="props" @click="menu.isOpen = !menu.isOpen">
                             {{ menu.title }}
                             <v-icon>{{ menu.isOpen ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
                         </v-btn>
@@ -17,15 +17,15 @@
                     <v-list>
                         <v-list-item v-for="(item1, j) in menu.submenus" :key="j">
                             <v-list-item-title>
-                                <v-btn flat>
+                                <v-btn :to="item1.route" flat>
                                     {{ item1.title }}
                                 </v-btn>
                             </v-list-item-title>
                         </v-list-item>
                     </v-list>
                 </v-menu>
-                <v-btn v-else flat :key="menu.title">
-                    {{menu.title}}
+                <v-btn v-else :to="menu.route" flat :key="menu.title">
+                    {{ menu.title }}
                 </v-btn>
             </template>
         </v-toolbar-items>
@@ -41,19 +41,22 @@
                     <v-list>
                         <v-list-item v-for="(item, i) in menu1.submenus" :key="i">
                             <v-list-item-title>
-                                <v-icon>{{item.icon}}</v-icon>
-                                <v-btn flat>
+                                <v-icon>{{ item.icon }}</v-icon>
+                                <v-btn flat @click="logout" v-if="item.title === 'Logout'">
+                                    {{ item.title }}
+                                </v-btn>
+                                <v-btn :to="item.to" v-else flat>
                                     {{ item.title }}
                                 </v-btn>
                             </v-list-item-title>
                         </v-list-item>
                     </v-list>
                 </v-menu>
-                <v-btn v-else flat :key="menu1.title">
+                <v-btn v-else :to="menu1.route" flat :key="menu1.title">
                     <v-icon left dark>{{ menu1.icon }}</v-icon>
                 </v-btn>
             </template>
-        </v-toolbar-items>       
+        </v-toolbar-items>
     </v-toolbar>
 </template>
 
@@ -63,20 +66,35 @@ export default {
     data() {
         return {
             menusCenter: [
-                { title: 'Beranda' },
-                { title: 'Peminjaman', submenus:[{title: 'Peminjaman Ruangan'}, {title: 'Peminjaman Alat'}], isOpen: false, },
-                { title: 'Daftar Petugas' },
-                { title: 'Daftar Alat' },
-                { title: 'Daftar Peminjaman' },
-                { title: 'Ruangan' },
+                { title: 'Ruangan', route: 'ruangan' },
+                { title: 'Alat', route: 'alat' },
+                { title: 'Beranda', route: 'berandaSuperAdmin' },
+                { title: 'Peminjaman', submenus: [{ title: 'Peminjaman Ruangan & Alat', route: 'peminjamanRuangan' }, { title: 'Peminjaman Alat', route: 'peminjamanAlat' }], isOpen: false, },
+                { title: 'Daftar Alat', route: 'daftarAlat' },
+                { title: 'Daftar Peminjaman', route: 'daftarPeminjaman' },
+                { title: 'Daftar Petugas', route: 'daftarPetugas' },
             ],
 
             menusLeft: [
                 { title: 'Pemberitahuan', icon: 'mdi-bell' },
-                { title: 'Pengaturan', icon: 'mdi-cog', submenus: [{ title: 'Profil', icon: 'mdi-account-circle'}, { title: 'Logout', icon: 'mdi-logout'}] },
+                { title: 'Pengaturan', icon: 'mdi-cog', submenus: [{ title: 'Profil', icon: 'mdi-account-circle', route: 'profil' }, { title: 'Logout', icon: 'mdi-logout' }] },
             ]
         }
     },
+    methods: {
+        logout() {
+            axios.get('http://localhost:8000/api/logout')
+                .then(() => {
+                    // Remove localStorage
+                    localStorage.removeItem("loggedIn");
+                    // Redirect
+                    return this.$router.push({ name: 'loginPage' });
+                })
+                .catch(error => {
+                    console.error('Logout failed:', error);
+                });
+        }
+    }
 };
 </script>
 

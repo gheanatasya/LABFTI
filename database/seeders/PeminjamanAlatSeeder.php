@@ -17,27 +17,21 @@ class PeminjamanAlatSeeder extends Seeder
     { {
             $faker = Faker::create('id_ID');
             $peminjamanID = DB::table('peminjaman')->pluck('PeminjamanID');
-            $detailalatID = DB::table('detail_alat')->pluck('DetailAlatID');
-            $waktuPakai = $faker->time('H:i:s');
-            $waktuPakaiDateTime = \DateTime::createFromFormat('H:i:s', $waktuPakai);
-            $waktuPengambilanDateTime = clone $waktuPakaiDateTime;
-            $waktuPengambilanDateTime->modify('-1 hour');
-
-            $waktuPakaiFormatted = $waktuPakaiDateTime->format('H:i');
-            $waktuPengambilanFormatted = $waktuPengambilanDateTime->format('H:i');
+            $alatID = DB::table('alat')->pluck('AlatID');
+            $dokumenID = DB::table('dokumen')->pluck('DokumenID');
 
             for ($i = 1; $i <= 50; $i++) {
                 DB::table('peminjaman_alat_bridge')->insert([
                     'PeminjamanID' => $faker->randomElement($peminjamanID),
-                    'DetailAlatID' => $faker->randomElement($detailalatID),
-                    'Tanggal_pakai_awal' => $faker->date('d-m-Y'),
-                    'Tanggal_pakai_akhir' => $faker->date('d-m-Y'),
-                    'Waktu_pakai' => $faker->time($waktuPakaiFormatted),
-                    'Waktu_selesai' => $faker->time('H:i:s'),
-                    'Waktu_pengambilan' => $faker->time($waktuPengambilanFormatted),
-                    'Tanggal_pengembalian' => $faker->date('d-m-Y'),
-                    'Waktu_pengembalian' => $faker->time('H:i:s'),
-                    'Jumlah_pinjam' => $faker->numberBetween(1, 2)
+                    'AlatID' => $faker->randomElement($alatID),
+                    'Tanggal_pakai_awal' => $faker->date(),
+                    'Tanggal_pakai_akhir' => $faker->date(),
+                    'Jumlah_pinjam' => $faker->numberBetween(1, 10),
+                    'Keterangan' => $faker->text(100),
+                    'Is_Personal' => $faker->boolean(60),
+                    'Is_Organisation' => $faker->boolean(30),
+                    'Is_Eksternal' => $faker->boolean(20),
+                    'DokumenID' => $faker->randomElement($dokumenID)
                 ]);
             }
         }
