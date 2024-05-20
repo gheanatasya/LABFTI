@@ -86,6 +86,8 @@ Route::get('/alat/{AlatID}', [AlatController::class, 'show']);
 Route::post('/alat', [AlatController::class, 'store']);
 Route::put('/alat/{AlatID}', [AlatController::class, 'update']);
 Route::delete('/alat/{AlatID}', [AlatController::class, 'delete']);
+Route::get('/alatforDaftarAlat', [AlatController::class, 'forDaftarAlat']);
+
 
 // route untuk detail alat
 Route::get('/detail', [DetailAlatController::class, 'getAllDetailAlat']);
