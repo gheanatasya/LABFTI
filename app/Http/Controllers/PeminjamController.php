@@ -60,12 +60,9 @@ class PeminjamController extends Controller
     //update berdasarkan ID
     public function update(UpdatePeminjamRequest $request, $Nama)
     {
-        // Find the Peminjam record with the given UserID
         $peminjam = Peminjam::where('Nama', $Nama)->first();
 
-        // Check if the Peminjam record exists
         if (!$peminjam) {
-            // Return a response indicating that the record was not found
             return response()->json(['message' => 'Peminjam not found'], 404);
         }
 
@@ -78,7 +75,6 @@ class PeminjamController extends Controller
         $peminjam->Nama = $request->nama;
         $peminjam->save();
 
-        // Return a success response
         return response()->json(['message' => 'Nama berhasil diperbarui', 'data' => $peminjam]);
     }
 

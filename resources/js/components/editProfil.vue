@@ -168,12 +168,10 @@ export default {
             }
             const UserID = localStorage.getItem('UserID');
 
-            // Request CSRF token first
             axios.get('http://localhost:8000/sanctum/csrf-cookie')
                 .then(response => {
-                    // Once CSRF token is retrieved, make the PUT request with the token included in headers
                     axios.put(`http://127.0.0.1:8000/api/user/${UserID}`, updatedUserData, {
-                        withCredentials: true, // Ensure credentials are included in cross-origin requests
+                        withCredentials: true, 
                         headers: {
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                         }

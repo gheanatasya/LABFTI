@@ -112,7 +112,6 @@
                                 <td style="width: 150px; font-size: 25px;">
                                     <v-icon style="color: rgb(2, 39, 10, 1);"
                                         @click="editDataDetailAlat(detail.NamaDetailAlat, detail.KodeDetailAlat, detail.StatusKebergunaan, detail.StatusPeminjaman, detail.Foto)">mdi-pencil-circle</v-icon>
-                                    <v-icon style="color: rgb(206, 0, 0, 0.91);">mdi-delete-circle</v-icon>
                                 </td>
                             </tr>
                         </tbody>
@@ -128,22 +127,21 @@
                 <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;">
                     Edit Alat</v-card-title>
                 <v-card-text style="text-align: center;">
-                    <v-text-field label="Nama Alat" :model-value="this.alatEdit.namaAlat" variant="outlined"
+                    <v-text-field label="Kode Alat" v-model="this.alatEdit.kodeAlat" variant="outlined"
                         style="margin-right: 100px; margin-left:40px;"></v-text-field>
 
-                    <v-text-field label="Kode Alat" :model-value="this.alatEdit.kodeAlat" variant="outlined"
+                    <v-text-field label="Nama Alat" v-model="this.alatEdit.namaAlat" variant="outlined"
                         style="margin-right: 100px; margin-left:40px;"></v-text-field>
 
-                    <v-select v-model="this.alatEdit.statusAlat" :items="['Tersedia', 'Tidak Tersedia']"
-                        persistent-hint variant="outlined" style="margin-right: 100px; margin-left:40px;"
-                        label="Status Kebergunaan">
+                    <v-select v-model="this.alatEdit.statusAlat" :items="['Tersedia', 'Tidak Tersedia']" persistent-hint
+                        variant="outlined" style="margin-right: 100px; margin-left:40px;" label="Status Kebergunaan">
                     </v-select>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
                         style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                         @click="editActionAlat = false">Batal</v-btn>
-                    <v-btn
+                    <v-btn @click="updateAlat(alatEdit.namaAlat, alatEdit.kodeAlat, alatEdit.statusAlat)"
                         style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
                 </v-card-actions>
             </v-card>
@@ -156,10 +154,10 @@
                 <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;">
                     Edit Detail Alat</v-card-title>
                 <v-card-text style="text-align: center; margin-left: 40px;">
-                    <v-text-field label="Nama Detail Alat" :model-value="this.detailalatEdit.namaDetailAlat"
+                    <v-text-field label="Nama Detail Alat" v-model="this.detailalatEdit.namaDetailAlat"
                         variant="outlined" style="margin-right: 100px; margin-left:40px;"></v-text-field>
 
-                    <v-text-field label="Kode Detail Alat" :model-value="this.detailalatEdit.kodeDetailAlat"
+                    <v-text-field label="Kode Detail Alat" v-model="this.detailalatEdit.kodeDetailAlat"
                         variant="outlined" style="margin-right: 100px; margin-left:40px;"></v-text-field>
 
                     <v-select v-model="this.detailalatEdit.statusKebergunaan" :items="['Dapat Digunakan', 'Rusak']"
@@ -172,7 +170,7 @@
                         label="Status Peminjaman">
                     </v-select>
 
-                    <v-file-input label="Foto" variant="outlined"
+                    <v-file-input label="Foto" variant="outlined" v-model="this.detailalatEdit.foto"
                         style="margin-right: 100px; margin-left:0px;"></v-file-input>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
@@ -180,6 +178,7 @@
                         style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                         @click="editActionDetailAlat = false">Batal</v-btn>
                     <v-btn
+                        @click="updateDetailAlat(detailalatEdit.namaDetailAlat, detailalatEdit.kodeDetailAlat, detailalatEdit.statusKebergunaan, detailalatEdit.statusPeminjaman, detailalatEdit.foto)"
                         style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
                 </v-card-actions>
             </v-card>
@@ -237,16 +236,21 @@ export default {
         return {
             User_role: localStorage.getItem('User_role'),
             searchAlat: '',
-            allData: [],
             expanded: false,
             editActionAlat: false,
             itemforDetailAlat: [],
-            alatEdit: null,
+            alatEdit: {
+                namaAlat: null,
+                kodeAlat: null,
+                statusAlat: null
+            },
             editActionDetailAlat: false,
             detailalatEdit: null,
             dialogHapusAlat: false,
             itemforHapusAlat: [],
             gagalDeleteAlat: false,
+            allData: [],
+
         }
     },
     methods: {
@@ -309,6 +313,60 @@ export default {
                     console.error("Error deleting Alat:", error);
                     this.gagalDeleteAlat = true;
                     this.dialogHapusAlat = false;
+                });
+        },
+        updateAlat(namaAlat, kodeAlat, statusAlat) {
+            const updateData = {
+                namaAlat,
+                statusAlat
+            }
+
+            console.log(updateData);
+            axios.get('http://localhost:8000/sanctum/csrf-cookie')
+                .then(res => {
+                    axios.put(`http://127.0.0.1:8000/api/alat/${kodeAlat}`, updateData, {
+                        withCredentials: true,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    }).
+                        then(response => {
+                            if (response.status === 200) {
+                                console.log("Alat updated successfully:", response.data);
+                                this.editActionAlat = false;
+                            } else {
+                                console.error("Error updating Alat:", response.data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error updating Alat:", error);
+                        });
+                })
+        },
+        updateDetailAlat(namaDetailAlat, kodeDetailAlat, statusKebergunaan, statusPeminjaman, foto) {
+            const updateData = {
+                namaDetailAlat,
+                statusKebergunaan,
+                statusPeminjaman,
+                foto
+            }
+            console.log(updateData);
+
+            axios.put(`http://127.0.0.1:8000/api/detail/${kodeDetailAlat}`, updateData, {
+                withCredentials: true,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+                .then(response => {
+                    if (response.status === 200) {
+                        console.log("Detail alat updated successfully:", response.data);
+                        this.editActionDetailAlat = false;
+                    } else {
+                        console.error("Error updating detail alat:", response.data.message);
+                    }
+                }).catch(error => {
+                    console.error("Error updating detail alat:", error);
                 });
         }
     },

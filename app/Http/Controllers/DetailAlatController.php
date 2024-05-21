@@ -27,11 +27,29 @@ class DetailAlatController extends Controller
             return response()->json(['message' => 'Detail Alat gagal ditambahkan'], 500);
         }
     }
-    //mengubah data
-    public function update(UpdateDetail_AlatRequest $request, Detail_Alat $DetailAlatID)
+    //mengubah data detail alat
+    public function update(UpdateDetail_AlatRequest $request, $DetailAlatID)
     {
-        $DetailAlatID->update($request->all());
-        return response()->json(['message' => 'Detail Alat berhasil diperbarui', 'data' => $DetailAlatID]);
+        $detailalat = Detail_Alat::where('DetailAlatID', $DetailAlatID)->first();
+
+        if ($detailalat === null) {
+            return response()->json(['error' => 'Detail alat not found'], 404);
+        }
+
+        $request->validate([
+            'namaDetailAlat' => 'required',
+            'statusKebergunaan' => 'required',
+            'statusPeminjaman' => 'required',
+        ]);
+
+        $detailalat->Nama_alat = $request->get('namaDetailAlat');
+        $detailalat->Status_Kebergunaan = $request->get('statusKebergunaan');
+        $detailalat->Status_Peminjaman = $request->get('statusPeminjaman');
+        $detailalat->Foto = $request->get('foto');
+        $detailalat->save();
+
+        return response()->json(['message' => 'Detail alat berhasil diperbarui', 'data' => $detailalat]);
+
     }
     //hapus data
     public function delete($DetailAlatID)
@@ -40,5 +58,4 @@ class DetailAlatController extends Controller
         $detailalat->delete();
         return response()->json(['message' => 'Detail Alat berhasil dihapus'], 204);
     }
-    
 }

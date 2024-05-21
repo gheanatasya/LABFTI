@@ -21,6 +21,7 @@ class AlatController extends Controller
     {
         return Alat::find($AlatID);
     }
+
     //tambah data
     public function store(StoreAlatRequest $request)
     {
@@ -31,12 +32,28 @@ class AlatController extends Controller
             return response()->json(['message' => 'Alat gagal ditambahkan'], 500);
         }
     }
-    //mengubah data
-    public function update(UpdateAlatRequest $request, Alat $AlatID)
+
+    //edit data alat 
+    public function update(UpdateAlatRequest $request, $AlatID)
     {
-        $AlatID->update($request->all());
-        return response()->json(['message' => 'Alat berhasil diperbarui', 'data' => $AlatID]);
+        $alat = Alat::where('AlatID', $AlatID)->first();
+
+        if ($alat === null) {
+            return response()->json(['error' => 'Alat not found'], 404);
+        }
+
+        $request->validate([
+            'namaAlat' => 'required',
+            'statusAlat' => 'required',
+        ]);
+
+        $alat->Nama = $request->get('namaAlat');
+        $alat->Status = $request->get('statusAlat');
+        $alat->save();
+
+        return response()->json(['message' => 'Alat berhasil diperbarui', 'data' => $alat]);
     }
+
     //hapus data alat
     public function delete($AlatID)
     {
