@@ -71,6 +71,7 @@ export default {
                 { title: 'Beranda', route: 'berandaSuperAdmin' },
                 { title: 'Peminjaman', submenus: [{ title: 'Peminjaman Ruangan & Alat', route: 'peminjamanRuangan' }, { title: 'Peminjaman Alat', route: 'peminjamanAlat' }], isOpen: false, },
                 { title: 'Daftar Alat', route: 'daftarAlat' },
+                { title: 'Daftar Ruangan', route: 'daftarRuangan' },
                 { title: 'Daftar Peminjaman', route: 'daftarPeminjaman' },
                 { title: 'Daftar Petugas', route: 'daftarPetugas' },
             ],

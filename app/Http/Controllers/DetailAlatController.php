@@ -20,12 +20,16 @@ class DetailAlatController extends Controller
     //tambah data
     public function store(StoreDetail_AlatRequest $request)
     {
-        $detailalat = Detail_Alat::create($request->only(['DetailAlatID', 'AlatID', 'Nama_alat', 'Status_Kebergunaan', 'Status_Peminjaman', 'Foto']));
-        if ($detailalat) {
-            return response()->json(['message' => 'Detail Alat berhasil ditambahkan', 'data' => $detailalat], 201);
-        } else {
-            return response()->json(['message' => 'Detail Alat gagal ditambahkan'], 500);
-        }
+        $input = $request->all();
+        Detail_Alat::create([
+            'DetailAlatID' => $input['kodeDetailAlat'],
+            'AlatID' => $input['kodeAlat'],
+            'Nama_alat' => $input['namaDetailAlat'],
+            'Status_Kebergunaan' => $input['statusKebergunaan'],
+            'Status_Peminjaman' => $input['statusPeminjaman'],
+            'Foto' => $input['foto']
+        ]);
+        return response()->json(['status' => true, 'message' => "Registration Success"]);
     }
     //mengubah data detail alat
     public function update(UpdateDetail_AlatRequest $request, $DetailAlatID)
@@ -49,7 +53,6 @@ class DetailAlatController extends Controller
         $detailalat->save();
 
         return response()->json(['message' => 'Detail alat berhasil diperbarui', 'data' => $detailalat]);
-
     }
     //hapus data
     public function delete($DetailAlatID)

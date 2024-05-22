@@ -23,5 +23,5 @@ class Alat extends Model
     public $timestamps = false;
     protected $table = 'alat';
     protected $primaryKey = 'AlatID';
-    protected $fillable = ['Nama', 'Jumlah_ketersediaan', 'Status'];
+    protected $fillable = ['AlatID', 'Nama', 'Jumlah_ketersediaan', 'Status'];
 }

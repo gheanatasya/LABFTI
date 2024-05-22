@@ -25,12 +25,14 @@ class AlatController extends Controller
     //tambah data
     public function store(StoreAlatRequest $request)
     {
-        $alat = Alat::create($request->only(['AlatID', 'Nama', 'Jumlah_ketersediaan']));
-        if ($alat) {
-            return response()->json(['message' => 'Alat berhasil ditambahkan', 'data' => $alat], 201);
-        } else {
-            return response()->json(['message' => 'Alat gagal ditambahkan'], 500);
-        }
+        $input = $request->all();
+        Alat::create([
+            'AlatID' => $input['kodeAlat'],
+            'Nama' => $input['namaAlat'],
+            'Status' => $input['statusAlat'],
+            'Jumlah_ketersediaan' => $input['jumlahKetersediaan']
+        ]);
+        return response()->json(['status' => true, 'message' => "Registration Success"]);
     }
 
     //edit data alat 
@@ -89,10 +91,12 @@ class AlatController extends Controller
             $statusAlat = $tool->Status;
             $detailAlat = Detail_Alat::where('AlatID', $kodeAlat)->get();
             $jumlahAlat = count($detailAlat);
+            $jumlahRusak = $detailAlat->where('Status_Kebergunaan', 'Rusak')->count();
             $recordData = [
                 'Nama' => $namaAlat,
                 'KodeAlat' => $kodeAlat,
                 'JumlahAlat' => $jumlahAlat,
+                'JumlahRusak' => $jumlahRusak,
                 'StatusAlat' => $statusAlat,
                 'detailAlat' => [],
             ];

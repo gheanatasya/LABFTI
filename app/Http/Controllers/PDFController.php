@@ -49,11 +49,9 @@ class PDFController extends Controller
             // Single record
             $singleRecord = $peminjaman->first();
             $peminjamanid = $singleRecord->PeminjamanID;
-            $keterangan = $singleRecord->Keterangan;
             $peminjamanRuang = Peminjaman_Ruangan_Bridge::where('PeminjamanID', $peminjamanid)->get();
             $peminjamanAlat = Peminjaman_Alat_Bridge::where('PeminjamanID', $peminjamanid)->get();
             $recordData = [
-                'keterangan' => $keterangan,
                 'PeminjamanID' => $peminjamanid,
                 'peminjamanRuang' => [],
                 'peminjamanAlat' => [],
@@ -69,12 +67,14 @@ class PDFController extends Controller
                 $ruanganid = $singlePeminjaman->RuanganID;
                 $ruangan = Ruangan::where('RuanganID', $ruanganid)->first();
                 $namaruangan = $ruangan->Nama_ruangan;
+                $keterangan = $singlePeminjaman->Keterangan;
                 $roomBookingData = [
                     'tanggalawal' => $tanggalawal,
                     'tanggalakhir' => $tanggalakhir,
                     'waktupakai' => $waktupakai,
                     'waktuselesai' => $waktuselesai,
                     'namaruangan' => $namaruangan,
+                    'keterangan' => $keterangan
                 ];
                 $recordData['peminjamanRuang'][] = $roomBookingData;
             } else {
@@ -83,6 +83,7 @@ class PDFController extends Controller
                     $tanggalakhir = $booking->Tanggal_pakai_akhir;
                     $waktupakai = $booking->Waktu_pakai;
                     $waktuselesai = $booking->Waktu_selesai;
+                    $keterangan = $booking->Keterangan;
                     $ruanganid = $booking->RuanganID;
                     $ruangan = Ruangan::where('RuanganID', $ruanganid)->first();
                     $namaruangan = $ruangan->Nama_ruangan;
@@ -93,6 +94,7 @@ class PDFController extends Controller
                         'waktupakai' => $booking->Waktu_pakai,
                         'waktuselesai' => $booking->Waktu_selesai,
                         'namaruangan' => $namaruangan,
+                        'keterangan' => $keterangan
                     ];
                     $recordData['peminjamanRuang'][] = $roomBookingData;
                 }
@@ -104,6 +106,7 @@ class PDFController extends Controller
                 $tanggalakhir = $singlePeminjaman->Tanggal_pakai_akhir;
                 $waktupakai = $singlePeminjaman->Waktu_pakai;
                 $waktuselesai = $singlePeminjaman->Waktu_selesai;
+                $keterangan = $singlePeminjaman->Keterangan;
                 $detailalatid = $singlePeminjaman->DetailAlatID;
                 $detailalat = Detail_Alat::where('DetailAlatID', $detailalatid)->first();
                 $namaalat = $detailalat->Nama_alat;
@@ -113,6 +116,7 @@ class PDFController extends Controller
                     'waktupakai' => $waktupakai,
                     'waktuselesai' => $waktuselesai,
                     'namaalat' => $namaalat,
+                    'keterangan' => $keterangan
                 ];
                 $recordData['peminjamanAlat'][] = $equipmentBookingData;
             } else {
@@ -121,6 +125,7 @@ class PDFController extends Controller
                     $tanggalakhir = $booking->Tanggal_pakai_akhir;
                     $waktupakai = $booking->Waktu_pakai;
                     $waktuselesai = $booking->Waktu_selesai;
+                    $keterangan = $booking->Keterangan;
                     $detailalatid = $singlePeminjaman->DetailAlatID;
                     $detailalat = Detail_Alat::where('DetailAlatID', $detailalatid)->first();
                     $namaalat = $detailalat->Nama_alat;
@@ -131,6 +136,7 @@ class PDFController extends Controller
                         'waktupakai' => $booking->Waktu_pakai,
                         'waktuselesai' => $booking->Waktu_selesai,
                         'namaalat' => $namaalat,
+                        'keterangan' => $keterangan
                     ];
                     $recordData['peminjamanAlat'][] = $equipmentBookingData;
                 }
@@ -160,6 +166,7 @@ class PDFController extends Controller
                     $waktupakai = $singlePeminjaman->Waktu_pakai;
                     $waktuselesai = $singlePeminjaman->Waktu_selesai;
                     $ruanganid = $singlePeminjaman->RuanganID;
+                    $keterangan = $singlePeminjaman->Keterangan;
                     $ruangan = Ruangan::where('RuanganID', $ruanganid)->first();
                     $namaruangan = $ruangan->Nama_ruangan;
 
@@ -169,6 +176,7 @@ class PDFController extends Controller
                         'waktupakai' => $waktupakai,
                         'waktuselesai' => $waktuselesai,
                         'namaruangan' => $namaruangan,
+                        'keterangan' => $keterangan
                     ];
                     $recordData['peminjamanRuang'][] = $roomBookingData;
                 } else {
@@ -178,6 +186,7 @@ class PDFController extends Controller
                         $waktupakai = $booking->Waktu_pakai;
                         $waktuselesai = $booking->Waktu_selesai;
                         $ruanganid = $booking->RuanganID;
+                        $keterangan = $booking->Keterangan;
                         $ruangan = Ruangan::where('RuanganID', $ruanganid)->first();
                         $namaruangan = $ruangan->Nama_ruangan;
 
@@ -187,6 +196,7 @@ class PDFController extends Controller
                             'waktupakai' => $booking->Waktu_pakai,
                             'waktuselesai' => $booking->Waktu_selesai,
                             'namaruangan' => $namaruangan,
+                            'keterangan' => $keterangan
                         ];
 
                         $recordData['peminjamanRuang'][] = $roomBookingData;
@@ -199,9 +209,10 @@ class PDFController extends Controller
                     $tanggalakhir = $singlePeminjaman->Tanggal_pakai_akhir;
                     $waktupakai = $singlePeminjaman->Waktu_pakai;
                     $waktuselesai = $singlePeminjaman->Waktu_selesai;
-                    $detailalatid = $singlePeminjaman->DetailAlatID;
-                    $detailalat = Detail_Alat::where('DetailAlatID', $detailalatid)->first();
-                    $namaalat = $detailalat->Nama_alat;
+                    $alatid = $singlePeminjaman->AlatID;
+                    $keterangan = $singlePeminjaman->Keterangan;
+                    $alat = Alat::where('AlatID', $alatid)->first();
+                    $namaalat = $alat->Nama;
 
                     $equipmentBookingData = [
                         'tanggalawal' => $tanggalawal,
@@ -209,6 +220,7 @@ class PDFController extends Controller
                         'waktupakai' => $waktupakai,
                         'waktuselesai' => $waktuselesai,
                         'namaalat' => $namaalat,
+                        'keterangan' => $keterangan
                     ];
                     $recordData['peminjamanAlat'][] = $equipmentBookingData;
                 } else {
@@ -217,16 +229,18 @@ class PDFController extends Controller
                         $tanggalakhir = $booking->Tanggal_pakai_akhir;
                         $waktupakai = $booking->Waktu_pakai;
                         $waktuselesai = $booking->Waktu_selesai;
-                        $detailalatid = $booking->DetailAlatID;
-                        $detailalat = Detail_Alat::where('DetailAlatID', $detailalatid)->first();
-                        $namaalat = $detailalat->Nama_alat;
-
+                        $keterangan = $booking->Keterangan;
+                        $alatid = $booking->AlatID;
+                        $alat = Alat::where('AlatID', $alatid)->first();
+                        $namaalat = $alat->Nama;
+    
                         $equipmentBookingData = [
                             'tanggalawal' => $booking->Tanggal_pakai_awal,
                             'tanggalakhir' => $booking->Tanggal_pakai_akhir,
                             'waktupakai' => $booking->Waktu_pakai,
                             'waktuselesai' => $booking->Waktu_selesai,
                             'namaalat' => $namaalat,
+                            'keterangan' => $keterangan
                         ];
 
                         $recordData['peminjamanAlat'][] = $equipmentBookingData;
@@ -250,10 +264,6 @@ class PDFController extends Controller
             'desiredPeminjamanID' => $desiredPeminjamanID
         ];
 
-        // Load PDF view and download
-        //$pdf = PDF::loadView('document', $data);
-        //return $pdf->download('document.pdf');
-        // Load PDF view and return without download
         $pdf = PDF::loadView('document', $data);
         return $pdf->download('document.pdf');
     }

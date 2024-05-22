@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import berandaUser from '../components/berandaUser.vue'
 import berandaSuperAdmin from '../components/berandaSuperAdmin.vue'
 import daftarAlat from '../components/daftarAlat.vue'
+import daftarRuangan from '../components/daftarRuangan.vue'
 import daftarPetugas from '../components/daftarPetugas.vue'
 import daftarPeminjaman from '../components/daftarPeminjaman.vue'
 import loginPage from '../components/loginPage.vue'
@@ -98,6 +99,11 @@ const routes = [
         path: '/berandaSuperAdmin',
         name: 'berandaSuperAdmin',
         component: berandaSuperAdmin
+    },
+    {
+        path: '/daftarRuangan',
+        name: 'daftarRuangan',
+        component: daftarRuangan
     },
 ]
 

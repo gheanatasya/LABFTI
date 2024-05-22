@@ -98,10 +98,10 @@ Route::delete('/detail/{DetailAlatID}', [DetailAlatController::class, 'delete'])
 
 // route untuk ruangan
 Route::get('/ruangan', [RuanganController::class, 'getAllRuangan']);
-Route::get('/ruangan/{DetailAlatID}', [RuanganController::class, 'show']);
+Route::get('/ruangan/{RuanganID}', [RuanganController::class, 'show']);
 Route::post('/ruangan', [RuanganController::class, 'store']);
-Route::put('/ruangan/{DetailAlatID}', [RuanganController::class, 'update']);
-Route::delete('/ruangan/{DetailAlatID}', [RuanganController::class, 'delete']);
+Route::put('/ruangan/{RuanganID}', [RuanganController::class, 'update']);
+Route::delete('/ruangan/{RuanganID}', [RuanganController::class, 'delete']);
 
 //route untuk peminjaman
 Route::get('/peminjaman', [PeminjamanController::class, 'getAllPeminjaman']);

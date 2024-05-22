@@ -37,7 +37,9 @@ class RuanganController extends Controller
     public function delete($RuanganID)
     {
         $ruangan = Ruangan::find($RuanganID);
-        $ruangan->delete();
+        $ruangan->Status = 'Tidak Tersedia';
+        $ruangan->save(); 
+        
         return response()->json(['message' => 'Ruangan berhasil dihapus'], 204);
     }
     

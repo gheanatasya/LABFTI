@@ -23,5 +23,5 @@ class Detail_Alat extends Model
     public $timestamps = false;
     protected $table = 'detail_alat';
     protected $primaryKey = 'DetailAlatID';
-    protected $fillable = ['AlatID', 'Nama_alat', 'Status_Kebergunaan', 'Status_Peminjaman', 'Foto'];
+    protected $fillable = ['DetailAlatID', 'AlatID', 'Nama_alat', 'Status_Kebergunaan', 'Status_Peminjaman', 'Foto'];
 }
