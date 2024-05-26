@@ -20,6 +20,7 @@
             <v-col>
                 <v-btn @click="this.grafikDialog = true"
                     style="text-transform: none; font-family: Lexend-Regular; background-color: rgb(2,39, 10, 0.9); color:white;">
+                    <v-icon>mdi-chart-line</v-icon>
                     Grafik Peminjaman</v-btn>
             </v-col>
 
@@ -274,8 +275,8 @@
         </v-dialog>
 
         <!-- grafik peminjaman perbulan -->
-        <v-dialog style="justify-content:center;" v-model="grafikDialog" persistent max-width="290">
-            <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 400px;">
+        <v-dialog style="justify-content:center;" v-model="grafikDialog" persistent max-width="500">
+            <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 500px; height: 500px;">
                 <v-card-actions class="d-flex justify-end">
                     <v-icon @click="grafikDialog = false">mdi-close-circle</v-icon>
                 </v-card-actions>
@@ -283,8 +284,8 @@
                     Grafik Peminjaman Alat
                 </v-card-title>
                 <v-card-text style="text-align: center;">
-                    <v-btn @click="createChart">Lihat Grafik</v-btn>
-                    <canvas id="chart" max-width="100" height="150"></canvas>
+                    <v-btn @click="createChart()">Lihat Grafik</v-btn>
+                    <canvas id="chart" max-width="300" height="200"></canvas>
                 </v-card-text>
             </v-card>
         </v-dialog>
@@ -482,62 +483,102 @@ export default {
                     console.error("Data tidak berhasil dimasukkan ke tabel Detail Alat", Error);
                 });
         },
-        createChart() {
-            const canvas = document.getElementById('chart');
+        async createChart() {
+            try {
+                await axios.get("http://127.0.0.1:8000/api/alattotalPerbulan").
+                    then(response => {
+                        const dataAlat = response.data;
+                        const canvas = document.getElementById('chart');
+                        const dataset = [];
+                        let label;
+                        let data;
 
-            new Chart(canvas, {
-                type: "bar",
-                data: {
-                    labels: ["Karbon Terserap", "Emisi Karbon"],
-                    datasets: [
-                        {
-                            label: "Tanah",
-                            data: [
-                                88,
-                                88,
-                            ],
-                            backgroundColor: ["#134280"],
-                        },
-                        {
-                            label: "Tanaman",
-                            data: [
-                                88,
-                                88,
-                            ],
-                            backgroundColor: ["#426799"],
-                        },
-                        {
-                            label: "Lingkungan",
-                            data: ["", 88],
-                            backgroundColor: ["#718db2"],
-                        },
-                    ],
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        x: {
-                            stacked: true,
-                            grid: {
-                                display: false,
-                            },
-                        },
-                        y: {
-                            stacked: true,
-                            grid: {
-                                display: false,
-                            },
-                        },
-                    },
-                    plugins: {
-                        legend: {
-                            position: "bottom",
-                            fullSize: true,
-                        },
-                    },
-                },
+                        for (let i = 0; i < dataAlat.length; i++) {
+                            label = dataAlat[i].label;
+                            data = [
+                                dataAlat[i].dataperbulan["01"].jumlah_peminjaman,
+                                dataAlat[i].dataperbulan["02"].jumlah_peminjaman,
+                                dataAlat[i].dataperbulan["03"].jumlah_peminjaman,
+                                dataAlat[i].dataperbulan["04"].jumlah_peminjaman,
+                                dataAlat[i].dataperbulan["05"].jumlah_peminjaman,
+                                dataAlat[i].dataperbulan["06"].jumlah_peminjaman,
+                                dataAlat[i].dataperbulan["07"].jumlah_peminjaman,
+                                dataAlat[i].dataperbulan["08"].jumlah_peminjaman,
+                                dataAlat[i].dataperbulan["09"].jumlah_peminjaman,
+                                dataAlat[i].dataperbulan["10"].jumlah_peminjaman,
+                                dataAlat[i].dataperbulan["11"].jumlah_peminjaman,
+                                dataAlat[i].dataperbulan["12"].jumlah_peminjaman,
+                            ];
 
-            })
+                            const record = {
+                                label,
+                                data 
+                            }
+                            
+                            dataset.push(record);
+                        }
+
+                        console.log(dataset);
+
+                        new Chart(canvas, {
+                            type: "line",
+                            data: {
+                                labels: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
+                                datasets: dataset/* [
+                                    {
+                                        label: "Tanah",
+                                        data: [
+                                            88,
+                                            88,
+                                        ],
+                                        backgroundColor: ["#134280"],
+                                    },
+                                    {
+                                        label: "Tanaman",
+                                        data: [
+                                            88,
+                                            88,
+                                        ],
+                                        backgroundColor: ["#426799"],
+                                    },
+                                    {
+                                        label: "Lingkungan",
+                                        data: ["", 88],
+                                        backgroundColor: ["#718db2"],
+                                    },
+                                ], */
+                            },
+                            options: {
+                                responsive: true,
+                                scales: {
+                                    x: {
+                                        stacked: true,
+                                        grid: {
+                                            display: false,
+                                        },
+                                    },
+                                    y: {
+                                        stacked: true,
+                                        grid: {
+                                            display: false,
+                                        },
+                                    },
+                                },
+                                plugins: {
+                                    legend: {
+                                        position: "bottom",
+                                        fullSize: true,
+                                    },
+                                },
+                            },
+
+                        })
+                    }).catch(error => {
+                        console.error("Error gagal mengambil data alat perbulan", error);
+                    });
+            } catch {
+                console.error()
+            }
         }
     },
     mounted() {

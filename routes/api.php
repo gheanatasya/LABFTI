@@ -13,6 +13,7 @@ use App\Http\Controllers\ProgramStudiController;
 use App\Http\Controllers\RuanganController;
 use App\Http\Controllers\UserController;
 use App\Models\Instansi;
+use App\Models\Ruangan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -87,6 +88,7 @@ Route::post('/alat', [AlatController::class, 'store']);
 Route::put('/alat/{AlatID}', [AlatController::class, 'update']);
 Route::delete('/alat/{AlatID}', [AlatController::class, 'delete']);
 Route::get('/alatforDaftarAlat', [AlatController::class, 'forDaftarAlat']);
+Route::get('/alattotalPerbulan', [AlatController::class, 'totalPerbulan']);
 
 
 // route untuk detail alat
@@ -102,6 +104,7 @@ Route::get('/ruangan/{RuanganID}', [RuanganController::class, 'show']);
 Route::post('/ruangan', [RuanganController::class, 'store']);
 Route::put('/ruangan/{RuanganID}', [RuanganController::class, 'update']);
 Route::delete('/ruangan/{RuanganID}', [RuanganController::class, 'delete']);
+Route::get('/ruangantotalPerbulan', [RuanganController::class, 'totalPerbulan']);
 
 //route untuk peminjaman
 Route::get('/peminjaman', [PeminjamanController::class, 'getAllPeminjaman']);

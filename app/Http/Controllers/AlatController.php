@@ -6,6 +6,8 @@ use App\Models\Alat;
 use App\Http\Requests\StoreAlatRequest;
 use App\Http\Requests\UpdateAlatRequest;
 use App\Models\Detail_Alat;
+use App\Models\Peminjaman_Alat_Bridge;
+use Psy\Readline\Hoa\Console;
 
 use function Laravel\Prompts\error;
 
@@ -32,7 +34,7 @@ class AlatController extends Controller
             'Status' => $input['statusAlat'],
             'Jumlah_ketersediaan' => $input['jumlahKetersediaan']
         ]);
-        return response()->json(['status' => true, 'message' => "Registration Success"]);
+        return response()->json(['status' => true, 'message' => "Tambahkan Alat Success"]);
     }
 
     //edit data alat 
@@ -123,5 +125,44 @@ class AlatController extends Controller
         }
 
         return $semuaData;
+    }
+
+    //ambil data jumlah peminjaman perbulan
+    public function totalPerbulan()
+    {
+        $daftaralat = Alat::all();
+        $fixData = [];
+
+        foreach ($daftaralat as $alat) {
+            $alatid = $alat->AlatID;
+            $peminjamanalat = Peminjaman_Alat_Bridge::where('AlatID', $alatid)->get();
+            $dataBulan = [];
+
+            for ($i = 1; $i <= 12; $i++) {
+                $bulanString = str_pad($i, 2, '0', STR_PAD_LEFT); 
+                $namaBulan = date('F', strtotime("01-$bulanString-2024")); 
+            
+                $dataBulan[$bulanString] = [
+                    'nama_bulan' => $namaBulan,
+                    'jumlah_peminjaman' => 0,
+                ];
+            }
+            
+            foreach ($peminjamanalat as $peminjaman) {
+                $bulan = date('m', strtotime($peminjaman->Tanggal_pakai_awal));            
+                $dataBulan[$bulan]['jumlah_peminjaman']++;
+            }
+            
+            ksort($dataBulan);
+
+            $record = [
+                'label' => $alat->Nama,
+                'dataperbulan' => $dataBulan
+            ];
+
+            $fixData[] = $record;
+        }
+
+        return $fixData;
     }
 }

@@ -17,10 +17,10 @@
             <v-spacer></v-spacer>
             <v-spacer></v-spacer>
             <v-col>
-                <v-btn @click="goToDetail"
+                <v-btn @click="this.grafikDialog = true"
                     style="text-transform: none; font-family: Lexend-Regular; background-color: rgb(2,39, 10, 0.9); color:white;">
-                    <v-icon>mdi-download</v-icon>Download
-                    Histori Peminjaman</v-btn>
+                    <v-icon>mdi-chart-line</v-icon>
+                    Grafik Peminjaman</v-btn>
             </v-col>
             <v-col>
                 <v-btn style="text-transform: none; font-family: Lexend-Regular; background-color: rgb(2,39, 10, 0.9); color:white;
@@ -165,7 +165,7 @@
                 <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;">
                     Tambah Ruangan</v-card-title>
                 <v-card-text style="text-align: center;">
-                    <v-text-field label="Kode Ruangan" v-model="this.ruanganTambah.RuanganID" variant="outlined" readonly
+                    <v-text-field label="Kode Ruangan" v-model="this.ruanganTambah.RuanganID" variant="outlined"
                         style="margin-right: 100px; margin-left:40px;"></v-text-field>
 
                     <v-text-field label="Nama Ruangan" v-model="this.ruanganTambah.Nama_ruangan" variant="outlined"
@@ -186,8 +186,13 @@
                         variant="outlined" style="margin-right: 100px; margin-left:40px;" label="Kategori">
                     </v-select>
 
-                    <v-textarea label="Fasilitas" v-model="this.ruanganTambah.fasilitas" variant="outlined" type=""
-                        style="margin-right: 100px; margin-left:40px;"></v-textarea>
+                    <v-textarea label="Fasilitas" v-model="this.ruanganTambah.fasilitas" variant="outlined"
+                        placeholder="TV, Papan Tulis, ..." style="margin-right: 100px; margin-left:40px;"></v-textarea>
+
+                    <v-select v-model="this.ruanganTambah.Status" :items="['Tersedia', 'Tidak Tersedia']"
+                        persistent-hint variant="outlined" style="margin-right: 100px; margin-left:40px;"
+                        label="Status">
+                    </v-select>
 
                     <v-file-input label="Foto" variant="outlined" v-model="this.ruanganTambah.foto" multiple
                         style="margin-right: 100px; margin-left:0px;"></v-file-input>
@@ -196,12 +201,28 @@
                     <v-btn
                         style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                         @click="this.dialogTambahRuangan = false">Batal</v-btn>
-                    <v-btn @click="tambahRuangan()"
-                        style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
+                    <v-btn @click="tambahRuangan(ruanganTambah)"
+                        style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Tambah</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
 
+        <!-- grafik peminjaman perbulan -->
+        <v-dialog style="justify-content:center;" v-model="grafikDialog" persistent max-width="500">
+            <v-card
+                style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 500px; height: 500px;">
+                <v-card-actions class="d-flex justify-end">
+                    <v-icon @click="grafikDialog = false">mdi-close-circle</v-icon>
+                </v-card-actions>
+                <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;">
+                    Grafik Peminjaman Ruangan
+                </v-card-title>
+                <v-card-text style="text-align: center;">
+                    <v-btn @click="createChart()">Lihat Grafik</v-btn>
+                    <canvas id="chart" max-width="300" height="200"></canvas>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
     </div>
 
     <footerPage></footerPage>
@@ -211,6 +232,7 @@
 import headerSuperAdmin from '../components/headerSuperAdmin.vue'
 import headerAdmin from '../components/headerAdmin.vue'
 import footerPage from '../components/footerPage.vue'
+import Chart from "chart.js/auto"
 
 export default {
     name: 'daftarRuangan',
@@ -226,6 +248,7 @@ export default {
             dialogTambahRuangan: false,
             editActionRuangan: false,
             gagalDeleteRuangan: false,
+            grafikDialog: false,
             allRoom: [],
             ruanganHapus: undefined,
             dialogHapusRuangan: false,
@@ -245,7 +268,8 @@ export default {
                 Kategori: null,
                 fasilitas: null,
                 Foto: null,
-                Nama_ruangan: null
+                Nama_ruangan: null,
+                Status: null
             }
         }
     },
@@ -258,7 +282,7 @@ export default {
                             if (room.fasilitas) {
                                 const cleanedString = room.fasilitas.slice(1, -1);
                                 const facilitiesArray = cleanedString.split(/"(.*?)",|,/).filter(facilit => facilit);
-                                room.fasilitas = facilitiesArray;
+                                room.fasilitas = facilitiesArray.map(facility => facility.replace(/"/g, ""));
                             }
                             return room;
                         });
@@ -298,6 +322,109 @@ export default {
                     this.gagalDeleteRuangan = true;
                     this.dialogHapusRuangan = false;
                 });
+        },
+        async createChart() {
+            try {
+                await axios.get("http://127.0.0.1:8000/api/ruangantotalPerbulan").
+                    then(response => {
+                        const dataRuangan = response.data;
+                        const canvas = document.getElementById('chart');
+                        const dataset = [];
+                        let label;
+                        let data;
+
+                        for (let i = 0; i < dataRuangan.length; i++) {
+                            label = dataRuangan[i].label;
+                            data = [
+                                dataRuangan[i].dataperbulan["01"].jumlah_peminjaman,
+                                dataRuangan[i].dataperbulan["02"].jumlah_peminjaman,
+                                dataRuangan[i].dataperbulan["03"].jumlah_peminjaman,
+                                dataRuangan[i].dataperbulan["04"].jumlah_peminjaman,
+                                dataRuangan[i].dataperbulan["05"].jumlah_peminjaman,
+                                dataRuangan[i].dataperbulan["06"].jumlah_peminjaman,
+                                dataRuangan[i].dataperbulan["07"].jumlah_peminjaman,
+                                dataRuangan[i].dataperbulan["08"].jumlah_peminjaman,
+                                dataRuangan[i].dataperbulan["09"].jumlah_peminjaman,
+                                dataRuangan[i].dataperbulan["10"].jumlah_peminjaman,
+                                dataRuangan[i].dataperbulan["11"].jumlah_peminjaman,
+                                dataRuangan[i].dataperbulan["12"].jumlah_peminjaman,
+                            ];
+
+                            const record = {
+                                label,
+                                data
+                            }
+
+                            dataset.push(record);
+                        }
+
+                        console.log(dataset);
+
+                        new Chart(canvas, {
+                            type: "line",
+                            data: {
+                                labels: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
+                                datasets: dataset
+                            },
+                            options: {
+                                responsive: true,
+                                scales: {
+                                    x: {
+                                        stacked: true,
+                                        grid: {
+                                            display: false,
+                                        },
+                                    },
+                                    y: {
+                                        stacked: true,
+                                        grid: {
+                                            display: false,
+                                        },
+                                    },
+                                },
+                                plugins: {
+                                    legend: {
+                                        position: "bottom",
+                                        fullSize: true,
+                                    },
+                                },
+                            },
+
+                        })
+                    }).catch(error => {
+                        console.error("Error gagal mengambil data alat perbulan", error);
+                    });
+            } catch {
+                console.error()
+            }
+        },
+        tambahRuangan(ruanganTambah) {
+            const facilitiesString = ruanganTambah.fasilitas;
+            const facilitiesArray = facilitiesString.split(/,/);
+            const fasilit = facilitiesArray.filter(facility => facility.trim());
+            const postgresqlArrayString = `{"${fasilit.map(facility => `"${facility.trim()}"`).join('", "')}"}`;
+
+            const tambahData = {
+                RuanganID: ruanganTambah.RuanganID,
+                Kapasitas: ruanganTambah.Kapasitas,
+                Kategori: ruanganTambah.Kategori,
+                Lokasi: ruanganTambah.Lokasi,
+                Foto: ruanganTambah.Foto,
+                Nama_ruangan: ruanganTambah.Nama_ruangan,
+                fasilitas: postgresqlArrayString,
+                Status: ruanganTambah.Status
+            }
+
+            console.log(tambahData)
+
+            /* axios.post(`http://127.0.0.1:8000/api/ruangan`, tambahData)
+                .then(response => {
+                    console.log("Data berhasil masuk ke tabel Ruangan", response.data)
+                    this.dialogTambahRuangan = false
+                })
+                .catch(Error => {
+                    console.error("Data tidak berhasil dimasukkan ke tabel Ruangan", Error);
+                }); */
         }
     },
     mounted() {
