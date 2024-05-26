@@ -19,7 +19,7 @@ class PeminjamanSeeder extends Seeder
         $peminjamID = DB::table('peminjam')->pluck('PeminjamID');
         $dokumenID = DB::table('dokumen')->pluck('DokumenID');
 
-        for($i = 1; $i <= 5; $i++) {
+        for($i = 1; $i <= 50; $i++) {
             DB::table('peminjaman')->insert([
                 'PeminjamID' => $faker->randomElement($peminjamID),
                 'DokumenID' => $faker->randomElement($dokumenID),

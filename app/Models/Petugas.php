@@ -13,4 +13,9 @@ class Petugas extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public $timestamps = false;
+    protected $table = 'petugas';
+    protected $primaryKey = 'PetugasID';
+    protected $fillable = ['Email', 'Nama', 'NIM', 'Foto', 'Tgl_Bekerja', 'Tgl_Berhenti'];
 }

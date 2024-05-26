@@ -9,6 +9,7 @@ use App\Http\Controllers\PeminjamanAlatBridgeController;
 use App\Http\Controllers\PeminjamanRuanganBridgeController;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\PeminjamController;
+use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\ProgramStudiController;
 use App\Http\Controllers\RuanganController;
 use App\Http\Controllers\UserController;
@@ -139,3 +140,8 @@ Route::get('/peminjamanRuangan/getKeterangan/{PeminjamanID}', [PeminjamanRuangan
 Route::get('/peminjamanRuangan/checkRelation/{PeminjamanID}', [PeminjamanRuanganBridgeController::class, 'checkRelation']);
 Route::get('/peminjamanRuangan/jadwalPeminjaman/{Tanggal_pakai_awal}/{Tanggal_pakai_akhir}', [PeminjamanRuanganBridgeController::class, 'jadwalPeminjaman'])->middleware('throttle:500,1');
 Route::get('/peminjamanRuangan/getPeminjamanRuangan/{UserID}', [PeminjamanRuanganBridgeController::class, 'getPeminjamanRuangan']);
+
+//route untuk petugas
+Route::get('/petugas', [PetugasController::class, 'allPetugas']);
+Route::put('/petugas/{UserID}', [PetugasController::class, 'update']);
+Route::delete('/petugas/{UserID}', [PetugasController::class, 'delete']);
