@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Petugas;
 use App\Http\Requests\StorePetugasRequest;
 use App\Http\Requests\UpdatePetugasRequest;
+use App\Models\Peminjam;
 use App\Models\User;
 
 class PetugasController extends Controller
@@ -83,4 +84,30 @@ class PetugasController extends Controller
 
         return response()->json(['message' => 'Petugas berhasil dihapus'], 204);
     }
+
+    //tambah petugas
+    public function store(StorePetugasRequest $request)
+    {
+        $input = $request->all();
+        $user = User::where('Email', $input['Email'])->first();
+        $userid = $user->UserID;
+        // return $userid;
+
+        $peminjam = Peminjam::where('UserID', $userid)->first();
+        $nama = $peminjam->Nama;
+
+         Petugas::create([
+            'Nama' => $nama,
+            'UserID' => $userid,
+            'Foto' => $input['Foto'],
+            'Tgl_Bekerja' => $input['Tgl_Bekerja'],
+            'Tgl_Berhenti' => $input['Tgl_Berhenti'],
+        ]);
+
+        $user->User_role = 'Petugas';
+        $user->save();
+
+        return response()->json(['status' => true, 'message' => "Tambahkan Petugas Success"]);
+    }
+
 }

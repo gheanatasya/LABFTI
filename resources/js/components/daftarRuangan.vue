@@ -114,6 +114,10 @@
                     <v-textarea label="Fasilitas" v-model="this.ruanganEdit.fasilitas" variant="outlined" type=""
                         style="margin-right: 100px; margin-left:40px;"></v-textarea>
 
+                    <v-select v-model="this.ruanganEdit.Status" :items="['Tersedia', 'Tidak Tersedia']" persistent-hint
+                        variant="outlined" style="margin-right: 100px; margin-left:40px;" label="Status">
+                    </v-select>
+
                     <v-file-input label="Foto" variant="outlined" v-model="this.ruanganEdit.foto" multiple
                         style="margin-right: 100px; margin-left:0px;"></v-file-input>
                 </v-card-text>
@@ -121,7 +125,8 @@
                     <v-btn
                         style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                         @click="editActionRuangan = false">Batal</v-btn>
-                    <v-btn @click="updateRuangan()"
+                    <v-btn
+                        @click="updateRuangan(ruanganEdit.RuanganID, ruanganEdit.Nama_ruangan, ruanganEdit.Lokasi, ruanganEdit.Kapasitas, ruanganEdit.Kategori, ruanganEdit.fasilitas, ruanganEdit.Foto, ruanganEdit.Status)"
                         style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
                 </v-card-actions>
             </v-card>
@@ -259,7 +264,8 @@ export default {
                 Kategori: null,
                 fasilitas: null,
                 Foto: null,
-                Nama_ruangan: null
+                Nama_ruangan: null,
+                Status: null,
             },
             ruanganTambah: {
                 RuanganID: null,
@@ -280,8 +286,7 @@ export default {
                     .then(response => {
                         this.allRoom = response.data.map(room => {
                             if (room.fasilitas) {
-                                const cleanedString = room.fasilitas.slice(1, -1);
-                                const facilitiesArray = cleanedString.split(/"(.*?)",|,/).filter(facilit => facilit);
+                                const facilitiesArray = room.fasilitas.split(/"(.*?)",|,/).filter(facilit => facilit);
                                 room.fasilitas = facilitiesArray.map(facility => facility.replace(/"/g, ""));
                             }
                             return room;
@@ -304,6 +309,39 @@ export default {
             this.ruanganEdit.Nama_ruangan = ruangan.Nama_ruangan;
             this.ruanganEdit.fasilitas = ruangan.fasilitas;
             this.ruanganEdit.Foto = ruangan.Foto;
+            this.ruanganEdit.Status = ruangan.Status;
+
+        },
+        updateRuangan(RuanganID, Nama_ruangan, Lokasi, Kapasitas, Kategori, fasilitas, Foto, Status) {
+            const updatebaru = fasilitas.toString();
+            const updateData = {
+                RuanganID,
+                Nama_ruangan,
+                Lokasi,
+                Kapasitas,
+                Kategori, 
+                updatebaru,
+                Foto,
+                Status
+            }
+            console.log(updateData)
+
+            axios.put(`http://127.0.0.1:8000/api/ruangan/${RuanganID}`, updateData, {
+                withCredentials: true,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+                .then(response => {
+                    if (response.status === 200) {
+                        console.log("Ruangan updated successfully:", response.data);
+                        this.editActionRuangan = false;
+                    } else {
+                        console.error("Error updating Ruangan:", response.data.message);
+                    }
+                }).catch(error => {
+                    console.error("Error updating Ruangan:", error);
+                });
         },
         konfirmasiHapusRuangan(RuanganID, Nama_ruangan) {
             this.dialogHapusRuangan = true;
@@ -402,7 +440,8 @@ export default {
             const facilitiesString = ruanganTambah.fasilitas;
             const facilitiesArray = facilitiesString.split(/,/);
             const fasilit = facilitiesArray.filter(facility => facility.trim());
-            const postgresqlArrayString = `{"${fasilit.map(facility => `"${facility.trim()}"`).join('", "')}"}`;
+            //const postgresqlArrayString = `{"${fasilit.map(facility => `"${facility.trim()}"`).join('", "')}"}`;
+            console.log(fasilit)
 
             const tambahData = {
                 RuanganID: ruanganTambah.RuanganID,
@@ -411,20 +450,20 @@ export default {
                 Lokasi: ruanganTambah.Lokasi,
                 Foto: ruanganTambah.Foto,
                 Nama_ruangan: ruanganTambah.Nama_ruangan,
-                fasilitas: postgresqlArrayString,
+                fasilitas: ruanganTambah.fasilitas,
                 Status: ruanganTambah.Status
             }
 
             console.log(tambahData)
 
-            /* axios.post(`http://127.0.0.1:8000/api/ruangan`, tambahData)
+            axios.post(`http://127.0.0.1:8000/api/ruangan`, tambahData)
                 .then(response => {
                     console.log("Data berhasil masuk ke tabel Ruangan", response.data)
                     this.dialogTambahRuangan = false
                 })
                 .catch(Error => {
                     console.error("Data tidak berhasil dimasukkan ke tabel Ruangan", Error);
-                }); */
+                });
         }
     },
     mounted() {

@@ -22,11 +22,10 @@ class RuanganController extends Controller
     public function store(StoreRuanganRequest $request)
     {
         $input = $request->all();
-       /*  $fasilitasArray = $input['fasilitas']; */
-       /*  $fasilitasPostgresArray = implode("', '", $fasilitasArray); */
-       /*  $fasilitasPostgresArray = "{'$fasilitasPostgresArray'}"; */
-        
-        //return $input;
+        /* $fasilitasArray = $input['fasilitas'];
+        $fasilitasPostgresArray = explode(', ', $fasilitasArray);
+        return $fasilitasPostgresArray; */
+
         $ruangan = Ruangan::create([
             'RuanganID' => $input['RuanganID'],
             'Nama_ruangan' => $input['Nama_ruangan'],
@@ -43,10 +42,36 @@ class RuanganController extends Controller
         return response()->json(['status' => true, 'message' => "Tambahkan Ruangan Success", 'data' => $ruanganWithId]);
     }
     //mengubah data
-    public function update(UpdateRuanganRequest $request, Ruangan $RuanganID)
+    public function update(UpdateRuanganRequest $request, $RuanganID)
     {
-        $RuanganID->update($request->all());
-        return response()->json(['message' => 'Ruangan berhasil diperbarui', 'data' => $RuanganID]);
+        $ruangan = Ruangan::where('RuanganID', $RuanganID)->first();
+
+        if ($ruangan === null) {
+            return response()->json(['error' => 'Ruangan not found'], 404);
+        }
+
+        $request->validate([
+            'RuanganID' => 'required', 
+            'Nama_ruangan' => 'required', 
+            'Kapasitas' => 'required', 
+            'Lokasi' => 'required', 
+            'Kategori' => 'required', 
+            'updatebaru' => 'required', 
+            //'Foto' => 'required', 
+            'Status' => 'required'
+        ]);
+
+        $ruangan->RuanganID = $request->get('RuanganID');
+        $ruangan->Nama_ruangan = $request->get('Nama_ruangan');
+        $ruangan->Kapasitas = $request->get('Kapasitas');
+        $ruangan->Lokasi = $request->get('Lokasi');
+        $ruangan->Kategori = $request->get('Kategori');
+        $ruangan->fasilitas = $request->get('updatebaru');
+        $ruangan->Status = $request->get('Status');
+        $ruangan->Foto = $request->get('Foto');
+        $ruangan->save();
+
+        return response()->json(['message' => 'Ruangan berhasil diperbarui', 'data' => $ruangan]);
     }
     //hapus data
     public function delete($RuanganID)

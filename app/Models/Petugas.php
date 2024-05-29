@@ -17,5 +17,6 @@ class Petugas extends Model
     public $timestamps = false;
     protected $table = 'petugas';
     protected $primaryKey = 'PetugasID';
-    protected $fillable = ['Email', 'Nama', 'NIM', 'Foto', 'Tgl_Bekerja', 'Tgl_Berhenti'];
+    // protected $guarded = ['PetugasID'];
+    protected $fillable = ['Email', 'Nama', 'NIM', 'Foto', 'Tgl_Bekerja', 'Tgl_Berhenti', 'UserID'];
 }

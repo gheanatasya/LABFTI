@@ -145,3 +145,5 @@ Route::get('/peminjamanRuangan/getPeminjamanRuangan/{UserID}', [PeminjamanRuanga
 Route::get('/petugas', [PetugasController::class, 'allPetugas']);
 Route::put('/petugas/{UserID}', [PetugasController::class, 'update']);
 Route::delete('/petugas/{UserID}', [PetugasController::class, 'delete']);
+Route::post('/petugas', [PetugasController::class, 'store']);
+
