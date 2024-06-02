@@ -140,6 +140,8 @@ Route::get('/peminjamanRuangan/getKeterangan/{PeminjamanID}', [PeminjamanRuangan
 Route::get('/peminjamanRuangan/checkRelation/{PeminjamanID}', [PeminjamanRuanganBridgeController::class, 'checkRelation']);
 Route::get('/peminjamanRuangan/jadwalPeminjaman/{Tanggal_pakai_awal}/{Tanggal_pakai_akhir}', [PeminjamanRuanganBridgeController::class, 'jadwalPeminjaman'])->middleware('throttle:500,1');
 Route::get('/peminjamanRuangan/getPeminjamanRuangan/{UserID}', [PeminjamanRuanganBridgeController::class, 'getPeminjamanRuangan']);
+Route::get('/getAllPeminjamanforAccRuangan', [PeminjamanRuanganBridgeController::class, 'getAllPeminjamanforAccRuangan']);
+Route::get('/getAllPeminjamanforAccAlat', [PeminjamanRuanganBridgeController::class, 'getAllPeminjamanforAccAlat']);
 
 //route untuk petugas
 Route::get('/petugas', [PetugasController::class, 'allPetugas']);

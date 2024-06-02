@@ -29,6 +29,16 @@ class Peminjaman_Alat_Bridge extends Model
         return $this->belongsTo(Dokumen::class);
     }
 
+    public function status_peminjaman()
+    {
+        return $this->hasOne(Status_Peminjaman::class);
+    }
+
+    public function persetujuan()
+    {
+        return $this->hasOne(Persetujuan::class);
+    }
+
     public $timestamps = false;
     protected $table = 'peminjaman_alat_bridge';
     protected $primaryKey = 'Peminjaman_Alat_ID';

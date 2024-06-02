@@ -15,11 +15,13 @@ class StatusPeminjamanSeeder extends Seeder
     public function run(): void
     {
         $faker = Faker::create('id_ID');
-        $peminjamanID = DB::table('peminjaman')->pluck('PeminjamanID');
+        $peminjamanruanganID = DB::table('peminjaman_ruangan_bridge')->pluck('Peminjaman_Ruangan_ID');
+        $peminjamanalatID = DB::table('peminjaman_alat_bridge')->pluck('Peminjaman_Alat_ID');
         $statusID = DB::table('status')->pluck('StatusID');
         for ($i = 1; $i <= 50; $i++) {
             DB::table('status_peminjaman')->insert([
-                'PeminjamanID' => $faker->randomElement($peminjamanID),
+                'Peminjaman_Ruangan_ID' => $faker->randomElement($peminjamanruanganID),
+                'Peminjaman_Alat_ID' => $faker->randomElement($peminjamanalatID),
                 'StatusID' => $faker->randomElement($statusID),
                 'Tanggal_Acc' => $faker->date('d-m-Y'),
             ]);

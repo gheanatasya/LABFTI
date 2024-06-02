@@ -16,15 +16,15 @@ class Peminjaman extends Model
         return $this->belongsTo(Peminjam::class,'PeminjamID','PeminjamID');
     }
 
-    public function persetujuan()
+    /* public function persetujuan()
     {
         return $this->hasOne(Persetujuan::class);
-    }
+    } */
 
-    public function status_peminjaman()
+    /* public function status_peminjaman()
     {
         return $this->hasOne(Status_Peminjaman::class);
-    }
+    } */
 
     public function peminjaman_ruangan_bridge(): HasMany
     {

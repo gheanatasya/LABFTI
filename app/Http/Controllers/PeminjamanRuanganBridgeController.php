@@ -164,11 +164,13 @@ class PeminjamanRuanganBridgeController extends Controller
     {
         $peminjam = Peminjam::where('UserID', $UserID)->first();
         $peminjamID = $peminjam->PeminjamID;
+        $namapeminjam = $peminjam->Nama;
         $peminjaman = Peminjaman::where('PeminjamID', $peminjamID)->get();
         $allroombooking = [];
 
         foreach ($peminjaman as $booking) {
             $peminjamanID = $booking->PeminjamanID;
+            $tanggalpinjam = $booking->Tanggal_pinjam;
             $datapinjamruangan = Peminjaman_Ruangan_Bridge::where('PeminjamanID', $peminjamanID)->get();
 
             foreach ($datapinjamruangan as $data) {
@@ -190,7 +192,7 @@ class PeminjamanRuanganBridgeController extends Controller
                 $kepala = $persetujuan->Kepala_Approve ?? null;
                 $petugas = $persetujuan->Petugas_Approve ?? null;
                 $koord = $persetujuan->Koordinator_Approve ?? null;
-                $namastatus = 'Diproses'; 
+                $namastatus = 'Diproses';
 
                 if (!empty($persetujuan)) {
                     if ($isOrganisation) {
@@ -214,7 +216,7 @@ class PeminjamanRuanganBridgeController extends Controller
                             $namastatus = 'Diterima';
                         } elseif ($petugas === null) {
                             $namastatus = 'Diproses';
-                        } elseif ($petugas === false){
+                        } elseif ($petugas === false) {
                             $namastatus = 'Ditolak';
                         }
                     } else {
@@ -231,11 +233,13 @@ class PeminjamanRuanganBridgeController extends Controller
                 $recordData = [
                     'peminjamanruanganid' => $peminjamanruanganid,
                     'peminjamanid' => $peminjamanid,
+                    'tanggalpinjam' => $tanggalpinjam,
                     'tanggalawal' => $tanggalawal,
                     'tanggalakhir' => $tanggalakhir,
                     'keterangan' => $keterangan,
                     'namaruangan' => $namaruangan,
-                    'status' => $namastatus
+                    'status' => $namastatus,
+                    'namapeminjam' => $namapeminjam
                 ];
 
                 $allroombooking[] = $recordData;
@@ -328,5 +332,185 @@ class PeminjamanRuanganBridgeController extends Controller
         }
 
         return response()->json(['availableRoom' => $array, 'detailRuangan' => $detailRoom]);
+    }
+
+    //ambil semua data peminjaman untuk admin 
+    public function getAllPeminjamanforAccRuangan()
+    {
+        $peminjaman = Peminjaman::all();
+        $totalsemuapeminjaman = [];
+
+        foreach ($peminjaman as $booking) {
+            $peminjamanID = $booking->PeminjamanID;
+            $tanggalpinjam = $booking->Tanggal_pinjam;
+            $peminjamID = $booking->PeminjamID;
+            $peminjam = Peminjam::where('PeminjamID', $peminjamID)->first();
+            $namapeminjam = $peminjam->Nama;
+            $datapinjamruangan = Peminjaman_Ruangan_Bridge::where('PeminjamanID', $peminjamanID)->get();
+
+            foreach ($datapinjamruangan as $data) {
+                $peminjamanruanganid = $data->Peminjaman_Ruangan_ID;
+                $ruanganid = $data->RuanganID;
+                $tanggalawal = $data->Tanggal_pakai_awal;
+                $tanggalakhir = $data->Tanggal_pakai_akhir;
+                $cariroom = Ruangan::where('RuanganID', $ruanganid)->first();
+                $namaruangan = $cariroom->Nama_ruangan;
+                $peminjamanid = $data->PeminjamanID;
+                $keterangan = $data->Keterangan;
+                $isPersonal = $data->Is_Personal;
+                $isOrganisation = $data->Is_Organisation;
+                $isEksternal = $data->Is_Eksternal;
+                $persetujuan = Persetujuan::where('PeminjamanID', $peminjamanID)->first();
+                $dekan = $persetujuan->Dekan_Approve ?? null;
+                $wd2 = $persetujuan->WD2_Approve ?? null;
+                $wd3 = $persetujuan->WD3_Approve ?? null;
+                $kepala = $persetujuan->Kepala_Approve ?? null;
+                $petugas = $persetujuan->Petugas_Approve ?? null;
+                $koord = $persetujuan->Koordinator_Approve ?? null;
+                $namastatus = 'Diproses';
+
+                if (!empty($persetujuan)) {
+                    if ($isOrganisation) {
+                        if ($wd3 && $kepala && $koord && $petugas) {
+                            $namastatus = 'Diterima';
+                        } elseif ($wd3 === null || $kepala === null || $koord === null || $petugas === null) {
+                            $namastatus = 'Diproses';
+                        } elseif ($wd3 === false || $kepala === false || $koord === false || $petugas === false) {
+                            $namastatus = 'Ditolak';
+                        }
+                    } elseif ($isEksternal) {
+                        if ($dekan && $kepala && $koord && $petugas) {
+                            $namastatus = 'Diterima';
+                        } elseif ($dekan === null || $kepala === null || $koord === null || $petugas === null) {
+                            $namastatus = 'Diproses';
+                        } elseif ($dekan === false || $kepala === false || $koord === false || $petugas === false) {
+                            $namastatus = 'Ditolak';
+                        }
+                    } elseif ($isPersonal) {
+                        if ($petugas) {
+                            $namastatus = 'Diterima';
+                        } elseif ($petugas === null) {
+                            $namastatus = 'Diproses';
+                        } elseif ($petugas === false) {
+                            $namastatus = 'Ditolak';
+                        }
+                    } else {
+                        if ($wd2 && $kepala && $koord && $petugas) {
+                            $namastatus = 'Diterima';
+                        } elseif ($wd2 === null || $kepala === null || $koord === null || $petugas === null) {
+                            $namastatus = 'Diproses';
+                        } elseif ($wd2 === false || $kepala === false || $koord === false || $petugas === false) {
+                            $namastatus = 'Ditolak';
+                        }
+                    }
+                }
+
+                $recordDataRoom = [
+                    'peminjamanruanganid' => $peminjamanruanganid,
+                    'peminjamanid' => $peminjamanid,
+                    'tanggalpinjam' => $tanggalpinjam,
+                    'tanggalawal' => $tanggalawal,
+                    'tanggalakhir' => $tanggalakhir,
+                    'keterangan' => $keterangan,
+                    'namaruangan' => $namaruangan,
+                    'status' => $namastatus,
+                    'namapeminjam' => $namapeminjam
+                ];
+
+                $totalsemuapeminjaman[] = $recordDataRoom;
+            }
+        }
+        return $totalsemuapeminjaman;
+    }
+
+    public function getAllPeminjamanforAccAlat()
+    {
+        $peminjaman = Peminjaman::all();
+        $totalsemuapeminjaman = [];
+
+        foreach ($peminjaman as $booking) {
+            $keterangan = $booking->Keterangan;
+            $peminjamanID = $booking->PeminjamanID;
+            $peminjamID = $booking->PeminjamID;
+            $tanggalpinjam = $booking->Tanggal_pinjam;
+            $peminjam = Peminjam::where('PeminjamID', $peminjamID)->first();
+            $namapeminjam = $peminjam->Nama;
+            $datapinjamalat = Peminjaman_Alat_Bridge::where('PeminjamanID', $peminjamanID)->get();
+
+            foreach ($datapinjamalat as $data) {
+                $peminjamanalatid = $data->Peminjaman_Alat_ID;
+                $alatid = $data->AlatID;
+                $tanggalawal = $data->Tanggal_pakai_awal;
+                $tanggalakhir = $data->Tanggal_pakai_akhir;
+                $peminjamanid = $data->PeminjamanID;
+                $alat = Alat::where('AlatID', $alatid)->first();
+                $namaalat = $alat->Nama;
+                $jumlahPinjam = $data->Jumlah_pinjam;
+                $keterangan = $data->Keterangan;
+                $isPersonal = $data->Is_Personal;
+                $isOrganisation = $data->Is_Organisation;
+                $isEksternal = $data->Is_Eksternal;
+                $persetujuan = Persetujuan::where('PeminjamanID', $peminjamanID)->first();
+                $dekan = $persetujuan->Dekan_Approve ?? null;
+                $wd2 = $persetujuan->WD2_Approve ?? null;
+                $wd3 = $persetujuan->WD3_Approve ?? null;
+                $kepala = $persetujuan->Kepala_Approve ?? null;
+                $petugas = $persetujuan->Petugas_Approve ?? null;
+                $koord = $persetujuan->Koordinator_Approve ?? null;
+                $namastatus = 'Diproses';
+
+                if (!empty($persetujuan)) {
+                    if ($isOrganisation) {
+                        if ($wd3 && $kepala && $koord && $petugas) {
+                            $namastatus = 'Diterima';
+                        } elseif ($wd3 === null || $kepala === null || $koord === null || $petugas === null) {
+                            $namastatus = 'Diproses';
+                        } elseif ($wd3 === false || $kepala === false || $koord === false || $petugas === false) {
+                            $namastatus = 'Ditolak';
+                        }
+                    } elseif ($isEksternal) {
+                        if ($dekan && $kepala && $koord && $petugas) {
+                            $namastatus = 'Diterima';
+                        } elseif ($dekan === null || $kepala === null || $koord === null || $petugas === null) {
+                            $namastatus = 'Diproses';
+                        } elseif ($dekan === false || $kepala === false || $koord === false || $petugas === false) {
+                            $namastatus = 'Ditolak';
+                        }
+                    } elseif ($isPersonal) {
+                        if ($petugas) {
+                            $namastatus = 'Diterima';
+                        } elseif ($petugas === null) {
+                            $namastatus = 'Diproses';
+                        } elseif ($petugas === false) {
+                            $namastatus = 'Ditolak';
+                        }
+                    } else {
+                        if ($wd2 && $kepala && $koord && $petugas) {
+                            $namastatus = 'Diterima';
+                        } elseif ($wd2 === null || $kepala === null || $koord === null || $petugas === null) {
+                            $namastatus = 'Diproses';
+                        } elseif ($wd2 === false || $kepala === false || $koord === false || $petugas === false) {
+                            $namastatus = 'Ditolak';
+                        }
+                    }
+                }
+
+                $recordDataAlat = [
+                    'peminjamanalatid' => $peminjamanalatid,
+                    'peminjamanid' => $peminjamanid,
+                    'tanggalawal' => $tanggalawal,
+                    'tanggalakhir' => $tanggalakhir,
+                    'keterangan' => $keterangan,
+                    'namaalat' => $namaalat,
+                    'status' => $namastatus,
+                    'jumlahPinjam' => $jumlahPinjam,
+                    'namapeminjam' => $namapeminjam,
+                    'tanggalpinjam' => $tanggalpinjam,
+                ];
+
+                $totalsemuapeminjaman[] = $recordDataAlat;
+            }
+        }
+        return $totalsemuapeminjaman;
     }
 }

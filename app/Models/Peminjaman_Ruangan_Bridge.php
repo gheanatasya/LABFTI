@@ -24,6 +24,16 @@ class Peminjaman_Ruangan_Bridge extends Model
         return $this->belongsTo(Dokumen::class);
     }
 
+    public function status_peminjaman()
+    {
+        return $this->hasOne(Status_Peminjaman::class);
+    }
+
+    public function persetujuan()
+    {
+        return $this->hasOne(Persetujuan::class);
+    }
+
     public $timestamps = false;
     protected $table = 'peminjaman_ruangan_bridge';
     protected $primaryKey = 'Peminjaman_Ruangan_ID';
