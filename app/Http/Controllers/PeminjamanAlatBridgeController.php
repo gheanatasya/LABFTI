@@ -11,6 +11,7 @@ use App\Models\Peminjam;
 use App\Models\Peminjaman;
 use App\Models\Peminjaman_Ruangan_Bridge;
 use App\Models\Persetujuan;
+use App\Models\Status_Peminjaman;
 use Illuminate\Support\Facades\DB;
 
 
@@ -41,6 +42,8 @@ class PeminjamanAlatBridgeController extends Controller
         //dd($peminjaman);
         $peminjamanid = $peminjaman->PeminjamanID;
         $totalpinjamalat = [];
+        $persetujuanAlat = [];
+        $statuspeminjamanAlat = [];
 
         for ($i = 0; $i < count($input); $i++) {
             if (count($input[$i]['alat']) > 0) {
@@ -59,18 +62,41 @@ class PeminjamanAlatBridgeController extends Controller
                             'Is_Organisation' => $input[$i]['selectedOptionOrganisation'],
                             'Is_Eksternal' => $input[$i]['selectedOptionEksternal'],
                             'DokumenID' => $input[$i]['dokumen'],
-                            'Keterangan' => $input[$i]['keterangan']
+                            'Keterangan' => $input[$i]['keterangan'],
+                            'RuanganID' => null,
                         ]);
+
+                        $accAlat = Persetujuan::create([
+                            'Peminjaman_Ruangan_ID' => null,
+                            'Peminjaman_Alat_ID' => $peminjaman_alat->Peminjaman_Alat_ID,
+                            'Dekan_Approve' => null,
+                            'WD2_Approve' => null,
+                            'WD3_Approve' => null,
+                            'Kepala Lab' => null,
+                            'Koordinator Lab' => null,
+                            'Petugas' => null
+                        ]);
+
+                        $statuspeminjamanA = Status_Peminjaman::create([
+                            'Peminjaman_Ruangan_ID' => null,
+                            'Peminjaman_Alat_ID' => $peminjaman_alat->Peminjaman_Alat_ID,
+                            'StatusID' => 1,
+                            'Tanggal_Acc' => date('d-m-Y')
+                        ]);
+                        
                         $stokSedia = $detail->Jumlah_ketersediaan;
                         $stokAkhir = $stokSedia - $jumlahpinjam;
                         $currentStok = Alat::where('AlatID', $alatID)->update(['Jumlah_ketersediaan' => $stokAkhir]);
                         $totalpinjamalat[] = $peminjaman_alat;
+                        $persetujuanAlat[] = $accAlat;
+                        $statuspeminjamanAlat[] = $statuspeminjamanA;
                     }
                 };
             }
         }
 
-        return response()->json(['status' => true, 'message' => "Registration Success", 'peminjaman_alat_bridge' => $totalpinjamalat]);
+        return response()->json(['status' => true, 'message' => "Registration Success", 'peminjaman_alat_bridge' => $totalpinjamalat, 'persetujuan' => $persetujuanAlat,
+        'statuspeminjamanalat' => $statuspeminjamanAlat]);
     }
     //mengubah data semua row
     public function updateSemuaRow(UpdatePeminjaman_Alat_BridgeRequest $request, Peminjaman_Alat_Bridge $Peminjaman_Alat_ID)

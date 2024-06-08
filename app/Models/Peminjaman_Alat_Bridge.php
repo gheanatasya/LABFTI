@@ -44,6 +44,6 @@ class Peminjaman_Alat_Bridge extends Model
     protected $primaryKey = 'Peminjaman_Alat_ID';
     protected $fillable = [
         'PeminjamanID', 'AlatID', 'Tanggal_pakai_awal', 'Tanggal_pakai_akhir', 'Waktu_pakai', 'Waktu_selesai', 'Waktu_pengambilan', 'Tanggal_pengembalian', 'Waktu_pengembalian', 'Jumlah_pinjam',
-        'Is_Personal', 'Is_Organisation', 'Is_Eksternal', 'Keterangan', 'DokumenID'
+        'Is_Personal', 'Is_Organisation', 'Is_Eksternal', 'Keterangan', 'DokumenID', 'RuanganID'
     ];
 }

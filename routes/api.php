@@ -9,6 +9,7 @@ use App\Http\Controllers\PeminjamanAlatBridgeController;
 use App\Http\Controllers\PeminjamanRuanganBridgeController;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\PeminjamController;
+use App\Http\Controllers\PersetujuanController;
 use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\ProgramStudiController;
 use App\Http\Controllers\RuanganController;
@@ -141,11 +142,22 @@ Route::get('/peminjamanRuangan/checkRelation/{PeminjamanID}', [PeminjamanRuangan
 Route::get('/peminjamanRuangan/jadwalPeminjaman/{Tanggal_pakai_awal}/{Tanggal_pakai_akhir}', [PeminjamanRuanganBridgeController::class, 'jadwalPeminjaman'])->middleware('throttle:500,1');
 Route::get('/peminjamanRuangan/getPeminjamanRuangan/{UserID}', [PeminjamanRuanganBridgeController::class, 'getPeminjamanRuangan']);
 Route::get('/getAllPeminjamanforAccRuangan', [PeminjamanRuanganBridgeController::class, 'getAllPeminjamanforAccRuangan']);
+Route::get('/getAllPeminjamanforAccRuanganDekan', [PeminjamanRuanganBridgeController::class, 'getAllPeminjamanforAccRuanganDekan']);
+Route::get('/getAllPeminjamanforAccRuanganWD2', [PeminjamanRuanganBridgeController::class, 'getAllPeminjamanforAccRuanganWD2']);
+Route::get('/getAllPeminjamanforAccRuanganWD3', [PeminjamanRuanganBridgeController::class, 'getAllPeminjamanforAccRuanganWD3']);
 Route::get('/getAllPeminjamanforAccAlat', [PeminjamanRuanganBridgeController::class, 'getAllPeminjamanforAccAlat']);
+Route::get('/getAllPeminjamanforAccAlatDekan', [PeminjamanRuanganBridgeController::class, 'getAllPeminjamanforAccAlatDekan']);
+Route::get('/getAllPeminjamanforAccAlatWD2', [PeminjamanRuanganBridgeController::class, 'getAllPeminjamanforAccAlatWD2']);
+Route::get('/getAllPeminjamanforAccAlatWD3', [PeminjamanRuanganBridgeController::class, 'getAllPeminjamanforAccAlatWD3']);
 
 //route untuk petugas
 Route::get('/petugas', [PetugasController::class, 'allPetugas']);
 Route::put('/petugas/{UserID}', [PetugasController::class, 'update']);
 Route::delete('/petugas/{UserID}', [PetugasController::class, 'delete']);
 Route::post('/petugas', [PetugasController::class, 'store']);
+
+//route untuk persetujuan
+Route::put('/persetujuan/confirmBookingRuangan/{Peminjaman_Ruangan_ID}/{User_role}/{NamaStatus}/{Catatan}', [PersetujuanController::class, 'confirmBookingRuangan']);
+Route::put('/persetujuan/confirmBookingAlat/{Peminjaman_Alat_ID}/{User_role}/{NamaStatus}/{Catatan}', [PersetujuanController::class, 'confirmBookingAlat']);
+
 

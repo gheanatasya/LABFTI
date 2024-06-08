@@ -11,7 +11,7 @@ class UpdateActivity_LogRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**

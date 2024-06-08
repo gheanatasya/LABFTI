@@ -13,4 +13,9 @@ class Activity_Log extends Model
     {
         return $this->belongsTo(Status_Peminjaman::class);
     }
+
+    public $timestamps = false;
+    protected $table = 'activity_log';
+    protected $primaryKey = 'Activity_LogID';
+    protected $fillable = ['Status_PeminjamanID', 'Nama_status', 'Tanggal_Acc', 'Acc_by', 'Catatan'];
 }
