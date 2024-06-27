@@ -17,7 +17,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/generate-pdf/{UserID}/{desiredPeminjamanID}', [PDFController::class, 'generatePDF']);
+Route::get('/generate-pdf/{UserID}/{desiredPeminjamanID}/{peminjamanruanganid}/{peminjamanalatid}', [PDFController::class, 'generatePDF']);
 
 Route::get('/{pathMatch}', function(){
     return view('welcome');

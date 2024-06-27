@@ -22,8 +22,11 @@
                     <v-list>
                         <v-list-item v-for="(item, i) in menu1.submenus" :key="i">
                             <v-list-item-title>
-                                <v-icon>{{item.icon}}</v-icon>
-                                <v-btn flat>
+                                <v-icon>{{ item.icon }}</v-icon>
+                                <v-btn flat @click="logout" v-if="item.title === 'Logout'">
+                                    {{ item.title }}
+                                </v-btn>
+                                <v-btn :to="item.route" v-else flat>
                                     {{ item.title }}
                                 </v-btn>
                             </v-list-item-title>
@@ -53,10 +56,24 @@ export default {
 
             menusLeft: [
                 { title: 'Pemberitahuan', icon: 'mdi-bell' },
-                { title: 'Pengaturan', icon: 'mdi-cog', submenus: [{ title: 'Profil', icon: 'mdi-account-circle'}, { title: 'Logout', icon: 'mdi-logout'}] },
+                { title: 'Pengaturan', icon: 'mdi-cog', submenus: [{ title: 'Profil', icon: 'mdi-account-circle', route: 'profil'}, { title: 'Logout', icon: 'mdi-logout'}] },
             ]
         }
     },
+    methods: {
+        logout() {
+            axios.get('http://localhost:8000/api/logout')
+                .then(() => {
+                    // Remove localStorage
+                    localStorage.removeItem("loggedIn");
+                    // Redirect
+                    return this.$router.push({ name: 'loginPage' });
+                })
+                .catch(error => {
+                    console.error('Logout failed:', error);
+                });
+        }
+    }
 };
 </script>
 

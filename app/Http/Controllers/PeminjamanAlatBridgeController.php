@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Peminjaman_Alat_Bridge;
 use App\Http\Requests\StorePeminjaman_Alat_BridgeRequest;
 use App\Http\Requests\UpdatePeminjaman_Alat_BridgeRequest;
+use App\Models\Activity_Log;
 use App\Models\Alat;
 use App\Models\Detail_Alat;
 use App\Models\Peminjam;
@@ -107,6 +108,13 @@ class PeminjamanAlatBridgeController extends Controller
     //hapus data
     public function delete($Peminjaman_Alat_ID)
     {
+        $statuspeminjaman = Status_Peminjaman::where('Peminjaman_Alat_ID', $Peminjaman_Alat_ID)->first();
+        $statuspeminjamanid = $statuspeminjaman->Status_PeminjamanID;
+        $activitylog = Activity_Log::where('Status_PeminjamanID', $statuspeminjamanid)->first();
+        $activitylog->delete();
+        $statuspeminjaman->delete();
+        $persetujuan = Persetujuan::where('Peminjaman_Alat_ID', $Peminjaman_Alat_ID)->first();
+        $persetujuan->delete();
         $peminjamanalat = Peminjaman_Alat_Bridge::find($Peminjaman_Alat_ID);
         $peminjamanalat->delete();
         return response()->json(['message' => 'peminjamanalat berhasil dihapus'], 204);
@@ -184,7 +192,7 @@ class PeminjamanAlatBridgeController extends Controller
                 $isPersonal = $data->Is_Personal;
                 $isOrganisation = $data->Is_Organisation;
                 $isEksternal = $data->Is_Eksternal;
-                $persetujuan = Persetujuan::where('PeminjamanID', $peminjamanID)->first();
+                $persetujuan = Persetujuan::where('Peminjaman_Alat_ID', $peminjamanalatid)->first();
                 $dekan = $persetujuan->Dekan_Approve ?? null;
                 $wd2 = $persetujuan->WD2_Approve ?? null;
                 $wd3 = $persetujuan->WD3_Approve ?? null;
@@ -229,6 +237,23 @@ class PeminjamanAlatBridgeController extends Controller
                     }
                 }
 
+                $histori = [];
+                $statuspeminjaman = Status_Peminjaman::where('Peminjaman_Alat_ID', $peminjamanalatid)->first();
+                if ($statuspeminjaman != null) {
+                    $statuspeminjamanid = $statuspeminjaman->Status_PeminjamanID;
+                    $activitylog = Activity_Log::where('Status_PeminjamanID', $statuspeminjamanid)->get();
+                    foreach ($activitylog as $log) {
+                        $recordHistory = [
+                            'Acc_by' => $log->Acc_by,
+                            'Tanggal_acc' => $log->Tanggal_Acc,
+                            'Namastatus' => $log->Nama_status,
+                            'Catatan' => $log->Catatan
+                        ];
+
+                        $histori[] = $recordHistory;
+                    }
+                }
+
                 $recordData = [
                     'peminjamanalatid' => $peminjamanalatid,
                     'peminjamanid' => $peminjamanid,
@@ -237,7 +262,8 @@ class PeminjamanAlatBridgeController extends Controller
                     'keterangan' => $keterangan,
                     'namaalat' => $namaalat,
                     'status' => $namastatus,
-                    'jumlahPinjam' => $jumlahPinjam
+                    'jumlahPinjam' => $jumlahPinjam,
+                    'histori' => $histori
                 ];
 
                 $alltoolsbooking[] = $recordData;

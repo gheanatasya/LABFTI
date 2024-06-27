@@ -78,7 +78,7 @@ export default {
 
             menusLeft: [
                 { title: 'Pemberitahuan', icon: 'mdi-bell' },
-                { title: 'Pengaturan', icon: 'mdi-cog', submenus: [{ title: 'Profil', icon: 'mdi-account-circle', route: '/profil'}, { title: 'Logout', icon: 'mdi-logout', route: '/landingPage'}] },
+                { title: 'Pengaturan', icon: 'mdi-cog', submenus: [{ title: 'Profil', icon: 'mdi-account-circle', route: 'profil'}, { title: 'Logout', icon: 'mdi-logout', route: 'landingPage'}] },
             ]
         }
     },

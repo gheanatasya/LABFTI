@@ -8,11 +8,14 @@ use App\Http\Requests\UpdatePeminjaman_Ruangan_BridgeRequest;
 use App\Models\Activity_Log;
 use App\Models\Alat;
 use App\Models\Detail_Alat;
+use App\Models\Fakultas;
+use App\Models\Instansi;
 use App\Models\Peminjam;
 use App\Models\Ruangan;
 use App\Models\Peminjaman;
 use App\Models\Peminjaman_Alat_Bridge;
 use App\Models\Persetujuan;
+use App\Models\Program_Studi;
 use App\Models\Status;
 use App\Models\Status_Peminjaman;
 use App\Models\User;
@@ -161,7 +164,43 @@ class PeminjamanRuanganBridgeController extends Controller
     //hapus data
     public function delete($Peminjaman_Ruangan_ID)
     {
+        $statuspeminjaman = Status_Peminjaman::where('Peminjaman_Ruangan_ID', $Peminjaman_Ruangan_ID)->first();
+        $statuspeminjamanid = $statuspeminjaman->Status_PeminjamanID;
+        $activitylog = Activity_Log::where('Status_PeminjamanID', $statuspeminjamanid)->first();
+        $persetujuan = Persetujuan::where('Peminjaman_Ruangan_ID', $Peminjaman_Ruangan_ID)->first();
         $peminjamanruangan = Peminjaman_Ruangan_Bridge::find($Peminjaman_Ruangan_ID);
+
+        if ($activitylog != null) {
+            $activitylog->delete();
+        }
+
+        if ($statuspeminjaman != null) {
+            $statuspeminjaman->delete();
+        }
+
+        if ($persetujuan != null) {
+            $organisasi = $peminjamanruangan->Is_Organisation;
+            $personal = $peminjamanruangan->Is_Personal;
+            $eksternal = $peminjamanruangan->Is_Eksternal;
+            $tanggalpenggunaan = $peminjamanruangan->Tanggal_pakai_awal;
+            $tanggalbatal = date('d-m-Y');
+
+            $dekan = $persetujuan->Dekan_Approve;
+            $wd2 = $persetujuan->WD2_Approve;
+            $wd3 = $persetujuan->WD3_Approve;
+            $kepala = $persetujuan->Kepala_Lab;
+            $koordinator = $persetujuan->Koordinator_Lab;
+            $petugas = $persetujuan->Petugas;
+
+            if ($organisasi === true){
+                if ($wd3 === true && $kepala === true && $koordinator === true && $petugas === true && ($tanggalpenggunaan >= $tanggalbatal)) {
+                    
+                }
+            }
+
+            $persetujuan->delete();
+        }
+        
         $peminjamanruangan->delete();
         return response()->json(['message' => 'peminjamanruangan berhasil dihapus'], 204);
     }
@@ -213,7 +252,7 @@ class PeminjamanRuanganBridgeController extends Controller
         $namapeminjam = $peminjam->Nama;
         $peminjaman = Peminjaman::where('PeminjamID', $peminjamID)->get();
         $allroombooking = [];
-
+        
         foreach ($peminjaman as $booking) {
             $peminjamanID = $booking->PeminjamanID;
             $tanggalpinjam = $booking->Tanggal_pinjam;
@@ -231,7 +270,7 @@ class PeminjamanRuanganBridgeController extends Controller
                 $isPersonal = $data->Is_Personal;
                 $isOrganisation = $data->Is_Organisation;
                 $isEksternal = $data->Is_Eksternal;
-                $persetujuan = Persetujuan::where('PeminjamanID', $peminjamanID)->first();
+                $persetujuan = Persetujuan::where('Peminjaman_Ruangan_ID', $peminjamanruanganid)->first();
                 $dekan = $persetujuan->Dekan_Approve ?? null;
                 $wd2 = $persetujuan->WD2_Approve ?? null;
                 $wd3 = $persetujuan->WD3_Approve ?? null;
@@ -276,6 +315,23 @@ class PeminjamanRuanganBridgeController extends Controller
                     }
                 }
 
+                $histori = [];
+                $statuspeminjaman = Status_Peminjaman::where('Peminjaman_Ruangan_ID', $peminjamanruanganid)->first();
+                if ($statuspeminjaman != null) {
+                    $statuspeminjamanid = $statuspeminjaman->Status_PeminjamanID;
+                    $activitylog = Activity_Log::where('Status_PeminjamanID', $statuspeminjamanid)->get();
+                    foreach ($activitylog as $log) {
+                        $recordHistory = [
+                            'Acc_by' => $log->Acc_by,
+                            'Tanggal_acc' => $log->Tanggal_Acc,
+                            'Namastatus' => $log->Nama_status,
+                            'Catatan' => $log->Catatan
+                        ];
+
+                        $histori[] = $recordHistory;
+                    }
+                }
+
                 $recordData = [
                     'peminjamanruanganid' => $peminjamanruanganid,
                     'peminjamanid' => $peminjamanid,
@@ -285,7 +341,8 @@ class PeminjamanRuanganBridgeController extends Controller
                     'keterangan' => $keterangan,
                     'namaruangan' => $namaruangan,
                     'status' => $namastatus,
-                    'namapeminjam' => $namapeminjam
+                    'namapeminjam' => $namapeminjam,
+                    'histori' => $histori
                 ];
 
                 $allroombooking[] = $recordData;
@@ -1404,5 +1461,90 @@ class PeminjamanRuanganBridgeController extends Controller
                 }
             }
         }
+    }
+
+    public function generatePDF($UserID, $desiredPeminjamanID, $peminjamanruanganid)
+    {
+        $user = User::where('UserID', $UserID)->first();
+        $peminjam = Peminjam::where('UserID', $UserID)->first();
+        $peminjamid = $peminjam->PeminjamID;
+        $nama = $peminjam ? $peminjam->Nama : '';
+        $nim = $user ? $user->NIM_NIDN : '';
+        $role = $user ? $user->User_role : '';
+        $email = $user ? $user->Email : '';
+
+        $prodiId = $peminjam ? $peminjam->ProdiID : null;
+        $instansiID = $peminjam ? $peminjam->InstansiID : null;
+        $instansi = Instansi::find($instansiID);
+        $namainstansi = $instansi ? $instansi->Nama_instansi : '';
+        $prodi = Program_Studi::find($prodiId);
+        $namaprodi = $prodi ? $prodi->Nama_prodi : '';
+        $fakultasId = $prodi ? $prodi->FakultasID : null;
+        $fakultas = Fakultas::find($fakultasId);
+        $namafakultas = $fakultas ? $fakultas->Nama_fakultas : '';
+
+        $peminjamID = $peminjam->PeminjamID;
+        $PeminjamanRuangan = Peminjaman_Ruangan_Bridge::where('Peminjaman_Ruangan_ID', $peminjamanruanganid)->first();
+
+        if ($PeminjamanRuangan !== null) {
+            $ruanganid = $PeminjamanRuangan->RuanganID;
+            $ruangan = Ruangan::find($ruanganid);
+            $namaruangan = $ruangan ? $ruangan->Nama_ruangan : '';
+            $tanggalawal = $PeminjamanRuangan->Tanggal_pakai_awal;
+            $tanggalakhir = $PeminjamanRuangan->Tanggal_pakai_akhir;
+            $keterangan = $PeminjamanRuangan->Keterangan;
+
+            $recordDataRuangan = [
+                'PeminjamanID' => $desiredPeminjamanID,
+                'namaruangan' => $namaruangan,
+                'keterangan' => $keterangan,
+                'tanggalawal' => $tanggalawal,
+                'tanggalakhir' => $tanggalakhir,
+            ];
+
+            $recordDataAlat = [];
+
+            $peminjamanalat = Peminjaman_Alat_Bridge::where('RuanganID', $ruanganid)
+            ->where('Tanggal_pakai_awal', $tanggalawal)
+            ->where('Tanggal_pakai_akhir', $tanggalakhir)
+            ->get();
+
+            if ($peminjamanalat != null) {
+                foreach ($peminjamanalat as $alat) {
+                    $alatid = $alat->AlatID;
+                    $alatt = Alat::find($alatid);
+                    $namalat = $alatt ? $alatt->Nama : '';
+                    $jumlahPinjam = $alat->Jumlah_pinjam;
+                    $tanggalawal = $alat->Tanggal_pakai_awal;
+                    $tanggalakhir = $alat->Tanggal_pakai_akhir;
+                    $keterangan = $alat->Keterangan;
+                    
+                    $recordDataAlat[] = [
+                        'namaalat' => $namalat,
+                        'jumlahPinjam' => $jumlahPinjam,
+                        'tanggalawal' => $tanggalawal,
+                        'tanggalakhir' => $tanggalakhir,
+                        'keterangan' => $keterangan
+                    ];
+                }    
+            }
+        }
+
+        $data = [
+            'title' => 'Peminjaman Ruangan dan Alat LAB FTI UKDW',
+            'nama' => $nama,
+            'nim' => $nim,
+            'role' => $role,
+            'email' => $email,
+            'namainstansi' => $namainstansi,
+            'namaprodi' => $namaprodi,
+            'namafakultas' => $namafakultas,
+            'peminjamanDataRuangan' => $recordDataRuangan,
+            'peminjamanDataAlat' => $recordDataAlat,
+            'desiredPeminjamanID' => $desiredPeminjamanID,
+            'tanggaldownload' => date('d/m/Y')
+        ];
+
+        return $data;
     }
 }

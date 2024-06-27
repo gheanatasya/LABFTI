@@ -183,7 +183,7 @@ export default {
             if (this.selectedLokasi) {
                 filteredData = filteredData.filter((room) => room.Lokasi === this.selectedLokasi);
             }
-
+            
             //filter berdasarkan kategori
             if (this.selectedKategori) {
                 filteredData = filteredData.filter((room) => room.Kategori === this.selectedKategori);

@@ -35,19 +35,19 @@
                             <td style="text-align: center;">
                                 <v-chip v-if="item.status === 'Diterima'"
                                     style="background-color: rgb(2, 39, 10, 1); color: white;"
-                                    @click="openInformationRoom">{{ item.status }}</v-chip>
+                                    @click="openInformationRoom(item.histori)">{{ item.status }}</v-chip>
 
                                 <v-chip v-if="item.status === 'Ditolak'"
                                     style="background-color: rgb(234, 8, 8, 0.91); color: white;"
-                                    @click="openInformationRoom">{{ item.status }}</v-chip>
+                                    @click="openInformationRoom(item.histori)">{{ item.status }}</v-chip>
 
                                 <v-chip v-if="item.status === 'Diproses'"
                                     style="background-color: rgb(0, 0, 0, 0.5); color: white;"
-                                    @click="openInformationRoom">{{ item.status }}</v-chip>
+                                    @click="openInformationRoom(item.histori)">{{ item.status }}</v-chip>
                             </td>
 
                             <td style="width: 110px; font-size: 25px;"> <v-icon
-                                    @click="downloadPDF(this.UserID, item.peminjamanid)"
+                                    @click="downloadPDF(this.UserID, item.peminjamanid, item.peminjamanruanganid, 0)"
                                     style="color: rgb(2, 39, 10, 1)">mdi-download-circle</v-icon>
                                 <v-icon
                                     @click="confirmDelete(item.peminjamanruanganid, item.peminjamanid, item.namaruangan)"
@@ -68,8 +68,18 @@
                     <v-icon @click="dialogVisibleRoom = false">mdi-close-circle</v-icon>
                 </v-card-actions>
                 <v-card-text style="margin-top: -50px;">
-                    <p>1. Disetujui oleh Kepala Lab</p>
-                    <p>1. Disetujui oleh Kepala Lab</p>
+                    <div v-if="(this.activitylog.length > 0)">
+                        <p v-for="(histori, index) in this.activitylog" :key="index"
+                            style="font-family: Lexend-Regular;">
+                            {{ index + 1 }}. {{ histori.Namastatus }} oleh {{ histori.Acc_by }} pada tanggal {{
+                                histori.Tanggal_accnew }}
+                            <italic>({{ histori.Catatan }})</italic>
+                        </p>
+                    </div>
+                    <div v-else>
+                        <p style="font-family: Lexend-Regular; margin-right: 10px; text-align: center">Peminjaman sedang
+                            diproses</p>
+                    </div>
                 </v-card-text>
             </v-card>
         </v-dialog>
@@ -77,8 +87,8 @@
         <v-dialog style="justify-content:center;" v-model="dialogVisible" persistent max-width="290">
             <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 400px;">
                 <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;">Konfirmasi
-                    Penghapusan</v-card-title>
-                <v-card-text style="text-align: center;">Yakin ingin menghapus peminjaman ruangan <strong>{{
+                    Pembatalan</v-card-title>
+                <v-card-text style="text-align: center;">Yakin ingin membatalkan peminjaman ruangan <strong>{{
                     itemToDelete.namaruangan }}</strong>?</v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
@@ -138,17 +148,17 @@
                             <td style="text-align: center;">
                                 <v-chip v-if="item.status === 'Diterima'"
                                     style="background-color: rgb(2, 39, 10, 1); color: white;"
-                                    @click="openInformationRoom">{{ item.status }}</v-chip>
+                                    @click="openInformationTool(item.histori)">{{ item.status }}</v-chip>
                                 <v-chip v-if="item.status === 'Ditolak'"
                                     style="background-color: rgb(234, 8, 8, 0.91); color: white;"
-                                    @click="openInformationRoom">{{ item.status }}</v-chip>
+                                    @click="openInformationTool(item.histori)">{{ item.status }}</v-chip>
                                 <v-chip v-if="item.status === 'Diproses'"
                                     style="background-color: rgb(0, 0, 0, 0.5); color: white;"
-                                    @click="openInformationRoom">{{ item.status }}</v-chip>
+                                    @click="openInformationTool(item.histori)">{{ item.status }}</v-chip>
                             </td>
 
                             <td style="width: 110px; font-size: 25px;"> <v-icon
-                                    @click="downloadPDF(this.UserID, item.peminjamanid)"
+                                    @click="downloadPDF(this.UserID, item.peminjamanid, 0, item.peminjamanalatid)"
                                     style="color: rgb(2, 39, 10, 1)">mdi-download-circle</v-icon>
                                 <v-icon
                                     @click="confirmDeleteAlat(item.peminjamanalatid, item.peminjamanid, item.namaalat)"
@@ -168,8 +178,18 @@
                     <v-icon @click="dialogVisibleTool = false">mdi-close-circle</v-icon>
                 </v-card-actions>
                 <v-card-text style="margin-top: -50px;">
-                    <p>1. Disetujui oleh Kepala Lab</p>
-                    <p>1. Disetujui oleh Kepala Lab</p>
+                    <div v-if="(this.activitylogAlat.length > 0)">
+                        <p v-for="(histori, index) in this.activitylogAlat" :key="index"
+                            style="font-family: Lexend-Regular;">
+                            {{ index + 1 }}. {{ histori.Namastatus }} oleh {{ histori.Acc_by }} pada tanggal {{
+                                histori.Tanggal_accnew }}
+                            <italic>({{ histori.Catatan }})</italic>
+                        </p>
+                    </div>
+                    <div v-else>
+                        <p style="font-family: Lexend-Regular; margin-right: 10px; text-align: center">Peminjaman sedang
+                            diproses</p>
+                    </div>
                 </v-card-text>
             </v-card>
         </v-dialog>
@@ -177,8 +197,8 @@
         <v-dialog style="justify-content:center;" v-model="dialogVisibleAlat" persistent max-width="290">
             <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 400px;">
                 <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;">Konfirmasi
-                    Penghapusan</v-card-title>
-                <v-card-text style="text-align: center;">Yakin ingin menghapus peminjaman alat <strong>{{
+                    Pembatalan</v-card-title>
+                <v-card-text style="text-align: center;">Yakin ingin membatalkan peminjaman alat <strong>{{
                     itemToDeleteAlat.namaalat }}</strong>?</v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
@@ -238,6 +258,8 @@ export default {
             alat: [],
             relasi: false,
             UserID: localStorage.getItem('UserID'),
+            activitylog: [],
+            activitylogAlat: [],
         }
     },
     mounted() {
@@ -246,11 +268,28 @@ export default {
             this.getPeminjamanAlat()
     },
     methods: {
-        openInformationTool() {
+        openInformationTool(histori) {
             this.dialogVisibleTool = true;
+            const options = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' };
+            const modifiedHistori = histori.map(histori => {
+                return {
+                    ...histori,
+                    Tanggal_accnew: new Date(histori.Tanggal_acc).toLocaleDateString('id', options)
+                }
+            })
+            this.activitylogAlat = modifiedHistori;
         },
-        openInformationRoom() {
+        openInformationRoom(histori) {
             this.dialogVisibleRoom = true;
+            const options = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' };
+            const modifiedHistori = histori.map(histori => {
+                return {
+                    ...histori,
+                    Tanggal_accnew: new Date(histori.Tanggal_acc).toLocaleDateString('id', options)
+                }
+            })
+            this.activitylog = modifiedHistori;
+
         },
         getName() {
             const UserID = localStorage.getItem('UserID');
@@ -264,6 +303,8 @@ export default {
         },
         deletePeminjamanRuangan(peminjamanruanganid, PeminjamanID) {
             console.log(peminjamanruanganid);
+            const tanggalhariini = new Date();
+            console.log(tanggalhariini);
             const count = this.ruanganbridge.filter(item => item.peminjamanid === PeminjamanID).length;
             axios.get(`http://127.0.0.1:8000/api/peminjamanRuangan/checkRelation/${PeminjamanID}`)
                 .then(check => {
@@ -357,8 +398,8 @@ export default {
                     }
                 })
         },
-        downloadPDF(UserID, $desiredPeminjamanID) {
-            window.open(`/generate-pdf/${UserID}/${$desiredPeminjamanID}`, '_blank');
+        downloadPDF(UserID, $desiredPeminjamanID, $peminjamanruanganid, $peminjamanalatid) {
+            window.open(`/generate-pdf/${UserID}/${$desiredPeminjamanID}/${$peminjamanruanganid}/${$peminjamanalatid}`, '_blank');
         },
         getPeminjamanRuangan() {
             const UserID = localStorage.getItem('UserID');
