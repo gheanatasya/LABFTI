@@ -12,11 +12,13 @@ class DetailAlatController extends Controller
     {
         return Detail_Alat::all();
     }
+
     //ambil data sesuai id
     public function show($DetailAlatID)
     {
         return Detail_Alat::find($DetailAlatID);
     }
+
     //tambah data
     public function store(StoreDetail_AlatRequest $request)
     {
@@ -31,6 +33,7 @@ class DetailAlatController extends Controller
         ]);
         return response()->json(['status' => true, 'message' => "Registration Success"]);
     }
+
     //mengubah data detail alat
     public function update(UpdateDetail_AlatRequest $request, $DetailAlatID)
     {
@@ -54,6 +57,7 @@ class DetailAlatController extends Controller
 
         return response()->json(['message' => 'Detail alat berhasil diperbarui', 'data' => $detailalat]);
     }
+    
     //hapus data
     public function delete($DetailAlatID)
     {

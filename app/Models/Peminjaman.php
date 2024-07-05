@@ -39,5 +39,5 @@ class Peminjaman extends Model
     public $timestamps = false;
     protected $table = 'peminjaman';
     protected $primaryKey = 'PeminjamanID';
-    protected $fillable = ['Tanggal_pinjam', 'PeminjamID'];
+    protected $fillable = ['Tanggal_pinjam', 'PeminjamID', 'Prioritas'];
 }

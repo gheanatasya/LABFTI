@@ -39,7 +39,9 @@ class PeminjamController extends Controller
             'Nama' => $input['name'],
             'UserID' => $input['UserID'],
             'ProdiID' => $input['selectedProdiID'],
-            'InstansiID' => $input['selectedInstansiID']
+            'InstansiID' => $input['selectedInstansiID'],
+            'Total_batal' => 0,
+            'Tanggal_batal_terakhir' => null
         ]);
         return response()->json(['status' => true, 'message' => "Registration Success"]);
     }
@@ -113,5 +115,21 @@ class PeminjamController extends Controller
         $namafakultas = $fakultas->Nama_fakultas;
 
         return response()->json(['NIM_NIDN' => $nim, 'Email' => $email, 'Role' => $role, 'Nama' => $nama, 'Prodi' => $namaprodi, 'Fakultas' => $namafakultas, 'Instansi' => $namainstansi]);
+    }
+
+    //reset total batal user 
+    public function resetTotalBatal()
+    {
+        $currentMonth = date('m');
+        $peminjams = Peminjam::all();
+        foreach ($peminjams as $peminjam) {
+            $currentTanggalBatal = $peminjam->Tanggal_batal_terakhir;
+            $bulanTanggalBatal = date('m', strtotime($currentTanggalBatal));
+            if ($currentMonth !== $bulanTanggalBatal) {
+                $peminjam->Total_batal = 0;
+                $peminjam->save();
+            } 
+        }
+        return response()->json(['total batal berhasil diperbarui']);
     }
 }

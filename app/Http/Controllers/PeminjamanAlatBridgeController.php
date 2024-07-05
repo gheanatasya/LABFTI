@@ -13,6 +13,7 @@ use App\Models\Peminjaman;
 use App\Models\Peminjaman_Ruangan_Bridge;
 use App\Models\Persetujuan;
 use App\Models\Status_Peminjaman;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 
@@ -36,9 +37,19 @@ class PeminjamanAlatBridgeController extends Controller
         //dd($input);
         $user = Peminjam::where('UserID', $request[0]['UserID'])->first();
         $peminjamID = $user->PeminjamID;
+        $USER = User::where('UserID', $request[0]['UserID'])->first();
+        $userrole = $USER->User_role;
+
+        if ($userrole === 'Mahasiswa' || $userrole === 'Petugas'){
+            $nilaiprioritas = 1;
+        } else {
+            $nilaiprioritas = 2;
+        }
+
         $peminjaman = Peminjaman::create([
             'PeminjamID' => $peminjamID,
-            'Tanggal_pinjam' => date('d-m-Y')
+            'Tanggal_pinjam' => date('d-m-Y'),
+            'Prioritas' => $nilaiprioritas
         ]);
         //dd($peminjaman);
         $peminjamanid = $peminjaman->PeminjamanID;
@@ -84,7 +95,7 @@ class PeminjamanAlatBridgeController extends Controller
                             'StatusID' => 1,
                             'Tanggal_Acc' => date('d-m-Y')
                         ]);
-                        
+
                         $stokSedia = $detail->Jumlah_ketersediaan;
                         $stokAkhir = $stokSedia - $jumlahpinjam;
                         $currentStok = Alat::where('AlatID', $alatID)->update(['Jumlah_ketersediaan' => $stokAkhir]);
@@ -96,8 +107,10 @@ class PeminjamanAlatBridgeController extends Controller
             }
         }
 
-        return response()->json(['status' => true, 'message' => "Registration Success", 'peminjaman_alat_bridge' => $totalpinjamalat, 'persetujuan' => $persetujuanAlat,
-        'statuspeminjamanalat' => $statuspeminjamanAlat]);
+        return response()->json([
+            'status' => true, 'message' => "Registration Success", 'peminjaman_alat_bridge' => $totalpinjamalat, 'persetujuan' => $persetujuanAlat,
+            'statuspeminjamanalat' => $statuspeminjamanAlat
+        ]);
     }
     //mengubah data semua row
     public function updateSemuaRow(UpdatePeminjaman_Alat_BridgeRequest $request, Peminjaman_Alat_Bridge $Peminjaman_Alat_ID)
@@ -109,15 +122,119 @@ class PeminjamanAlatBridgeController extends Controller
     public function delete($Peminjaman_Alat_ID)
     {
         $statuspeminjaman = Status_Peminjaman::where('Peminjaman_Alat_ID', $Peminjaman_Alat_ID)->first();
-        $statuspeminjamanid = $statuspeminjaman->Status_PeminjamanID;
-        $activitylog = Activity_Log::where('Status_PeminjamanID', $statuspeminjamanid)->first();
-        $activitylog->delete();
-        $statuspeminjaman->delete();
+        if ($statuspeminjaman != null) {
+            $statuspeminjamanid = $statuspeminjaman->Status_PeminjamanID;
+            $activitylog = Activity_Log::where('Status_PeminjamanID', $statuspeminjamanid)->first();
+
+            if ($activitylog != null) {
+                $activitylog->delete();
+            }
+
+            $statuspeminjaman->delete();
+        }
         $persetujuan = Persetujuan::where('Peminjaman_Alat_ID', $Peminjaman_Alat_ID)->first();
-        $persetujuan->delete();
         $peminjamanalat = Peminjaman_Alat_Bridge::find($Peminjaman_Alat_ID);
+        $peminjamanid = $peminjamanalat->PeminjamanID;
+        $peminjaman = Peminjaman::where('PeminjamanID', $peminjamanid)->first();
+        $peminjamid = $peminjaman->PeminjamID;
+
+        if ($persetujuan != null) {
+            $organisasi = $peminjamanalat->Is_Organisation;
+            $personal = $peminjamanalat->Is_Personal;
+            $eksternal = $peminjamanalat->Is_Eksternal;
+            $tanggalpenggunaan = $peminjamanalat->Tanggal_pakai_awal;
+            $tanggalbatal = date('d-m-Y');
+            $penggunaanMonth = date('m', strtotime($tanggalpenggunaan));
+            $batalMonth = date('m', strtotime($tanggalbatal));
+            $currentMonth = date('m');
+
+            $dekan = $persetujuan->Dekan_Approve;
+            $wd2 = $persetujuan->WD2_Approve;
+            $wd3 = $persetujuan->WD3_Approve;
+            $kepala = $persetujuan->Kepala_Lab;
+            $koordinator = $persetujuan->Koordinator_Lab;
+            $petugas = $persetujuan->Petugas;
+
+            if ($organisasi === true) {
+                if ($wd3 === true && $kepala === true && $koordinator === true && $petugas === true) {
+                    $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
+                    $peminjam->Total_batal + 1;
+                    $peminjam->Tanggal_batal_terakhir->$tanggalbatal;
+                    $peminjam->save();
+                } elseif ($wd3 === true || $kepala === true || $koordinator === true || $petugas === true) {
+                    $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
+                    $peminjam->Total_batal + 1;
+                    $peminjam->Tanggal_batal_terakhir->$tanggalbatal;
+                    $peminjam->save();
+                } /* else {
+                    $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
+                    $peminjam->Total_batal + 1;
+                    $peminjam->Tanggal_batal_terakhir->$tanggalbatal;
+                    $peminjam->save();
+                } */
+            } elseif ($eksternal === true) {
+                if ($dekan === true && $kepala === true && $koordinator === true && $petugas === true) {
+                    $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
+                    $peminjam->Total_batal + 1;
+                    $peminjam->Tanggal_batal_terakhir->$tanggalbatal;
+                    $peminjam->save();
+                } elseif ($dekan === true || $kepala === true || $koordinator === true || $petugas === true) {
+                    $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
+                    $peminjam->Total_batal + 1;
+                    $peminjam->Tanggal_batal_terakhir->$tanggalbatal;
+                    $peminjam->save();
+                } /* else {
+                    $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
+                    $peminjam->Total_batal + 1;
+                    $peminjam->Tanggal_batal_terakhir->$tanggalbatal;
+                    $peminjam->save();
+                } */
+            } elseif ($personal === true) {
+                if ($petugas === true) {
+                    $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
+                    $peminjam->Total_batal + 1;
+                    $peminjam->Tanggal_batal_terakhir->$tanggalbatal;
+                    $peminjam->save();
+                } /* elseif ($petugas === false) {
+                    $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
+                    $peminjam->Total_batal + 1;
+                    $peminjam->Tanggal_batal_terakhir->$tanggalbatal;
+                    $peminjam->save();
+                }  *//* else {
+                    $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
+                    $peminjam->Total_batal + 1;
+                    $peminjam->Tanggal_batal_terakhir->$tanggalbatal;
+                    $peminjam->save();
+                } */
+            } else {
+                $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
+                $userid = $peminjam->UserID;
+                $user = User::where('UserID', $userid)->first();
+                $role = $user->User_role;
+                if ($role === 'Staff' || $role === 'Dosen' || $role === 'Wakil Dekan 2' || $role === 'Wakil Dekan 3' || $role === 'Dekan' || $role === 'Kepala Lab' || $role === 'Koordinator Lab') {
+                    if ($wd2 === true && $kepala === true && $koordinator === true && $petugas === true) {
+                        $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
+                        $peminjam->Total_batal + 1;
+                        $peminjam->Tanggal_batal_terakhir->$tanggalbatal;
+                        $peminjam->save();
+                    } elseif ($wd2 === true || $kepala === true || $koordinator === true || $petugas === true) {
+                        $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
+                        $peminjam->Total_batal + 1;
+                        $peminjam->Tanggal_batal_terakhir->$tanggalbatal;
+                        $peminjam->save();
+                    } /* else {
+                        $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
+                        $peminjam->Total_batal + 1;
+                        $peminjam->Tanggal_batal_terakhir->$tanggalbatal;
+                        $peminjam->save();
+                    } */
+                }
+            }
+            $persetujuan->delete();
+        }
+
         $peminjamanalat->delete();
-        return response()->json(['message' => 'peminjamanalat berhasil dihapus'], 204);
+        return response()->json(['message' => 'peminjamanruangan berhasil dihapus'], 204);
     }
 
     //menghapus peminjaman berdasarkan peminjamanID

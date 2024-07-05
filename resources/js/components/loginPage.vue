@@ -78,7 +78,7 @@ export default {
                             email: this.email,
                             password: this.password
                         }).then(res => {
-                            //debug user login
+                            //debug login user 
                             console.log(res)
 
                             if (res.data.success) {
@@ -94,6 +94,9 @@ export default {
                                 //save user role
                                 localStorage.setItem("User_role", res.data.User_role);
 
+                                //save total batal user 
+                                localStorage.setItem("Total_batal", res.data.Total_batal);
+
                                 //change state
                                 this.loggedIn = true
 
@@ -101,11 +104,11 @@ export default {
                                 if (res.data.User_role === 'Mahasiswa' || res.data.User_role === 'Dosen' || res.data.User_role === 'Staff') {
                                     return this.$router.push({ name: 'berandaUser' })
                                 } else if (res.data.User_role === 'Petugas') {
-
+                                    return this.$router.push({ name: 'berandaUser' })
                                 } else if (res.data.User_role === 'Kepala Lab' || res.data.User_role === 'Koordinator Lab') {
                                     return this.$router.push({ name: 'berandaSuperAdmin' })
                                 } else if (res.data.User_role === 'Dekan' || res.data.User_role === 'Wakil Dekan 2' || res.data.User_role === 'Wakil Dekan 3') {
-
+                                    return this.$router.push({ name: 'berandaUser' })
                                 }
                             } else {
                                 //set state login failed

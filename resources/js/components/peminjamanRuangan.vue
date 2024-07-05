@@ -8,7 +8,24 @@
     <headerDekanat v-if="User_role === 'Dekan' || User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'"
       style="z-index: 1"></headerDekanat>
 
-    <v-dialog v-model="confirmBefore"
+    <v-dialog v-if="Total_batal > 3" v-model="confirmBeforeCancel"
+      style="justify-content: center; background-color: rgb(2, 39, 10, 0.7); z-index: 0;" persistent max-width="500">
+      <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 500px; height: 250px;">
+        <v-card-title style="font-family: 'Lexend-Medium'; text-align: center; margin-top: 20px;">
+          Batas Maksimal Pembatalan Peminjaman
+        </v-card-title>
+        <v-card-text style="text-align: center;">
+          Mohon maaf, anda melewati batas maksimal pembatalan peminjaman! 
+          Peminjaman tidak dapat dilakukan hingga sebulan kedepan.
+          Atas perhatiannya kami ucapkan terima kasih.
+        </v-card-text>
+        <v-card-actions style="position: absolute; top: 0; right: 0; margin-right: -15px;">
+          <v-btn @click="navigateToBeranda"><v-icon style="font-size: 30px;">mdi-close-circle</v-icon></v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-else v-model="confirmBefore"
       style="justify-content: center; background-color: rgb(2, 39, 10, 0.7); z-index: 0;" persistent max-width="500">
       <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 500px; height: 250px;">
         <v-card-title style="font-family: 'Lexend-Medium'; text-align: center; margin-top: 20px;">
@@ -405,8 +422,10 @@ export default {
   data() {
     return {
       confirmBefore: true,
+      confirmBeforeCancel: true,
       selectedConfirmBefore: true,
       User_role: localStorage.getItem('User_role'),
+      Total_batal: localStorage.getItem('Total_batal'),
     }
   },
   methods: {

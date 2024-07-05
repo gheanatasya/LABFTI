@@ -1,8 +1,28 @@
 <template>
-    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1"></headerUser>
-    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1"></headerSuperAdmin>
+    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1">
+    </headerUser>
+    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1">
+    </headerSuperAdmin>
     <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1"></headerAdmin>
-    <headerDekanat v-if="User_role === 'Dekan'|| User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'" style="z-index: 1"></headerDekanat>
+    <headerDekanat v-if="User_role === 'Dekan' || User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'"
+        style="z-index: 1"></headerDekanat>
+
+    <v-dialog v-if="Total_batal > 3" v-model="confirmBeforeCancel"
+        style="justify-content: center; background-color: rgb(2, 39, 10, 0.7); z-index: 0;" persistent max-width="500">
+        <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 500px; height: 250px;">
+            <v-card-title style="font-family: 'Lexend-Medium'; text-align: center; margin-top: 20px;">
+                Batas Maksimal Pembatalan Peminjaman
+            </v-card-title>
+            <v-card-text style="text-align: center;">
+                Mohon maaf, anda melewati batas maksimal pembatalan peminjaman!
+                Peminjaman tidak dapat dilakukan hingga sebulan kedepan.
+                Atas perhatiannya kami ucapkan terima kasih.
+            </v-card-text>
+            <v-card-actions style="position: absolute; top: 0; right: 0; margin-right: -15px;">
+                <v-btn @click="navigateToBeranda"><v-icon style="font-size: 30px;">mdi-close-circle</v-icon></v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
 
     <div style="margin-top: 80px; height: 80%">
         <router-link to="/berandaUser"
@@ -55,7 +75,7 @@
                                 </v-radio-group>
 
                                 <label for="isOrganisation">Apakah peminjaman dilakukan untuk keperluan
-                                    organisasi?</label>
+                                    organisasi (contoh: BPMFTI, BEMFTI)?</label>
                                 <v-radio-group v-model="item.selectedOptionOrganisation" id="isOrganisation">
                                     <v-row>
                                         <v-col cols="auto">
@@ -370,6 +390,14 @@ export default {
         return {
             ketentuan: false,
             User_role: localStorage.getItem('User_role'),
+            Total_batal: localStorage.getItem('Total_batal'),
+            confirmBeforeCancel: true
+        }
+    },
+    methods: {
+        navigateToBeranda() {
+            this.confirmBeforeCancel = false;
+            this.$router.push('/berandaUser')
         }
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
+use App\Models\Peminjam;
 
 class LoginController extends Controller
 {
@@ -18,6 +19,9 @@ class LoginController extends Controller
 
         $User = User::where('Email', $request->email)->first();
         $role = $User->User_role;
+        $userid = $User->UserID;
+        $peminjam = Peminjam::where('UserID', $userid)->first();
+        $totalbatal = $peminjam->Total_batal;
 
         if (!$User || !Hash::check($request->password, $User->Password)) {
             return response([
@@ -32,8 +36,9 @@ class LoginController extends Controller
             'success'   => true,
             'user'      => $User,
             'token'     => $token,
-            'UserID'    => $User->UserID,
-            'User_role' => $role
+            'UserID'    => $userid,
+            'User_role' => $role,
+            'Total_batal' => $totalbatal
         ];
 
         return response($response, 201);

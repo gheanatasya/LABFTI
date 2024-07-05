@@ -82,6 +82,7 @@ Route::delete('/peminjam/{PeminjamID}', [PeminjamController::class, 'delete']);
 Route::get('/peminjam/getIDByUserID/{UserID}', [PeminjamController::class, 'getIDByUserID']);
 Route::get('/peminjam/byUserID/{UserID}', [PeminjamController::class, 'byUserID']);
 Route::get('/peminjam/getDataforProfil/{UserID}', [PeminjamController::class, 'getDataforProfil']);
+Route::post('/peminjam/resetTotalBatal', [PeminjamController::class, 'resetTotalBatal']);
 
 // route untuk alat
 Route::get('/alat', [AlatController::class, 'getAllAlat']);

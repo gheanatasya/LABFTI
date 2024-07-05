@@ -64,7 +64,7 @@
 import '@mdi/font/css/materialdesignicons.min.css';
 
 export default {
-    name: "landingPage",
+    name: "headerAdmin",
     data() {
         return {
             menusCenter: [

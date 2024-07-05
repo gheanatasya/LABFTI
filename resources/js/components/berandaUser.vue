@@ -1,5 +1,8 @@
 <template>
-    <headerUser style="z-index: 1"></headerUser>
+    <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1"></headerAdmin>
+    <headerDekanat v-if="User_role === 'Dekan' || User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'"
+        style="z-index: 1"></headerDekanat>
+    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1"></headerUser>
 
     <div style="padding-top: 90px">
         <p style="font-size: 35px; font-family: Lexend-Medium; text-align: center; margin-top: 20px;">Halo,
@@ -220,15 +223,20 @@
 import axios from 'axios'
 import headerUser from '../components/headerUser.vue'
 import footerPage from '../components/footerPage.vue'
+import headerAdmin from '../components/headerAdmin.vue'
+import headerDekanat from '../components/headerDekanat.vue'
 
 export default {
     name: 'berandaUser',
     components: {
         headerUser,
-        footerPage
+        footerPage,
+        headerAdmin,
+        headerDekanat
     },
     data() {
         return {
+            User_role: localStorage.getItem('User_role'),
             dialogVisibleRoom: false,
             dialogVisibleTool: false,
             itemToDelete: null,
@@ -260,6 +268,7 @@ export default {
             UserID: localStorage.getItem('UserID'),
             activitylog: [],
             activitylogAlat: [],
+            daftarrelasi: [],
         }
     },
     mounted() {
@@ -293,6 +302,8 @@ export default {
         },
         getName() {
             const UserID = localStorage.getItem('UserID');
+            const totalbatal = localStorage.getItem('Total_batal');
+            //console.log(totalbatal);
             axios.get(`http://127.0.0.1:8000/api/peminjam/byUserID/${UserID}`)
                 .then(response => {
                     this.user = response.data;
@@ -310,12 +321,33 @@ export default {
                 .then(check => {
                     console.log(check.data)
                     this.relasi = check.data.relasi;
-
+                    this.daftarrelasi = check.data.daftarrelasi;
                     if (this.relasi) {
                         axios.delete(`http://127.0.0.1:8000/api/peminjamanRuangan/${peminjamanruanganid}`)
                             .then(response => {
                                 console.log("PeminjamanRuangan deleted successfully:", response.data);
                                 this.ruanganbridge = this.ruanganbridge.filter(item => item.peminjamanruanganid !== peminjamanruanganid);
+
+                                for (let i = 0; i < this.daftarrelasi.length; i++) {
+                                    const peminjamanalatid = this.daftarrelasi[i];
+                                    axios.delete(`http://127.0.0.1:8000/api/peminjamanAlat/${peminjamanalatid}`)
+                                        .then(response => {
+                                            console.log("PeminjamanAlat deleted successfully:", response.data);
+                                            this.alatbridge = this.alatbridge.filter(item => item.peminjamanalatid !== peminjamanalatid);
+                                        }).catch(error => {
+                                            console.error("Error deleting PeminjamanAlat:", error);
+                                        });
+                                }
+
+                                axios.delete(`http://127.0.0.1:8000/api/peminjaman/${PeminjamanID}`)
+                                    .then(response => {
+                                        console.log("Peminjaman deleted successfully:", response.data);
+                                        this.dialogVisible = false;
+                                    })
+                                    .catch(error => {
+                                        console.error("Error deleting Peminjaman:", error);
+                                    });
+
                                 this.dialogVisible = false;
                             }).catch(error => {
                                 console.error("Error deleting PeminjamanRuangan:", error);
@@ -348,9 +380,7 @@ export default {
                                 });
                         }
                     }
-
                 })
-
         },
         deletePeminjamanAlat(peminjamanalatid, PeminjamanID) {
             console.log(peminjamanalatid);
