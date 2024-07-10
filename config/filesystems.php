@@ -56,6 +56,13 @@ return [
             'throw' => false,
         ],
 
+        'symlink' => [
+            'driver' => 'local',
+            'root' => public_path(),
+            'url' => env('APP_URL'),
+            'visibility' => 'public',
+        ],
+
     ],
 
     /*
@@ -73,5 +80,6 @@ return [
         public_path('storage') => storage_path('app/public'),
         public_path('picture') => storage_path('app/picture')
     ],
+    
 
 ];

@@ -86,7 +86,9 @@
                                 }}
                             </td>
 
-                            <td style="width: 500px;"> </td>
+                            <td style="width: 500px;"> 
+                                <a v-if="ruangan.path !== null" :href="'../storage/' + ruangan.path" target="_blank">{{ ruangan.namadokumen }}</a> 
+                            </td>
 
                             <td style="width: 700px;"> {{ ruangan.keterangan }} </td>
 
@@ -242,7 +244,9 @@
                             <td style="width: 500px;"> {{ alat.tanggalawalFormat }} - {{ alat.tanggalakhirFormat }}
                             </td>
 
-                            <td style="width: 500px;"> </td>
+                            <td style="width: 500px;">
+                                <a v-if="alat.path !== null" :href="'../storage/' + alat.path" target="_blank">{{ alat.namadokumen }}</a> 
+                            </td>
 
                             <td style="width: 500px;"> {{ alat.keterangan }} </td>
 

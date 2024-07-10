@@ -45,7 +45,7 @@
                                 <v-btn flat @click="logout" v-if="item.title === 'Logout'">
                                     {{ item.title }}
                                 </v-btn>
-                                <v-btn :to="item.to" v-else flat>
+                                <v-btn :to="item.route" v-else flat>
                                     {{ item.title }}
                                 </v-btn>
                             </v-list-item-title>

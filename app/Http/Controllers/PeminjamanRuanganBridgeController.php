@@ -8,6 +8,7 @@ use App\Http\Requests\UpdatePeminjaman_Ruangan_BridgeRequest;
 use App\Models\Activity_Log;
 use App\Models\Alat;
 use App\Models\Detail_Alat;
+use App\Models\Dokumen;
 use App\Models\Fakultas;
 use App\Models\Instansi;
 use App\Models\Peminjam;
@@ -19,6 +20,7 @@ use App\Models\Program_Studi;
 use App\Models\Status;
 use App\Models\Status_Peminjaman;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 class PeminjamanRuanganBridgeController extends Controller
 {
@@ -39,14 +41,15 @@ class PeminjamanRuanganBridgeController extends Controller
     {
         setlocale(LC_ALL, 'id_ID');
         $input = $request->all();
-        //dd($input);
 
-        $user = Peminjam::where('UserID', $request[0]['UserID'])->first();
+        $user = Peminjam::where('UserID', $request['UserID'])->first();
         $peminjamID = $user->PeminjamID;
-        $USER = User::where('UserID', $request[0]['UserID'])->first();
+        $USER = User::where('UserID', $request['UserID'])->first();
         $userrole = $USER->User_role;
+        $peminjam = Peminjam::where('UserID', $request['UserID'])->first();
+        $nama = $peminjam->Nama;
 
-        if ($userrole === 'Mahasiswa' || $userrole === 'Petugas'){
+        if ($userrole === 'Mahasiswa' || $userrole === 'Petugas') {
             $nilaiprioritas = 1;
         } else {
             $nilaiprioritas = 2;
@@ -57,109 +60,108 @@ class PeminjamanRuanganBridgeController extends Controller
             'Tanggal_pinjam' => date('d-m-Y'),
             'Prioritas' => $nilaiprioritas
         ]);
-        //dd($peminjaman);
+
         $peminjamanid = $peminjaman->PeminjamanID;
         $semuapeminjaman = [];
         $persetujuanRuangan = [];
         $statuspeminjamanRuangan = [];
 
-        for ($i = 0; $i < count($input); $i++) {
-            $ruanganid = Ruangan::where('Nama_ruangan', $input[$i]['selectedRuangan'])->first();
-            $idroom = $ruanganid->RuanganID;
+        $ruanganid = Ruangan::where('Nama_ruangan', $input['selectedRuangan'])->first();
+        $idroom = $ruanganid->RuanganID;
 
-            $peminjaman_ruangan = Peminjaman_Ruangan_Bridge::create([
-                'PeminjamanID' => $peminjamanid,
-                'RuanganID' => $idroom,
-                'Tanggal_pakai_awal' => $input[$i]['tanggalAwal'],
-                'Tanggal_pakai_akhir' => $input[$i]['tanggalSelesai'],
-                'Keterangan' => $input[$i]['keterangan'],
-                'Is_Personal' => $input[$i]['selectedOptionPersonal'],
-                'Is_Organisation' => $input[$i]['selectedOptionOrganisation'],
-                'Is_Eksternal' => $input[$i]['selectedOptionEksternal'],
-                'DokumenID' => $input[$i]['dokumen']
-            ]);
+        $peminjaman_ruangan = Peminjaman_Ruangan_Bridge::create([
+            'PeminjamanID' => $peminjamanid,
+            'RuanganID' => $idroom,
+            'Tanggal_pakai_awal' => $input['tanggalAwal'],
+            'Tanggal_pakai_akhir' => $input['tanggalSelesai'],
+            'Keterangan' => $input['keterangan'],
+            'Is_Personal' => $input['selectedOptionPersonal'],
+            'Is_Organisation' => $input['selectedOptionOrganisation'],
+            'Is_Eksternal' => $input['selectedOptionEksternal'],
+            'DokumenID' => null
+        ]);
 
-            $accRoom = Persetujuan::create([
-                'Peminjaman_Ruangan_ID' => $peminjaman_ruangan->Peminjaman_Ruangan_ID,
-                'Peminjaman_Alat_ID' => null,
-                'Dekan_Approve' => null,
-                'WD2_Approve' => null,
-                'WD3_Approve' => null,
-                'Kepala Lab' => null,
-                'Koordinator Lab' => null,
-                'Petugas' => null
-            ]);
+        $accRoom = Persetujuan::create([
+            'Peminjaman_Ruangan_ID' => $peminjaman_ruangan->Peminjaman_Ruangan_ID,
+            'Peminjaman_Alat_ID' => null,
+            'Dekan_Approve' => null,
+            'WD2_Approve' => null,
+            'WD3_Approve' => null,
+            'Kepala Lab' => null,
+            'Koordinator Lab' => null,
+            'Petugas' => null
+        ]);
 
-            $statuspeminjamanR = Status_Peminjaman::create([
-                'Peminjaman_Ruangan_ID' => $peminjaman_ruangan->Peminjaman_Ruangan_ID,
-                'Peminjaman_Alat_ID' => null,
-                'StatusID' => 1,
-                'Tanggal_Acc' => date('d-m-Y')
-            ]);
+        $statuspeminjamanR = Status_Peminjaman::create([
+            'Peminjaman_Ruangan_ID' => $peminjaman_ruangan->Peminjaman_Ruangan_ID,
+            'Peminjaman_Alat_ID' => null,
+            'StatusID' => 1,
+            'Tanggal_Acc' => date('d-m-Y')
+        ]);
 
-            $peminjaman_ruangan_ID = $peminjaman_ruangan->Peminjaman_Ruangan_ID;
-            $semuapeminjaman[] = $peminjaman_ruangan;
-            $persetujuanRuangan[] = $accRoom;
-            $statuspeminjamanRuangan[] = $statuspeminjamanR;
+        $peminjaman_ruangan_ID = $peminjaman_ruangan->Peminjaman_Ruangan_ID;
+        $semuapeminjaman[] = $peminjaman_ruangan;
+        $persetujuanRuangan[] = $accRoom;
+        $statuspeminjamanRuangan[] = $statuspeminjamanR;
 
-            $persetujuanAlat = [];
-            $totalpinjamalat = [];
-            $statuspeminjamanAlat = [];
+        $persetujuanAlat = [];
+        $totalpinjamalat = [];
+        $statuspeminjamanAlat = [];
 
-            if (count($input[$i]['alat']) > 0) {
-                foreach ($input[$i]['alat'] as $tool) {
-                    if (!empty($tool['nama']) && $tool['jumlahPinjam'] > 0) {
-                        $detail = Alat::where('Nama', $tool['nama'])->first();
-                        $jumlahpinjam = $tool['jumlahPinjam'];
-                        $alatID = $detail->AlatID;
-                        $peminjaman_alat = Peminjaman_Alat_Bridge::create([
-                            'PeminjamanID' => $peminjamanid,
-                            'AlatID' => $alatID,
-                            'Tanggal_pakai_awal' => $input[$i]['tanggalAwal'],
-                            'Tanggal_pakai_akhir' => $input[$i]['tanggalSelesai'],
-                            'Jumlah_pinjam' => $jumlahpinjam,
-                            'Is_Personal' => $input[$i]['selectedOptionPersonal'],
-                            'Is_Organisation' => $input[$i]['selectedOptionOrganisation'],
-                            'Is_Eksternal' => $input[$i]['selectedOptionEksternal'],
-                            'DokumenID' => $input[$i]['dokumen'],
-                            'Keterangan' => $input[$i]['keterangan'],
-                            'RuanganID' => $idroom
-                        ]);
+        if (count($input['alat']) > 0) {
+            foreach ($input['alat'] as $tool) {
+                if (!empty($tool['nama']) && $tool['jumlahPinjam'] > 0) {
+                    $detail = Alat::where('Nama', $tool['nama'])->first();
+                    $jumlahpinjam = $tool['jumlahPinjam'];
+                    $alatID = $detail->AlatID;
 
-                        $accAlat = Persetujuan::create([
-                            'Peminjaman_Ruangan_ID' => null,
-                            'Peminjaman_Alat_ID' => $peminjaman_alat->Peminjaman_Alat_ID,
-                            'Dekan_Approve' => null,
-                            'WD2_Approve' => null,
-                            'WD3_Approve' => null,
-                            'Kepala Lab' => null,
-                            'Koordinator Lab' => null,
-                            'Petugas' => null
-                        ]);
+                    $peminjaman_alat = Peminjaman_Alat_Bridge::create([
+                        'PeminjamanID' => $peminjamanid,
+                        'AlatID' => $alatID,
+                        'Tanggal_pakai_awal' => $input['tanggalAwal'],
+                        'Tanggal_pakai_akhir' => $input['tanggalSelesai'],
+                        'Jumlah_pinjam' => $jumlahpinjam,
+                        'Is_Personal' => $input['selectedOptionPersonal'],
+                        'Is_Organisation' => $input['selectedOptionOrganisation'],
+                        'Is_Eksternal' => $input['selectedOptionEksternal'],
+                        'DokumenID' => null,
+                        'Keterangan' => $input['keterangan'],
+                        'RuanganID' => $idroom
+                    ]);
 
-                        $statuspeminjamanA = Status_Peminjaman::create([
-                            'Peminjaman_Ruangan_ID' => null,
-                            'Peminjaman_Alat_ID' => $peminjaman_alat->Peminjaman_Alat_ID,
-                            'StatusID' => 1,
-                            'Tanggal_Acc' => date('d-m-Y')
-                        ]);
+                    $accAlat = Persetujuan::create([
+                        'Peminjaman_Ruangan_ID' => null,
+                        'Peminjaman_Alat_ID' => $peminjaman_alat->Peminjaman_Alat_ID,
+                        'Dekan_Approve' => null,
+                        'WD2_Approve' => null,
+                        'WD3_Approve' => null,
+                        'Kepala Lab' => null,
+                        'Koordinator Lab' => null,
+                        'Petugas' => null
+                    ]);
 
-                        $stokSedia = $detail->Jumlah_ketersediaan;
-                        $stokAkhir = $stokSedia - $jumlahpinjam;
-                        $currentStok = Alat::where('AlatID', $alatID)->update(['Jumlah_ketersediaan' => $stokAkhir]);
+                    $statuspeminjamanA = Status_Peminjaman::create([
+                        'Peminjaman_Ruangan_ID' => null,
+                        'Peminjaman_Alat_ID' => $peminjaman_alat->Peminjaman_Alat_ID,
+                        'StatusID' => 1,
+                        'Tanggal_Acc' => date('d-m-Y')
+                    ]);
 
-                        $totalpinjamalat[] = $peminjaman_alat;
-                        $persetujuanAlat[] = $accAlat;
-                        $statuspeminjamanAlat[] = $statuspeminjamanA;
-                    }
-                };
-            }
+                    $stokSedia = $detail->Jumlah_ketersediaan;
+                    $stokAkhir = $stokSedia - $jumlahpinjam;
+                    $currentStok = Alat::where('AlatID', $alatID)->update(['Jumlah_ketersediaan' => $stokAkhir]);
+
+                    $totalpinjamalat[] = $peminjaman_alat;
+                    $persetujuanAlat[] = $accAlat;
+                    $statuspeminjamanAlat[] = $statuspeminjamanA;
+                }
+            };
         }
 
         return response()->json([
             'status' => true, 'message' => "Registration Success", 'peminjaman_ruangan_bridge' => $semuapeminjaman,
             'peminjaman' => $peminjaman, 'peminjaman_alat_bridge' => $totalpinjamalat, 'persetujuanRuangan' => $persetujuanRuangan, 'persetujuanAlat' => $persetujuanAlat,
-            'statuspeminjamanruangan' => $statuspeminjamanRuangan, 'statuspeminjamanalat' => $statuspeminjamanAlat
+            'statuspeminjamanruangan' => $statuspeminjamanRuangan, 'statuspeminjamanalat' => $statuspeminjamanAlat,
         ]);
     }
 
@@ -517,26 +519,6 @@ class PeminjamanRuanganBridgeController extends Controller
             $detailRoom[] = $ambildata;
         }
 
-        /* $peminjamanalat = Peminjaman_Alat_Bridge::where('Tanggal_pakai_awal', "<=", $Tanggal_pakai_awal)
-            ->where('Tanggal_pakai_akhir', ">=", $Tanggal_pakai_akhir)
-            ->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
-                $query->where('Tanggal_pakai_awal', '>', $Tanggal_pakai_awal)
-                    ->where('Tanggal_pakai_akhir', '<=', $Tanggal_pakai_akhir);
-            })->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
-                $query->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_awal)
-                    ->where('Tanggal_pakai_akhir', '>', $Tanggal_pakai_akhir);
-            })->pluck('AlatID')->unique();
-        $dataalat = Alat::pluck('AlatID', 'Nama', 'Jumlah_ketersediaan');
-        $alat = $dataalat->diff($peminjamanalat);
-        $tool = $alat->toArray();
-        $array = array_keys($tool);
-
-        $detailTool = [];
-        foreach ($array as $availableTool) {
-            $ambildata = Alat::where('Nama', $availableTool)->first();
-            $detailTool[] = $ambildata;
-        } */
-
         return response()->json(['availableRoom' => $array, 'detailRuangan' => $detailRoom]);
     }
 
@@ -559,18 +541,32 @@ class PeminjamanRuanganBridgeController extends Controller
                 $ruanganid = $data->RuanganID;
                 $tanggalawal = $data->Tanggal_pakai_awal;
                 $tanggalakhir = $data->Tanggal_pakai_akhir;
+                $dokumenID = $data->DokumenID;
+                if ($dokumenID !== null) {
+                    $doc = Dokumen::where('DokumenID', $dokumenID)->first();
+                    $path = $doc->Path;
+                    $namadokumen = $doc->Nama_dokumen;
+                }
                 $cariroom = Ruangan::where('RuanganID', $ruanganid)->first();
                 $cekalat = Peminjaman_Alat_Bridge::where('RuanganID', $ruanganid)
                     ->where('Tanggal_pakai_awal', $tanggalawal)
                     ->where('Tanggal_pakai_akhir', $tanggalakhir)
                     ->get();
                 $kumpulanalat = [];
+
                 foreach ($cekalat as $cek) {
                     $jumlahPinjam = $cek->Jumlah_pinjam;
                     $alatid = $cek->AlatID;
                     $alat = Alat::where('AlatID', $alatid)->first();
                     $namaalat = $alat->Nama;
-                    $dataAlat = ['namaalat' => $namaalat, 'jumlahPinjam' => $jumlahPinjam];
+                    $dokumenid = $cek->DokumenID;
+                    if ($dokumenid !== null) {
+                        $docx = Dokumen::where('DokumenID', $dokumenid)->first();
+                        $path = $docx->Path;
+                        $namadokumen = $docx->Nama_dokumen;
+
+                    }
+                    $dataAlat = ['namaalat' => $namaalat, 'jumlahPinjam' => $jumlahPinjam, 'path' => $path, 'namadokumen' => $namadokumen];
                     $kumpulanalat[] = $dataAlat;
                 }
 
@@ -662,7 +658,9 @@ class PeminjamanRuanganBridgeController extends Controller
                     'wd3' => $wd3,
                     'kepala' => $kepala,
                     'petugas' => $petugas,
-                    'koordinator' => $koord
+                    'koordinator' => $koord,
+                    'path' => $path,
+                    'namadokumen' => $namadokumen
                 ];
 
                 $totalsemuapeminjaman[] = $recordDataRoom;
@@ -691,6 +689,13 @@ class PeminjamanRuanganBridgeController extends Controller
                 $tanggalawal = $data->Tanggal_pakai_awal;
                 $tanggalakhir = $data->Tanggal_pakai_akhir;
                 $peminjamanid = $data->PeminjamanID;
+                $dokumenID = $data->DokumenID;
+                if ($dokumenID != null) {
+                    $doc = Dokumen::where('DokumenID', $dokumenID)->first();
+                    $path = $doc->Path;
+                    $namadokumen = $doc->Nama_dokumen;
+
+                }
                 $alat = Alat::where('AlatID', $alatid)->first();
                 $namaalat = $alat->Nama;
                 $jumlahPinjam = $data->Jumlah_pinjam;
@@ -780,7 +785,9 @@ class PeminjamanRuanganBridgeController extends Controller
                     'wd3' => $wd3,
                     'kepala' => $kepala,
                     'petugas' => $petugas,
-                    'koordinator' => $koord
+                    'koordinator' => $koord,
+                    'path' => $path,
+                    'namadokumen' => $namadokumen
                 ];
 
                 $totalsemuapeminjaman[] = $recordDataAlat;
@@ -807,6 +814,13 @@ class PeminjamanRuanganBridgeController extends Controller
                 $ruanganid = $data->RuanganID;
                 $tanggalawal = $data->Tanggal_pakai_awal;
                 $tanggalakhir = $data->Tanggal_pakai_akhir;
+                $dokumenID = $data->DokumenID;
+                if ($dokumenID != null) {
+                    $doc = Dokumen::where('DokumenID', $dokumenID)->first();
+                    $path = $doc->Path;
+                    $namadokumen = $doc->Nama_dokumen;
+
+                }
                 $cariroom = Ruangan::where('RuanganID', $ruanganid)->first();
                 $cekalat = Peminjaman_Alat_Bridge::where('RuanganID', $ruanganid)
                     ->where('Tanggal_pakai_awal', $tanggalawal)
@@ -816,9 +830,16 @@ class PeminjamanRuanganBridgeController extends Controller
                 foreach ($cekalat as $cek) {
                     $jumlahPinjam = $cek->Jumlah_pinjam;
                     $alatid = $cek->AlatID;
+                    $dokumenid = $cek->DokumenID;
+                    if ($dokumenid != null) {
+                        $docx = Dokumen::where('DokumenID', $dokumenid)->first();
+                        $path = $docx->Path;
+                        $namadokumen = $docx->Nama_dokumen;
+
+                    }
                     $alat = Alat::where('AlatID', $alatid)->first();
                     $namaalat = $alat->Nama;
-                    $dataAlat = ['namaalat' => $namaalat, 'jumlahPinjam' => $jumlahPinjam];
+                    $dataAlat = ['namaalat' => $namaalat, 'jumlahPinjam' => $jumlahPinjam, 'path' => $path, 'namadokumen' => $namadokumen];
                     $kumpulanalat[] = $dataAlat;
                 }
 
@@ -910,7 +931,9 @@ class PeminjamanRuanganBridgeController extends Controller
                     'wd3' => $wd3,
                     'kepala' => $kepala,
                     'petugas' => $petugas,
-                    'koordinator' => $koord
+                    'koordinator' => $koord,
+                    'path' => $path,
+                    'namadokumen' => $namadokumen
                 ];
 
                 if ($isEksternal) {
@@ -948,6 +971,13 @@ class PeminjamanRuanganBridgeController extends Controller
                             $ruanganid = $data->RuanganID;
                             $tanggalawal = $data->Tanggal_pakai_awal;
                             $tanggalakhir = $data->Tanggal_pakai_akhir;
+                            $dokumenID = $data->DokumenID;
+                            if ($dokumenID != null) {
+                                $doc = Dokumen::where('DokumenID', $dokumenID)->first();
+                                $path = $doc->Path;
+                                $namadokumen = $doc->Nama_dokumen;
+
+                            }
                             $cariroom = Ruangan::where('RuanganID', $ruanganid)->first();
                             $cekalat = Peminjaman_Alat_Bridge::where('RuanganID', $ruanganid)
                                 ->where('Tanggal_pakai_awal', $tanggalawal)
@@ -957,9 +987,16 @@ class PeminjamanRuanganBridgeController extends Controller
                             foreach ($cekalat as $cek) {
                                 $jumlahPinjam = $cek->Jumlah_pinjam;
                                 $alatid = $cek->AlatID;
+                                $dokumenid = $cek->DokumenID;
+                                if ($dokumenid != null) {
+                                    $docx = Dokumen::where('DokumenID', $dokumenid)->first();
+                                    $path = $docx->Path;
+                                    $namadokumen = $docx->Nama_dokumen;
+
+                                }
                                 $alat = Alat::where('AlatID', $alatid)->first();
                                 $namaalat = $alat->Nama;
-                                $dataAlat = ['namaalat' => $namaalat, 'jumlahPinjam' => $jumlahPinjam];
+                                $dataAlat = ['namaalat' => $namaalat, 'jumlahPinjam' => $jumlahPinjam, 'path' => $path, 'namadokumen' => $namadokumen];
                                 $kumpulanalat[] = $dataAlat;
                             }
 
@@ -1052,7 +1089,9 @@ class PeminjamanRuanganBridgeController extends Controller
                                 'wd3' => $wd3,
                                 'kepala' => $kepala,
                                 'petugas' => $petugas,
-                                'koordinator' => $koord
+                                'koordinator' => $koord,
+                                'path' => $path,
+                                'namadokumen' => $namadokumen
                             ];
                         }
                         $totalsemuapeminjaman[] = $recordDataRoom;
@@ -1081,6 +1120,13 @@ class PeminjamanRuanganBridgeController extends Controller
                 $ruanganid = $data->RuanganID;
                 $tanggalawal = $data->Tanggal_pakai_awal;
                 $tanggalakhir = $data->Tanggal_pakai_akhir;
+                $dokumenID = $data->DokumenID;
+                if ($dokumenID != null) {
+                    $doc = Dokumen::where('DokumenID', $dokumenID)->first();
+                    $path = $doc->Path;
+                    $namadokumen = $doc->Nama_dokumen;
+
+                }
                 $cariroom = Ruangan::where('RuanganID', $ruanganid)->first();
                 $cekalat = Peminjaman_Alat_Bridge::where('RuanganID', $ruanganid)
                     ->where('Tanggal_pakai_awal', $tanggalawal)
@@ -1090,9 +1136,16 @@ class PeminjamanRuanganBridgeController extends Controller
                 foreach ($cekalat as $cek) {
                     $jumlahPinjam = $cek->Jumlah_pinjam;
                     $alatid = $cek->AlatID;
+                    $dokumenid = $cek->DokumenID;
+                    if ($dokumenid != null) {
+                        $docx = Dokumen::where('DokumenID', $dokumenid)->first();
+                        $path = $docx->Path;
+                        $namadokumen = $docx->Nama_dokumen;
+
+                    }
                     $alat = Alat::where('AlatID', $alatid)->first();
                     $namaalat = $alat->Nama;
-                    $dataAlat = ['namaalat' => $namaalat, 'jumlahPinjam' => $jumlahPinjam];
+                    $dataAlat = ['namaalat' => $namaalat, 'jumlahPinjam' => $jumlahPinjam, 'path' => $path, 'namadokumen' => $namadokumen];
                     $kumpulanalat[] = $dataAlat;
                 }
 
@@ -1184,7 +1237,9 @@ class PeminjamanRuanganBridgeController extends Controller
                     'wd3' => $wd3,
                     'kepala' => $kepala,
                     'petugas' => $petugas,
-                    'koordinator' => $koord
+                    'koordinator' => $koord,
+                    'path' => $path,
+                    'namadokumen' => $namadokumen
                 ];
 
                 if ($isOrganisation) {
@@ -1215,6 +1270,14 @@ class PeminjamanRuanganBridgeController extends Controller
                 $tanggalawal = $data->Tanggal_pakai_awal;
                 $tanggalakhir = $data->Tanggal_pakai_akhir;
                 $peminjamanid = $data->PeminjamanID;
+                $dokumenID = $data->DokumenID;
+                if ($dokumenID != null) {
+                    $doc = Dokumen::where('DokumenID', $dokumenID)->first();
+                    $path = $doc->Path;
+                    $namadokumen = $doc->Nama_dokumen;
+
+                }
+
                 $alat = Alat::where('AlatID', $alatid)->first();
                 $namaalat = $alat->Nama;
                 $jumlahPinjam = $data->Jumlah_pinjam;
@@ -1304,7 +1367,9 @@ class PeminjamanRuanganBridgeController extends Controller
                     'wd3' => $wd3,
                     'kepala' => $kepala,
                     'petugas' => $petugas,
-                    'koordinator' => $koord
+                    'koordinator' => $koord,
+                    'path' => $path,
+                    'namadokumen' => $namadokumen
                 ];
 
                 if ($isEksternal) {
@@ -1335,6 +1400,13 @@ class PeminjamanRuanganBridgeController extends Controller
                 $tanggalawal = $data->Tanggal_pakai_awal;
                 $tanggalakhir = $data->Tanggal_pakai_akhir;
                 $peminjamanid = $data->PeminjamanID;
+                $dokumenID = $data->DokumenID;
+                if ($dokumenID != null) {
+                    $doc = Dokumen::where('DokumenID', $dokumenID)->first();
+                    $path = $doc->Path;
+                    $namadokumen = $doc->Nama_dokumen;
+                }
+
                 $alat = Alat::where('AlatID', $alatid)->first();
                 $namaalat = $alat->Nama;
                 $jumlahPinjam = $data->Jumlah_pinjam;
@@ -1424,7 +1496,9 @@ class PeminjamanRuanganBridgeController extends Controller
                     'wd3' => $wd3,
                     'kepala' => $kepala,
                     'petugas' => $petugas,
-                    'koordinator' => $koord
+                    'koordinator' => $koord,
+                    'path' => $path,
+                    'namadokumen' => $namadokumen
                 ];
 
                 if ($isOrganisation) {
@@ -1462,6 +1536,14 @@ class PeminjamanRuanganBridgeController extends Controller
                             $alatid = $data->AlatID;
                             $tanggalawal = $data->Tanggal_pakai_awal;
                             $tanggalakhir = $data->Tanggal_pakai_akhir;
+                            $dokumenID = $data->DokumenID;
+                            if ($dokumenID != null) {
+                                $doc = Dokumen::where('DokumenID', $dokumenID)->first();
+                                $path = $doc->Path;
+                                $namadokumen = $doc->Nama_dokumen;
+
+                            }
+
                             $alat = Alat::where('AlatID', $alatid)->first();
                             $namaalat = $alat->Nama;
                             $jumlahPinjam = $data->Jumlah_pinjam;
@@ -1552,7 +1634,9 @@ class PeminjamanRuanganBridgeController extends Controller
                                 'wd3' => $wd3,
                                 'kepala' => $kepala,
                                 'petugas' => $petugas,
-                                'koordinator' => $koord
+                                'koordinator' => $koord,
+                                'path' => $path,
+                                'namadokumen' => $namadokumen
                             ];
 
                             if ($isOrganisation) {

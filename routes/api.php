@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AlatController;
 use App\Http\Controllers\DetailAlatController;
+use App\Http\Controllers\DokumenController;
 use App\Http\Controllers\FakultasController;
 use App\Http\Controllers\InstansiController;
 use App\Http\Controllers\LoginController;
@@ -161,5 +162,8 @@ Route::post('/petugas', [PetugasController::class, 'store']);
 //route untuk persetujuan
 Route::put('/persetujuan/confirmBookingRuangan/{Peminjaman_Ruangan_ID}/{User_role}/{NamaStatus}/{Catatan}', [PersetujuanController::class, 'confirmBookingRuangan']);
 Route::put('/persetujuan/confirmBookingAlat/{Peminjaman_Alat_ID}/{User_role}/{NamaStatus}/{Catatan}', [PersetujuanController::class, 'confirmBookingAlat']);
+
+//dokumen
+Route::post('/dokumen', [DokumenController::class, 'forDokumenPeminjaman']);
 
 

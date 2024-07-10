@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Detail_Alat;
 use App\Http\Requests\StoreDetail_AlatRequest;
 use App\Http\Requests\UpdateDetail_AlatRequest;
+use App\Models\Alat;
 
 class DetailAlatController extends Controller
 {
@@ -31,6 +32,11 @@ class DetailAlatController extends Controller
             'Status_Peminjaman' => $input['statusPeminjaman'],
             'Foto' => $input['foto']
         ]);
+
+        $alat = Alat::where('AlatID', $input['kodeAlat'])->first();
+        $jumlahalat = $alat->Jumlah_ketersediaan;
+        $alat->Jumlah_ketersediaan = $jumlahalat + 1;
+        $alat->save();
         return response()->json(['status' => true, 'message' => "Registration Success"]);
     }
 

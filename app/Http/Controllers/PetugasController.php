@@ -96,7 +96,7 @@ class PetugasController extends Controller
         $peminjam = Peminjam::where('UserID', $userid)->first();
         $nama = $peminjam->Nama;
 
-         Petugas::create([
+        Petugas::create([
             'Nama' => $nama,
             'UserID' => $userid,
             'Foto' => $input['Foto'],

@@ -15,7 +15,7 @@
           Batas Maksimal Pembatalan Peminjaman
         </v-card-title>
         <v-card-text style="text-align: center;">
-          Mohon maaf, anda melewati batas maksimal pembatalan peminjaman! 
+          Mohon maaf, anda melewati batas maksimal pembatalan peminjaman!
           Peminjaman tidak dapat dilakukan hingga sebulan kedepan.
           Atas perhatiannya kami ucapkan terima kasih.
         </v-card-text>
@@ -137,13 +137,12 @@
                 <v-btn @click="hapusAlat(index, alatIndex)" style="font-size: 18px; margin-left: -90px; margin-right: 100px; border-radius: 50%; width: 60px; height: 60px; background-color: none; box-shadow: none;
                 margin-top: -18px;">
                   <v-icon>mdi-minus-circle</v-icon></v-btn>
-
               </div>
 
               <v-file-input v-if="item.selectedOptionOrganisation === 'True' || item.selectedOptionEksternal === 'True'"
                 type="file" accept="file/pdf" :no-icon="true" v-model="item.dokumen"
-                style="width: 505px; margin-left: 303px; margin-top: 5px;" variant="outlined"
-                label="Surat Peminjaman"></v-file-input>
+                style="width: 505px; margin-left: 303px; margin-top: 5px;" variant="outlined" label="Surat Peminjaman"
+                ref="dokumenPendukung" :id="'dokumen-' + index" @change="handleFileChange(index)"></v-file-input>
 
               <div
                 style="display: flex; justify-content: space-between; margin-left: 320px; margin-right: 20px; margin-bottom: 50px;">
@@ -211,7 +210,7 @@
 </template>
 
 <script>
-import { reactive, onMounted } from 'vue';
+import { reactive, onMounted, ref } from 'vue';
 import headerUser from '../components/headerUser.vue'
 import footerPage from '../components/footerPage.vue'
 import axios from 'axios';
@@ -299,53 +298,80 @@ export default {
 
       const UserID = localStorage.getItem('UserID');
 
-      for (const formData of form) {
-        const dataToSave = {
-          tanggalSelesai: formData.tanggalSelesai,
-          tanggalAwal: formData.tanggalAwal,
-          selectedRuangan: formData.selectedRuangan,
-          selectedOptionPersonal: formData.selectedOptionPersonal,
-          selectedOptionEksternal: formData.selectedOptionEksternal,
-          selectedOptionOrganisation: formData.selectedOptionOrganisation,
-          alat: formData.alat,
-          keterangan: formData.keterangan,
-          dokumen: formData.dokumen,
-          UserID: UserID
-        };
-        dataSend.push(dataToSave);
-      }
+      //console.log(form);
+      for (let i = 0; i < form.length; i++) {
+        const FORMDATA = new FormData();
+        const file = document.querySelector('#dokumen-' + i);
+        const today = new Date();
+        const formattedDate = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
 
-      for (const formData of form) {
+        if (file !== null) {
+          FORMDATA.append('dokumen', file.files[0]);
+          FORMDATA.append('UserID', UserID);
+          FORMDATA.append('Tanggal_pinjam', formattedDate);
+        }
+
         const dataToSave = {
-          tanggalSelesai: formData.tanggalSelesai,
-          tanggalAwal: formData.tanggalAwal,
-          selectedRuangan: formData.selectedRuangan,
-          selectedOptionPersonal: formData.selectedOptionPersonal,
-          selectedOptionEksternal: formData.selectedOptionEksternal,
-          selectedOptionOrganisation: formData.selectedOptionOrganisation,
-          alat: formData.alat,
-          keterangan: formData.keterangan,
-          dokumen: formData.dokumen,
+          tanggalSelesai: form[i].tanggalSelesai,
+          tanggalAwal: form[i].tanggalAwal,
+          selectedRuangan: form[i].selectedRuangan,
+          selectedOptionPersonal: form[i].selectedOptionPersonal,
+          selectedOptionEksternal: form[i].selectedOptionEksternal,
+          selectedOptionOrganisation: form[i].selectedOptionOrganisation,
+          alat: form[i].alat,
+          keterangan: form[i].keterangan,
+          dokumen: null,
           UserID: UserID
         };
 
-        console.log(dataToSave);
+        //dataSend.push(dataToSave);
+        //console.log(dataSend);
+
         try {
           const response = await axios({
             method: 'POST',
             url: 'http://localhost:8000/api/peminjamanRuangan/',
-            data: dataSend,
+            data: dataToSave,
             headers: {
               'Access-Control-Allow-Origin': '*',
-              'Content-Type': 'application/json'
+              'Content-Type': 'multipart/form-data',
             },
           });
-          savedItems.push(response.data);
+
+          const peminjamanruanganid = response.data.peminjaman_ruangan_bridge[0]['Peminjaman_Ruangan_ID'];
+          FORMDATA.append('peminjamanruanganid', peminjamanruanganid);
+
+          if (response.data.peminjaman_alat_bridge.length > 0) {
+            for (let j = 0; j < response.data.peminjaman_alat_bridge.length; j++) {
+              const peminjamanalatid = response.data.peminjaman_alat_bridge[j]['Peminjaman_Alat_ID'];
+              FORMDATA.append('peminjamanalatid' + j, peminjamanalatid);
+            }
+            FORMDATA.append('totalalat', response.data.peminjaman_alat_bridge.length);
+          }
+          console.log(peminjamanruanganid);
+
+          //if (file !== null) {
+            const response2 = await axios({
+              method: 'POST',
+              url: 'http://localhost:8000/api/dokumen/',
+              data: FORMDATA,
+              headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'multipart/form-data',
+              },
+            })
+          //}
+          //savedItems.push(response.data);
+          console.log('Peminjaman saved successfully: response2', response2.data);
           console.log('Peminjaman saved successfully:', response.data);
         } catch (error) {
           console.error('Error menyimpan data peminjaman ruangan', error);
         }
       }
+    }
+
+    const handleFileChange = (index) => {
+      //form[index].dokumen = $refs.dokumenPendukung.files[0];
     }
 
     const fetchAlat = () => {
@@ -411,13 +437,11 @@ export default {
       }
     }
 
-
-
     onMounted(() => {
       fetchAlat();
     });
 
-    return { form, addNewForm, removeForm, fetchAlat, saveItem, availableRoom, tambahAlat, hapusAlat }
+    return { form, addNewForm, removeForm, fetchAlat, saveItem, availableRoom, tambahAlat, hapusAlat, handleFileChange }
   },
   data() {
     return {
@@ -439,7 +463,7 @@ export default {
     navigateToBeranda() {
       this.confirmBefore = false;
       this.$router.push('/berandaUser')
-    }
+    },
   }
 };
 </script>

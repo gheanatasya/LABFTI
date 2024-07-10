@@ -22,5 +22,5 @@ class Dokumen extends Model
     public $timestamps = false;
     protected $table = 'dokumen';
     protected $primaryKey = 'DokumenID';
-    protected $fillable = ['Nama_dokumen'];
+    protected $fillable = ['Nama_dokumen', 'Path'];
 }

@@ -9,6 +9,7 @@ use App\Models\Fakultas;
 use App\Models\Instansi;
 use App\Models\Program_Studi;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 
@@ -43,6 +44,10 @@ class PeminjamController extends Controller
             'Total_batal' => 0,
             'Tanggal_batal_terakhir' => null
         ]);
+
+        $directory = 'dokumen/' . $input['name'];
+        Storage::makeDirectory($directory);
+
         return response()->json(['status' => true, 'message' => "Registration Success"]);
     }
     //mengubah data

@@ -156,7 +156,7 @@
                         type="date" style="margin-right: 100px; margin-left:40px;"></v-text-field>
 
                     <v-file-input label="Foto" variant="outlined" v-model="this.petugasTambah.Foto"
-                        style="margin-right: 100px; margin-left:0px;"></v-file-input>
+                        style="margin-right: 100px; margin-left:0px;" id="fotoPetugas"></v-file-input>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
@@ -285,6 +285,10 @@ export default {
         },
         tambahPetugas(petugasTambah) {
             console.log(petugasTambah)
+
+            const formData = new FormData();
+            const file = document.querySelector('fotoPetugas');
+            formData.append('foto', file.files[0]);
 
             axios.post(`http://127.0.0.1:8000/api/petugas/`, petugasTambah)
                 .then(response => {

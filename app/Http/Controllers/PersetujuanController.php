@@ -11,13 +11,14 @@ use App\Models\Peminjaman_Alat_Bridge;
 use App\Models\Peminjaman_Ruangan_Bridge;
 use App\Models\Status;
 use App\Models\Status_Peminjaman;
+use Illuminate\Support\Facades\DB;
 
 class PersetujuanController extends Controller
 {
     public function confirmBookingRuangan($Peminjaman_Ruangan_ID, $User_role, $NamaStatus, $Catatan)
     {
         $persetujuan = Persetujuan::where('Peminjaman_Ruangan_ID', $Peminjaman_Ruangan_ID)->first();
-        
+
         $peminjamanruangan = Peminjaman_Ruangan_Bridge::where('Peminjaman_Ruangan_ID', $Peminjaman_Ruangan_ID)->first();
         $tanggalawal = $peminjamanruangan->Tanggal_pakai_awal;
         $tanggalakhir = $peminjamanruangan->Tanggal_pakai_akhir;
@@ -74,30 +75,41 @@ class PersetujuanController extends Controller
             } else if ($NamaStatus === 'Ditolak') {
                 $persetujuan->Petugas_Approve = false;
                 $persetujuan->save();
-            } else if ($NamaStatus === 'Selesai'){
+            } else if ($NamaStatus === 'Selesai') {
                 $newtanggalakhir = now();
                 $peminjamanruangan->Tanggal_pakai_akhir = $newtanggalakhir;
+            } else if ($NamaStatus === 'Dibatalkan') {
+                $statuspeminjaman = Status_Peminjaman::where('Peminjaman_Ruangan_ID', $Peminjaman_Ruangan_ID)->first();
+                $statuspeminjamanid = $statuspeminjaman->Status_PeminjamanID;
+                $deletedCount = DB::table('activity_log')
+                    ->where('Status_PeminjamanID', $statuspeminjamanid)
+                    ->delete();
+                $statuspeminjaman->delete();
+                $persetujuan->delete();
+                $peminjamanruangan->delete();
             }
+        }
+
+        $statuspeminjaman = Status_Peminjaman::where('Peminjaman_Ruangan_ID', $Peminjaman_Ruangan_ID)->first();
+        if ($statuspeminjaman !== null) {
+            $status = Status::where('Nama_status', $NamaStatus)->first();
+            $statusid = $status->StatusID;
+            $tanggalacc = now();
+            $statuspeminjaman->StatusID = $statusid;
+            $statuspeminjaman->Tanggal_Acc = $tanggalacc;
+            $statuspeminjaman->save();
+
+            $activitylog = Activity_Log::create([
+                'Status_PeminjamanID' => $statuspeminjaman->Status_PeminjamanID,
+                'Nama_status' => $NamaStatus,
+                'Tanggal_Acc' => now(),
+                'Acc_by' => $User_role,
+                'Catatan' => $Catatan
+            ]);
         }
 
         if ($peminjamanalat != null) {
             foreach ($peminjamanalat as $alat) {
-                $statuspeminjaman = Status_Peminjaman::where('Peminjaman_Alat_ID', $alat->Peminjaman_Alat_ID)->first();
-                $status = Status::where('Nama_status', $NamaStatus)->first();
-                $statusid = $status->StatusID;
-                $tanggalacc = now();
-                $statuspeminjaman->StatusID = $statusid;
-                $statuspeminjaman->Tanggal_Acc = $tanggalacc;
-                $statuspeminjaman->save();
-
-                $activitylog = Activity_Log::create([
-                    'Status_PeminjamanID' => $statuspeminjaman->Status_PeminjamanID,
-                    'Nama_status' => $NamaStatus,
-                    'Tanggal_Acc' => now(),
-                    'Acc_by' => $User_role,
-                    'Catatan' => $Catatan
-                ]);
-
                 $persetujuan = Persetujuan::where('Peminjaman_Alat_ID', $alat->Peminjaman_Alat_ID)->first();
                 if ($User_role === 'Dekan') {
                     if ($NamaStatus === 'Diterima') {
@@ -196,7 +208,13 @@ class PersetujuanController extends Controller
                         $newJumlahKetersediaan = $jumlahKetersediaan + $jumlahPinjam;
                         $ALAT->Jumlah_ketersediaan = $newJumlahKetersediaan;
                         $ALAT->save();
-                    }  else if ($NamaStatus === 'Dibatalkan') {
+
+                        $newtanggalakhir = now();
+                        $alat->Tanggal_pakai_akhir = $newtanggalakhir;
+                        $alat->save();
+                    } else if ($NamaStatus === 'Dibatalkan') {
+                        $statuspeminjaman = Status_Peminjaman::where('Peminjaman_Alat_ID', $alat->Peminjaman_Alat_ID)->first();
+                        $statuspeminjamanid = $statuspeminjaman->Status_PeminjamanID;
                         $alatid = $alat->AlatID;
                         $jumlahPinjam = $alat->Jumlah_pinjam;
                         $ALAT = Alat::where('AlatID', $alatid)->first();
@@ -204,26 +222,35 @@ class PersetujuanController extends Controller
                         $newJumlahKetersediaan = $jumlahKetersediaan + $jumlahPinjam;
                         $ALAT->Jumlah_ketersediaan = $newJumlahKetersediaan;
                         $ALAT->save();
+
+                        $persetujuan->delete();
+                        $deletedCount = DB::table('activity_log')
+                            ->where('Status_PeminjamanID', $statuspeminjamanid)
+                            ->delete();
+                        $statuspeminjaman->delete();
+                        $alat->delete();
                     }
+                }
+
+                $statuspeminjaman = Status_Peminjaman::where('Peminjaman_Alat_ID', $alat->Peminjaman_Alat_ID)->first();
+                if ($statuspeminjaman !== null) {
+                    $status = Status::where('Nama_status', $NamaStatus)->first();
+                    $statusid = $status->StatusID;
+                    $tanggalacc = now();
+                    $statuspeminjaman->StatusID = $statusid;
+                    $statuspeminjaman->Tanggal_Acc = $tanggalacc;
+                    $statuspeminjaman->save();
+
+                    $activitylog = Activity_Log::create([
+                        'Status_PeminjamanID' => $statuspeminjaman->Status_PeminjamanID,
+                        'Nama_status' => $NamaStatus,
+                        'Tanggal_Acc' => now(),
+                        'Acc_by' => $User_role,
+                        'Catatan' => $Catatan
+                    ]);
                 }
             }
         }
-
-        $statuspeminjaman = Status_Peminjaman::where('Peminjaman_Ruangan_ID', $Peminjaman_Ruangan_ID)->first();
-        $status = Status::where('Nama_status', $NamaStatus)->first();
-        $statusid = $status->StatusID;
-        $tanggalacc = now();
-        $statuspeminjaman->StatusID = $statusid;
-        $statuspeminjaman->Tanggal_Acc = $tanggalacc;
-        $statuspeminjaman->save();
-
-        $activitylog = Activity_Log::create([
-            'Status_PeminjamanID' => $statuspeminjaman->Status_PeminjamanID,
-            'Nama_status' => $NamaStatus,
-            'Tanggal_Acc' => now(),
-            'Acc_by' => $User_role,
-            'Catatan' => $Catatan
-        ]);
 
         return response()->json([
             'message' => 'Persetujuan ruangan berhasil diperbarui', 'data' => $Peminjaman_Ruangan_ID,
@@ -337,9 +364,13 @@ class PersetujuanController extends Controller
                 $jumlahKetersediaan = $alat->Jumlah_ketersediaan;
                 $newJumlahKetersediaan = $jumlahKetersediaan + $jumlahPinjam;
                 $alat->Jumlah_ketersediaan = $newJumlahKetersediaan;
-                $alat->save();
+                $newtanggalakhir = now();
+                $peminjamanalat->Tanggal_pakai_akhir = $newtanggalakhir;
+                $peminjamanalat->save();
             } else if ($NamaStatus === 'Dibatalkan') {
                 $peminjamanalat = Peminjaman_Alat_Bridge::where('Peminjaman_Alat_ID', $Peminjaman_Alat_ID)->first();
+                $statuspeminjaman = Status_Peminjaman::where('Peminjaman_Alat_ID', $Peminjaman_Alat_ID)->first();
+                $statuspeminjamanid = $statuspeminjaman->Status_PeminjamanID;
                 $alatid = $peminjamanalat->AlatID;
                 $jumlahPinjam = $peminjamanalat->Jumlah_pinjam;
                 $alat = Alat::where('AlatID', $alatid)->first();
@@ -347,6 +378,13 @@ class PersetujuanController extends Controller
                 $newJumlahKetersediaan = $jumlahKetersediaan + $jumlahPinjam;
                 $alat->Jumlah_ketersediaan = $newJumlahKetersediaan;
                 $alat->save();
+
+                $persetujuan->delete();
+                $deletedCount = DB::table('activity_log')
+                    ->where('Status_PeminjamanID', $statuspeminjamanid)
+                    ->delete();
+                $statuspeminjaman->delete();
+                $peminjamanalat->delete();
             }
         }
 

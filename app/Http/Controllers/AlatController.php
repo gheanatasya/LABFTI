@@ -32,7 +32,7 @@ class AlatController extends Controller
             'AlatID' => $input['kodeAlat'],
             'Nama' => $input['namaAlat'],
             'Status' => $input['statusAlat'],
-            'Jumlah_ketersediaan' => $input['jumlahKetersediaan']
+            'Jumlah_ketersediaan' => 0
         ]);
         return response()->json(['status' => true, 'message' => "Tambahkan Alat Success"]);
     }

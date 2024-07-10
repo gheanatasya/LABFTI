@@ -5,62 +5,55 @@ namespace App\Http\Controllers;
 use App\Models\Dokumen;
 use App\Http\Requests\StoreDokumenRequest;
 use App\Http\Requests\UpdateDokumenRequest;
+use App\Models\Peminjam;
+use App\Models\Peminjaman;
+use App\Models\Peminjaman_Alat_Bridge;
+use App\Models\Peminjaman_Ruangan_Bridge;
+use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 class DokumenController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
+    public function forDokumenPeminjaman(StoreDokumenRequest $request){
+        $data = $request->file('dokumen');
+        $userid = $request->input('UserID');
+        $tanggalpinjam = $request->input('Tanggal_pinjam');
+        $peminjamanruanganid = $request->input('peminjamanruanganid');
+        $totalalat = $request->input('totalalat');
+        $a = []; 
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+        $peminjam = Peminjam::where('UserID', $userid)->first();
+        $nama = $peminjam->Nama;
+        $peminjamid = $peminjam->PeminjamID;
+        $directory = 'dokumen/' . $nama;
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreDokumenRequest $request)
-    {
-        //
-    }
+        $fileInfo = [
+            'originalName' => $data->getClientOriginalName(),
+            'size' => $data->getSize(),
+            'mimeType' => $data->getClientMimeType(),
+        ];
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Dokumen $dokumen)
-    {
-        //
-    }
+        $path = Storage::putFileAs($directory, $data, $fileInfo['originalName']);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Dokumen $dokumen)
-    {
-        //
-    }
+        $dokumen = Dokumen::create([
+            'Nama_dokumen' => $fileInfo['originalName'],
+            'Path' => $path,
+        ]);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateDokumenRequest $request, Dokumen $dokumen)
-    {
-        //
-    }
+        $peminjamanruangan = Peminjaman_Ruangan_Bridge::where('Peminjaman_Ruangan_ID', $peminjamanruanganid)->first();
+        $peminjamanruangan->DokumenID = $dokumen->DokumenID;
+        $peminjamanruangan->save();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Dokumen $dokumen)
-    {
-        //
+        for ($i = 0; $i < $totalalat; $i++) {
+            $peminjamanalatid = $request->input('peminjamanalatid'.$i);
+            $a[] = $peminjamanalatid; 
+
+            $peminjamanalat = Peminjaman_Alat_Bridge::where('Peminjaman_Alat_ID', $peminjamanalatid)->first();
+            $peminjamanalat->DokumenID = $dokumen->DokumenID;
+            $peminjamanalat->save();
+        }
+
+        //return $tanggalpinjam;
+        return response()->json(['message' => 'File uploaded successfully!']);
     }
 }
