@@ -158,6 +158,7 @@ Route::get('/petugas', [PetugasController::class, 'allPetugas']);
 Route::put('/petugas/{UserID}', [PetugasController::class, 'update']);
 Route::delete('/petugas/{UserID}', [PetugasController::class, 'delete']);
 Route::post('/petugas', [PetugasController::class, 'store']);
+Route::post('/petugas/tambahFoto', [PetugasController::class, 'tambahFoto']);
 
 //route untuk persetujuan
 Route::put('/persetujuan/confirmBookingRuangan/{Peminjaman_Ruangan_ID}/{User_role}/{NamaStatus}/{Catatan}', [PersetujuanController::class, 'confirmBookingRuangan']);

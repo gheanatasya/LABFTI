@@ -7,6 +7,7 @@ use App\Http\Requests\StorePetugasRequest;
 use App\Http\Requests\UpdatePetugasRequest;
 use App\Models\Peminjam;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 class PetugasController extends Controller
 {
@@ -60,14 +61,13 @@ class PetugasController extends Controller
             return response()->json(['error' => 'Petugas not found'], 404);
         }
 
-        $request->validate([
+        /* $request->validate([
             'Tgl_Bekerja' => 'required',
             'Tgl_Berhenti' => 'required',
-        ]);
+        ]); */
 
         $petugas->Tgl_Bekerja = $request->get('Tgl_Bekerja');
         $petugas->Tgl_Berhenti = $request->get('Tgl_Berhenti');
-        $petugas->Foto = $request->get('Foto');
         $petugas->save();
 
         return response()->json(['message' => 'Petugas berhasil diperbarui', 'data' => $petugas]);
@@ -99,15 +99,60 @@ class PetugasController extends Controller
         Petugas::create([
             'Nama' => $nama,
             'UserID' => $userid,
-            'Foto' => $input['Foto'],
+            'Foto' => null,
             'Tgl_Bekerja' => $input['Tgl_Bekerja'],
             'Tgl_Berhenti' => $input['Tgl_Berhenti'],
         ]);
 
+        $directory = 'petugas/' . $nama;
+        Storage::makeDirectory($directory);
+
         $user->User_role = 'Petugas';
         $user->save();
 
-        return response()->json(['status' => true, 'message' => "Tambahkan Petugas Success"]);
+        return response()->json(['status' => true, 'message' => "Tambahkan Petugas Success", 'UserID' => $userid]);
+    }
+
+    public function tambahFoto(StorePetugasRequest $request){
+        $data = $request->file('foto');
+        $userid = $request->input('userid');
+
+        $petugas = Petugas::where('UserID', $userid)->first();
+        $directory = 'petugas/' . $petugas->Nama;
+
+        $fileInfo = [
+            'originalName' => $data->getClientOriginalName(),
+            'size' => $data->getSize(),
+            'mimeType' => $data->getClientMimeType(),
+        ];
+
+        $path = Storage::putFileAs($directory, $data, $fileInfo['originalName']);
+
+        $petugas->Foto = $path;
+        $petugas->save();
+
+        return response()->json(['message' => 'File uploaded successfully!']);
+    }
+
+    public function editFoto(UpdatePetugasRequest $request){
+        $data = $request->file('foto');
+        $userid = $request->input('userid');
+
+        $petugas = Petugas::where('UserID', $userid)->first();
+        $directory = 'petugas/' . $petugas->Nama;
+
+        $fileInfo = [
+            'originalName' => $data->getClientOriginalName(),
+            'size' => $data->getSize(),
+            'mimeType' => $data->getClientMimeType(),
+        ];
+
+        $path = Storage::putFileAs($directory, $data, $fileInfo['originalName']);
+
+        $petugas->Foto = $path;
+        $petugas->save();
+
+        return response()->json(['message' => 'File uploaded successfully!']);
     }
 
 }

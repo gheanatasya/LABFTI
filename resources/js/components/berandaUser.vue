@@ -49,9 +49,13 @@
                                     @click="openInformationRoom(item.histori)">{{ item.status }}</v-chip>
                             </td>
 
-                            <td style="width: 110px; font-size: 25px;"> <v-icon
+                            <td style="width: 110px; font-size: 25px;"> <v-icon v-if="item.status === 'Diterima'"
                                     @click="downloadPDF(this.UserID, item.peminjamanid, item.peminjamanruanganid, 0)"
                                     style="color: rgb(2, 39, 10, 1)">mdi-download-circle</v-icon>
+
+                                    <v-icon v-else
+                                    style="color: rgb(0, 0, 0, 0.5)">mdi-download-circle</v-icon>
+
                                 <v-icon
                                     @click="confirmDelete(item.peminjamanruanganid, item.peminjamanid, item.namaruangan)"
                                     style="color: rgb(206, 0, 0, 0.91);">mdi-delete-circle</v-icon>
@@ -160,9 +164,13 @@
                                     @click="openInformationTool(item.histori)">{{ item.status }}</v-chip>
                             </td>
 
-                            <td style="width: 110px; font-size: 25px;"> <v-icon
+                            <td style="width: 110px; font-size: 25px;"> <v-icon v-if="item.status === 'Diterima'"
                                     @click="downloadPDF(this.UserID, item.peminjamanid, 0, item.peminjamanalatid)"
                                     style="color: rgb(2, 39, 10, 1)">mdi-download-circle</v-icon>
+
+                                    <v-icon v-else
+                                    style="color: rgb(0, 0, 0, 0.5)">mdi-download-circle</v-icon>
+
                                 <v-icon
                                     @click="confirmDeleteAlat(item.peminjamanalatid, item.peminjamanid, item.namaalat)"
                                     style="color: rgb(206, 0, 0, 0.91);">mdi-delete-circle</v-icon>

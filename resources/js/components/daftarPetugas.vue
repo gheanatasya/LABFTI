@@ -57,7 +57,12 @@
 
                     <td style="width: 100px; text-align: center;"> {{ petugas.Tgl_Berhenti }} </td>
 
-                    <td style="width: 100px; text-align: center;"> {{ petugas.Foto }} </td>
+                    <td style="width: 100px; text-align: center;">
+                        <a :href="'../storage/' + petugas.Foto" target="_blank">
+                            <v-img :src="'../storage/' + petugas.Foto" style="width: 200px; height: 200px;"
+                                cover></v-img>
+                        </a>
+                    </td>
 
                     <td style="width: 100px; font-size: 25px; text-align: center;">
                         <v-icon style="color: rgb(2, 39, 10, 1);"
@@ -95,7 +100,7 @@
                     <v-text-field label="Tgl Berhenti" v-model="this.petugasEdit.Tgl_Berhenti" variant="outlined"
                         type="date" style="margin-right: 100px; margin-left:40px;"></v-text-field>
 
-                    <v-file-input label="Foto" variant="outlined" v-model="this.petugasEdit.Foto"
+                    <v-file-input label="Foto" variant="outlined" v-model="this.petugasEdit.Foto" id="editFotoPetugas"
                         style="margin-right: 100px; margin-left:0px;"></v-file-input>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
@@ -156,7 +161,7 @@
                         type="date" style="margin-right: 100px; margin-left:40px;"></v-text-field>
 
                     <v-file-input label="Foto" variant="outlined" v-model="this.petugasTambah.Foto"
-                        style="margin-right: 100px; margin-left:0px;" id="fotoPetugas"></v-file-input>
+                        style="margin-right: 100px; margin-left:0px;" id="fotoPetugasTambah"></v-file-input>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
@@ -232,6 +237,17 @@ export default {
             }
         },
         updatePetugas(Nama, NIM, Email, Prodi, Tgl_Bekerja, Tgl_Berhenti, Foto, UserID) {
+            const formData = new FormData();
+
+            if (typeof Foto === 'object' && Foto instanceof File) {
+                const file = document.getElementById('editFotoPetugas');
+                formData.append('foto', file.files[0]);
+                formData.append('userid', UserID);
+                //console.log('ada')
+            } /* else {
+                console.log('tidak ada')
+            } */
+
             const updateData = {
                 Nama,
                 NIM,
@@ -239,11 +255,10 @@ export default {
                 Prodi,
                 Tgl_Bekerja,
                 Tgl_Berhenti,
-                Foto,
                 UserID
             }
 
-            console.log(updateData)
+            //console.log(updateData)
 
             axios.put(`http://127.0.0.1:8000/api/petugas/${UserID}`, updateData, {
                 withCredentials: true,
@@ -254,6 +269,16 @@ export default {
                 then(response => {
                     if (response.status === 200) {
                         console.log("Petugas updated successfully:", response.data);
+                        if (typeof Foto === 'object' && Foto instanceof File) {
+                            axios.post(`http://127.0.0.1:8000/api/petugas/tambahFoto/`, formData)
+                                .then(res => {
+                                    console.log("Petugas picture updated successfully:", res.data);
+                                    this.editActionPetugas = false;
+                                })
+                                .catch(err => {
+                                    console.error("Error updating Petugas:", err);
+                                });
+                        }
                         this.editActionPetugas = false;
                     } else {
                         console.error("Error updating Petugas:", response.data.message);
@@ -287,13 +312,20 @@ export default {
             console.log(petugasTambah)
 
             const formData = new FormData();
-            const file = document.querySelector('fotoPetugas');
+            const file = document.getElementById('fotoPetugasTambah');;
             formData.append('foto', file.files[0]);
 
             axios.post(`http://127.0.0.1:8000/api/petugas/`, petugasTambah)
                 .then(response => {
+                    formData.append('userid', response.data.UserID);
                     console.log("Petugas ditambahkan successfully:", response.data);
-                    this.tambahActionPetugas = false;
+                    axios.post(`http://127.0.0.1:8000/api/petugas/tambahFoto/`, formData)
+                        .then(res => {
+                            console.log("Foto ditambahkan successfully:", res.data);
+                            this.tambahActionPetugas = false;
+                        }).catch(error => {
+                            console.error("Foto gagal ditambahkan", error);
+                        })
                 }).catch(error => {
                     console.error("Data gagal ditambahkan", error);
                 });
