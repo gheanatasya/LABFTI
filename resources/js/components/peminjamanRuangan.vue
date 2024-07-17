@@ -68,7 +68,8 @@
                 <v-text-field type="datetime-local" label="Tanggal Selesai" v-model="item.tanggalSelesai"
                   variant="outlined"
                   style="width: 300px; margin-left: -75px; margin-top: 100px; margin-right: 20px;"></v-text-field>
-                <v-btn @click="availableRoom(item.tanggalAwal, item.tanggalSelesai)"
+                <v-btn
+                  @click="availableRoom(item.tanggalAwal, item.tanggalSelesai), fetchAlat(item.tanggalAwal, item.tanggalSelesai)"
                   style="width: 120px; margin-left: 10px; margin-top: 80px; font-size: 11px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
                   color="primary">
                   Cek ruangan</v-btn>
@@ -125,11 +126,12 @@
               <div v-for="(alatItem, alatIndex) in item.alat" :key="alatIndex"
                 style="display: flex; align-items: center; grid-column: span 4; width: 145%;">
                 <v-combobox v-model="alatItem.nama" :items="item.items" label="Alat yang ingin dipinjam" clearable
-                  variant="outlined" style="margin-left: 303px; margin-right: -5px; width: 50px;">
+                  variant="outlined"
+                  style="margin-left: 303px; margin-right: -5px; width: 50px;">
                 </v-combobox>
 
                 <v-text-field type="number" label="Jumlah" v-model="alatItem.jumlahPinjam" variant="outlined" clearable
-                  style="margin-right: -35px; width: 40px; margin-left: 10px;"></v-text-field>
+                  min="0" :rules="validationRules" style="margin-right: -35px; width: 40px; margin-left: 10px;"></v-text-field>
 
                 <v-btn @click="tambahAlat(index)" style="font-size: 18px; margin-left: 45px; margin-right: 90px; border-radius: 50%; width: 60px; height: 60px; background-color: none; box-shadow: none;
                 margin-top: -18px;"><v-icon>mdi-plus-circle</v-icon></v-btn>
@@ -153,7 +155,7 @@
                   Peminjaman</v-btn>
               </div>
             </div>
-            <v-btn @click="saveItem" id="simpan" type="submit"
+            <v-btn @click="saveItem" id="simpan" 
               style="margin-left: 430px; margin-top: -5px; border-radius: 20px; font-size: 15px; width: 250px;"
               color="primary">
               Pinjam Ruangan </v-btn>
@@ -210,7 +212,7 @@
 </template>
 
 <script>
-import { reactive, onMounted, ref } from 'vue';
+import { reactive, onMounted, ref, computed } from 'vue';
 import headerUser from '../components/headerUser.vue'
 import footerPage from '../components/footerPage.vue'
 import axios from 'axios';
@@ -246,9 +248,11 @@ export default {
         selectedOptionEksternal: '',
         selectedOptionOrganisation: '',
         items: [],
+        itemsAll: [],
         alat: reactive([{
           nama: '',
           jumlahPinjam: 0,
+          maxValue: null,
         }]),
         selectedItems: '',
         keterangan: '',
@@ -275,9 +279,11 @@ export default {
         selectedOptionEksternal: '',
         selectedOptionOrganisation: '',
         items: [],
+        itemsAll: [],
         alat: reactive([{
           nama: '',
           jumlahPinjam: 0,
+          maxValue: null,
         }]),
         selectedItems: '',
         keterangan: '',
@@ -351,15 +357,15 @@ export default {
           console.log(peminjamanruanganid);
 
           //if (file !== null) {
-            const response2 = await axios({
-              method: 'POST',
-              url: 'http://localhost:8000/api/dokumen/',
-              data: FORMDATA,
-              headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Content-Type': 'multipart/form-data',
-              },
-            })
+          const response2 = await axios({
+            method: 'POST',
+            url: 'http://localhost:8000/api/dokumen/',
+            data: FORMDATA,
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+              'Content-Type': 'multipart/form-data',
+            },
+          })
           //}
           //savedItems.push(response.data);
           console.log('Peminjaman saved successfully: response2', response2.data);
@@ -370,21 +376,34 @@ export default {
       }
     }
 
-    const handleFileChange = (index) => {
-      //form[index].dokumen = $refs.dokumenPendukung.files[0];
-    }
+    const fetchAlat = async (tanggalAwal, tanggalSelesai) => {
+      if (tanggalAwal && tanggalSelesai) {
+        try {
+          const response = await axios.get(
+            `http://127.0.0.1:8000/api/peminjamanAlat/jadwalAlat/${tanggalAwal}/${tanggalSelesai}`
+          );
 
-    const fetchAlat = () => {
-      axios.get("http://127.0.0.1:8000/api/alat/")
-        .then(response => {
-          form.forEach(item => {
-            item.items = response.data.map(alat => alat.Nama);
-            console.log(item.items);
-          });
-        })
-        .catch(error => {
+          const alat = response.data.daftarAlatfix;
+          let namaAlat = [];
+          let jumlahAlat = [];
+          console.log(alat);
+
+          for (let i = 0; i < alat.length; i++) {
+            namaAlat.push(alat[i].NamaAlat);
+            jumlahAlat.push(alat[i].Jumlah_ketersediaan);
+          }
+
+          const index = form.findIndex(item => item.tanggalAwal === tanggalAwal && item.tanggalSelesai === tanggalSelesai);
+          if (index > -1) {
+            form[index].items = namaAlat;
+            form[index].itemsAll = alat;
+          } else {
+            console.warn("Could not find matching form item for fetched alat");
+          }
+        } catch (error) {
           console.error("Error gagal mengambil data Alat", error);
-        });
+        }
+      }
     }
 
     const availableRoom = async (tanggalAwal, tanggalSelesai) => {
@@ -433,15 +452,23 @@ export default {
         console.log('Form', form[index]);
       } else {
         // kalau tinggal 1 peminjaman
-        console.warn('Cannot remove the last alat or form.');
+        console.warn('Tidak dapat menghapus alat atau form');
       }
     }
 
-    onMounted(() => {
-      fetchAlat();
-    });
+    /* const validationRules = computed(() => {
+      const alatData = itemsAll.find(alat => alat.NamaAlat === alatItem.value.nama);
+      if (!alatData) return {}; //tidak ada alatData ditemukan
 
-    return { form, addNewForm, removeForm, fetchAlat, saveItem, availableRoom, tambahAlat, hapusAlat, handleFileChange }
+      return {
+        rulesAlat: [
+          v => v >= 0 || 'Jumlah pinjam tidak boleh negatif',
+          v => v <= alatData.Jumlah_ketersediaan || `Melebihi batas ketersediaan: ${alatData.Jumlah_ketersediaan}`,
+        ],
+      };
+    }) */
+
+    return { form, addNewForm, removeForm, fetchAlat, saveItem, availableRoom, tambahAlat, hapusAlat };
   },
   data() {
     return {
@@ -463,7 +490,7 @@ export default {
     navigateToBeranda() {
       this.confirmBefore = false;
       this.$router.push('/berandaUser')
-    },
+    }
   }
 };
 </script>

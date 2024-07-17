@@ -142,7 +142,7 @@
                         maka bersedia untuk ganti rugi sesuai dengan persyaratan yang telah ditentukan." value="true"
                             style="margin-left: 295px; margin-right: -80px;" v-model="this.ketentuan"></v-checkbox>
 
-                        <v-btn @click="saveItem" id="simpan" type="submit"
+                        <v-btn @click="saveItem" id="simpan" 
                             style="margin-left: 430px; margin-top: -5px; border-radius: 20px; font-size: 15px; width: 250px;"
                             color="primary">
                             Pinjam Alat </v-btn>

@@ -147,9 +147,9 @@ class PeminjamanRuanganBridgeController extends Controller
                         'Tanggal_Acc' => date('d-m-Y')
                     ]);
 
-                    $stokSedia = $detail->Jumlah_ketersediaan;
+                    /* $stokSedia = $detail->Jumlah_ketersediaan;
                     $stokAkhir = $stokSedia - $jumlahpinjam;
-                    $currentStok = Alat::where('AlatID', $alatID)->update(['Jumlah_ketersediaan' => $stokAkhir]);
+                    $currentStok = Alat::where('AlatID', $alatID)->update(['Jumlah_ketersediaan' => $stokAkhir]); */
 
                     $totalpinjamalat[] = $peminjaman_alat;
                     $persetujuanAlat[] = $accAlat;
@@ -494,6 +494,7 @@ class PeminjamanRuanganBridgeController extends Controller
         }
     }
 
+    // cek jadwal tabrakan
     public function jadwalPeminjaman($Tanggal_pakai_awal, $Tanggal_pakai_akhir)
     {
         //$statuspeminjaman = Status_Peminjaman::whereNot('StatusID', 7)->get();

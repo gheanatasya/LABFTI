@@ -130,6 +130,7 @@ Route::get('/peminjamanAlat/getKeterangan/{PeminjamanID}', [PeminjamanAlatBridge
 Route::get('/peminjamanAlat/checkRelation/{PeminjamanID}', [PeminjamanAlatBridgeController::class, 'checkRelation']);
 Route::get('/peminjamanAlat/getAllPeminjamanAlatByPeminjamanID/{PeminjamanID}', [PeminjamanAlatBridgeController::class, 'getAllPeminjamanAlatByPeminjamanID'])->middleware('throttle:500,1');
 Route::get('/peminjamanAlat/getPeminjamanAlat/{UserID}', [PeminjamanAlatBridgeController::class, 'getPeminjamanAlat']);
+Route::get('/peminjamanAlat/jadwalAlat/{Tanggal_pakai_awal}/{Tanggal_pakai_akhir}', [PeminjamanAlatBridgeController::class, 'jadwalAlat'])->middleware('throttle:500,1');
 
 //route untuk peminjaman ruangan bridge
 Route::get('/peminjamanRuangan', [PeminjamanRuanganBridgeController::class, 'getAllPeminjamanRuangan']);

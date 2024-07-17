@@ -4,6 +4,7 @@ import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import { VCalendar } from 'vuetify/labs/VCalendar'
+import { VNumberInput } from 'vuetify/labs/VNumberInput'
 
 const customeTheme = {
     dark: false,
@@ -36,6 +37,7 @@ const customeTheme = {
 const vuetify = createVuetify({
     components,
     VCalendar,
+    VNumberInput,
     directives,
     theme: {
         defaultTheme: "customeTheme",

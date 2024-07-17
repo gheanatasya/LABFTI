@@ -116,13 +116,13 @@ class PersetujuanController extends Controller
                         $persetujuan->Dekan_Approve = true;
                         $persetujuan->save();
                     } else if ($NamaStatus === 'Ditolak') {
-                        $alatid = $alat->AlatID;
+                        /* $alatid = $alat->AlatID;
                         $jumlahPinjam = $alat->Jumlah_pinjam;
                         $ALAT = Alat::where('AlatID', $alatid)->first();
                         $jumlahKetersediaan = $ALAT->Jumlah_ketersediaan;
                         $newJumlahKetersediaan = $jumlahKetersediaan + $jumlahPinjam;
                         $ALAT->Jumlah_ketersediaan = $newJumlahKetersediaan;
-                        $ALAT->save();
+                        $ALAT->save(); */
                         $persetujuan->Dekan_Approve = false;
                         $persetujuan->save();
                     }
@@ -131,13 +131,13 @@ class PersetujuanController extends Controller
                         $persetujuan->WD2_Approve = true;
                         $persetujuan->save();
                     } else if ($NamaStatus === 'Ditolak') {
-                        $alatid = $alat->AlatID;
+                        /* $alatid = $alat->AlatID;
                         $jumlahPinjam = $alat->Jumlah_pinjam;
                         $ALAT = Alat::where('AlatID', $alatid)->first();
                         $jumlahKetersediaan = $ALAT->Jumlah_ketersediaan;
                         $newJumlahKetersediaan = $jumlahKetersediaan + $jumlahPinjam;
                         $ALAT->Jumlah_ketersediaan = $newJumlahKetersediaan;
-                        $ALAT->save();
+                        $ALAT->save(); */
                         $persetujuan->WD2_Approve = false;
                         $persetujuan->save();
                     }
@@ -146,13 +146,13 @@ class PersetujuanController extends Controller
                         $persetujuan->WD3_Approve = true;
                         $persetujuan->save();
                     } else if ($NamaStatus === 'Ditolak') {
-                        $alatid = $alat->AlatID;
+                        /* $alatid = $alat->AlatID;
                         $jumlahPinjam = $alat->Jumlah_pinjam;
                         $ALAT = Alat::where('AlatID', $alatid)->first();
                         $jumlahKetersediaan = $ALAT->Jumlah_ketersediaan;
                         $newJumlahKetersediaan = $jumlahKetersediaan + $jumlahPinjam;
                         $ALAT->Jumlah_ketersediaan = $newJumlahKetersediaan;
-                        $ALAT->save();
+                        $ALAT->save(); */
                         $persetujuan->WD3_Approve = false;
                         $persetujuan->save();
                     }
@@ -161,13 +161,13 @@ class PersetujuanController extends Controller
                         $persetujuan->Kepala_Approve = true;
                         $persetujuan->save();
                     } else if ($NamaStatus === 'Ditolak') {
-                        $alatid = $alat->AlatID;
+                        /* $alatid = $alat->AlatID;
                         $jumlahPinjam = $alat->Jumlah_pinjam;
                         $ALAT = Alat::where('AlatID', $alatid)->first();
                         $jumlahKetersediaan = $ALAT->Jumlah_ketersediaan;
                         $newJumlahKetersediaan = $jumlahKetersediaan + $jumlahPinjam;
                         $ALAT->Jumlah_ketersediaan = $newJumlahKetersediaan;
-                        $ALAT->save();
+                        $ALAT->save(); */
                         $persetujuan->Kepala_Approve = false;
                         $persetujuan->save();
                     }
@@ -176,13 +176,13 @@ class PersetujuanController extends Controller
                         $persetujuan->Koordinator_Approve = true;
                         $persetujuan->save();
                     } else if ($NamaStatus === 'Ditolak') {
-                        $alatid = $alat->AlatID;
+                        /* $alatid = $alat->AlatID;
                         $jumlahPinjam = $alat->Jumlah_pinjam;
                         $ALAT = Alat::where('AlatID', $alatid)->first();
                         $jumlahKetersediaan = $ALAT->Jumlah_ketersediaan;
                         $newJumlahKetersediaan = $jumlahKetersediaan + $jumlahPinjam;
                         $ALAT->Jumlah_ketersediaan = $newJumlahKetersediaan;
-                        $ALAT->save();
+                        $ALAT->save(); */
                         $persetujuan->Koordinator_Approve = false;
                         $persetujuan->save();
                     }
@@ -191,23 +191,23 @@ class PersetujuanController extends Controller
                         $persetujuan->Petugas_Approve = true;
                         $persetujuan->save();
                     } else if ($NamaStatus === 'Ditolak') {
-                        $alatid = $alat->AlatID;
+                        /* $alatid = $alat->AlatID;
                         $jumlahPinjam = $alat->Jumlah_pinjam;
                         $ALAT = Alat::where('AlatID', $alatid)->first();
                         $jumlahKetersediaan = $ALAT->Jumlah_ketersediaan;
                         $newJumlahKetersediaan = $jumlahKetersediaan + $jumlahPinjam;
                         $ALAT->Jumlah_ketersediaan = $newJumlahKetersediaan;
-                        $ALAT->save();
+                        $ALAT->save(); */
                         $persetujuan->Petugas_Approve = false;
                         $persetujuan->save();
                     } else if ($NamaStatus === 'Selesai') {
-                        $alatid = $alat->AlatID;
+                        /* $alatid = $alat->AlatID;
                         $jumlahPinjam = $alat->Jumlah_pinjam;
                         $ALAT = Alat::where('AlatID', $alatid)->first();
                         $jumlahKetersediaan = $ALAT->Jumlah_ketersediaan;
                         $newJumlahKetersediaan = $jumlahKetersediaan + $jumlahPinjam;
                         $ALAT->Jumlah_ketersediaan = $newJumlahKetersediaan;
-                        $ALAT->save();
+                        $ALAT->save(); */
 
                         $newtanggalakhir = now();
                         $alat->Tanggal_pakai_akhir = $newtanggalakhir;
@@ -215,13 +215,13 @@ class PersetujuanController extends Controller
                     } else if ($NamaStatus === 'Dibatalkan') {
                         $statuspeminjaman = Status_Peminjaman::where('Peminjaman_Alat_ID', $alat->Peminjaman_Alat_ID)->first();
                         $statuspeminjamanid = $statuspeminjaman->Status_PeminjamanID;
-                        $alatid = $alat->AlatID;
+                        /* $alatid = $alat->AlatID;
                         $jumlahPinjam = $alat->Jumlah_pinjam;
                         $ALAT = Alat::where('AlatID', $alatid)->first();
                         $jumlahKetersediaan = $ALAT->Jumlah_ketersediaan;
                         $newJumlahKetersediaan = $jumlahKetersediaan + $jumlahPinjam;
                         $ALAT->Jumlah_ketersediaan = $newJumlahKetersediaan;
-                        $ALAT->save();
+                        $ALAT->save(); */
 
                         $persetujuan->delete();
                         $deletedCount = DB::table('activity_log')
@@ -266,14 +266,14 @@ class PersetujuanController extends Controller
                 $persetujuan->Dekan_Approve = true;
                 $persetujuan->save();
             } else if ($NamaStatus === 'Ditolak') {
-                $peminjamanalat = Peminjaman_Alat_Bridge::where('Peminjaman_Alat_ID', $Peminjaman_Alat_ID)->first();
+                /* $peminjamanalat = Peminjaman_Alat_Bridge::where('Peminjaman_Alat_ID', $Peminjaman_Alat_ID)->first();
                 $alatid = $peminjamanalat->AlatID;
                 $jumlahPinjam = $peminjamanalat->Jumlah_pinjam;
                 $alat = Alat::where('AlatID', $alatid)->first();
                 $jumlahKetersediaan = $alat->Jumlah_ketersediaan;
                 $newJumlahKetersediaan = $jumlahKetersediaan + $jumlahPinjam;
                 $alat->Jumlah_ketersediaan = $newJumlahKetersediaan;
-                $alat->save();
+                $alat->save(); */
                 $persetujuan->Dekan_Approve = false;
                 $persetujuan->save();
             }
@@ -282,14 +282,14 @@ class PersetujuanController extends Controller
                 $persetujuan->WD2_Approve = true;
                 $persetujuan->save();
             } else if ($NamaStatus === 'Ditolak') {
-                $peminjamanalat = Peminjaman_Alat_Bridge::where('Peminjaman_Alat_ID', $Peminjaman_Alat_ID)->first();
+                /* $peminjamanalat = Peminjaman_Alat_Bridge::where('Peminjaman_Alat_ID', $Peminjaman_Alat_ID)->first();
                 $alatid = $peminjamanalat->AlatID;
                 $jumlahPinjam = $peminjamanalat->Jumlah_pinjam;
                 $alat = Alat::where('AlatID', $alatid)->first();
                 $jumlahKetersediaan = $alat->Jumlah_ketersediaan;
                 $newJumlahKetersediaan = $jumlahKetersediaan + $jumlahPinjam;
                 $alat->Jumlah_ketersediaan = $newJumlahKetersediaan;
-                $alat->save();
+                $alat->save(); */
                 $persetujuan->WD2_Approve = false;
                 $persetujuan->save();
             }
@@ -298,14 +298,14 @@ class PersetujuanController extends Controller
                 $persetujuan->WD3_Approve = true;
                 $persetujuan->save();
             } else if ($NamaStatus === 'Ditolak') {
-                $peminjamanalat = Peminjaman_Alat_Bridge::where('Peminjaman_Alat_ID', $Peminjaman_Alat_ID)->first();
+                /* $peminjamanalat = Peminjaman_Alat_Bridge::where('Peminjaman_Alat_ID', $Peminjaman_Alat_ID)->first();
                 $alatid = $peminjamanalat->AlatID;
                 $jumlahPinjam = $peminjamanalat->Jumlah_pinjam;
                 $alat = Alat::where('AlatID', $alatid)->first();
                 $jumlahKetersediaan = $alat->Jumlah_ketersediaan;
                 $newJumlahKetersediaan = $jumlahKetersediaan + $jumlahPinjam;
                 $alat->Jumlah_ketersediaan = $newJumlahKetersediaan;
-                $alat->save();
+                $alat->save(); */
                 $persetujuan->WD3_Approve = false;
                 $persetujuan->save();
             }
@@ -314,14 +314,14 @@ class PersetujuanController extends Controller
                 $persetujuan->Kepala_Approve = true;
                 $persetujuan->save();
             } else if ($NamaStatus === 'Ditolak') {
-                $peminjamanalat = Peminjaman_Alat_Bridge::where('Peminjaman_Alat_ID', $Peminjaman_Alat_ID)->first();
+                /* $peminjamanalat = Peminjaman_Alat_Bridge::where('Peminjaman_Alat_ID', $Peminjaman_Alat_ID)->first();
                 $alatid = $peminjamanalat->AlatID;
                 $jumlahPinjam = $peminjamanalat->Jumlah_pinjam;
                 $alat = Alat::where('AlatID', $alatid)->first();
                 $jumlahKetersediaan = $alat->Jumlah_ketersediaan;
                 $newJumlahKetersediaan = $jumlahKetersediaan + $jumlahPinjam;
                 $alat->Jumlah_ketersediaan = $newJumlahKetersediaan;
-                $alat->save();
+                $alat->save(); */
                 $persetujuan->Kepala_Approve = false;
                 $persetujuan->save();
             }
@@ -330,14 +330,14 @@ class PersetujuanController extends Controller
                 $persetujuan->Koordinator_Approve = true;
                 $persetujuan->save();
             } else if ($NamaStatus === 'Ditolak') {
-                $peminjamanalat = Peminjaman_Alat_Bridge::where('Peminjaman_Alat_ID', $Peminjaman_Alat_ID)->first();
+                /* $peminjamanalat = Peminjaman_Alat_Bridge::where('Peminjaman_Alat_ID', $Peminjaman_Alat_ID)->first();
                 $alatid = $peminjamanalat->AlatID;
                 $jumlahPinjam = $peminjamanalat->Jumlah_pinjam;
                 $alat = Alat::where('AlatID', $alatid)->first();
                 $jumlahKetersediaan = $alat->Jumlah_ketersediaan;
                 $newJumlahKetersediaan = $jumlahKetersediaan + $jumlahPinjam;
                 $alat->Jumlah_ketersediaan = $newJumlahKetersediaan;
-                $alat->save();
+                $alat->save(); */
                 $persetujuan->Koordinator_Approve = false;
                 $persetujuan->save();
             }
@@ -346,24 +346,24 @@ class PersetujuanController extends Controller
                 $persetujuan->Petugas_Approve = true;
                 $persetujuan->save();
             } else if ($NamaStatus === 'Ditolak') {
-                $peminjamanalat = Peminjaman_Alat_Bridge::where('Peminjaman_Alat_ID', $Peminjaman_Alat_ID)->first();
+                /* $peminjamanalat = Peminjaman_Alat_Bridge::where('Peminjaman_Alat_ID', $Peminjaman_Alat_ID)->first();
                 $alatid = $peminjamanalat->AlatID;
                 $jumlahPinjam = $peminjamanalat->Jumlah_pinjam;
                 $alat = Alat::where('AlatID', $alatid)->first();
                 $jumlahKetersediaan = $alat->Jumlah_ketersediaan;
                 $newJumlahKetersediaan = $jumlahKetersediaan + $jumlahPinjam;
                 $alat->Jumlah_ketersediaan = $newJumlahKetersediaan;
-                $alat->save();
+                $alat->save(); */
                 $persetujuan->Petugas_Approve = false;
                 $persetujuan->save();
             } else if ($NamaStatus === 'Selesai') {
                 $peminjamanalat = Peminjaman_Alat_Bridge::where('Peminjaman_Alat_ID', $Peminjaman_Alat_ID)->first();
-                $alatid = $peminjamanalat->AlatID;
+/*                 $alatid = $peminjamanalat->AlatID;
                 $jumlahPinjam = $peminjamanalat->Jumlah_pinjam;
                 $alat = Alat::where('AlatID', $alatid)->first();
                 $jumlahKetersediaan = $alat->Jumlah_ketersediaan;
                 $newJumlahKetersediaan = $jumlahKetersediaan + $jumlahPinjam;
-                $alat->Jumlah_ketersediaan = $newJumlahKetersediaan;
+                $alat->Jumlah_ketersediaan = $newJumlahKetersediaan; */
                 $newtanggalakhir = now();
                 $peminjamanalat->Tanggal_pakai_akhir = $newtanggalakhir;
                 $peminjamanalat->save();
@@ -371,13 +371,13 @@ class PersetujuanController extends Controller
                 $peminjamanalat = Peminjaman_Alat_Bridge::where('Peminjaman_Alat_ID', $Peminjaman_Alat_ID)->first();
                 $statuspeminjaman = Status_Peminjaman::where('Peminjaman_Alat_ID', $Peminjaman_Alat_ID)->first();
                 $statuspeminjamanid = $statuspeminjaman->Status_PeminjamanID;
-                $alatid = $peminjamanalat->AlatID;
+                /* $alatid = $peminjamanalat->AlatID;
                 $jumlahPinjam = $peminjamanalat->Jumlah_pinjam;
                 $alat = Alat::where('AlatID', $alatid)->first();
                 $jumlahKetersediaan = $alat->Jumlah_ketersediaan;
                 $newJumlahKetersediaan = $jumlahKetersediaan + $jumlahPinjam;
                 $alat->Jumlah_ketersediaan = $newJumlahKetersediaan;
-                $alat->save();
+                $alat->save(); */
 
                 $persetujuan->delete();
                 $deletedCount = DB::table('activity_log')

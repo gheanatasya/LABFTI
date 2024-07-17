@@ -40,7 +40,7 @@ class PeminjamanAlatBridgeController extends Controller
         $USER = User::where('UserID', $request[0]['UserID'])->first();
         $userrole = $USER->User_role;
 
-        if ($userrole === 'Mahasiswa' || $userrole === 'Petugas'){
+        if ($userrole === 'Mahasiswa' || $userrole === 'Petugas') {
             $nilaiprioritas = 1;
         } else {
             $nilaiprioritas = 2;
@@ -96,9 +96,9 @@ class PeminjamanAlatBridgeController extends Controller
                             'Tanggal_Acc' => date('d-m-Y')
                         ]);
 
-                        $stokSedia = $detail->Jumlah_ketersediaan;
+                        /* $stokSedia = $detail->Jumlah_ketersediaan;
                         $stokAkhir = $stokSedia - $jumlahpinjam;
-                        $currentStok = Alat::where('AlatID', $alatID)->update(['Jumlah_ketersediaan' => $stokAkhir]);
+                        $currentStok = Alat::where('AlatID', $alatID)->update(['Jumlah_ketersediaan' => $stokAkhir]); */
                         $totalpinjamalat[] = $peminjaman_alat;
                         $persetujuanAlat[] = $accAlat;
                         $statuspeminjamanAlat[] = $statuspeminjamanA;
@@ -401,17 +401,66 @@ class PeminjamanAlatBridgeController extends Controller
             })->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
                 $query->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_awal)
                     ->where('Tanggal_pakai_akhir', '>', $Tanggal_pakai_akhir);
-            })->pluck('AlatID')->unique();
-        $dataalat = Alat::pluck('AlatID', 'Nama', 'Jumlah_ketersediaan');
-        $alat = $dataalat->diff($peminjamanalat);
-        $tool = $alat->toArray();
-        $array = array_keys($tool);
-        $detailTool = [];
+            })->get();
 
-        foreach ($array as $availableTool) {
-            $ambildata = Alat::where('Nama', $availableTool)->first();
-            $detailTool[] = $ambildata;
+        $daftarAlatTabrakan = [];
+
+        foreach ($peminjamanalat as $tool) {
+            $alatid = $tool->AlatID;
+            $jumlahpinjam = $tool->Jumlah_pinjam;
+            $found = false;
+            $ALAT = Alat::where('AlatID', $alatid)->first();
+            $namaAlat = $ALAT->Nama;
+
+            foreach ($daftarAlatTabrakan as &$existingAlat) {
+                if ($existingAlat['AlatID'] === $alatid) {
+                    $found = true;
+                    $newtotal = $existingAlat['Jumlah_pinjam'] + $jumlahpinjam;
+                    $existingAlat['Jumlah_pinjam'] = $newtotal;
+                    break;
+                }
+            }
+
+            if ($found === false) {
+                $daftarAlatTabrakan[] = [
+                    'AlatID' => $alatid,
+                    'Jumlah_pinjam' => $jumlahpinjam,
+                    'NamaAlat' => $namaAlat
+                ];
+            }
         }
-        return response()->json(['availableTool' => $array, 'detailAlat' => $detailTool]);
+
+        $allAlat = Alat::all();
+        $daftarAlat = [];
+        foreach ($allAlat as $alat) {
+            $alatid = $alat->AlatID;
+            $jumlah = $alat->Jumlah_ketersediaan;
+            $nama = $alat->Nama;
+            $daftarAlat[] = [
+                'AlatID' => $alatid,
+                'Jumlah_ketersediaan' => $jumlah,
+                'NamaAlat' => $nama
+            ];
+        }
+
+        $fixAlat = [];
+        foreach ($daftarAlat as $tool1) {
+            $fixAlat[] = [
+                'AlatID' => $tool1['AlatID'],
+                'Jumlah_ketersediaan' => $tool1['Jumlah_ketersediaan'],
+                'NamaAlat' => $tool1['NamaAlat']
+            ];
+
+            foreach ($daftarAlatTabrakan as $tool2) {
+                if ($tool1['AlatID'] === $tool2['AlatID']) {
+                    $newJumlahPinjam = $tool1['Jumlah_ketersediaan'] - $tool2['Jumlah_pinjam'];
+                    if ($newJumlahPinjam >= 0) {
+                        $fixAlat[count($fixAlat) - 1]['Jumlah_ketersediaan'] = $newJumlahPinjam;
+                    }
+                }
+            }
+        }
+
+        return response()->json(['daftarAlat' => $daftarAlat, 'daftaralattabrakan' => $daftarAlatTabrakan, 'daftarAlatfix' => $fixAlat]);
     }
 }
