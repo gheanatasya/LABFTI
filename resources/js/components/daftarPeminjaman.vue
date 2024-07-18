@@ -86,8 +86,9 @@
                                 }}
                             </td>
 
-                            <td style="width: 500px;"> 
-                                <a v-if="ruangan.path !== null" :href="'../storage/' + ruangan.path" target="_blank">{{ ruangan.namadokumen }}</a> 
+                            <td style="width: 500px;">
+                                <a v-if="ruangan.path !== null" :href="'../storage/' + ruangan.path" target="_blank">{{
+                                    ruangan.namadokumen }}</a>
                             </td>
 
                             <td style="width: 700px;"> {{ ruangan.keterangan }} </td>
@@ -225,7 +226,6 @@
                             </th>
                             <th class="text-center" style="background-color: rgb(2,39,10,0.9); color: white;">Action
                             </th>
-
                         </tr>
                     </thead>
                     <tbody>
@@ -245,7 +245,8 @@
                             </td>
 
                             <td style="width: 500px;">
-                                <a v-if="alat.path !== null" :href="'../storage/' + alat.path" target="_blank">{{ alat.namadokumen }}</a> 
+                                <a v-if="alat.path !== null" :href="'../storage/' + alat.path" target="_blank">{{
+                                    alat.namadokumen }}</a>
                             </td>
 
                             <td style="width: 500px;"> {{ alat.keterangan }} </td>
@@ -366,7 +367,7 @@
                         <v-btn
                             style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                             @click="editActionAlat = false">Batal</v-btn>
-                        <v-btn @click="confirmAlat(alat)"
+                        <v-btn @click="konfirmasiAlatLebih(alat)"
                             style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
                     </v-card-actions>
                 </v-card>
@@ -417,6 +418,30 @@
                     </v-card-actions>
                 </v-card>
             </v-dialog>
+
+            <!-- konfirmasi addon alat -->
+            <v-dialog style="justify-content:center; margin-top: 0px;" v-model="konfirmasiTools" persistent
+                padding-left="80px" max-width="800">
+                <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 800px;">
+                    <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;">
+                        Peminjaman Lebih Dari Satu Alat</v-card-title>
+                    <v-card-text style="text-align: center; margin-left: 40px;">
+                        <p>Alat yang dipinjam lebih dari satu. Berikut adalah alat yang dipinjam :</p>
+                        <p v-for="(alat, index) in this.sameTools" :key="index">
+                            {{ index + 1 }}. {{ alat.namaalat }} ({{ alat.jumlahPinjam }})
+                        </p>
+
+                        <p>Apakah ingin mengonfirmasi semua peminjaman alat yang dilakukan?</p>
+                    </v-card-text>
+                    <v-card-actions style="justify-content:center;">
+                        <v-btn
+                            style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;"
+                            @click="konfirmasiTools = false, confirmAlat(this.alat)">Tidak</v-btn>
+                        <v-btn @click="confirmAlat2(this.alat)"
+                            style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;">Ya</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
         </v-container>
     </div>
 
@@ -449,6 +474,7 @@ export default {
             allPeminjamanAlat: [],
             editActionRuangan: false,
             editActionAlat: false,
+            konfirmasiTools: false,
             alat: {},
             ruangan: {},
             allRoom: [],
@@ -456,6 +482,7 @@ export default {
             currentPageRuangan: 1,
             currentPageAlat: 1,
             itemsPerPage: 5,
+            sameTools: {},
         }
     },
     methods: {
@@ -653,6 +680,22 @@ export default {
             this.ruangan = ruangan;
             console.log(this.ruangan);
         },
+        konfirmasiAlatLebih(alat) {
+            const peminjamanid = alat.peminjamanid;
+            axios.get(`http://127.0.0.1:8000/api/peminjamanAlat/checkAlat/${peminjamanid}`)
+                .then(response => {
+                    if (response.data.length === 0) {
+                        this.confirmAlat(alat);
+                    } else {
+                        this.konfirmasiTools = true;
+                        this.sameTools = response.data;
+                        this.alat = alat;
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        },
         confirmRuangan(ruangan) {
             const peminjamanid = ruangan.peminjamanruanganid;
             const userrole = localStorage.getItem('User_role');
@@ -703,6 +746,39 @@ export default {
                 .catch(error => {
                     console.error("Error konfirmasi failed:", error);
                 });
+        },
+        confirmAlat2(alat) {
+            const pengecekan = this.allPeminjamanAlat.filter(data => data.peminjamanid === alat.peminjamanid);
+
+            //for (let i = 0; i < pengecekan.length; i++) {
+                const peminjamanid = alat.peminjamanalatid;
+                const userrole = localStorage.getItem('User_role');
+                const namastatus = alat.currentStatus;
+                const catatan = alat.catatan;
+
+                console.log(peminjamanid, userrole, namastatus, catatan);
+                axios.put(`http://127.0.0.1:8000/api/persetujuan/confirmBookingAlat2/${peminjamanid}/${userrole}/${namastatus}/${catatan}`, {
+                    withCredentials: true,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                }).
+                    then(response => {
+                        if (response.status === 200) {
+                            console.log("Konfirmasi success:", response.data);
+                        } else {
+                            console.error("Error konfirmasi failed:", response.data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error konfirmasi failed:", error);
+                    });
+
+                //console.log('berhasil memperbarui');
+            //}
+            console.log('berhasil memperbarui semuanya');
+            this.konfirmasiTools = false;
+            this.editActionAlat = false;
         },
         async getAllDataofRoom() {
             try {

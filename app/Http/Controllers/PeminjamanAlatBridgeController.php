@@ -463,4 +463,27 @@ class PeminjamanAlatBridgeController extends Controller
 
         return response()->json(['daftarAlat' => $daftarAlat, 'daftaralattabrakan' => $daftarAlatTabrakan, 'daftarAlatfix' => $fixAlat]);
     }
+
+    //lihat apakah peminjaman alat lebih dari satu alat dalam satu form 
+    public function checkMoreTools($peminjamanid){
+        $peminjaman = Peminjaman_Alat_Bridge::where('PeminjamanID', $peminjamanid)->get();
+        $toolsmoreone = [];
+
+        if(count($peminjaman) > 1){
+            foreach ($peminjaman as $alat){
+                $alatid = $alat->AlatID;
+                $ALAT =Alat::where('AlatID', $alatid)->first();
+                $namaalat = $ALAT->Nama;
+                $jumlahPinjam = $alat->Jumlah_pinjam;
+                $tool = [
+                    'namaalat' => $namaalat,
+                    'jumlahPinjam' => $jumlahPinjam
+                ];
+                $toolsmoreone[] = $tool;
+            }
+            return $toolsmoreone;
+        } else {
+            return $toolsmoreone;
+        }
+    }
 }

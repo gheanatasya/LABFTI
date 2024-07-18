@@ -468,7 +468,7 @@ export default {
       };
     }) */
 
-    return { form, addNewForm, removeForm, fetchAlat, saveItem, availableRoom, tambahAlat, hapusAlat };
+    return { form, addNewForm, removeForm, fetchAlat, saveItem, availableRoom, tambahAlat, hapusAlat};
   },
   data() {
     return {

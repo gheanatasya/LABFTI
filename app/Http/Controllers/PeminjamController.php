@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Peminjam;
 use App\Http\Requests\StorePeminjamRequest;
 use App\Http\Requests\UpdatePeminjamRequest;
+use App\Mail\Registration;
 use App\Models\Fakultas;
 use App\Models\Instansi;
 use App\Models\Program_Studi;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -47,6 +49,18 @@ class PeminjamController extends Controller
 
         $directory = 'dokumen/' . $input['name'];
         Storage::makeDirectory($directory);
+
+        $dataEmail = [
+            'email' => $input['email'],
+            'nama' => $input['name'],
+            'subject' => 'Registration Success',
+            'body' => 'Registration Success',
+            'actionText' => 'View My Profile',
+            'actionURL' => '/',
+            'lastline' => 'Thank you for using our application!'
+        ];
+
+        Mail::to($input['email'])->send(new Registration($dataEmail));
 
         return response()->json(['status' => true, 'message' => "Registration Success"]);
     }

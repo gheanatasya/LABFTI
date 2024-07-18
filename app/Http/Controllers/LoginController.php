@@ -23,6 +23,7 @@ class LoginController extends Controller
         $peminjam = Peminjam::where('UserID', $userid)->first();
         $totalbatal = $peminjam->Total_batal;
 
+
         if (!$User || !Hash::check($request->password, $User->Password)) {
             return response([
                 'success'   => false,

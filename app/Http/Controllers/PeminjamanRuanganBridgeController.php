@@ -683,6 +683,7 @@ class PeminjamanRuanganBridgeController extends Controller
             $peminjam = Peminjam::where('PeminjamID', $peminjamID)->first();
             $namapeminjam = $peminjam->Nama;
             $datapinjamalat = Peminjaman_Alat_Bridge::where('PeminjamanID', $peminjamanID)->get();
+            $alatbersama = []; //kalau pinjam alat lebih dari 1 dalam 1 form
 
             foreach ($datapinjamalat as $data) {
                 $peminjamanalatid = $data->Peminjaman_Alat_ID;
@@ -712,6 +713,11 @@ class PeminjamanRuanganBridgeController extends Controller
                 $petugas = $persetujuan->Petugas_Approve ?? null;
                 $koord = $persetujuan->Koordinator_Approve ?? null;
                 $namastatus = 'Diproses';
+                $another = [
+                    'toolName' => $namaalat,
+                    'toolAmount' => $jumlahPinjam,
+                ];
+                $alatbersama[] = $another;
 
                 if (!empty($persetujuan)) {
                     if ($isOrganisation) {
@@ -788,11 +794,12 @@ class PeminjamanRuanganBridgeController extends Controller
                     'petugas' => $petugas,
                     'koordinator' => $koord,
                     'path' => $path,
-                    'namadokumen' => $namadokumen
+                    'namadokumen' => $namadokumen,
                 ];
 
                 $totalsemuapeminjaman[] = $recordDataAlat;
             }
+            
         }
         return $totalsemuapeminjaman;
     }

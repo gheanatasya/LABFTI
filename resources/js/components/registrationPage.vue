@@ -175,36 +175,6 @@ export default {
 
             console.log(userData);
 
-            /* try {
-                const [prodiResponse, instansiResponse] = await Promise.all([
-                    axios.get(`http://127.0.0.1:8000/api/prodi/getIdByName/${this.selectedProdi}`),
-                    axios.get(`http://127.0.0.1:8000/api/instansi/getIdByName/${this.selectedInstansi}`),
-                ]);
-
-                this.selectedProdiID = prodiResponse.data.ProdiID;
-                this.selectedInstansiID = instansiResponse.data.InstansiID;
-
-                const peminjamData = {
-                    name: this.name,
-                    selectedInstansiID: this.selectedInstansiID,
-                    selectedProdiID: this.selectedProdiID,
-                };
-
-                console.log(userData);
-                const userResponse = await axios.post("http://127.0.0.1:8000/api/user/", userData);
-                const UserID = userResponse.data.UserID;
-
-                const peminjamDataWithUserID = { ...peminjamData, UserID };
-                await axios.post("http://127.0.0.1:8000/api/peminjam/", peminjamDataWithUserID);
-
-                console.log(peminjamDataWithUserID);
-                this.$router.push({ name: 'afterRegistration' });
-            } catch (error) {
-                console.error('Error registrasi user:', error);
-                alert("Pendaftaran gagal. Silakan coba lagi.");
-            } finally {
-                this.loading = false;
-            } */
             axios.get(`http://127.0.0.1:8000/api/prodi/getIdByName/${this.selectedProdi}`)
                 .then(response => {
                     this.selectedProdiID = response.data.ProdiID;
@@ -225,7 +195,7 @@ export default {
                                     console.log(data);
                                     try {
                                         const UserID = data.UserID;
-                                        const peminjamDataWithUserID = { ...peminjamData, UserID: UserID };
+                                        const peminjamDataWithUserID = { ...peminjamData, UserID: UserID, email: this.email };
                                         console.log(peminjamDataWithUserID);
                                         axios.post("http://127.0.0.1:8000/api/peminjam/", peminjamDataWithUserID)
                                             .then(peminjamResponse => {

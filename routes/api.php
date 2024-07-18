@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AboutEmailController;
 use App\Http\Controllers\AlatController;
 use App\Http\Controllers\DetailAlatController;
 use App\Http\Controllers\DokumenController;
@@ -34,6 +35,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('send', [AboutEmailController::class, 'sendnotification']);
 
 //route login
 Route::post('/login', [LoginController::class, 'login']);
@@ -131,6 +134,7 @@ Route::get('/peminjamanAlat/checkRelation/{PeminjamanID}', [PeminjamanAlatBridge
 Route::get('/peminjamanAlat/getAllPeminjamanAlatByPeminjamanID/{PeminjamanID}', [PeminjamanAlatBridgeController::class, 'getAllPeminjamanAlatByPeminjamanID'])->middleware('throttle:500,1');
 Route::get('/peminjamanAlat/getPeminjamanAlat/{UserID}', [PeminjamanAlatBridgeController::class, 'getPeminjamanAlat']);
 Route::get('/peminjamanAlat/jadwalAlat/{Tanggal_pakai_awal}/{Tanggal_pakai_akhir}', [PeminjamanAlatBridgeController::class, 'jadwalAlat'])->middleware('throttle:500,1');
+Route::get('/peminjamanAlat/checkAlat/{peminjamanid}', [PeminjamanAlatBridgeController::class, 'checkMoreTools'])->middleware('throttle:500,1');
 
 //route untuk peminjaman ruangan bridge
 Route::get('/peminjamanRuangan', [PeminjamanRuanganBridgeController::class, 'getAllPeminjamanRuangan']);
@@ -164,6 +168,7 @@ Route::post('/petugas/tambahFoto', [PetugasController::class, 'tambahFoto']);
 //route untuk persetujuan
 Route::put('/persetujuan/confirmBookingRuangan/{Peminjaman_Ruangan_ID}/{User_role}/{NamaStatus}/{Catatan}', [PersetujuanController::class, 'confirmBookingRuangan']);
 Route::put('/persetujuan/confirmBookingAlat/{Peminjaman_Alat_ID}/{User_role}/{NamaStatus}/{Catatan}', [PersetujuanController::class, 'confirmBookingAlat']);
+Route::put('/persetujuan/confirmBookingAlat2/{Peminjaman_Alat_ID}/{User_role}/{NamaStatus}/{Catatan}', [PersetujuanController::class, 'confirmBookingAlat2']);
 
 //dokumen
 Route::post('/dokumen', [DokumenController::class, 'forDokumenPeminjaman']);
