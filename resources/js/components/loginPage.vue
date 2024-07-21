@@ -22,12 +22,12 @@
                             class="alert alert-danger">Email required!</div>
                         <v-text-field variant="outlined" v-model="password" label="Password"
                             :append-inner-icon="show ? 'mdi-eye' : 'mdi-eye-off'" :type="show ? 'text' : 'password'"
-                            @click:append="show = !show" required></v-text-field>
+                            @click:append-inner="show = !show" required></v-text-field>
                         <div v-if="validation.password" style="margin-top: -15px; margin-bottom: 20px; color:red;"
                             class="alert alert-danger">Password required!</div>
                     </v-sheet>
 
-                    <v-btn :loading="loading" type="submit" @click="login"
+                    <v-btn :loading="loading" @click="login"
                         style="margin-top: 30px; margin-left: 370px; font-family: Lexend-Medium; background-color: rgb(2, 39, 10, 0.9); color: white; width: 200px; border-radius: 20px; font-size: 17px;">
                         <span v-if="!loading">Login</span>
                         <span v-else>Loading...</span>
@@ -61,7 +61,7 @@ export default {
             validation: [],
             loginFailed: null,
             loading: false,
-            show: true,
+            show: false,
         }
     },
     methods: {
@@ -115,6 +115,8 @@ export default {
                                 this.loginFailed = true
                                 this.loading = false
                             }
+
+                            console.log(res.data)
                         }).catch(error => {
                             console.log(error)
                             this.loading = false

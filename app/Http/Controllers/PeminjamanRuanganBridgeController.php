@@ -843,7 +843,6 @@ class PeminjamanRuanganBridgeController extends Controller
                         $docx = Dokumen::where('DokumenID', $dokumenid)->first();
                         $path = $docx->Path;
                         $namadokumen = $docx->Nama_dokumen;
-
                     }
                     $alat = Alat::where('AlatID', $alatid)->first();
                     $namaalat = $alat->Nama;

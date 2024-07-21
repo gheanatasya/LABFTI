@@ -76,12 +76,14 @@ Route::get('/user/{UserID}', [UserController::class, 'show']);
 Route::post('/user', [UserController::class, 'store']);
 Route::put('/user/{UserID}', [UserController::class, 'update']);
 Route::delete('/user/{UserID}', [UserController::class, 'delete']);
+Route::put('/userEmail/{UserID}', [UserController::class, 'updateEmail']);
+Route::put('/userPassword/{UserID}', [UserController::class, 'updatePassword']);
 
 // route untuk peminjam
 Route::get('/peminjam', [PeminjamController::class, 'getAllPeminjam']);
 Route::get('/peminjam/{PeminjamID}', [PeminjamController::class, 'show']);
 Route::post('/peminjam', [PeminjamController::class, 'store']);
-Route::put('/peminjam/{PeminjamID}', [PeminjamController::class, 'update']);
+Route::put('/peminjam/{UserID}', [PeminjamController::class, 'update']);
 Route::delete('/peminjam/{PeminjamID}', [PeminjamController::class, 'delete']);
 Route::get('/peminjam/getIDByUserID/{UserID}', [PeminjamController::class, 'getIDByUserID']);
 Route::get('/peminjam/byUserID/{UserID}', [PeminjamController::class, 'byUserID']);

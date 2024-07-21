@@ -30,7 +30,7 @@
                     <v-text-field label="Nama Lengkap" :model-value="this.user.Nama" variant="outlined" readonly
                         style="margin-right: 50px; margin-left:40px; padding-top: 30px;"></v-text-field>
 
-                    <div v-if="this.user.User_role === 'Mahasiswa' || 'Petugas'">
+                    <div v-if="this.user.Role === 'Mahasiswa' || 'Petugas'">
                         <v-text-field label="NIM" :model-value="this.user.NIM_NIDN" variant="outlined" readonly
                             style="margin-right: 50px; margin-left:40px;"></v-text-field>
                     </div>
@@ -43,7 +43,7 @@
                     <v-text-field label="Email" :model-value="this.user.Email" variant="outlined" readonly
                         style="margin-right: 50px; margin-left:40px;"></v-text-field>
 
-                    <div v-if="this.user.User_role === 'Staff'">
+                    <div v-if="this.user.Role === 'Staff'">
                         <v-text-field label="Instansi" :model-value="this.user.Instansi" variant="outlined" readonly
                             style="margin-right: 50px; margin-left:40px;"></v-text-field>
                     </div>
@@ -105,21 +105,7 @@ export default {
                     this.user = response.data;
                     console.log(this.user);
                 })
-            /* await axios.get(`http://127.0.0.1:8000/api/user/${UserID}`)
-                .then(response => {
-                    console.log(response.data)
-                    this.user = response.data
-                    axios.get(`http://127.0.0.1:8000/api/peminjam/byUserID/${UserID}`)
-                        .then(res => {
-                            console.log(res.data)
-                            this.peminjam = res.data
-                            this.getProdi(),
-                                this.getInstansi()
-                        }).catch(error => {
-                            console.error('Error fetching data pada tabel Peminjam', error);
-                        })
-                })
-             */    .catch(error => {
+                .catch(error => {
                     console.error('Error fetching data pada tabel User', error);
                 });
         },

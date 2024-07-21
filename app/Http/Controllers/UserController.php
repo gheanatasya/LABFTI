@@ -25,14 +25,15 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
         $input = $request->all();
-        $user = User::create([
+        $data = [
             'NIM_NIDN' => $input['NIM_NIDN'],
             'Email' => $input['email'],
-            'Password' => bcrypt($input['password']),
             'User_role' => $input['user_role'],
             'User_priority' => $input['user_priority']
-        ]);
-
+        ];
+        $data['Password'] = Hash::make($input['password']);
+        $user = User::create($data);
+                    
         $userID = $user->UserID;
 
         return response()->json(['status' => true, 'message' => "Registration Success", 'UserID' => $userID, 'user' => $user]);
@@ -73,5 +74,39 @@ class UserController extends Controller
         $user->save();
 
         return response()->json(['message' => 'Email dan password berhasil diperbarui', 'data' => $user]);
+    }
+
+    public function updateEmail(UpdateUserRequest $request, $UserID){
+        $user = User::find($UserID);
+
+        if ($user->id !== auth()->id()) {
+            return response()->json(['message' => 'Anda tidak memiliki izin untuk memperbarui pengguna lain'], 403);
+        }
+
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $user->Email = $request->email;
+        $user->save();
+
+        return response()->json(['message' => 'Email berhasil diperbarui', 'data' => $user]);
+    }
+
+    public function updatePassword(UpdateUserRequest $request, $UserID){
+        $user = User::find($UserID);
+
+        if ($user->id !== auth()->id()) {
+            return response()->json(['message' => 'Anda tidak memiliki izin untuk memperbarui pengguna lain'], 403);
+        }
+
+        $request->validate([
+            'password' => 'required',
+        ]);
+
+        $user->Password = bcrypt($request->password);
+        $user->save();
+
+        return response()->json(['message' => 'Password berhasil diperbarui', 'data' => $user]);
     }
 }

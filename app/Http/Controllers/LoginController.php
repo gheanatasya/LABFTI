@@ -16,13 +16,12 @@ class LoginController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ]);
-
+        
         $User = User::where('Email', $request->email)->first();
         $role = $User->User_role;
         $userid = $User->UserID;
         $peminjam = Peminjam::where('UserID', $userid)->first();
         $totalbatal = $peminjam->Total_batal;
-
 
         if (!$User || !Hash::check($request->password, $User->Password)) {
             return response([

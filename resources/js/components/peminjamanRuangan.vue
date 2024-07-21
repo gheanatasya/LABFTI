@@ -126,12 +126,20 @@
               <div v-for="(alatItem, alatIndex) in item.alat" :key="alatIndex"
                 style="display: flex; align-items: center; grid-column: span 4; width: 145%;">
                 <v-combobox v-model="alatItem.nama" :items="item.items" label="Alat yang ingin dipinjam" clearable
-                  variant="outlined"
-                  style="margin-left: 303px; margin-right: -5px; width: 50px;">
+                  variant="outlined" style="margin-left: 303px; margin-right: -5px; width: 50px;">
                 </v-combobox>
 
+                <div>
                 <v-text-field type="number" label="Jumlah" v-model="alatItem.jumlahPinjam" variant="outlined" clearable
-                  min="0" :rules="validationRules" style="margin-right: -35px; width: 40px; margin-left: 10px;"></v-text-field>
+                  v-if="alatItem.maxValue = item.itemsAll.find(item => item.NamaAlat === alatItem.nama)" min="0"
+                  :max="alatItem.maxValue.Jumlah_ketersediaan"
+                  style="margin-right: -35px; margin-left: 1t0px; margin-top: 10px;"></v-text-field>
+
+                <p v-if="maksimalPinjam = item.itemsAll.find(item => item.NamaAlat === alatItem.nama)"
+                  style="margin-top: -15px; margin-left: 10px;">
+                  Jumlah tersedia : {{ maksimalPinjam.Jumlah_ketersediaan }}
+                </p>
+                </div>
 
                 <v-btn @click="tambahAlat(index)" style="font-size: 18px; margin-left: 45px; margin-right: 90px; border-radius: 50%; width: 60px; height: 60px; background-color: none; box-shadow: none;
                 margin-top: -18px;"><v-icon>mdi-plus-circle</v-icon></v-btn>
@@ -147,7 +155,7 @@
                 ref="dokumenPendukung" :id="'dokumen-' + index" @change="handleFileChange(index)"></v-file-input>
 
               <div
-                style="display: flex; justify-content: space-between; margin-left: 320px; margin-right: 20px; margin-bottom: 50px;">
+                style="display: flex; justify-content: space-between; margin-left: 320px; margin-right: 20px; margin-bottom: 50px; margin-top: 20px;">
                 <v-btn @click="addNewForm" id="tambah" style="margin-right: 10px; margin-left: -5px;"
                   prepend-icon=mdi-plus-circle color="primary">Tambah
                   Peminjaman</v-btn>
@@ -155,7 +163,7 @@
                   Peminjaman</v-btn>
               </div>
             </div>
-            <v-btn @click="saveItem" id="simpan" 
+            <v-btn @click="saveItem" id="simpan"
               style="margin-left: 430px; margin-top: -5px; border-radius: 20px; font-size: 15px; width: 250px;"
               color="primary">
               Pinjam Ruangan </v-btn>
@@ -306,6 +314,15 @@ export default {
 
       //console.log(form);
       for (let i = 0; i < form.length; i++) {
+        if (form[i].alat.length > 0){
+          for (let j = 0; j < form[i].alat.length; j++) {
+            if (form[i].alat[j].jumlahPinjam > form[i].alat[j].maxValue.Jumlah_ketersediaan) {
+              alert('Jumlah pinjam melebihi jumlah ketersediaan alat!');
+              return;
+            }
+          }
+        }
+
         const FORMDATA = new FormData();
         const file = document.querySelector('#dokumen-' + i);
         const today = new Date();
@@ -456,19 +473,7 @@ export default {
       }
     }
 
-    /* const validationRules = computed(() => {
-      const alatData = itemsAll.find(alat => alat.NamaAlat === alatItem.value.nama);
-      if (!alatData) return {}; //tidak ada alatData ditemukan
-
-      return {
-        rulesAlat: [
-          v => v >= 0 || 'Jumlah pinjam tidak boleh negatif',
-          v => v <= alatData.Jumlah_ketersediaan || `Melebihi batas ketersediaan: ${alatData.Jumlah_ketersediaan}`,
-        ],
-      };
-    }) */
-
-    return { form, addNewForm, removeForm, fetchAlat, saveItem, availableRoom, tambahAlat, hapusAlat};
+    return { form, addNewForm, removeForm, fetchAlat, saveItem, availableRoom, tambahAlat, hapusAlat };
   },
   data() {
     return {

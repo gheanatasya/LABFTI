@@ -19,6 +19,7 @@
         "@mdi/font": "^7.4.47",
         "@syncfusion/ej2-vue-schedule": "^25.1.39",
         "@vitejs/plugin-vue": "^5.0.4",
+        "@vuelidate/core": "^2.0.3",
         "apexcharts": "^3.49.1",
         "babel-preset-stage-2": "^6.24.1",
         "babel-runtime": "^6.26.0",

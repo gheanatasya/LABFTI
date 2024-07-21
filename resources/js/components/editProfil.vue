@@ -15,65 +15,113 @@
                 <v-icon style="font-size: 250px;">mdi-account-circle</v-icon>
                 <v-icon style="font-size:30px;margin-top: 180px; margin-left: -50px;">mdi-pencil</v-icon>
 
-                <p style="font-family: Lexend-Regular; font-size: 30px; justify-content: center;"> {{ this.peminjam.Nama
+                <p style="font-family: Lexend-Regular; font-size: 30px; justify-content: center;"> {{ this.user.Nama
                     }} </p>
                 <p style="font-family: Lexend-Regular; font-size: 30px; justify-content: center;"> {{ this.user.NIM_NIDN
                     }}</p>
                 <p style="font-family: Lexend-Regular; font-size: 30px; justify-content: center;"> {{
-                    this.user.User_role }}</p>
+                    this.user.Role }}</p>
 
             </v-container>
 
             <v-container style="width:55%;">
                 <v-sheet
                     style=" background-color: rgb(3, 138, 33, 0.1); font-family: Lexend-Regular; margin-right: 80px;margin-top: -50px; border-radius: 10px;">
-                    <v-text-field label="Nama Lengkap" v-model="this.namaNew" :placeholder="this.peminjam.Nama"
-                        variant="outlined"
+                    <v-text-field label="Nama Lengkap" v-model="this.user.Nama" variant="outlined"
                         style="margin-right: 50px; margin-left:40px; padding-top: 30px;"></v-text-field>
 
-                    <div v-if="this.user.User_role === 'Mahasiswa' || 'Petugas'">
+                    <div v-if="this.user.Role === 'Mahasiswa' || 'Petugas'">
                         <v-text-field label="NIM" :model-value="this.user.NIM_NIDN" variant="outlined" readonly
-                            style="margin-right: 50px; margin-left:40px;"></v-text-field>
+                            style="margin-right: 50px; margin-left:40px; color: rgb(0, 0, 0, 0.5);"></v-text-field>
                     </div>
 
                     <div v-else>
                         <v-text-field label="NIDN" :model-value="this.user.NIM_NIDN" variant="outlined" readonly
-                            style="margin-right: 50px; margin-left:40px;"></v-text-field>
+                            style="margin-right: 50px; margin-left:40px; color: rgb(0, 0, 0, 0.5);"></v-text-field>
                     </div>
 
-                    <v-text-field label="Email" v-model="this.email" :placeholder="this.user.Email" variant="outlined"
-                        style="margin-right: 50px; margin-left:40px;"></v-text-field>
+                    <v-text-field label="Email" :model-value="this.user.Email" variant="outlined" readonly
+                        style="margin-right: 50px; margin-left:40px; color: rgb(0, 0, 0, 0.5);"></v-text-field>
 
-                    <v-text-field label="Password" v-model="this.password" variant="outlined"
+                    <!-- <v-text-field label="Password" v-model="this.password" variant="outlined"
                         :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'" :type="show ? 'text' : 'password'"
-                        @click:append="show = !show" style="margin-right: 50px; margin-left:40px;"></v-text-field>
+                        @click:append="show = !show" style="margin-right: 50px; margin-left:40px;"></v-text-field> -->
 
-                    <div v-if="this.user.User_role === 'Staff'">
-                        <v-text-field label="Instansi" :model-value="this.instansi" variant="outlined" readonly
-                            style="margin-right: 50px; margin-left:40px;"></v-text-field>
+                    <div v-if="this.user.Role === 'Staff'">
+                        <v-text-field label="Instansi" :model-value="this.user.Instansi" variant="outlined" readonly
+                            style="margin-right: 50px; margin-left:40px; color: rgb(0, 0, 0, 0.5);"></v-text-field>
                     </div>
 
                     <div v-else>
-                        <v-text-field label="Fakultas" :model-value="this.fakultas" variant="outlined" readonly
-                            style="margin-right: 50px; margin-left:40px;"></v-text-field>
+                        <v-text-field label="Fakultas" :model-value="this.user.Fakultas" variant="outlined" readonly
+                            style="margin-right: 50px; margin-left:40px; color: rgb(0, 0, 0, 0.5);"></v-text-field>
 
-                        <v-text-field label="Program Studi" :model-value="this.prodi" variant="outlined" readonly
-                            style="margin-right: 50px; margin-left:40px;"></v-text-field>
+                        <v-text-field label="Program Studi" :model-value="this.user.Prodi" variant="outlined" readonly
+                            style="margin-right: 50px; margin-left:40px; color: rgb(0, 0, 0, 0.5);"></v-text-field>
                     </div>
 
-                    <v-text-field label="Role" :model-value="this.user.User_role" variant="outlined" readonly
-                        style="margin-right: 50px; margin-left:40px;"></v-text-field>
+                    <v-text-field label="Role" :model-value="this.user.Role" variant="outlined" readonly
+                        style="margin-right: 50px; margin-left:40px; color: rgb(0, 0, 0, 0.5);"></v-text-field>
+
+                    <p @click="dialogEmail(this.user.Email)"
+                        style="color: #10511B; text-decoration: underline; cursor: pointer; margin-right: 50px; margin-left:40px;">
+                        Ubah
+                        email?</p>
+
+                    <p @click="dialogPassword(this.password)"
+                        style="color: #10511B; text-decoration: underline; cursor: pointer; margin-right: 50px; margin-left:40px;">
+                        Ubah
+                        password?</p>
 
                     <div style="display: flex; justify-content: center;">
                         <v-btn :to="'profil'"
                             style="margin-right: 20px;margin-top: 10px; margin-left: 420px; margin-bottom: 50px; font-family: Lexend-Bold; border: 3px solid rgb(2, 39, 10, 0.9);
                             box-shadow: none;background-color: none; color: rgb(2, 39, 10, 0.9); width: 150px; border-radius: 20px; font-size: 17px;">Batal</v-btn>
-                        <v-btn @click="update" :loading="loading"
+                        <v-btn @click="updateNama" :loading="loading"
                             style="margin-top: 10px; margin-right: 50px; margin-bottom: 50px; font-family: Lexend-Medium; 
                         background-color: rgb(2, 39, 10, 0.9); color: white; width: 150px; border-radius: 20px; font-size: 17px;">Simpan</v-btn>
                     </div>
-
                 </v-sheet>
+
+                <!-- ubah email -->
+                <v-dialog style="justify-content:center;" v-model="ubahEmail" persistent max-width="650">
+                    <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 700px;">
+                        <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;">
+                            Ubah Email</v-card-title>
+                        <v-card-text style="text-align: center; margin-left: 50px;">
+                            <v-text-field label="Email" v-model="this.email" variant="outlined"
+                                style="margin-right: 100px; margin-left:40px;"></v-text-field>
+                        </v-card-text>
+                        <v-card-actions style="justify-content:center;">
+                            <v-btn
+                                style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
+                                @click="ubahEmail = false">Batal</v-btn>
+                            <v-btn @click="updateEmail(this.email)" :loading="loadingEmail"
+                                style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Ubah</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+
+                <!-- ubah password -->
+                <v-dialog style="justify-content:center;" v-model="ubahPassword" persistent max-width="650">
+                    <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 700px;">
+                        <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;">
+                            Ubah Password</v-card-title>
+                        <v-card-text style="text-align: center; margin-left: 50px;">
+                            <v-text-field label="Password" v-model="this.password" variant="outlined"
+                                :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'" :type="show ? 'text' : 'password'"
+                                @click:append="show = !show"
+                                style="margin-right: 100px; margin-left:40px;"></v-text-field>
+                        </v-card-text>
+                        <v-card-actions style="justify-content:center;">
+                            <v-btn
+                                style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
+                                @click="ubahPassword = false">Batal</v-btn>
+                            <v-btn @click="updatePassword(this.password)" :loading="loadingPassword"
+                                style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Ubah</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
             </v-container>
         </div>
     </div>
@@ -105,7 +153,11 @@ export default {
             prodi: "",
             fakultas: "",
             loading: false,
+            loadingEmail: false,
+            loadingPassword: false,
             User_role: localStorage.getItem('User_role'),
+            ubahEmail: false,
+            ubahPassword: false
         }
     },
     mounted() {
@@ -114,19 +166,10 @@ export default {
     methods: {
         async getUserData() {
             const UserID = localStorage.getItem('UserID');
-            await axios.get(`http://127.0.0.1:8000/api/user/${UserID}`)
+            await axios.get(`http://127.0.0.1:8000/api/peminjam/getDataforProfil/${UserID}`)
                 .then(response => {
-                    console.log(response.data)
-                    this.user = response.data
-                    axios.get(`http://127.0.0.1:8000/api/peminjam/byUserID/${UserID}`)
-                        .then(res => {
-                            console.log(res.data)
-                            this.peminjam = res.data
-                            this.getProdi(),
-                                this.getInstansi()
-                        }).catch(error => {
-                            console.error('Error fetching data pada tabel Peminjam', error);
-                        })
+                    this.user = response.data;
+                    console.log(this.user);
                 })
                 .catch(error => {
                     console.error('Error fetching data pada tabel User', error);
@@ -156,49 +199,75 @@ export default {
                     console.error('Error fetching data pada tabel Instansi', error);
                 })
         },
-        update() {
+        updateNama() {
             this.loading = true;
-            const updatedUserData = {
-                email: this.email ? this.email : this.user.Email,
-                password: this.password ? this.password : this.user.Password,
-            };
-
             const updatedNama = {
-                nama: this.namaNew ? this.namaNew : this.peminjam.Nama
+                nama: this.peminjam.Nama
             }
+
+            console.log(updatedNama);
+
             const UserID = localStorage.getItem('UserID');
 
-            axios.get('http://localhost:8000/sanctum/csrf-cookie')
-                .then(response => {
-                    axios.put(`http://127.0.0.1:8000/api/user/${UserID}`, updatedUserData, {
-                        withCredentials: true, 
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
-                        .then(res => {
-                            console.log('User data updated successfully:', res.data);
-                            axios.put(`http://127.0.0.1:8000/api/peminjam/${this.peminjam.Nama}`, updatedNama)
-                                .then(rsp => {
-                                    this.loading = false;
-                                    this.$router.push({ name: 'profil' });
-                                }).catch(error => {
-                                    console.log('Error updating peminjam data:', error);
-                                    this.loading = false;
-                                })
-                        })
-                        .catch(error => {
-                            console.error('Error updating user data:', error);
-                            this.loading = false;
-                        });
+            axios.put(`http://127.0.0.1:8000/api/peminjam/${UserID}`, updatedNama)
+                .then(rsp => {
+                    this.loading = false;
+                    this.$router.push({ name: 'profil' });
+                }).catch(error => {
+                    console.log('Error updating nama user:', error);
+                    this.loading = false;
+                })
+        },
+        dialogEmail(email) {
+            this.ubahEmail = true;
+            this.email = email;
+            console.log(this.email);
+        },
+        dialogPassword(password) {
+            this.ubahPassword = true;
+            this.password = password;
+            console.log(this.password);
+        },
+        updateEmail(email) {
+            this.loadingEmail = true;
+            const emailUpdate = { email: email };
+            const UserID = localStorage.getItem('UserID');
+            axios.put(`http://127.0.0.1:8000/api/userEmail/${UserID}`, emailUpdate, {
+                withCredentials: true,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+                .then(res => {
+                    console.log('Email updated successfully:', res.data);
+                    this.loadingEmail = false;
+                    this.ubahEmail = false;
                 })
                 .catch(error => {
-                    console.log(error.reponse);
-                    this.loading = false;
+                    console.error('Error updating user email:', error);
+                    this.loadingEmail = false;
                 });
-        }
-
-
+        },
+        updatePassword(password) {
+            this.loadingPassword = true;
+            const passwordUpdate = { password: password };
+            const UserID = localStorage.getItem('UserID');
+            axios.put(`http://127.0.0.1:8000/api/userPassword/${UserID}`, passwordUpdate, {
+                withCredentials: true,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+                .then(res => {
+                    console.log('Password updated successfully:', res.data);
+                    this.loadingPassword = false;
+                    this.ubahPassword = false;
+                })
+                .catch(error => {
+                    console.error('Error updating user password:', error);
+                    this.loadingPassword = false;
+                });
+        },
     }
 }
 

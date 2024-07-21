@@ -17,7 +17,7 @@
                     <v-list>
                         <v-list-item v-for="(item1, j) in menu.submenus" :key="j">
                             <v-list-item-title>
-                                <v-btn :to="menu.route" flat>
+                                <v-btn :to="item1.route" flat>
                                     {{ item1.title }}
                                 </v-btn>
                             </v-list-item-title>
@@ -70,10 +70,10 @@ export default {
             menusCenter: [
                 { title: 'Ruangan', route: 'ruangan' },
                 { title: 'Alat', route: 'alat' },
-                { title: 'Beranda', route: '/berandaSuperAdmin' },
-                { title: 'Peminjaman', submenus:[{title: 'Peminjaman Ruangan & Alat', route: '/peminjamanRuangan'}, {title: 'Peminjaman Alat', route: '/peminjamanAlat'}], isOpen: false, },
-                { title: 'Daftar Alat', route: '/daftarAlat' },
-                { title: 'Daftar Peminjaman', route: '/daftarPeminjaman' },
+                { title: 'Beranda', route: 'berandaSuperAdmin' },
+                { title: 'Peminjaman', submenus:[{title: 'Peminjaman Ruangan & Alat', route: 'peminjamanRuangan'}, {title: 'Peminjaman Alat', route: 'peminjamanAlat'}], isOpen: false, },
+                { title: 'Daftar Alat', route: 'daftarAlat' },
+                { title: 'Daftar Peminjaman', route: 'daftarPeminjaman' },
             ],
 
             menusLeft: [
