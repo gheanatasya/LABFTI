@@ -133,7 +133,7 @@
                 <v-text-field type="number" label="Jumlah" v-model="alatItem.jumlahPinjam" variant="outlined" clearable
                   v-if="alatItem.maxValue = item.itemsAll.find(item => item.NamaAlat === alatItem.nama)" min="0"
                   :max="alatItem.maxValue.Jumlah_ketersediaan"
-                  style="margin-right: -35px; margin-left: 1t0px; margin-top: 10px;"></v-text-field>
+                  style="margin-right: -35px; margin-left: 10px; margin-top: 10px;"></v-text-field>
 
                 <p v-if="maksimalPinjam = item.itemsAll.find(item => item.NamaAlat === alatItem.nama)"
                   style="margin-top: -15px; margin-left: 10px;">

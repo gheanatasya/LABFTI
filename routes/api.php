@@ -7,6 +7,7 @@ use App\Http\Controllers\DokumenController;
 use App\Http\Controllers\FakultasController;
 use App\Http\Controllers\InstansiController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PeminjamanAlatBridgeController;
 use App\Http\Controllers\PeminjamanRuanganBridgeController;
 use App\Http\Controllers\PeminjamanController;
@@ -36,7 +37,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('send', [AboutEmailController::class, 'sendnotification']);
+Route::get('send', [NotificationController::class, 'sendnotification']);
 
 //route login
 Route::post('/login', [LoginController::class, 'login']);
