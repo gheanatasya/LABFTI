@@ -176,4 +176,9 @@ Route::put('/persetujuan/confirmBookingAlat2/{Peminjaman_Alat_ID}/{User_role}/{N
 //dokumen
 Route::post('/dokumen', [DokumenController::class, 'forDokumenPeminjaman']);
 
+//notifikasi
+Route::get('/notifikasi/{UserID}', [NotificationController::class, 'getNotifications']);
+Route::get('/notifikasiRead/{id}/{UserID}', [NotificationController::class, 'markAsRead']);
+
+
 

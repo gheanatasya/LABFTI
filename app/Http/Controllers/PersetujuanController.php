@@ -16,6 +16,7 @@ use App\Models\Ruangan;
 use App\Models\Status;
 use App\Models\Status_Peminjaman;
 use App\Models\User;
+use App\Notifications\SendNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
@@ -241,7 +242,16 @@ class PersetujuanController extends Controller
             'subject' => 'Persetujuan Peminjaman Ruangan dan Alat LAB FTI UKDW',
         ];
 
-        Mail::to($email)->send(new ConfirmAcc($dataEmail));
+        $dataNotifikasi = [
+            'detailruangan' => $detailRuangan,
+            'detailalat' => $daftarAlat,
+            'namastatus' => $NamaStatus,
+            'accby' => $User_role,
+            'catatan' => $Catatan,
+        ];
+
+/*         Mail::to($email)->send(new ConfirmAcc($dataEmail));
+ */        $peminjam->notify(new SendNotification($dataNotifikasi));
 
         return response()->json([
             'message' => 'Persetujuan ruangan berhasil diperbarui', 'data' => $Peminjaman_Ruangan_ID,

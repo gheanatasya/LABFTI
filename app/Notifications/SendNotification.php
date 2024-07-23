@@ -7,18 +7,18 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SendEmailNotification extends Notification
+class SendNotification extends Notification
 {
     use Queueable;
 
-    private $details;
+    public $data;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($details)
+    public function __construct($data)
     {
-        $this->details = $details;
+        $this->data = $data;
     }
 
     /**
@@ -28,19 +28,7 @@ class SendEmailNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
-    }
-
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): MailMessage
-    {
-        return (new MailMessage)
-                    ->greeting($this->details['greeting'])
-                    ->line($this->details['body'])
-                    ->action($this->details['actionText'], $this->details['actionURL'])
-                    ->line($this->details['lastline']);
+        return ['database'];
     }
 
     /**
@@ -48,10 +36,15 @@ class SendEmailNotification extends Notification
      *
      * @return array<string, mixed>
      */
-    public function toArray(object $notifiable): array
+    public function toArray($notifiable)
     {
         return [
-            //
+            'subject' => 'Status Peminjaman',
+            'detailruangan' => $this->data['detailruangan'],
+            'detailalat' => $this->data['detailalat'],
+            'namastatus' => $this->data['namastatus'],
+            'accby' => $this->data['accby'],
+            'catatan' => $this->data['catatan'],
         ];
     }
 }
