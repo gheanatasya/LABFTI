@@ -20,6 +20,7 @@ use App\Models\Program_Studi;
 use App\Models\Status;
 use App\Models\Status_Peminjaman;
 use App\Models\User;
+use App\Notifications\NewBookingNotification;
 use Illuminate\Support\Facades\Storage;
 
 class PeminjamanRuanganBridgeController extends Controller
@@ -48,6 +49,11 @@ class PeminjamanRuanganBridgeController extends Controller
         $userrole = $USER->User_role;
         $peminjam = Peminjam::where('UserID', $request['UserID'])->first();
         $nama = $peminjam->Nama;
+        $email = $USER->Email;
+        $prodiid = $peminjam->ProdiID;
+        $instansiid = $peminjam->InstansiID;
+        $emailParts = explode("@", $email);
+        $domain = $emailParts[1];
 
         if ($userrole === 'Mahasiswa' || $userrole === 'Petugas') {
             $nilaiprioritas = 1;
@@ -65,7 +71,6 @@ class PeminjamanRuanganBridgeController extends Controller
         $semuapeminjaman = [];
         $persetujuanRuangan = [];
         $statuspeminjamanRuangan = [];
-
         $ruanganid = Ruangan::where('Nama_ruangan', $input['selectedRuangan'])->first();
         $idroom = $ruanganid->RuanganID;
 
@@ -80,6 +85,12 @@ class PeminjamanRuanganBridgeController extends Controller
             'Is_Eksternal' => $input['selectedOptionEksternal'],
             'DokumenID' => null
         ]);
+
+        $detailruangan = [
+            'namaruangan' => $input['selectedRuangan'],
+            'tanggalawal' => $input['tanggalAwal'],
+            'tanggalakhir' => $input['tanggalSelesai']
+        ];
 
         $accRoom = Persetujuan::create([
             'Peminjaman_Ruangan_ID' => $peminjaman_ruangan->Peminjaman_Ruangan_ID,
@@ -107,6 +118,7 @@ class PeminjamanRuanganBridgeController extends Controller
         $persetujuanAlat = [];
         $totalpinjamalat = [];
         $statuspeminjamanAlat = [];
+        $detailalat = [];
 
         if (count($input['alat']) > 0) {
             foreach ($input['alat'] as $tool) {
@@ -114,6 +126,11 @@ class PeminjamanRuanganBridgeController extends Controller
                     $detail = Alat::where('Nama', $tool['nama'])->first();
                     $jumlahpinjam = $tool['jumlahPinjam'];
                     $alatID = $detail->AlatID;
+                    $datanotif = [
+                        'namaalat' => $tool['nama'],
+                        'jumlahPinjam' => $tool['jumlahPinjam']
+                    ];
+                    $detailalat[] = $datanotif;
 
                     $peminjaman_alat = Peminjaman_Alat_Bridge::create([
                         'PeminjamanID' => $peminjamanid,
@@ -158,10 +175,49 @@ class PeminjamanRuanganBridgeController extends Controller
             };
         }
 
+        $dataNotifikasi = [
+            'subject' => 'Peminjaman Ruangan Baru',
+            'detailruangan' => $detailruangan,
+            'detailalat' => $detailalat,
+        ];
+
+        $userAll = User::whereIn('User_role', ['Petugas', 'Kepala Lab', 'Koordinator Lab'])->get();
+
+        foreach ($userAll as $userr) {
+            $userid = $userr->UserID;
+            $peminjam = Peminjam::where('UserID', $userid)->first();
+            if ($peminjam) {
+                $peminjam->notify(new NewBookingNotification($dataNotifikasi));
+            }
+        }
+
+        if ($input['selectedOptionOrganisation'] === true){
+            $userOrg = User::where('User_role', 'Wakil Dekan 3')->first();
+            $userOrgid = $userOrg->UserID;
+            $peminjam = Peminjam::where('UserID', $userOrgid)->first();
+            if ($peminjam) {
+                $peminjam->notify(new NewBookingNotification($dataNotifikasi));
+            }
+        } elseif ($input['selectedOptionEksternal'] === true) {
+            $userExt = User::where('User_role', 'Dekan')->first();
+            $userExtid = $userExt->UserID;
+            $peminjam = Peminjam::where('UserID', $userExtid)->first();
+            if ($peminjam) {
+                $peminjam->notify(new NewBookingNotification($dataNotifikasi));
+            }
+        } elseif (strtolower($domain) !== "ti.ukdw.ac.id" && strtolower($domain) !== "si.ukdw.ac.id"){
+            $userOutside = User::where('User_role', 'Wakil Dekan 2')->first();
+            $userOutsideid = $userOutside->UserID;
+            $peminjam = Peminjam::where('UserID', $userOutsideid)->first();
+            if ($peminjam) {
+                $peminjam->notify(new NewBookingNotification($dataNotifikasi));
+            }
+        }
+
         return response()->json([
             'status' => true, 'message' => "Registration Success", 'peminjaman_ruangan_bridge' => $semuapeminjaman,
             'peminjaman' => $peminjaman, 'peminjaman_alat_bridge' => $totalpinjamalat, 'persetujuanRuangan' => $persetujuanRuangan, 'persetujuanAlat' => $persetujuanAlat,
-            'statuspeminjamanruangan' => $statuspeminjamanRuangan, 'statuspeminjamanalat' => $statuspeminjamanAlat,
+            'statuspeminjamanruangan' => $statuspeminjamanRuangan, 'statuspeminjamanalat' => $statuspeminjamanAlat, 'notifikasi berhasil dikirim' => $dataNotifikasi
         ]);
     }
 

@@ -14,6 +14,7 @@ use App\Models\Peminjaman_Ruangan_Bridge;
 use App\Models\Persetujuan;
 use App\Models\Status_Peminjaman;
 use App\Models\User;
+use App\Notifications\NewBookingNotification;
 use Illuminate\Support\Facades\DB;
 
 
@@ -39,6 +40,11 @@ class PeminjamanAlatBridgeController extends Controller
         $peminjamID = $user->PeminjamID;
         $USER = User::where('UserID', $request[0]['UserID'])->first();
         $userrole = $USER->User_role;
+        $email = $USER->Email;
+        $prodiid = $user->ProdiID;
+        $instansiid = $user->InstansiID;
+        $emailParts = explode("@", $email);
+        $domain = $emailParts[1];
 
         if ($userrole === 'Mahasiswa' || $userrole === 'Petugas') {
             $nilaiprioritas = 1;
@@ -56,6 +62,8 @@ class PeminjamanAlatBridgeController extends Controller
         $totalpinjamalat = [];
         $persetujuanAlat = [];
         $statuspeminjamanAlat = [];
+        $detailalat = [];
+        $detailruangan = [];
 
         for ($i = 0; $i < count($input); $i++) {
             if (count($input[$i]['alat']) > 0) {
@@ -64,6 +72,14 @@ class PeminjamanAlatBridgeController extends Controller
                         $detail = Alat::where('Nama', $tool['nama'])->first();
                         $jumlahpinjam = $tool['jumlahPinjam'];
                         $alatID = $detail->AlatID;
+                        $datanotif = [
+                            'namaalat' => $tool['nama'],
+                            'jumlahPinjam' => $tool['jumlahPinjam'],
+                            'tanggalawal' => $input[$i]['tanggalAwal'],
+                            'tanggalakhir' => $input[$i]['tanggalSelesai'],
+                        ];
+                        $detailalat[] = $datanotif;
+
                         $peminjaman_alat = Peminjaman_Alat_Bridge::create([
                             'PeminjamanID' => $peminjamanid,
                             'AlatID' => $alatID,
@@ -107,9 +123,48 @@ class PeminjamanAlatBridgeController extends Controller
             }
         }
 
+        $dataNotifikasi = [
+            'subject' => 'Peminjaman Alat Baru',
+            'detailruangan' => $detailruangan,
+            'detailalat' => $detailalat,
+        ];
+
+        $userAll = User::whereIn('User_role', ['Petugas', 'Kepala Lab', 'Koordinator Lab'])->get();
+
+        foreach ($userAll as $userr) {
+            $userid = $userr->UserID;
+            $peminjam = Peminjam::where('UserID', $userid)->first();
+            if ($peminjam) {
+                $peminjam->notify(new NewBookingNotification($dataNotifikasi));
+            }
+        }
+
+        if ($input['selectedOptionOrganisation'] === true) {
+            $userOrg = User::where('User_role', 'Wakil Dekan 3')->first();
+            $userOrgid = $userOrg->UserID;
+            $peminjam = Peminjam::where('UserID', $userOrgid)->first();
+            if ($peminjam) {
+                $peminjam->notify(new NewBookingNotification($dataNotifikasi));
+            }
+        } elseif ($input['selectedOptionEksternal'] === true) {
+            $userExt = User::where('User_role', 'Dekan')->first();
+            $userExtid = $userExt->UserID;
+            $peminjam = Peminjam::where('UserID', $userExtid)->first();
+            if ($peminjam) {
+                $peminjam->notify(new NewBookingNotification($dataNotifikasi));
+            }
+        } elseif (strtolower($domain) !== "ti.ukdw.ac.id" && strtolower($domain) !== "si.ukdw.ac.id") {
+            $userOutside = User::where('User_role', 'Wakil Dekan 2')->first();
+            $userOutsideid = $userOutside->UserID;
+            $peminjam = Peminjam::where('UserID', $userOutsideid)->first();
+            if ($peminjam) {
+                $peminjam->notify(new NewBookingNotification($dataNotifikasi));
+            }
+        }
+
         return response()->json([
             'status' => true, 'message' => "Registration Success", 'peminjaman_alat_bridge' => $totalpinjamalat, 'persetujuan' => $persetujuanAlat,
-            'statuspeminjamanalat' => $statuspeminjamanAlat
+            'statuspeminjamanalat' => $statuspeminjamanAlat, 'notifikasi berhasil dikirim' => $dataNotifikasi
         ]);
     }
     //mengubah data semua row
@@ -465,14 +520,15 @@ class PeminjamanAlatBridgeController extends Controller
     }
 
     //lihat apakah peminjaman alat lebih dari satu alat dalam satu form 
-    public function checkMoreTools($peminjamanid){
+    public function checkMoreTools($peminjamanid)
+    {
         $peminjaman = Peminjaman_Alat_Bridge::where('PeminjamanID', $peminjamanid)->get();
         $toolsmoreone = [];
 
-        if(count($peminjaman) > 1){
-            foreach ($peminjaman as $alat){
+        if (count($peminjaman) > 1) {
+            foreach ($peminjaman as $alat) {
                 $alatid = $alat->AlatID;
-                $ALAT =Alat::where('AlatID', $alatid)->first();
+                $ALAT = Alat::where('AlatID', $alatid)->first();
                 $namaalat = $ALAT->Nama;
                 $jumlahPinjam = $alat->Jumlah_pinjam;
                 $tool = [

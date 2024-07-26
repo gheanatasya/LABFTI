@@ -48,10 +48,6 @@ class PersetujuanController extends Controller
             'tanggalakhir' => $tanggalakhir
         ];
 
-        /* $peminjamanalat = Peminjaman_Alat_Bridge::where('RuanganID', $ruanganid)
-            ->where('Tanggal_pakai_awal', $tanggalawal)
-            ->where('Tanggal_pakai_akhir', $tanggalakhir)
-            ->get(); */
         $peminjamanalat = Peminjaman_Alat_Bridge::where('PeminjamanID', $peminjamanid)->get();
 
         if ($User_role === 'Dekan') {
@@ -243,6 +239,7 @@ class PersetujuanController extends Controller
         ];
 
         $dataNotifikasi = [
+            'subject' => 'Status Peminjaman Ruangan',
             'detailruangan' => $detailRuangan,
             'detailalat' => $daftarAlat,
             'namastatus' => $NamaStatus,
@@ -250,8 +247,8 @@ class PersetujuanController extends Controller
             'catatan' => $Catatan,
         ];
 
-/*         Mail::to($email)->send(new ConfirmAcc($dataEmail));
- */        $peminjam->notify(new SendNotification($dataNotifikasi));
+        Mail::to($email)->send(new ConfirmAcc($dataEmail));
+        $peminjam->notify(new SendNotification($dataNotifikasi));
 
         return response()->json([
             'message' => 'Persetujuan ruangan berhasil diperbarui', 'data' => $Peminjaman_Ruangan_ID,
@@ -384,7 +381,17 @@ class PersetujuanController extends Controller
             'subject' => 'Persetujuan Peminjaman Ruangan dan Alat LAB FTI UKDW',
         ];
 
+        $dataNotifikasi = [
+            'subject' => 'Status Peminjaman Ruangan',
+            'detailruangan' => $detailRuangan,
+            'detailalat' => $daftarAlat,
+            'namastatus' => $NamaStatus,
+            'accby' => $User_role,
+            'catatan' => $Catatan,
+        ];
+
         Mail::to($email)->send(new ConfirmAcc($dataEmail));
+        $peminjam->notify(new SendNotification($dataNotifikasi));
 
         return response()->json([
             'message' => 'Persetujuan alat berhasil diperbarui'
@@ -512,7 +519,17 @@ class PersetujuanController extends Controller
             'subject' => 'Persetujuan Peminjaman Ruangan dan Alat LAB FTI UKDW',
         ];
 
+        $dataNotifikasi = [
+            'subject' => 'Status Peminjaman Ruangan',
+            'detailruangan' => $detailRuangan,
+            'detailalat' => $daftarAlat,
+            'namastatus' => $NamaStatus,
+            'accby' => $User_role,
+            'catatan' => $Catatan,
+        ];
+
         Mail::to($email)->send(new ConfirmAcc($dataEmail));
+        $peminjam->notify(new SendNotification($dataNotifikasi));
 
         return response()->json([
             'message' => 'Persetujuan alat berhasil diperbarui', 'data' => $Peminjaman_Alat_ID,

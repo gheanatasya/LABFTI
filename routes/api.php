@@ -179,6 +179,9 @@ Route::post('/dokumen', [DokumenController::class, 'forDokumenPeminjaman']);
 //notifikasi
 Route::get('/notifikasi/{UserID}', [NotificationController::class, 'getNotifications']);
 Route::get('/notifikasiRead/{id}/{UserID}', [NotificationController::class, 'markAsRead']);
+Route::get('/notifikasiTest/{Peminjaman_Ruangan_ID}', [NotificationController::class, 'testRuangan']);
+Route::get('/notifikasiNewRoom/{Peminjaman_Ruangan_ID}', [NotificationController::class, 'newBookingNotificationRuangan']);
+Route::get('/notifikasiNewTools/{Peminjaman_Alat_ID}', [NotificationController::class, 'newBookingNotificationAlat']);
 
 
 

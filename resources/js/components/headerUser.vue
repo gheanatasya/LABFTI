@@ -38,47 +38,120 @@
                     <v-menu v-if="menu1.title === 'Pemberitahuan'">
                         <template v-slot:activator="{ on, props }">
                             <v-btn flat v-on="on" v-bind="props">
-                                <v-badge :content="this.allNotifications.length">
+                                <v-badge :content="this.unread">
                                     <v-icon left dark size="x-large">{{ menu1.icon }}</v-icon></v-badge>
                             </v-btn>
                         </template>
 
-                        <v-list>
+                        <v-list style="width: 600px;">
+
                             <v-list-item v-for="(item, i) in this.allNotifications" :key="i">
-                                <v-list-item-title> <!-- v-if="item.read_at == null" -->
-                                    <h4>{{ item.data.subject }}</h4>
-                                    <v-btn @click="readNotification(item.id)">Peminjaman ruangan {{ item.data.detailruangan.namaruangan }} untuk tanggal {{ new
-                                        Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID', {
-                                            year:
-                                                'numeric', month:
-                                                'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
-                                        }) }} - {{
-                                            item.data.detailruangan.tanggalakhir }} <br> telah {{ item.data.namastatus }}
-                                        oleh {{ item.data.accby }} pada {{ item.created_at }}. <br> Catatan : {{
-                                            item.data.catatan }}
-                                        </v-btn>
-                                </v-list-item-title>
+                                <v-hover>
+                                    <template v-slot:default="{ isHovering, props }" v-if="item.read_at === null">
+                                        <v-list-item-title v-if="item.read_at === null" v-bind="props" :style="{
+                                            backgroundColor: isHovering ? 'rgba(3, 138, 33, 0.4)' : 'rgb(3, 138, 33, 0.3)',
+                                            cursor: 'pointer',
+                                            paddingLeft: '10px',
+                                            borderBottom: '1px solid rgb(0, 0, 0, 0.1)',
+                                            paddingBottom: '15px',
+                                            paddingRight: '10px',
+                                            paddingTop: '10px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between'
+                                        }">
+                                            <div style="margin-right: 20px; text-align: justify;">
+                                                <h4>{{ item.data.subject }}</h4>
+                                                <p @click="readNotification(item.id)">Peminjaman ruangan {{
+                                                    item.data.detailruangan.namaruangan }}
+                                                    untuk tanggal <br>{{ new
+                                                        Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
+                                                            {
+                                                                year:
+                                                                    'numeric', month:
+                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                            }) }} - {{
+                                                        new
+                                                            Date(item.data.detailruangan.tanggalakhir).toLocaleTimeString('id-ID',
+                                                                {
+                                                                    year:
+                                                                        'numeric', month:
+                                                                        'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                                }) }} <br>telah {{
+                                                        item.data.namastatus
+                                                    }}
+                                                    oleh {{ item.data.accby }} pada {{ new
+                                                        Date(item.created_at).toLocaleTimeString('id-ID',
+                                                            {
+                                                                year:
+                                                                    'numeric', month:
+                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                            }) }}. <br>Catatan :
+                                                    {{
+                                                        item.data.catatan }}
+                                                </p>
+                                            </div>
+                                            <v-icon size="small" style="color: rgb(2,39,10,0.9);">mdi-circle</v-icon>
+                                        </v-list-item-title>
+                                    </template>
+                                </v-hover>
+
+
+                                <v-hover>
+                                    <template v-slot:default="{ isHovering2, props2 }" v-if="item.read_at !== null">
+                                        <v-list-item-title v-if="item.read_at !== null" v-bind="props2" :style="{
+                                            backgroundColor: isHovering2 ? 'rgba(0, 0, 0, 0.1)' : '',
+                                            cursor: 'pointer',
+                                            paddingLeft: '10px',
+                                            borderBottom: '1px solid rgb(0, 0, 0, 0.1)',
+                                            paddingBottom: '15px',
+                                            paddingRight: '10px',
+                                            paddingTop: '10px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between'
+                                        }">
+                                            <div style="margin-right: 20px; text-align: justify;">
+                                                <h4>{{ item.data.subject }}</h4>
+                                                <p @click="readNotification(item.id)">Peminjaman ruangan {{
+                                                    item.data.detailruangan.namaruangan }}
+                                                    untuk tanggal <br>{{ new
+                                                        Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
+                                                            {
+                                                                year:
+                                                                    'numeric', month:
+                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                            }) }} - {{
+                                                        new
+                                                            Date(item.data.detailruangan.tanggalakhir).toLocaleTimeString('id-ID',
+                                                                {
+                                                                    year:
+                                                                        'numeric', month:
+                                                                        'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                                })
+                                                    }} <br>telah {{
+                                                        item.data.namastatus
+                                                    }}
+                                                    oleh {{ item.data.accby }} pada {{ new
+                                                        Date(item.created_at).toLocaleTimeString('id-ID',
+                                                            {
+                                                                year:
+                                                                    'numeric', month:
+                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                            }) }}. <br>Catatan :
+                                                    {{
+                                                        item.data.catatan }}
+                                                </p>
+                                            </div>
+                                        </v-list-item-title>
+                                    </template>
+                                </v-hover>
                             </v-list-item>
                         </v-list>
                     </v-menu>
                 </template>
             </v-toolbar-items>
         </v-toolbar>
-
-        <!-- <v-dialog style="justify-content:center;" v-model="isNotify" persistent max-width="500">
-            <v-card
-                style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 500px; height: 500px;">
-                <v-card-actions class="d-flex justify-end">
-                    <v-icon @click="isNotify = false">mdi-close-circle</v-icon>
-                </v-card-actions>
-                <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;">
-                    Pemberitahuan
-                </v-card-title>
-                <v-card-text style="text-align: center;">
-                    Haloooowww
-                </v-card-text>
-            </v-card>
-        </v-dialog> -->
     </div>
 </template>
 
@@ -102,7 +175,8 @@ export default {
                 { title: 'Pengaturan', icon: 'mdi-cog', submenus: [{ title: 'Profil', icon: 'mdi-account-circle', to: 'profil' }, { title: 'Logout', icon: 'mdi-logout' }] },
             ],
             UserID: localStorage.getItem("UserID"),
-            allNotifications: []
+            allNotifications: [],
+            unread: 0
         }
     },
     mounted() {
@@ -130,7 +204,8 @@ export default {
         getNotification() {
             axios.get(`http://127.0.0.1:8000/api/notifikasi/${this.UserID}`)
                 .then((response) => {
-                    this.allNotifications = response.data;
+                    this.allNotifications = response.data.data;
+                    this.unread = response.data.unread;
                     console.log(this.allNotifications);
                 })
                 .catch((error) => {

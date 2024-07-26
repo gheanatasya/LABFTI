@@ -52,9 +52,227 @@
                         </v-list-item>
                     </v-list>
                 </v-menu>
-                <v-btn v-else :to="menu1.route" flat :key="menu1.title">
-                    <v-icon left dark>{{ menu1.icon }}</v-icon>
-                </v-btn>
+
+                <v-menu v-if="menu1.title === 'Pemberitahuan'">
+                    <template v-slot:activator="{ on, props }">
+                        <v-btn flat v-on="on" v-bind="props">
+                            <v-badge :content="this.unread">
+                                <v-icon left dark size="x-large">{{ menu1.icon }}</v-icon></v-badge>
+                        </v-btn>
+                    </template>
+
+                    <v-list style="width: 600px;">
+
+                        <v-list-item v-for="(item, i) in this.allNotifications" :key="i">
+                            <v-hover>
+                                <template v-slot:default="{ isHovering, props }" v-if="item.read_at === null">
+                                    <v-list-item-title v-if="item.read_at === null" v-bind="props" :style="{
+                                        backgroundColor: isHovering ? 'rgba(3, 138, 33, 0.4)' : 'rgb(3, 138, 33, 0.3)',
+                                        cursor: 'pointer',
+                                        paddingLeft: '10px',
+                                        borderBottom: '1px solid rgb(0, 0, 0, 0.1)',
+                                        paddingBottom: '15px',
+                                        paddingRight: '10px',
+                                        paddingTop: '10px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between'
+                                    }">
+                                        <div style="margin-right: 20px; text-align: justify;"
+                                            v-if="item.data.subject === 'Status Peminjaman'">
+                                            <h4>{{ item.data.subject }}</h4>
+                                            <p @click="readNotification(item.id)">Peminjaman ruangan {{
+                                                item.data.detailruangan.namaruangan }}
+                                                untuk tanggal <br>{{ new
+                                                    Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
+                                                        {
+                                                            year:
+                                                                'numeric', month:
+                                                                'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                        }) }} <br>- {{
+                                                    new
+                                                        Date(item.data.detailruangan.tanggalakhir).toLocaleTimeString('id-ID',
+                                                            {
+                                                                year:
+                                                                    'numeric', month:
+                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                            }) }} <br>telah {{
+                                                    item.data.namastatus
+                                                }}
+                                                oleh {{ item.data.accby }} pada {{ new
+                                                    Date(item.created_at).toLocaleTimeString('id-ID',
+                                                        {
+                                                            year:
+                                                                'numeric', month:
+                                                                'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                        }) }}. <br>Catatan :
+                                                {{
+                                                    item.data.catatan }}
+                                            </p>
+                                        </div>
+
+                                        <div style="margin-right: 20px; text-align: justify;"
+                                            v-if="item.data.subject === 'Peminjaman Ruangan Baru'">
+                                            <h4>{{ item.data.subject }}</h4>
+                                            <p @click="readNotification(item.id)"> Peminjaman ruangan telah dilakukan!
+                                                <br>
+                                                Ruangan {{ item.data.detailruangan.namaruangan }} akan dipinjam pada
+                                                tanggal
+                                                {{ new
+                                                    Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
+                                                        {
+                                                            year:
+                                                                'numeric', month:
+                                                                'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                        }) }}<br> - {{
+                                                    new
+                                                        Date(item.data.detailruangan.tanggalakhir).toLocaleTimeString('id-ID',
+                                                            {
+                                                                year:
+                                                                    'numeric', month:
+                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                            }) }}. <br>
+                                                Segera konfirmasi peminjaman!
+                                            </p>
+                                        </div>
+
+                                        <div style="margin-right: 20px; text-align: justify;"
+                                            v-if="item.data.subject === 'Peminjaman Alat Baru'">
+                                            <h4>{{ item.data.subject }}</h4>
+                                            <p @click="readNotification(item.id)"> Peminjaman alat telah dilakukan! <br>
+                                            <ul>
+                                                <li v-for="alat in item.data.detailalat" :key="alat">{{ alat.namaalat }}
+                                                    : {{ alat.jumlahPinjam }}</li>
+                                            </ul>
+                                            Akan dipinjam pada tanggal
+                                            {{ new
+                                                Date(item.data.detailalat[0].tanggalawal).toLocaleTimeString('id-ID',
+                                                    {
+                                                        year:
+                                                            'numeric', month:
+                                                            'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                    }) }}<br> - {{
+                                                new
+                                                    Date(item.data.detailalat[0].tanggalakhir).toLocaleTimeString('id-ID',
+                                                        {
+                                                            year:
+                                                                'numeric', month:
+                                                                'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                        }) }}. <br>
+                                            Segera konfirmasi peminjaman!
+                                            </p>
+                                        </div>
+
+                                        <v-icon size="small" style="color: rgb(2,39,10,0.9);">mdi-circle</v-icon>
+                                    </v-list-item-title>
+                                </template>
+                            </v-hover>
+
+
+                            <v-hover>
+                                <template v-slot:default="{ isHovering2, props2 }" v-if="item.read_at !== null">
+                                    <v-list-item-title v-if="item.read_at !== null" v-bind="props2" :style="{
+                                        backgroundColor: isHovering2 ? 'rgba(0, 0, 0, 0.1)' : '',
+                                        cursor: 'pointer',
+                                        paddingLeft: '10px',
+                                        borderBottom: '1px solid rgb(0, 0, 0, 0.1)',
+                                        paddingBottom: '15px',
+                                        paddingRight: '10px',
+                                        paddingTop: '10px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between'
+                                    }">
+                                        <div style="margin-right: 20px; text-align: justify;" v-if="item.data.subject === 'Status Peminjaman'">
+                                            <h4>{{ item.data.subject }}</h4>
+                                            <p @click="readNotification(item.id)">Peminjaman ruangan {{
+                                                item.data.detailruangan.namaruangan }}
+                                                untuk tanggal <br>{{ new
+                                                    Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
+                                                        {
+                                                            year:
+                                                                'numeric', month:
+                                                                'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                        }) }}<br>- {{
+                                                    new
+                                                        Date(item.data.detailruangan.tanggalakhir).toLocaleTimeString('id-ID',
+                                                            {
+                                                                year:
+                                                                    'numeric', month:
+                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                            })
+                                                }} <br>telah {{
+                                                    item.data.namastatus
+                                                }}
+                                                oleh {{ item.data.accby }} pada {{ new
+                                                    Date(item.created_at).toLocaleTimeString('id-ID',
+                                                        {
+                                                            year:
+                                                                'numeric', month:
+                                                                'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                        }) }}. <br>Catatan :
+                                                {{
+                                                    item.data.catatan }}
+                                            </p>
+                                        </div>
+
+                                        <div style="margin-right: 20px; text-align: justify;"
+                                            v-if="item.data.subject === 'Peminjaman Ruangan Baru'">
+                                            <h4>{{ item.data.subject }}</h4>
+                                            <p @click="readNotification(item.id)"> Peminjaman ruangan telah dilakukan!
+                                                <br>
+                                                Ruangan {{ item.data.detailruangan.namaruangan }} akan dipinjam pada
+                                                tanggal
+                                                {{ new
+                                                    Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
+                                                        {
+                                                            year:
+                                                                'numeric', month:
+                                                                'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                        }) }}<br> - {{
+                                                    new
+                                                        Date(item.data.detailruangan.tanggalakhir).toLocaleTimeString('id-ID',
+                                                            {
+                                                                year:
+                                                                    'numeric', month:
+                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                            }) }}. <br>
+                                                Segera konfirmasi peminjaman!
+                                            </p>
+                                        </div>
+
+                                        <div style="margin-right: 20px; text-align: justify;"
+                                            v-if="item.data.subject === 'Peminjaman Alat Baru'">
+                                            <h4>{{ item.data.subject }}</h4>
+                                            <p @click="readNotification(item.id)"> Peminjaman alat telah dilakukan! <br>
+                                            <ul>
+                                                <li v-for="alat in item.data.detailalat" :key="alat">{{ alat.namaalat }}
+                                                    : {{ alat.jumlahPinjam }}</li>
+                                            </ul>
+                                            Akan dipinjam pada tanggal
+                                            {{ new
+                                                Date(item.data.detailalat[0].tanggalawal).toLocaleTimeString('id-ID',
+                                                    {
+                                                        year:
+                                                            'numeric', month:
+                                                            'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                    }) }}<br> - {{
+                                                new
+                                                    Date(item.data.detailalat[0].tanggalakhir).toLocaleTimeString('id-ID',
+                                                        {
+                                                            year:
+                                                                'numeric', month:
+                                                                'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                        }) }}. <br>
+                                            Segera konfirmasi peminjaman!
+                                            </p>
+                                        </div>
+                                    </v-list-item-title>
+                                </template>
+                            </v-hover>
+                        </v-list-item>
+                    </v-list>
+                </v-menu>
             </template>
         </v-toolbar-items>
     </v-toolbar>
@@ -79,7 +297,10 @@ export default {
             menusLeft: [
                 { title: 'Pemberitahuan', icon: 'mdi-bell' },
                 { title: 'Pengaturan', icon: 'mdi-cog', submenus: [{ title: 'Profil', icon: 'mdi-account-circle', route: 'profil' }, { title: 'Logout', icon: 'mdi-logout' }] },
-            ]
+            ],
+            allNotifications: [],
+            UserID: localStorage.getItem('UserID'),
+            unread: 0,
         }
     },
     methods: {
@@ -94,8 +315,37 @@ export default {
                 .catch(error => {
                     console.error('Logout failed:', error);
                 });
+        },
+        getNotification() {
+            axios.get(`http://127.0.0.1:8000/api/notifikasi/${this.UserID}`)
+                .then((response) => {
+                    this.allNotifications = response.data.data;
+                    this.unread = response.data.unread;
+                    console.log(this.allNotifications);
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
+        },
+        readNotification(id) {
+            axios.get(`http://127.0.0.1:8000/api/notifikasiRead/${id}/${this.UserID}`)
+                .then((response) => {
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
         }
-    }
+    },
+    mounted() {
+        // Check if user is logged in
+        if (!localStorage.getItem("loggedIn")) {
+            // Redirect to login page
+            return this.$router.push({ name: 'loginPage' });
+        };
+
+        this.getNotification()
+    },
 };
 </script>
 

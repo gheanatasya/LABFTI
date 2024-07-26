@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SendNotification extends Notification
+class NewBookingNotification extends Notification
 {
     use Queueable;
 
@@ -42,9 +42,7 @@ class SendNotification extends Notification
             'subject' => $this->data['subject'],
             'detailruangan' => $this->data['detailruangan'],
             'detailalat' => $this->data['detailalat'],
-            'namastatus' => $this->data['namastatus'],
-            'accby' => $this->data['accby'],
-            'catatan' => $this->data['catatan'],
+            'namastatus' => 'Peminjaman Baru',
         ];
     }
 }

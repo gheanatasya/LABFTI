@@ -130,15 +130,15 @@
                 </v-combobox>
 
                 <div>
-                <v-text-field type="number" label="Jumlah" v-model="alatItem.jumlahPinjam" variant="outlined" clearable
-                  v-if="alatItem.maxValue = item.itemsAll.find(item => item.NamaAlat === alatItem.nama)" min="0"
-                  :max="alatItem.maxValue.Jumlah_ketersediaan"
-                  style="margin-right: -35px; margin-left: 10px; margin-top: 10px;"></v-text-field>
+                  <v-text-field type="number" label="Jumlah" v-model="alatItem.jumlahPinjam" variant="outlined"
+                    clearable v-if="alatItem.maxValue = item.itemsAll.find(item => item.NamaAlat === alatItem.nama)"
+                    min="0" :max="alatItem.maxValue.Jumlah_ketersediaan"
+                    style="margin-right: -35px; margin-left: 10px; margin-top: 10px;"></v-text-field>
 
-                <p v-if="maksimalPinjam = item.itemsAll.find(item => item.NamaAlat === alatItem.nama)"
-                  style="margin-top: -15px; margin-left: 10px;">
-                  Jumlah tersedia : {{ maksimalPinjam.Jumlah_ketersediaan }}
-                </p>
+                  <p v-if="maksimalPinjam = item.itemsAll.find(item => item.NamaAlat === alatItem.nama)"
+                    style="margin-top: -15px; margin-left: 10px;">
+                    Jumlah tersedia : {{ maksimalPinjam.Jumlah_ketersediaan }}
+                  </p>
                 </div>
 
                 <v-btn @click="tambahAlat(index)" style="font-size: 18px; margin-left: 45px; margin-right: 90px; border-radius: 50%; width: 60px; height: 60px; background-color: none; box-shadow: none;
@@ -314,7 +314,7 @@ export default {
 
       //console.log(form);
       for (let i = 0; i < form.length; i++) {
-        if (form[i].alat.length > 0){
+        if (form[i].alat.length > 0) {
           for (let j = 0; j < form[i].alat.length; j++) {
             if (form[i].alat[j].jumlahPinjam > form[i].alat[j].maxValue.Jumlah_ketersediaan) {
               alert('Jumlah pinjam melebihi jumlah ketersediaan alat!');
@@ -373,19 +373,19 @@ export default {
           }
           console.log(peminjamanruanganid);
 
-          //if (file !== null) {
-          const response2 = await axios({
-            method: 'POST',
-            url: 'http://localhost:8000/api/dokumen/',
-            data: FORMDATA,
-            headers: {
-              'Access-Control-Allow-Origin': '*',
-              'Content-Type': 'multipart/form-data',
-            },
-          })
-          //}
+          if (file !== null) {
+            const response2 = await axios({
+              method: 'POST',
+              url: 'http://localhost:8000/api/dokumen/',
+              data: FORMDATA,
+              headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'multipart/form-data',
+              },
+            });
+            console.log('Peminjaman saved successfully: response2', response2.data);
+          }
           //savedItems.push(response.data);
-          console.log('Peminjaman saved successfully: response2', response2.data);
           console.log('Peminjaman saved successfully:', response.data);
         } catch (error) {
           console.error('Error menyimpan data peminjaman ruangan', error);
