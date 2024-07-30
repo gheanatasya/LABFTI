@@ -4,6 +4,7 @@ use App\Http\Controllers\AboutEmailController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\TokenWebController;
+use App\Http\Controllers\WebNotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,3 +28,4 @@ Route::get('/{pathMatch}', function(){
 })->where('pathMatch', ".*");
 
 Route::post('tokenweb', TokenWebController::class);
+Route::post('/send-notification', [WebNotificationController::class, 'sendPushNotification']);

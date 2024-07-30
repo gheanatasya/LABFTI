@@ -21,6 +21,7 @@ use App\Models\Status;
 use App\Models\Status_Peminjaman;
 use App\Models\User;
 use App\Notifications\NewBookingNotification;
+use DateTime;
 use Illuminate\Support\Facades\Storage;
 
 class PeminjamanRuanganBridgeController extends Controller
@@ -191,7 +192,7 @@ class PeminjamanRuanganBridgeController extends Controller
             }
         }
 
-        if ($input['selectedOptionOrganisation'] === true){
+        if ($input['selectedOptionOrganisation'] === true) {
             $userOrg = User::where('User_role', 'Wakil Dekan 3')->first();
             $userOrgid = $userOrg->UserID;
             $peminjam = Peminjam::where('UserID', $userOrgid)->first();
@@ -205,7 +206,7 @@ class PeminjamanRuanganBridgeController extends Controller
             if ($peminjam) {
                 $peminjam->notify(new NewBookingNotification($dataNotifikasi));
             }
-        } elseif (strtolower($domain) !== "ti.ukdw.ac.id" && strtolower($domain) !== "si.ukdw.ac.id"){
+        } elseif (strtolower($domain) !== "ti.ukdw.ac.id" && strtolower($domain) !== "si.ukdw.ac.id") {
             $userOutside = User::where('User_role', 'Wakil Dekan 2')->first();
             $userOutsideid = $userOutside->UserID;
             $peminjam = Peminjam::where('UserID', $userOutsideid)->first();
@@ -621,7 +622,6 @@ class PeminjamanRuanganBridgeController extends Controller
                         $docx = Dokumen::where('DokumenID', $dokumenid)->first();
                         $path = $docx->Path;
                         $namadokumen = $docx->Nama_dokumen;
-
                     }
                     $dataAlat = ['namaalat' => $namaalat, 'jumlahPinjam' => $jumlahPinjam, 'path' => $path, 'namadokumen' => $namadokumen];
                     $kumpulanalat[] = $dataAlat;
@@ -752,7 +752,6 @@ class PeminjamanRuanganBridgeController extends Controller
                     $doc = Dokumen::where('DokumenID', $dokumenID)->first();
                     $path = $doc->Path;
                     $namadokumen = $doc->Nama_dokumen;
-
                 }
                 $alat = Alat::where('AlatID', $alatid)->first();
                 $namaalat = $alat->Nama;
@@ -855,7 +854,6 @@ class PeminjamanRuanganBridgeController extends Controller
 
                 $totalsemuapeminjaman[] = $recordDataAlat;
             }
-            
         }
         return $totalsemuapeminjaman;
     }
@@ -883,7 +881,6 @@ class PeminjamanRuanganBridgeController extends Controller
                     $doc = Dokumen::where('DokumenID', $dokumenID)->first();
                     $path = $doc->Path;
                     $namadokumen = $doc->Nama_dokumen;
-
                 }
                 $cariroom = Ruangan::where('RuanganID', $ruanganid)->first();
                 $cekalat = Peminjaman_Alat_Bridge::where('RuanganID', $ruanganid)
@@ -1039,7 +1036,6 @@ class PeminjamanRuanganBridgeController extends Controller
                                 $doc = Dokumen::where('DokumenID', $dokumenID)->first();
                                 $path = $doc->Path;
                                 $namadokumen = $doc->Nama_dokumen;
-
                             }
                             $cariroom = Ruangan::where('RuanganID', $ruanganid)->first();
                             $cekalat = Peminjaman_Alat_Bridge::where('RuanganID', $ruanganid)
@@ -1055,7 +1051,6 @@ class PeminjamanRuanganBridgeController extends Controller
                                     $docx = Dokumen::where('DokumenID', $dokumenid)->first();
                                     $path = $docx->Path;
                                     $namadokumen = $docx->Nama_dokumen;
-
                                 }
                                 $alat = Alat::where('AlatID', $alatid)->first();
                                 $namaalat = $alat->Nama;
@@ -1188,7 +1183,6 @@ class PeminjamanRuanganBridgeController extends Controller
                     $doc = Dokumen::where('DokumenID', $dokumenID)->first();
                     $path = $doc->Path;
                     $namadokumen = $doc->Nama_dokumen;
-
                 }
                 $cariroom = Ruangan::where('RuanganID', $ruanganid)->first();
                 $cekalat = Peminjaman_Alat_Bridge::where('RuanganID', $ruanganid)
@@ -1204,7 +1198,6 @@ class PeminjamanRuanganBridgeController extends Controller
                         $docx = Dokumen::where('DokumenID', $dokumenid)->first();
                         $path = $docx->Path;
                         $namadokumen = $docx->Nama_dokumen;
-
                     }
                     $alat = Alat::where('AlatID', $alatid)->first();
                     $namaalat = $alat->Nama;
@@ -1338,7 +1331,6 @@ class PeminjamanRuanganBridgeController extends Controller
                     $doc = Dokumen::where('DokumenID', $dokumenID)->first();
                     $path = $doc->Path;
                     $namadokumen = $doc->Nama_dokumen;
-
                 }
 
                 $alat = Alat::where('AlatID', $alatid)->first();
@@ -1604,7 +1596,6 @@ class PeminjamanRuanganBridgeController extends Controller
                                 $doc = Dokumen::where('DokumenID', $dokumenID)->first();
                                 $path = $doc->Path;
                                 $namadokumen = $doc->Nama_dokumen;
-
                             }
 
                             $alat = Alat::where('AlatID', $alatid)->first();
@@ -1796,5 +1787,232 @@ class PeminjamanRuanganBridgeController extends Controller
         ];
 
         return $data;
+    }
+
+    //ambil data peminjaman ruangan dan alat untuk kalender 
+    public function getDataforCalender()
+    {
+        $peminjamanruangan = [];
+        $peminjamanalat = [];
+        
+        $dataRoomsBook = Peminjaman_Ruangan_Bridge::all();
+        $dataToolsBook = Peminjaman_Alat_Bridge::all();
+
+        foreach ($dataRoomsBook as $room) {
+            $id = $room->Peminjaman_Ruangan_ID;
+            $persetujuan = Persetujuan::where('Peminjaman_Ruangan_ID', $id)->first();
+            if ($persetujuan) {
+                $petugas = $persetujuan->Petugas_Approve;
+                $koordinator = $persetujuan->Koordinator_Approve;
+                $kepala = $persetujuan->Kepala_Approve;
+                $wd2 = $persetujuan->WD2_Approve;
+                $wd3 = $persetujuan->WD3_Approve;
+                $dekan = $persetujuan->Dekan_Approve;
+
+                if ($petugas === true && $koordinator === true && $kepala === true && $wd2 === true) {
+                    $tanggalawal = $room->Tanggal_pakai_awal;
+                    $tanggalakhir = $room->Tanggal_pakai_akhir;
+
+                    $datetimeawal = new DateTime($tanggalawal);
+                    $datetimeakhir = new DateTime($tanggalakhir);
+
+                    $tanggalawal_baru = $datetimeawal->format('Y-m-d H:i');
+                    $tanggalakhir_baru = $datetimeakhir->format('Y-m-d H:i');
+
+                    $record = [
+                        'id' => $room->Peminjaman_Ruangan_ID,
+                        'title' => $room->Keterangan,
+                        'start' => $tanggalawal_baru,
+                        'end' => $tanggalakhir_baru
+                    ];
+
+                    $peminjamanruangan[] = $record;
+                } elseif ($petugas === true && $koordinator === true && $kepala === true && $wd3 === true) {
+                    $tanggalawal = $room->Tanggal_pakai_awal;
+                    $tanggalakhir = $room->Tanggal_pakai_akhir;
+
+                    $datetimeawal = new DateTime($tanggalawal);
+                    $datetimeakhir = new DateTime($tanggalakhir);
+
+                    $tanggalawal_baru = $datetimeawal->format('Y-m-d H:i');
+                    $tanggalakhir_baru = $datetimeakhir->format('Y-m-d H:i');
+
+                    $record = [
+                        'id' => $room->Peminjaman_Ruangan_ID,
+                        'title' => $room->Keterangan,
+                        'start' => $tanggalawal_baru,
+                        'end' => $tanggalakhir_baru
+                    ];
+
+                    $peminjamanruangan[] = $record;
+                } elseif ($petugas === true && $koordinator === true && $kepala === true && $dekan === true) {
+                    $tanggalawal = $room->Tanggal_pakai_awal;
+                    $tanggalakhir = $room->Tanggal_pakai_akhir;
+
+                    $datetimeawal = new DateTime($tanggalawal);
+                    $datetimeakhir = new DateTime($tanggalakhir);
+
+                    $tanggalawal_baru = $datetimeawal->format('Y-m-d H:i');
+                    $tanggalakhir_baru = $datetimeakhir->format('Y-m-d H:i');
+
+                    $record = [
+                        'id' => $room->Peminjaman_Ruangan_ID,
+                        'title' => $room->Keterangan,
+                        'start' => $tanggalawal_baru,
+                        'end' => $tanggalakhir_baru
+                    ];
+
+                    $peminjamanruangan[] = $record;
+                } elseif ($petugas === true && $koordinator === true && $kepala === true) {
+                    $tanggalawal = $room->Tanggal_pakai_awal;
+                    $tanggalakhir = $room->Tanggal_pakai_akhir;
+
+                    $datetimeawal = new DateTime($tanggalawal);
+                    $datetimeakhir = new DateTime($tanggalakhir);
+
+                    $tanggalawal_baru = $datetimeawal->format('Y-m-d H:i');
+                    $tanggalakhir_baru = $datetimeakhir->format('Y-m-d H:i');
+
+                    $record = [
+                        'id' => $room->Peminjaman_Ruangan_ID,
+                        'title' => $room->Keterangan,
+                        'start' => $tanggalawal_baru,
+                        'end' => $tanggalakhir_baru
+                    ];
+
+                    $peminjamanruangan[] = $record;
+                } elseif ($petugas === true) {
+                    $tanggalawal = $room->Tanggal_pakai_awal;
+                    $tanggalakhir = $room->Tanggal_pakai_akhir;
+
+                    $datetimeawal = new DateTime($tanggalawal);
+                    $datetimeakhir = new DateTime($tanggalakhir);
+
+                    $tanggalawal_baru = $datetimeawal->format('Y-m-d H:i');
+                    $tanggalakhir_baru = $datetimeakhir->format('Y-m-d H:i');
+
+                    $record = [
+                        'id' => $room->Peminjaman_Ruangan_ID,
+                        'title' => $room->Keterangan,
+                        'start' => $tanggalawal_baru,
+                        'end' => $tanggalakhir_baru
+                    ];
+
+                    $peminjamanruangan[] = $record;
+                }
+            }
+        };
+
+        foreach ($dataToolsBook as $tool) {
+            $id = $tool->Peminjaman_Alat_ID;
+            $persetujuan = Persetujuan::where('Peminjaman_Alat_ID', $id)->first();
+            if ($persetujuan) {
+                $petugas = $persetujuan->Petugas_Approve;
+                $koordinator = $persetujuan->Koordinator_Approve;
+                $kepala = $persetujuan->Kepala_Approve;
+                $wd2 = $persetujuan->WD2_Approve;
+                $wd3 = $persetujuan->WD3_Approve;
+                $dekan = $persetujuan->Dekan_Approve;
+
+                if ($petugas === true && $koordinator === true && $kepala === true && $wd2 === true) {
+                    $tanggalawal = $tool->Tanggal_pakai_awal;
+                    $tanggalakhir = $tool->Tanggal_pakai_akhir;
+
+                    $datetimeawal = new DateTime($tanggalawal);
+                    $datetimeakhir = new DateTime($tanggalakhir);
+
+                    $tanggalawal_baru = $datetimeawal->format('Y-m-d H:i');
+                    $tanggalakhir_baru = $datetimeakhir->format('Y-m-d H:i');
+
+                    $record = [
+                        'id' => $tool->Peminjaman_Alat_ID,
+                        'title' => $tool->Keterangan,
+                        'start' => $tanggalawal_baru,
+                        'end' => $tanggalakhir_baru
+                    ];
+
+                    $peminjamanalat[] = $record;
+                } elseif ($petugas === true && $koordinator === true && $kepala === true && $wd3 === true) {
+                    $tanggalawal = $tool->Tanggal_pakai_awal;
+                    $tanggalakhir = $tool->Tanggal_pakai_akhir;
+
+                    $datetimeawal = new DateTime($tanggalawal);
+                    $datetimeakhir = new DateTime($tanggalakhir);
+
+                    $tanggalawal_baru = $datetimeawal->format('Y-m-d H:i');
+                    $tanggalakhir_baru = $datetimeakhir->format('Y-m-d H:i');
+
+                    $record = [
+                        'id' => $tool->Peminjaman_Alat_ID,
+                        'title' => $tool->Keterangan,
+                        'start' => $tanggalawal_baru,
+                        'end' => $tanggalakhir_baru
+                    ];
+
+                    $peminjamanalat[] = $record;
+                } elseif ($petugas === true && $koordinator === true && $kepala === true && $dekan === true) {
+                    $tanggalawal = $tool->Tanggal_pakai_awal;
+                    $tanggalakhir = $tool->Tanggal_pakai_akhir;
+
+                    $datetimeawal = new DateTime($tanggalawal);
+                    $datetimeakhir = new DateTime($tanggalakhir);
+
+                    $tanggalawal_baru = $datetimeawal->format('Y-m-d H:i');
+                    $tanggalakhir_baru = $datetimeakhir->format('Y-m-d H:i');
+
+                    $record = [
+                        'id' => $tool->Peminjaman_Alat_ID,
+                        'title' => $tool->Keterangan,
+                        'start' => $tanggalawal_baru,
+                        'end' => $tanggalakhir_baru
+                    ];
+
+                    $peminjamanalat[] = $record;
+                } elseif ($petugas === true && $koordinator === true && $kepala === true) {
+                    $tanggalawal = $tool->Tanggal_pakai_awal;
+                    $tanggalakhir = $tool->Tanggal_pakai_akhir;
+
+                    $datetimeawal = new DateTime($tanggalawal);
+                    $datetimeakhir = new DateTime($tanggalakhir);
+
+                    $tanggalawal_baru = $datetimeawal->format('Y-m-d H:i');
+                    $tanggalakhir_baru = $datetimeakhir->format('Y-m-d H:i');
+
+                    $record = [
+                        'id' => $tool->Peminjaman_Alat_ID,
+                        'title' => $tool->Keterangan,
+                        'start' => $tanggalawal_baru,
+                        'end' => $tanggalakhir_baru
+                    ];
+
+                    $peminjamanalat[] = $record;
+                } elseif ($petugas === true) {
+                    $tanggalawal = $tool->Tanggal_pakai_awal;
+                    $tanggalakhir = $tool->Tanggal_pakai_akhir;
+
+                    $datetimeawal = new DateTime($tanggalawal);
+                    $datetimeakhir = new DateTime($tanggalakhir);
+
+                    $tanggalawal_baru = $datetimeawal->format('Y-m-d H:i');
+                    $tanggalakhir_baru = $datetimeakhir->format('Y-m-d H:i');
+
+                    $record = [
+                        'id' => $tool->Peminjaman_Alat_ID,
+                        'title' => $tool->Keterangan,
+                        'start' => $tanggalawal_baru,
+                        'end' => $tanggalakhir_baru
+                    ];
+
+                    $peminjamanalat[] = $record;
+                }
+            }
+        };
+
+        $allData = [
+            'peminjamanruangan' => $peminjamanruangan,
+            'peminjamanalat' => $peminjamanalat
+        ];
+
+        return $allData;
     }
 }

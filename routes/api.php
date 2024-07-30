@@ -160,6 +160,7 @@ Route::get('/getAllPeminjamanforAccAlatDekan', [PeminjamanRuanganBridgeControlle
 Route::get('/getAllPeminjamanforAccAlatWD2', [PeminjamanRuanganBridgeController::class, 'getAllPeminjamanforAccAlatWD2']);
 Route::get('/getAllPeminjamanforAccAlatWD3', [PeminjamanRuanganBridgeController::class, 'getAllPeminjamanforAccAlatWD3']);
 Route::get('/getAllforPDF/{UserID}/{desiredPeminjamanID}/{peminjamanruanganid}', [PeminjamanRuanganBridgeController::class, 'generatePDF']);
+Route::get('/getDataforCalender', [PeminjamanRuanganBridgeController::class, 'getDataforCalender']);
 
 //route untuk petugas
 Route::get('/petugas', [PetugasController::class, 'allPetugas']);
