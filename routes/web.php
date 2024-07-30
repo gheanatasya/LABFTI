@@ -3,6 +3,8 @@
 use App\Http\Controllers\AboutEmailController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PDFController;
+use App\Http\Controllers\TokenWebController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -24,3 +26,4 @@ Route::get('/{pathMatch}', function(){
     return view('welcome');
 })->where('pathMatch', ".*");
 
+Route::post('tokenweb', TokenWebController::class);

@@ -32,6 +32,13 @@ class User extends Model
         });
     }
 
+    public function routeNotificationForFcm(){
+        return [
+            'fcm' => $this->fcm_token, 
+            'web' => $this->web_token,
+        ];
+    }
+
     protected $keyType = 'string';
     public $incrementing = false;
     protected $table = 'user';
