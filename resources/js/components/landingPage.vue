@@ -13,7 +13,25 @@
       dahulu.
     </div>
 
-    <v-container id="calendar">
+    <v-container style="height: 700px; display: flex;">
+      <div id="calendar" style="width: 1000px; float: left; margin-left: -80px; margin-right: 50px;"></div>
+      <div style="float: clear; font-family:Lexend-Regular; font-size: 20px; color: white; margin-top: 30px;">
+        <p style="margin-bottom: 10px;">Keterangan : </p>
+        <p style="background-color: #fff5aa; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">SIC</p>
+        <p style="background-color: #ffd2dc; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">Byte</p>
+        <p style="background-color: #dafff0; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">Debug</p>
+        <p style="background-color: #d2e7ff; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">Firewall</p>
+        <p style="background-color: #f0e0b4; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">Gateway</p>
+        <p style="background-color: #ab826c; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">Interface</p>
+        <p style="background-color: #b5ad8b; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">Hypertext</p>
+        <p style="background-color: #c2d49b; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">Java</p>
+        <p style="background-color: #c2f2b6; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">Kernel</p>
+        <p style="background-color: #b9f0c7; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">L.Mobile</p>
+        <p style="background-color: #91abb8; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">L.BigData</p>
+        <p style="background-color: #6c5b6e; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">L.AI</p>
+        <p style="background-color: #a38c8e; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">L.MIS</p>
+        <p style="background-color: #f5c9e2; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">Alat</p>
+      </div>
     </v-container>
   </div>
 </template>
@@ -41,14 +59,6 @@ const formattedDate = `${year}-${month}-${day}`;
 async function initializeCalendar() {
   try {
     const response = await axios.get('http://localhost:8000/api/getDataforCalender/');
-    /* const peminjamanruangan = response.data.peminjamanruangan;
-
-    const events = peminjamanruangan.map((ruangan) => ({
-      title: ruangan.title,
-      start: ruangan.start,
-      end: ruangan.end,
-      id: ruangan.id,
-    })); */
 
     const allEvents = [...response.data.peminjamanruangan, ...response.data.peminjamanalat];
 
