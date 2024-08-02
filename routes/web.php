@@ -28,4 +28,3 @@ Route::get('/{pathMatch}', function(){
 })->where('pathMatch', ".*");
 
 Route::post('tokenweb', TokenWebController::class);
-Route::post('/send-notification', [WebNotificationController::class, 'sendPushNotification']);

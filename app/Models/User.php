@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Contracts\Auth\Authenticatable;
+use \LaravelFCM\Traits\HasPushToken;
 
 class User extends Model
 {
@@ -30,13 +31,6 @@ class User extends Model
         static::creating(function ($model) {
             $model->{$model->getKeyName()} = Str::uuid()->toString();
         });
-    }
-
-    public function routeNotificationForFcm(){
-        return [
-            'fcm' => $this->fcm_token, 
-            'web' => $this->web_token,
-        ];
     }
 
     protected $keyType = 'string';

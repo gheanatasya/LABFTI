@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
+use \LaravelFCM\Traits\HasPushToken;
 
 class Peminjam extends Model
 {
@@ -32,8 +33,13 @@ class Peminjam extends Model
         return $this->hasMany(Peminjaman::class, 'PeminjamID','PeminjamID');
     }
 
+    public function routeNotificationForFCM()
+    {
+        return $this->web_token;
+    }
+
     public $timestamps = false;
     protected $table = 'peminjam';
     protected $primaryKey = 'PeminjamID';
-    protected $fillable = ['Nama', 'UserID', 'ProdiID', 'InstansiID', 'Total_batal', 'Tanggal_batal_terakhir'];
+    protected $fillable = ['Nama', 'UserID', 'ProdiID', 'InstansiID', 'Total_batal', 'Tanggal_batal_terakhir', 'web_token', 'fcm_token'];
 }

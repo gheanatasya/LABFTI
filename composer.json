@@ -8,12 +8,11 @@
         "php": "^8.1",
         "barryvdh/laravel-dompdf": "^2.1",
         "google/apiclient": "*",
-        "guzzlehttp/guzzle": "^7.2",
-        "kreait/firebase-php": "^5.26",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
-        "laravel/ui": "^4.5"
+        "laravel/ui": "^4.5",
+        "paxha/laravel-fcm": "^3.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
@@ -39,7 +38,8 @@
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+            "@php artisan package:discover --ansi",
+            "Google\\Task\\Composer::cleanup"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
@@ -54,7 +54,10 @@
     "extra": {
         "laravel": {
             "dont-discover": []
-        }
+        },
+        "google/apiclient-services": [
+            "FirebaseCloudMessaging"
+        ]
     },
     "config": {
         "optimize-autoloader": true,

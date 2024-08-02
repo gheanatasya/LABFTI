@@ -16,6 +16,7 @@ use App\Models\Ruangan;
 use App\Models\Status;
 use App\Models\Status_Peminjaman;
 use App\Models\User;
+use App\Notifications\NewMessage;
 use App\Notifications\SendNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -247,8 +248,12 @@ class PersetujuanController extends Controller
             'catatan' => $Catatan,
         ];
 
+        $title = 'Konfirmasi Peminjaman Ruangan';
+        $body = 'Peminjaman ruangan' . ' ' . $detailRuangan['namaruangan'] . ' ' . 'telah' . ' ' . $NamaStatus . ' ' . 'oleh' . ' ' . $User_role;
+
         Mail::to($email)->send(new ConfirmAcc($dataEmail));
         $peminjam->notify(new SendNotification($dataNotifikasi));
+        $peminjam->notify(new NewMessage($title, $body));
 
         return response()->json([
             'message' => 'Persetujuan ruangan berhasil diperbarui', 'data' => $Peminjaman_Ruangan_ID,
@@ -390,8 +395,13 @@ class PersetujuanController extends Controller
             'catatan' => $Catatan,
         ];
 
+        $title = 'Konfirmasi Peminjaman Alat';
+        $body = 'Peminjaman alat' . ' ' . $daftarAlat[0]['namaalat'] . ' ' . 'sebanyak' . ' '. $daftarAlat[0]['jumlahPinjam'] . ' ' . 'telah' . ' ' . 
+        $NamaStatus . ' ' . 'oleh' . ' ' . $User_role;
+
         Mail::to($email)->send(new ConfirmAcc($dataEmail));
         $peminjam->notify(new SendNotification($dataNotifikasi));
+        $peminjam->notify(new NewMessage($title, $body));
 
         return response()->json([
             'message' => 'Persetujuan alat berhasil diperbarui'
@@ -528,6 +538,9 @@ class PersetujuanController extends Controller
             'catatan' => $Catatan,
         ];
 
+        $title = 'Konfirmasi Peminjaman Alat';
+        $body = 'Peminjaman alat';
+
         Mail::to($email)->send(new ConfirmAcc($dataEmail));
         $peminjam->notify(new SendNotification($dataNotifikasi));
 
@@ -535,5 +548,14 @@ class PersetujuanController extends Controller
             'message' => 'Persetujuan alat berhasil diperbarui', 'data' => $Peminjaman_Alat_ID,
             'activitylog' => $activitylog
         ]);
+    }
+
+    public function coba(){
+        $peminjam = Peminjam::where('UserID', '338ffdaf-f4cc-4304-b463-20735996b588')->first();
+        $title = 'halo';
+        $body = 'is it work?';
+        $peminjam->notify(new NewMessage($title, $body));
+
+        return 'oke';
     }
 }

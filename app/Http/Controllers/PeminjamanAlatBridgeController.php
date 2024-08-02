@@ -15,6 +15,7 @@ use App\Models\Persetujuan;
 use App\Models\Status_Peminjaman;
 use App\Models\User;
 use App\Notifications\NewBookingNotification;
+use App\Notifications\NewMessage;
 use Illuminate\Support\Facades\DB;
 
 
@@ -129,6 +130,14 @@ class PeminjamanAlatBridgeController extends Controller
             'detailalat' => $detailalat,
         ];
 
+        $title = 'Peminjaman Alat Baru';
+
+        if (count($detailalat) >  1){
+            $body = $detailalat[0]['namaalat'] . ' dan lainnya dipinjam. Segera berikan konfirmasi.';
+        } else {
+            $body = $detailalat['namaalat'] . ' dipinjam. Segera berikan konfirmasi.';
+        }
+
         $userAll = User::whereIn('User_role', ['Petugas', 'Kepala Lab', 'Koordinator Lab'])->get();
 
         foreach ($userAll as $userr) {
@@ -136,6 +145,7 @@ class PeminjamanAlatBridgeController extends Controller
             $peminjam = Peminjam::where('UserID', $userid)->first();
             if ($peminjam) {
                 $peminjam->notify(new NewBookingNotification($dataNotifikasi));
+                $peminjam->notify(new NewMessage($title, $body));
             }
         }
 
@@ -145,6 +155,7 @@ class PeminjamanAlatBridgeController extends Controller
             $peminjam = Peminjam::where('UserID', $userOrgid)->first();
             if ($peminjam) {
                 $peminjam->notify(new NewBookingNotification($dataNotifikasi));
+                $peminjam->notify(new NewMessage($title, $body));
             }
         } elseif ($input['selectedOptionEksternal'] === true) {
             $userExt = User::where('User_role', 'Dekan')->first();
@@ -152,6 +163,7 @@ class PeminjamanAlatBridgeController extends Controller
             $peminjam = Peminjam::where('UserID', $userExtid)->first();
             if ($peminjam) {
                 $peminjam->notify(new NewBookingNotification($dataNotifikasi));
+                $peminjam->notify(new NewMessage($title, $body));
             }
         } elseif (strtolower($domain) !== "ti.ukdw.ac.id" && strtolower($domain) !== "si.ukdw.ac.id") {
             $userOutside = User::where('User_role', 'Wakil Dekan 2')->first();
@@ -159,6 +171,7 @@ class PeminjamanAlatBridgeController extends Controller
             $peminjam = Peminjam::where('UserID', $userOutsideid)->first();
             if ($peminjam) {
                 $peminjam->notify(new NewBookingNotification($dataNotifikasi));
+                $peminjam->notify(new NewMessage($title, $body));
             }
         }
 

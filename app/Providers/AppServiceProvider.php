@@ -10,9 +10,7 @@ class AppServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        Notification::extend('fcm', function ($app) {
-            return new FcmChannel();
-        });
+        //
     }
     /**
      * Register any application services.

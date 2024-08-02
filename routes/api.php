@@ -173,6 +173,7 @@ Route::post('/petugas/tambahFoto', [PetugasController::class, 'tambahFoto']);
 Route::put('/persetujuan/confirmBookingRuangan/{Peminjaman_Ruangan_ID}/{User_role}/{NamaStatus}/{Catatan}', [PersetujuanController::class, 'confirmBookingRuangan']);
 Route::put('/persetujuan/confirmBookingAlat/{Peminjaman_Alat_ID}/{User_role}/{NamaStatus}/{Catatan}', [PersetujuanController::class, 'confirmBookingAlat']);
 Route::put('/persetujuan/confirmBookingAlat2/{Peminjaman_Alat_ID}/{User_role}/{NamaStatus}/{Catatan}', [PersetujuanController::class, 'confirmBookingAlat2']);
+Route::get('/coba', [PersetujuanController::class, 'coba']);
 
 //dokumen
 Route::post('/dokumen', [DokumenController::class, 'forDokumenPeminjaman']);
