@@ -27,6 +27,19 @@ const firebaseConfig = {
 // Initialize Firebase
 const appp = initializeApp(firebaseConfig);
 const messaging = getMessaging(appp);
+
+/* if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/firebase-messaging-sw.js')
+            .then(registration => {
+                console.log('Service worker registered:', registration);
+            })
+            .catch(error => {
+                console.error('Service worker registration failed:', error);
+            });
+    });
+} */
+
 onMessage(messaging, (payload) => {
     console.log('Message received. ', payload);
     alert('ada notifikasi baru');
@@ -38,6 +51,7 @@ getToken(messaging, {
     if (currentToken) {
         console.log(currentToken);
         sentTokenToServer(currentToken);
+        requestPermission();
     } else {
         requestPermission();
         console.log('No registration token available. Request permission to generate one.');
@@ -46,23 +60,23 @@ getToken(messaging, {
     console.log('An error occurred while retrieving token. ', err);
 });
 
-function sentTokenToServer(token){
+function sentTokenToServer(token) {
     var csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     let formData = new FormData();
     formData.append('web_token', token);
     formData.append('UserID', localStorage.getItem('UserID'));
     fetch("/tokenweb", {
         method: "POST",
-        body: formData, 
+        body: formData,
         headers: {
             'X-CSRF-TOKEN': csrf,
             _method: 'POST'
         },
         credentials: 'same-origin'
     })
-    .then((response) => {
-        console.log(response.status);
-    });
+        .then((response) => {
+            console.log(response.status);
+        });
 }
 
 function requestPermission() {

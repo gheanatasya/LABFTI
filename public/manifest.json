@@ -1,0 +1,17 @@
+{
+    "name": "E-Reservation LAB FTI UKDW",
+    "short_name": "E-Reservation",
+    "start_url": "/",
+    "background_color": "#ffffff",
+    "description": "Tutorial of Laravel Package",
+    "display": "fullscreen",
+    "theme_color": "#ffffff",
+    "icons": [
+        {
+            "src": "ftiukdw.PNG",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}
