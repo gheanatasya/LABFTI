@@ -6,12 +6,26 @@ use App\Models\Ruangan;
 use App\Http\Requests\StoreRuanganRequest;
 use App\Http\Requests\UpdateRuanganRequest;
 use App\Models\Peminjaman_Ruangan_Bridge;
+use Illuminate\Contracts\Cache\Store;
+use Illuminate\Support\Facades\Storage;
 
 class RuanganController extends Controller
 {
     public function getAllRuangan()
     {
-        return Ruangan::all();
+        $ruangan = Ruangan::all();
+        $ruanganReturn = [];
+
+        foreach ($ruangan as $room) {
+            if ($room->Foto !== null) {
+                $gambar = explode(':', $room->Foto);
+                $room->Foto = $gambar;
+            }
+    
+            $ruanganReturn[] = $room;
+        }
+
+        return $ruanganReturn;
     }
     //ambil data sesuai id
     public function show($RuanganID)
@@ -33,7 +47,7 @@ class RuanganController extends Controller
             'Lokasi' => $input['Lokasi'],
             'Kategori' => $input['Kategori'],
             'fasilitas' => $input['fasilitas'],
-            'Foto' => $input['Foto'],
+            'Foto' => null,
             'Status' => $input['Status']
         ]);
 
@@ -51,13 +65,12 @@ class RuanganController extends Controller
         }
 
         $request->validate([
-            'RuanganID' => 'required', 
-            'Nama_ruangan' => 'required', 
-            'Kapasitas' => 'required', 
-            'Lokasi' => 'required', 
-            'Kategori' => 'required', 
-            'updatebaru' => 'required', 
-            //'Foto' => 'required', 
+            'RuanganID' => 'required',
+            'Nama_ruangan' => 'required',
+            'Kapasitas' => 'required',
+            'Lokasi' => 'required',
+            'Kategori' => 'required',
+            'updatebaru' => 'required',
             'Status' => 'required'
         ]);
 
@@ -68,7 +81,6 @@ class RuanganController extends Controller
         $ruangan->Kategori = $request->get('Kategori');
         $ruangan->fasilitas = $request->get('updatebaru');
         $ruangan->Status = $request->get('Status');
-        $ruangan->Foto = $request->get('Foto');
         $ruangan->save();
 
         return response()->json(['message' => 'Ruangan berhasil diperbarui', 'data' => $ruangan]);
@@ -120,5 +132,36 @@ class RuanganController extends Controller
         }
 
         return $fixData;
+    }
+
+    public function tambahFoto(StoreRuanganRequest $request, $RuanganID)
+    {
+        $data = $request->file('foto');
+        $namaData = [];
+
+        $ruangan = Ruangan::where('RuanganID', $RuanganID)->first();
+        $namaruangan = $ruangan->Nama_ruangan;
+        $directory = 'ruangan/' . $namaruangan;
+
+        if (!Storage::exists($directory)) {
+            Storage::makeDirectory($directory);
+        }
+
+        foreach ($data as $foto) {
+            $fileInfo = [
+                'originalName' => $foto->getClientOriginalName(),
+                'size' => $foto->getSize(),
+                'mimeType' => $foto->getClientMimeType(),
+            ];
+
+            $path = Storage::putFileAs($directory, $foto, $fileInfo['originalName']);
+            $namaData[] = $path;
+        };
+
+        $namaDataString = implode(':', $namaData);
+        $ruangan->Foto = $namaDataString;
+        $ruangan->save();
+
+        return response()->json(['message' => 'File uploaded successfully!']);
     }
 }

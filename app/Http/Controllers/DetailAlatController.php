@@ -6,6 +6,7 @@ use App\Models\Detail_Alat;
 use App\Http\Requests\StoreDetail_AlatRequest;
 use App\Http\Requests\UpdateDetail_AlatRequest;
 use App\Models\Alat;
+use Illuminate\Support\Facades\Storage;
 
 class DetailAlatController extends Controller
 {
@@ -30,7 +31,7 @@ class DetailAlatController extends Controller
             'Nama_alat' => $input['namaDetailAlat'],
             'Status_Kebergunaan' => $input['statusKebergunaan'],
             'Status_Peminjaman' => $input['statusPeminjaman'],
-            'Foto' => $input['foto']
+            'Foto' => null
         ]);
 
         $alat = Alat::where('AlatID', $input['kodeAlat'])->first();
@@ -70,5 +71,38 @@ class DetailAlatController extends Controller
         $detailalat = Detail_Alat::find($DetailAlatID);
         $detailalat->delete();
         return response()->json(['message' => 'Detail Alat berhasil dihapus'], 204);
+    }
+
+    //tambah foto, edit foto
+    public function tambahFoto(StoreDetail_AlatRequest $request, $DetailAlatID){
+        $data = $request->file('foto');
+        $namaData = [];
+
+        $detailalat = Detail_Alat::where('DetailAlatID', $DetailAlatID)->first();
+        $alatid = $detailalat->AlatID;
+        $alat = Alat::where('AlatID', $alatid)->first();
+        $namaalat = $alat->Nama;
+        $directory = 'alat/' . $namaalat;
+
+        if (!Storage::exists($directory)) {
+            Storage::makeDirectory($directory);
+        }
+
+        foreach ($data as $foto){
+            $fileInfo = [
+                'originalName' => $foto->getClientOriginalName(),
+                'size' => $foto->getSize(),
+                'mimeType' => $foto->getClientMimeType(),
+            ];
+
+            $path = Storage::putFileAs($directory, $foto, $fileInfo['originalName']);
+            $namaData[] = $path;
+        };
+
+        $namaDataString = implode(':', $namaData);
+        $detailalat->Foto = $namaDataString;
+        $detailalat->save();
+
+        return response()->json(['message' => 'File uploaded successfully!']);
     }
 }

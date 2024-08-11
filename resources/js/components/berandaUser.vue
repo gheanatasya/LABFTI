@@ -1,5 +1,6 @@
 <template>
     <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1"></headerAdmin>
+    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1"></headerSuperAdmin>
     <headerDekanat v-if="User_role === 'Dekan' || User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'"
         style="z-index: 1"></headerDekanat>
     <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1"></headerUser>
@@ -233,6 +234,7 @@ import headerUser from '../components/headerUser.vue'
 import footerPage from '../components/footerPage.vue'
 import headerAdmin from '../components/headerAdmin.vue'
 import headerDekanat from '../components/headerDekanat.vue'
+import headerSuperAdmin from '../components/headerSuperAdmin.vue'
 
 export default {
     name: 'berandaUser',
@@ -240,7 +242,8 @@ export default {
         headerUser,
         footerPage,
         headerAdmin,
-        headerDekanat
+        headerDekanat,
+        headerSuperAdmin
     },
     data() {
         return {

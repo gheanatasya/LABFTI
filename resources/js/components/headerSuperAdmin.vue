@@ -284,8 +284,6 @@ export default {
     data() {
         return {
             menusCenter: [
-                { title: 'Ruangan', route: 'ruangan' },
-                { title: 'Alat', route: 'alat' },
                 { title: 'Beranda', route: 'berandaSuperAdmin' },
                 { title: 'Peminjaman', submenus: [{ title: 'Peminjaman Ruangan & Alat', route: 'peminjamanRuangan' }, { title: 'Peminjaman Alat', route: 'peminjamanAlat' }], isOpen: false, },
                 { title: 'Daftar Alat', route: 'daftarAlat' },

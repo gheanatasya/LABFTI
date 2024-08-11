@@ -69,13 +69,16 @@
                                             <v-btn style="background-color: rgb(2,39, 10, 0.9); color: white; border-radius: 20px; margin-left: 90px;
                                             font-size: 12px;" @click="pinjamRuang">Pinjam Ruangan</v-btn>
                                             <br>
-                                            <v-btn @click="morePicture(room.Nama_ruangan, room.Lokasi)" style="color: rgb(2,39, 10, 0.9); margin-left: 90px; background: none;
+                                            <v-btn @click="morePicture(room.Nama_ruangan, room.Lokasi, room.Foto)"
+                                                style="color: rgb(2,39, 10, 0.9); margin-left: 90px; background: none;
                                                 text-decoration: underline; box-shadow: none; 
                                                 ">L<p style="text-transform: lowercase;">ihat lebih banyak
                                                     gambar>></p></v-btn>
                                         </div>
                                     </div>
-                                    <v-img src="../picture/regis-login.jpeg" style="width: 40%; height: 100%;"
+                                    <v-img v-if="room.Foto != null" :src="'../storage/' + room.Foto[0]"
+                                        style="width: 40%; height: 100%;" cover></v-img>
+                                    <v-img v-else src="../storage/ruangan/no-image.png" style="width: 40%; height: 100%;"
                                         cover></v-img>
                                 </div>
                             </v-card>
@@ -87,7 +90,8 @@
             <v-dialog v-model="showImageDialog">
                 <v-container fluid>
                     <v-carousel height="600" show-arrows="hover" cycle hide-delimiter-background>
-                        <v-carousel-item v-for="(picture, index) in pictures" :key="index" :src="picture">
+                        <v-carousel-item v-for="(picture, index) in pictures" :key="index"
+                            :src="'../storage/' + picture">
                         </v-carousel-item>
                     </v-carousel>
                     <v-btn icon small style="position: absolute; top: 20px; right:20px;"
@@ -131,10 +135,7 @@ export default {
             allRoomsData: [],
             showImageDialog: false,
             itemToShow: null,
-            pictures: [
-                "./picture/regis-login.jpeg",
-                "./picture/fti-ukdw.png",
-            ],
+            pictures: [],
             dataLoaded: false,
             User_role: localStorage.getItem('User_role'),
         }
@@ -146,8 +147,8 @@ export default {
                     .then(response => {
                         this.allRoomsData = response.data.map(room => {
                             if (room.fasilitas) {
-                                const cleanedString = room.fasilitas.slice(1, -1);
-                                const facilitiesArray = cleanedString.split(/"(.*?)",|,/).filter(facilit => facilit);
+                                //const cleanedString = room.fasilitas.slice(1, -1);
+                                const facilitiesArray = room.fasilitas.split(", ").filter(facilit => facilit);
                                 room.fasilitas = facilitiesArray;
                             }
                             return room;
@@ -161,11 +162,14 @@ export default {
                 console.error()
             }
         },
-        morePicture(Nama_ruangan, Lokasi) {
+        morePicture(Nama_ruangan, Lokasi, Foto) {
             this.showImageDialog = true;
             this.itemToShow = {
                 Nama_ruangan,
-                Lokasi
+                Lokasi,
+            };
+            if (Foto !== null) {
+                this.pictures = Foto;
             }
         },
         pinjamRuang() {
@@ -183,7 +187,7 @@ export default {
             if (this.selectedLokasi) {
                 filteredData = filteredData.filter((room) => room.Lokasi === this.selectedLokasi);
             }
-            
+
             //filter berdasarkan kategori
             if (this.selectedKategori) {
                 filteredData = filteredData.filter((room) => room.Kategori === this.selectedKategori);

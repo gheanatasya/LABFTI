@@ -130,6 +130,7 @@
                 </v-combobox>
 
                 <div>
+                  
                   <v-text-field type="number" label="Jumlah" v-model="alatItem.jumlahPinjam" variant="outlined"
                     clearable v-if="alatItem.maxValue = item.itemsAll.find(item => item.NamaAlat === alatItem.nama)"
                     min="0" :max="alatItem.maxValue.Jumlah_ketersediaan"

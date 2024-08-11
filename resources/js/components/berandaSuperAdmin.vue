@@ -3,7 +3,7 @@
 
     <div style="padding-top: 90px">
         <p style="font-size: 35px; font-family: Lexend-Medium; text-align: center; margin-top: 20px;">Halo,
-            {{ this.user.Nama }} ! </p>
+            {{ this.user.Nama }} !</p>
 
         <p style="font-family: Lexend-Bold; margin-left: 40px; margin-top: 30px; font-size: 20px;"> Peminjaman
             Ruangan Yang Sedang Anda Lakukan : </p>

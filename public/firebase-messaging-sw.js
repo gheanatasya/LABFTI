@@ -40,3 +40,10 @@ messaging.onBackgroundMessage(function (payload) {
     /* self.registration.showNotification(notificationTitle,
         notificationOptions); */
 });
+
+/* self.addEventListener('notificationclick', function(event) {
+    event.notification.close();
+    event.waitUntil(
+        clients.openWindow('http://localhost:8000')
+    );
+}); */

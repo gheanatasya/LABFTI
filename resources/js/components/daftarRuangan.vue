@@ -71,7 +71,12 @@
 
                     <td style="width: 100px; text-align: center;"> {{ ruangan.Status }} </td>
 
-                    <td style="width: 100px; text-align: center;"> {{ ruangan.Foto }} </td>
+                    <td style="width: 100px; text-align: center;">
+                        <v-btn @click="morePicture(ruangan.Foto)" style="color: rgb(2,39, 10, 0.9); margin-left: 90px; background: none;
+                                                text-decoration: underline; box-shadow: none; 
+                                                ">L<p style="text-transform: lowercase;">ihat lebih banyak
+                                gambar>></p></v-btn>
+                    </td>
 
                     <td style="width: 100px; font-size: 25px; text-align: center;">
                         <v-icon @click="editRuangan(ruangan)"
@@ -119,14 +124,14 @@
                     </v-select>
 
                     <v-file-input label="Foto" variant="outlined" v-model="this.ruanganEdit.foto" multiple
-                        style="margin-right: 100px; margin-left:0px;"></v-file-input>
+                        id="editFotoRuangan" style="margin-right: 100px; margin-left:0px;"></v-file-input>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
                         style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                         @click="editActionRuangan = false">Batal</v-btn>
                     <v-btn
-                        @click="updateRuangan(ruanganEdit.RuanganID, ruanganEdit.Nama_ruangan, ruanganEdit.Lokasi, ruanganEdit.Kapasitas, ruanganEdit.Kategori, ruanganEdit.fasilitas, ruanganEdit.Foto, ruanganEdit.Status)"
+                        @click="updateRuangan(ruanganEdit.RuanganID, ruanganEdit.Nama_ruangan, ruanganEdit.Lokasi, ruanganEdit.Kapasitas, ruanganEdit.Kategori, ruanganEdit.fasilitas, ruanganEdit.foto, ruanganEdit.Status)"
                         style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
                 </v-card-actions>
             </v-card>
@@ -199,7 +204,7 @@
                         label="Status">
                     </v-select>
 
-                    <v-file-input label="Foto" variant="outlined" v-model="this.ruanganTambah.foto" multiple
+                    <v-file-input label="Foto" variant="outlined" v-model="this.ruanganTambah.foto" multiple id="tambahFotoRuangan"
                         style="margin-right: 100px; margin-left:0px;"></v-file-input>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
@@ -227,6 +232,20 @@
                     <canvas id="chart" max-width="300" height="200"></canvas>
                 </v-card-text>
             </v-card>
+        </v-dialog>
+
+        <!-- lihat gambar -->
+        <v-dialog v-model="showImageDialog">
+            <v-container fluid>
+                <v-carousel height="600" show-arrows="hover" cycle hide-delimiter-background>
+                    <v-carousel-item v-for="(picture, index) in gambarTampil" :key="index"
+                        :src="'../storage/' + picture">
+                    </v-carousel-item>
+                </v-carousel>
+                <v-btn icon small style="position: absolute; top: 20px; right:20px;" @click="showImageDialog = false">
+                    <v-icon>mdi-close</v-icon>
+                </v-btn>
+            </v-container>
         </v-dialog>
     </div>
 
@@ -263,7 +282,7 @@ export default {
                 Lokasi: null,
                 Kategori: null,
                 fasilitas: null,
-                Foto: null,
+                foto: null,
                 Nama_ruangan: null,
                 Status: null,
             },
@@ -276,7 +295,9 @@ export default {
                 Foto: null,
                 Nama_ruangan: null,
                 Status: null
-            }
+            },
+            gambarTampil: [],
+            showImageDialog: false,
         }
     },
     methods: {
@@ -308,23 +329,36 @@ export default {
             this.ruanganEdit.Kategori = ruangan.Kategori;
             this.ruanganEdit.Nama_ruangan = ruangan.Nama_ruangan;
             this.ruanganEdit.fasilitas = ruangan.fasilitas;
-            this.ruanganEdit.Foto = ruangan.Foto;
+            this.ruanganEdit.foto = ruangan.Foto;
             this.ruanganEdit.Status = ruangan.Status;
-
         },
-        updateRuangan(RuanganID, Nama_ruangan, Lokasi, Kapasitas, Kategori, fasilitas, Foto, Status) {
+        updateRuangan(RuanganID, Nama_ruangan, Lokasi, Kapasitas, Kategori, fasilitas, foto, Status) {
             const updatebaru = fasilitas.toString();
+            const formData = new FormData();
+
+            if (foto !== null) {
+                const file = document.getElementById('editFotoRuangan');
+                for (let i = 0; i < file.files.length; i++) {
+                    formData.append('foto[]', file.files[i]);
+                }
+                console.log('ada')
+            } else {
+                console.log('tidak ada')
+            }
+
+
+            console.log(foto);
             const updateData = {
                 RuanganID,
                 Nama_ruangan,
                 Lokasi,
                 Kapasitas,
-                Kategori, 
+                Kategori,
                 updatebaru,
-                Foto,
                 Status
             }
-            console.log(updateData)
+
+            console.log(updateData);
 
             axios.put(`http://127.0.0.1:8000/api/ruangan/${RuanganID}`, updateData, {
                 withCredentials: true,
@@ -335,7 +369,17 @@ export default {
                 .then(response => {
                     if (response.status === 200) {
                         console.log("Ruangan updated successfully:", response.data);
-                        this.editActionRuangan = false;
+
+                        if (foto !== null) {
+                            axios.post(`http://127.0.0.1:8000/api/ruangan/tambahFoto/${RuanganID}`, formData)
+                                .then(res => {
+                                    console.log("Foto ditambahkan successfully:", res.data);
+                                    this.editActionRuangan = false;
+                                }).catch(error => {
+                                    console.error("Foto gagal ditambahkan", error);
+                                })
+                        }
+
                     } else {
                         console.error("Error updating Ruangan:", response.data.message);
                     }
@@ -424,8 +468,7 @@ export default {
                                     legend: {
                                         position: "bottom",
                                         fullSize: true,
-                                    },
-                                },
+                                    },                               },
                             },
 
                         })
@@ -442,13 +485,24 @@ export default {
             const fasilit = facilitiesArray.filter(facility => facility.trim());
             //const postgresqlArrayString = `{"${fasilit.map(facility => `"${facility.trim()}"`).join('", "')}"}`;
             console.log(fasilit)
+            
+            const formData = new FormData();
+
+            if (ruanganTambah.foto !== null) {
+                const file = document.getElementById('tambahFotoRuangan');
+                for (let i = 0; i < file.files.length; i++) {
+                    formData.append('foto[]', file.files[i]);
+                }
+                console.log('ada')
+            } else {
+                console.log('tidak ada')
+            }
 
             const tambahData = {
                 RuanganID: ruanganTambah.RuanganID,
                 Kapasitas: ruanganTambah.Kapasitas,
                 Kategori: ruanganTambah.Kategori,
                 Lokasi: ruanganTambah.Lokasi,
-                Foto: ruanganTambah.Foto,
                 Nama_ruangan: ruanganTambah.Nama_ruangan,
                 fasilitas: ruanganTambah.fasilitas,
                 Status: ruanganTambah.Status
@@ -459,11 +513,26 @@ export default {
             axios.post(`http://127.0.0.1:8000/api/ruangan`, tambahData)
                 .then(response => {
                     console.log("Data berhasil masuk ke tabel Ruangan", response.data)
-                    this.dialogTambahRuangan = false
+
+                    if (ruanganTambah.foto !== null) {
+                        axios.post(`http://127.0.0.1:8000/api/ruangan/tambahFoto/${ruanganTambah.RuanganID}`, formData)
+                            .then(res => {
+                                console.log("Foto ditambahkan successfully:", res.data);
+                                this.dialogTambahRuangan = false
+                            }).catch(error => {
+                                console.error("Foto gagal ditambahkan", error);
+                            })
+                    }
                 })
                 .catch(Error => {
                     console.error("Data tidak berhasil dimasukkan ke tabel Ruangan", Error);
                 });
+        },
+        morePicture(foto) {
+            this.showImageDialog = true;
+            const fotoArray = foto.split(":").filter(pict => pict);
+            this.gambarTampil = fotoArray;
+            console.log(fotoArray);
         }
     },
     mounted() {

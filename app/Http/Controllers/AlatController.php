@@ -15,7 +15,36 @@ class AlatController extends Controller
 {
     public function getAllAlat()
     {
-        return Alat::all()->where('Status', 'Tersedia');
+        $alat = Alat::all()->where('Status', 'Tersedia');
+        $alatReturn = [];
+        foreach ($alat as $tool){
+            $gambar = [];
+            $alatid = $tool->AlatID;
+            $detail = Detail_Alat::where('AlatID', $alatid)->get();
+            foreach ($detail as $det){
+                if ($det->Foto !== null){
+                    $image = explode(':', $det->Foto);
+                    $gambar[] = $image;
+                }
+            }
+
+            $gambarGabung = [];
+            foreach ($gambar as $img){
+                $gambarGabung = array_merge($gambarGabung, $img);
+            }
+            
+            $fixRecord = [
+                'AlatID' => $tool->AlatID,
+                'Nama' => $tool->Nama,
+                'Status' => $tool->Status,
+                'Jumlah_ketersediaan' => $tool->Jumlah_ketersediaan,
+                'Foto' => $gambarGabung
+            ];
+
+            $alatReturn[] = $fixRecord;
+        }
+
+        return $alatReturn;
     }
 
     //ambil data sesuai id

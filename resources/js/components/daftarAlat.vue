@@ -109,7 +109,12 @@
                                 <td style="width: 150px; text-align: center;"> {{ detail.KodeDetailAlat }} </td>
                                 <td style="width: 200px; text-align: center;"> {{ detail.StatusKebergunaan }} </td>
                                 <td style="width: 200px; text-align: center;"> {{ detail.StatusPeminjaman }} </td>
-                                <td style="width: 500px;"> </td>
+                                <td style="width: 500px;"> 
+                                    <v-btn @click="morePicture(detail.Foto)" style="color: rgb(2,39, 10, 0.9); margin-left: 90px; background: none;
+                                                text-decoration: underline; box-shadow: none; 
+                                                ">L<p style="text-transform: lowercase;">ihat lebih banyak
+                                gambar>></p></v-btn>
+                                </td>
                                 <td style="width: 150px; font-size: 25px;">
                                     <v-icon style="color: rgb(2, 39, 10, 1);"
                                         @click="editDataDetailAlat(detail.NamaDetailAlat, detail.KodeDetailAlat, detail.StatusKebergunaan, detail.StatusPeminjaman, detail.Foto)">mdi-pencil-circle</v-icon>
@@ -171,7 +176,7 @@
                         label="Status Peminjaman">
                     </v-select>
 
-                    <v-file-input label="Foto" variant="outlined" v-model="this.detailalatEdit.foto"
+                    <v-file-input label="Foto" variant="outlined" v-model="this.detailalatEdit.foto" multiple id="editFotoAlat"
                         style="margin-right: 100px; margin-left:0px;"></v-file-input>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
@@ -261,7 +266,7 @@
                         persistent-hint variant="outlined" style="margin-right: 100px; margin-left:40px;"
                         label="Status Peminjaman">
                     </v-select>
-                    <v-file-input label="Foto" variant="outlined" v-model="this.detailalatTambah.foto" multiple
+                    <v-file-input label="Foto" variant="outlined" v-model="this.detailalatTambah.foto" multiple id="tambahFotoAlat"
                         style="margin-right: 100px; margin-left:0px;"></v-file-input>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
@@ -288,6 +293,20 @@
                     <canvas id="chart" max-width="300" height="200"></canvas>
                 </v-card-text>
             </v-card>
+        </v-dialog>
+
+        <!-- lihat gambar -->
+        <v-dialog v-model="showImageDialog">
+            <v-container fluid>
+                <v-carousel height="600" show-arrows="hover" cycle hide-delimiter-background>
+                    <v-carousel-item v-for="(picture, index) in gambarTampil" :key="index"
+                        :src="'../storage/' + picture">
+                    </v-carousel-item>
+                </v-carousel>
+                <v-btn icon small style="position: absolute; top: 20px; right:20px;" @click="showImageDialog = false">
+                    <v-icon>mdi-close</v-icon>
+                </v-btn>
+            </v-container>
         </v-dialog>
     </div>
 
@@ -343,6 +362,8 @@ export default {
             dialogTambahAlat: false,
             dialogTambahDetailAlat: false,
             allData: [],
+            showImageDialog: false,
+            gambarTampil: []
         }
     },
     methods: {
@@ -437,11 +458,22 @@ export default {
                 })
         },
         updateDetailAlat(namaDetailAlat, kodeDetailAlat, statusKebergunaan, statusPeminjaman, foto) {
+            const formData = new FormData();
+
+            if (foto !== null) {
+                const file = document.getElementById('editFotoAlat');
+                for (let i = 0; i < file.files.length; i++) {
+                    formData.append('foto[]', file.files[i]);
+                }
+                console.log('ada')
+            } else {
+                console.log('tidak ada')
+            }
+
             const updateData = {
                 namaDetailAlat,
                 statusKebergunaan,
                 statusPeminjaman,
-                foto
             }
             console.log(updateData);
 
@@ -454,7 +486,15 @@ export default {
                 .then(response => {
                     if (response.status === 200) {
                         console.log("Detail alat updated successfully:", response.data);
-                        this.editActionDetailAlat = false;
+                        if (foto !== null) {
+                            axios.post(`http://127.0.0.1:8000/api/detail/tambahFoto/${kodeDetailAlat}`, formData)
+                                .then(res => {
+                                    console.log("Foto ditambahkan successfully:", res.data);
+                                    this.editActionDetailAlat = false;
+                                }).catch(error => {
+                                    console.error("Foto gagal ditambahkan", error);
+                                })
+                        }
                     } else {
                         console.error("Error updating detail alat:", response.data.message);
                     }
@@ -474,10 +514,30 @@ export default {
         },
         tambahDetailAlat(detailalatTambah) {
             //console.log(detailalatTambah)
+            const formData = new FormData();
+
+            if (detailalatTambah.foto !== null) {
+                const file = document.getElementById('tambahFotoAlat');
+                for (let i = 0; i < file.files.length; i++) {
+                    formData.append('foto[]', file.files[i]);
+                }
+                console.log('ada')
+            } else {
+                console.log('tidak ada')
+            }
+
             axios.post(`http://127.0.0.1:8000/api/detail`, detailalatTambah)
                 .then(response => {
-                    console.log("Data berhasil masuk ke tabel Detail Alat", response.data)
-                    this.dialogTambahDetailAlat = false
+                    console.log("Data berhasil masuk ke tabel Detail Alat", response.data);
+                    if (detailalatTambah.foto !== null) {
+                            axios.post(`http://127.0.0.1:8000/api/detail/tambahFoto/${detailalatTambah.kodeDetailAlat}`, formData)
+                                .then(res => {
+                                    console.log("Foto ditambahkan successfully:", res.data);
+                                    this.dialogTambahDetailAlat = false
+                                }).catch(error => {
+                                    console.error("Foto gagal ditambahkan", error);
+                                })
+                        }
                 })
                 .catch(Error => {
                     console.error("Data tidak berhasil dimasukkan ke tabel Detail Alat", Error);
@@ -579,6 +639,12 @@ export default {
             } catch {
                 console.error()
             }
+        },
+        morePicture(foto) {
+            this.showImageDialog = true;
+            const fotoArray = foto.split(":").filter(pict => pict);
+            this.gambarTampil = fotoArray;
+            console.log(fotoArray);
         }
     },
     mounted() {

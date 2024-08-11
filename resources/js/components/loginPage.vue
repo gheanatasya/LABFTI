@@ -101,7 +101,7 @@ export default {
                                 this.loggedIn = true
 
                                 //redirect dashboard
-                                if (res.data.User_role === 'Mahasiswa' || res.data.User_role === 'Dosen' || res.data.User_role === 'Staff') {
+                                /* if (res.data.User_role === 'Mahasiswa' || res.data.User_role === 'Dosen' || res.data.User_role === 'Staff') {
                                     return this.$router.push({ name: 'berandaUser' })
                                 } else if (res.data.User_role === 'Petugas') {
                                     return this.$router.push({ name: 'berandaUser' })
@@ -109,7 +109,10 @@ export default {
                                     return this.$router.push({ name: 'berandaSuperAdmin' })
                                 } else if (res.data.User_role === 'Dekan' || res.data.User_role === 'Wakil Dekan 2' || res.data.User_role === 'Wakil Dekan 3') {
                                     return this.$router.push({ name: 'berandaUser' })
-                                }
+                                } else if (res.data.User_role === 'Koordinator Lab') {
+                                    return this.$router.push({ name: 'berandaSuperAdmin' }) 
+                                } */
+                                return this.$router.push({ name: 'berandaUser' })
                             } else {
                                 //set state login failed
                                 this.loginFailed = true

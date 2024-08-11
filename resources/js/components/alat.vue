@@ -31,13 +31,15 @@
                                             <v-btn style="background-color: rgb(2,39, 10, 0.9); color: white; border-radius: 20px; margin-left: 50px;
                                             font-size: 12px;" @click="pinjamAlat">Pinjam Alat</v-btn>
                                             <br>
-                                            <v-btn @click="morePicture(tool.Nama)" style="color: rgb(2,39, 10, 0.9); margin-left: 0px; background: none;
+                                            <v-btn @click="morePicture(tool.Nama, tool.Foto)" style="color: rgb(2,39, 10, 0.9); margin-left: 0px; background: none;
                                                 text-decoration: underline; box-shadow: none; font-size: 12px;
                                                 ">L<p style="text-transform: lowercase;">ihat lebih banyak
                                                     gambar>></p></v-btn>
                                         </div>
                                     </div>
-                                    <v-img src="../picture/regis-login.jpeg" style="width: 50%; height: 100%;"
+                                    <v-img v-if="tool.Foto.length > 0" :src="'../storage/' + tool.Foto[0]"
+                                        style="width: 40%; height: 100%;" cover></v-img>
+                                    <v-img v-else src="../storage/ruangan/no-image.png" style="width: 40%; height: 100%;"
                                         cover></v-img>
                                 </div>
                             </v-card>
@@ -49,7 +51,7 @@
             <v-dialog v-model="showImageDialog">
                 <v-container fluid>
                     <v-carousel height="600" show-arrows="hover" cycle hide-delimiter-background>
-                        <v-carousel-item v-for="(picture, index) in pictures" :key="index" :src="picture">
+                        <v-carousel-item v-for="(picture, index) in pictures" :key="index" :src="'../storage/' + picture">
                         </v-carousel-item>
                     </v-carousel>
                     <v-btn icon small style="position: absolute; top: 20px; right:20px;"
@@ -87,10 +89,7 @@ export default {
             allToolsData: [],
             showImageDialog: false,
             itemToShow: null,
-            pictures: [
-                "./picture/regis-login.jpeg",
-                "./picture/fti-ukdw.png",
-            ],
+            pictures: [],
             dataLoaded: false,
             searchAlat: '',
             User_role: localStorage.getItem('User_role'),
@@ -111,10 +110,13 @@ export default {
                 console.error()
             }
         },
-        morePicture(Nama) {
+        morePicture(Nama, Foto) {
             this.showImageDialog = true;
             this.itemToShow = {
                 Nama
+            };
+            if (Foto !== null) {
+                this.pictures = Foto;
             }
         },
         pinjamAlat() {
