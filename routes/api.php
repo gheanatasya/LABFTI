@@ -179,6 +179,7 @@ Route::get('/coba', [PersetujuanController::class, 'coba']);
 
 //dokumen
 Route::post('/dokumen', [DokumenController::class, 'forDokumenPeminjaman']);
+Route::post('/dokumenAlat', [DokumenController::class, 'forDokumenPeminjamanAlat']);
 
 //notifikasi
 Route::get('/notifikasi/{UserID}', [NotificationController::class, 'getNotifications']);

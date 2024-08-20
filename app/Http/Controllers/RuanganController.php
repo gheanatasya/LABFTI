@@ -22,7 +22,18 @@ class RuanganController extends Controller
                 $room->Foto = $gambar;
             }
     
-            $ruanganReturn[] = $room;
+            $fixRecord = [
+                'RuanganID' => $room->RuanganID,
+                'Kapasitas' => $room->Kapasitas,
+                'Lokasi' => $room->Lokasi,
+                'Kategori' => $room->Kategori,
+                'Nama_ruangan' => $room->Nama_ruangan,
+                'fasilitas' => $room->fasilitas,
+                'Status' => $room->Status,
+                'Foto' => $room->Foto
+            ];
+
+            $ruanganReturn[] = $fixRecord;
         }
 
         return $ruanganReturn;

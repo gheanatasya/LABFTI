@@ -8,6 +8,19 @@
         style="z-index: 1"></headerDekanat>
 
     <div style="margin-top: 70px;">
+        <v-overlay v-model="overlay" style="background-color: white; z-index: 0">
+            <v-container style="height: 660px; margin-left: 440px;">
+                <v-row align-content="center" class="fill-height" justify="center">
+                    <v-col class="text-subtitle-1 text-center" cols="12" style="font-family: Lexend-Regular;">
+                        Memuat halaman
+                    </v-col>
+                    <v-col cols="6">
+                        <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
+                    </v-col>
+                </v-row>
+            </v-container>
+        </v-overlay>
+
         <p style="font-family: Lexend-Medium; font-size: 28px; margin-left: 40px; margin-top: 20px;">Profil</p>
 
         <div style="width: 100%; display: flex;">
@@ -92,10 +105,19 @@ export default {
             fakultas: "",
             loading: false,
             User_role: localStorage.getItem('User_role'),
+            overlay: true,
         }
     },
     mounted() {
-        this.getUserData()
+        Promise.all([
+            this.getUserData()
+        ])
+            .then(() => {
+                this.overlay = false;
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     },
     methods: {
         async getUserData() {

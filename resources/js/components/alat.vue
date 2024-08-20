@@ -1,10 +1,23 @@
 <template>
-    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1"></headerUser>
+    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1;"></headerUser>
     <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1"></headerSuperAdmin>
     <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1"></headerAdmin>
     <headerDekanat v-if="User_role === 'Dekan'|| User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'" style="z-index: 1"></headerDekanat>
 
     <div style="margin-top: 100px;">
+        <v-overlay v-model="overlay" style="background-color: white; z-index: 0">
+            <v-container style="height: 660px; margin-left: 440px;">
+                <v-row align-content="center" class="fill-height" justify="center">
+                    <v-col class="text-subtitle-1 text-center" cols="12" style="font-family: Lexend-Regular;">
+                        Memuat halaman
+                    </v-col>
+                    <v-col cols="6">
+                        <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
+                    </v-col>
+                </v-row>
+            </v-container>
+        </v-overlay>
+
         <p style="font-family: 'Lexend-Medium'; font-size: 25px; margin-top: -20px; margin-left: 30px">Alat</p>
 
         <div id="filter" style="margin-top: 30px; margin-right: 60px; margin-bottom: 40px;">
@@ -93,6 +106,7 @@ export default {
             dataLoaded: false,
             searchAlat: '',
             User_role: localStorage.getItem('User_role'),
+            overlay: true
         }
     },
     methods: {
@@ -124,7 +138,15 @@ export default {
         },
     },
     mounted() {
-        this.getAllDataofTools()
+        Promise.all([
+            this.getAllDataofTools()
+        ])
+            .then(() => {
+                this.overlay = false;
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     },
     computed: {
         filteredTools() {

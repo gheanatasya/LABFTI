@@ -1,11 +1,26 @@
 <template>
     <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1"></headerAdmin>
-    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1"></headerSuperAdmin>
+    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1">
+    </headerSuperAdmin>
     <headerDekanat v-if="User_role === 'Dekan' || User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'"
         style="z-index: 1"></headerDekanat>
-    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1"></headerUser>
+    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1">
+    </headerUser>
 
     <div style="padding-top: 90px">
+        <v-overlay v-model="overlay" style="background-color: white; z-index: 0">
+            <v-container style="height: 660px; margin-left: 440px;">
+                <v-row align-content="center" class="fill-height" justify="center">
+                    <v-col class="text-subtitle-1 text-center" cols="12" style="font-family: Lexend-Regular;">
+                        Memuat halaman
+                    </v-col>
+                    <v-col cols="6">
+                        <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
+                    </v-col>
+                </v-row>
+            </v-container>
+        </v-overlay>
+
         <p style="font-size: 35px; font-family: Lexend-Medium; text-align: center; margin-top: 20px;">Halo,
             {{ this.user.Nama }} ! </p>
 
@@ -14,7 +29,7 @@
 
         <v-container>
             <v-card class="tabelPinjamRuangan">
-                <v-table style="overflow: hidden;">
+                <v-table style="overflow: hidden; height: 400px;">
                     <thead style="font-family: Lexend-Regular; font-size: 15px;">
                         <tr>
                             <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">No</th>
@@ -25,7 +40,7 @@
                             <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody v-if="this.ruanganbridge.length > 0">
                         <tr v-for="(item, index) in paginatedRuangan(currentPageRuangan)" :key="item.peminjamanid"
                             style="background-color: white; font-family: 'Lexend-Regular; font-size: 15px;">
                             <td style="width: 20px;"> {{ (currentPageRuangan - 1) * itemsPerPage + index + 1 }} </td>
@@ -54,14 +69,24 @@
                                     @click="downloadPDF(this.UserID, item.peminjamanid, item.peminjamanruanganid, 0)"
                                     style="color: rgb(2, 39, 10, 1)">mdi-download-circle</v-icon>
 
-                                    <v-icon v-else
-                                    style="color: rgb(0, 0, 0, 0.5)">mdi-download-circle</v-icon>
+                                <v-icon v-else style="color: rgb(0, 0, 0, 0.5)">mdi-download-circle</v-icon>
 
                                 <v-icon
                                     @click="confirmDelete(item.peminjamanruanganid, item.peminjamanid, item.namaruangan)"
                                     style="color: rgb(206, 0, 0, 0.91);">mdi-delete-circle</v-icon>
                             </td>
                         </tr>
+                    </tbody>
+                    <tbody v-else>
+                        <td></td>
+                        <td></td>
+                        <div class="py-1 text-center" style="content: center; margin-top: 60px; margin-left: 150px; margin-right: -50px;">
+                            <v-icon class="mb-6" color="primary" icon="mdi-alert-circle-outline" size="40"></v-icon>
+                            <div class="text-h7 font-weight-bold">Maaf, tidak ada data yang bisa ditampilkan.</div>
+                        </div>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tbody>
                 </v-table>
 
@@ -102,7 +127,7 @@
                     <v-btn
                         style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                         @click="dialogVisible = false">Batal</v-btn>
-                    <v-btn
+                    <v-btn :loading="this.itemToDelete.loading"
                         style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;"
                         @click="deletePeminjamanRuangan(itemToDelete.peminjamanruanganid, itemToDelete.peminjamanid)">Hapus</v-btn>
                 </v-card-actions>
@@ -114,7 +139,7 @@
 
         <v-container>
             <v-card class="tabelPinjamAlat">
-                <v-table style="font-family: Lexend-Regular;" fixed-header>
+                <v-table style="font-family: Lexend-Regular; height: 400px;" fixed-header>
                     <thead>
                         <tr>
                             <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">
@@ -140,7 +165,7 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody v-if="this.alatbridge.length > 0">
                         <tr v-for="(item, index) in paginatedAlat(currentPageAlat)" :key="item.peminjamanid"
                             style="font-family:'Lexend-Regular'; font-size: 15px; ">
                             <td style="width: 20px;"> {{ (currentPageAlat - 1) * itemsPerPage + index + 1 }} </td>
@@ -169,14 +194,25 @@
                                     @click="downloadPDF(this.UserID, item.peminjamanid, 0, item.peminjamanalatid)"
                                     style="color: rgb(2, 39, 10, 1)">mdi-download-circle</v-icon>
 
-                                    <v-icon v-else
-                                    style="color: rgb(0, 0, 0, 0.5)">mdi-download-circle</v-icon>
+                                <v-icon v-else style="color: rgb(0, 0, 0, 0.5)">mdi-download-circle</v-icon>
 
                                 <v-icon
                                     @click="confirmDeleteAlat(item.peminjamanalatid, item.peminjamanid, item.namaalat)"
                                     style="color: rgb(206, 0, 0, 0.91);">mdi-delete-circle</v-icon>
                             </td>
                         </tr>
+                    </tbody>
+                    <tbody v-else>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <div class="py-1 text-center" style="content: center; margin-top: 60px; margin-left: 30px;">
+                            <v-icon class="mb-6" color="primary" icon="mdi-alert-circle-outline" size="40"></v-icon>
+                            <div class="text-h7 font-weight-bold">Maaf, tidak ada data yang bisa ditampilkan.</div>
+                        </div>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tbody>
                 </v-table>
 
@@ -216,7 +252,7 @@
                     <v-btn
                         style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                         @click="dialogVisibleAlat = false">Batal</v-btn>
-                    <v-btn
+                    <v-btn :loading="itemToDeleteAlat.loading"
                         style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;"
                         @click="deletePeminjamanAlat(itemToDeleteAlat.peminjamanalatid, itemToDeleteAlat.peminjamanid)">Hapus</v-btn>
                 </v-card-actions>
@@ -250,13 +286,13 @@ export default {
             User_role: localStorage.getItem('User_role'),
             dialogVisibleRoom: false,
             dialogVisibleTool: false,
-            itemToDelete: null,
-            itemToDeleteAlat: null,
+            itemToDelete: [],
+            itemToDeleteAlat: [],
             dialogVisible: false,
             dialogVisibleAlat: false,
             currentPageRuangan: 1,
             currentPageAlat: 1,
-            itemsPerPage: 5,
+            itemsPerPage: 6,
             no: '',
             peminjaman: [],
             ruanganbridge: [],
@@ -280,12 +316,21 @@ export default {
             activitylog: [],
             activitylogAlat: [],
             daftarrelasi: [],
+            overlay: true
         }
     },
     mounted() {
-        this.getName(),
+        Promise.all([
+            this.getName(),
             this.getPeminjamanRuangan(),
             this.getPeminjamanAlat()
+        ])
+            .then(() => {
+                this.overlay = false;
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     },
     methods: {
         openInformationTool(histori) {
@@ -311,11 +356,12 @@ export default {
             this.activitylog = modifiedHistori;
 
         },
-        getName() {
+        async getName() {
             const UserID = localStorage.getItem('UserID');
             const totalbatal = localStorage.getItem('Total_batal');
             //console.log(totalbatal);
-            axios.get(`http://127.0.0.1:8000/api/peminjam/byUserID/${UserID}`)
+            console.log(this.overlay);
+            await axios.get(`http://127.0.0.1:8000/api/peminjam/byUserID/${UserID}`)
                 .then(response => {
                     this.user = response.data;
                 })
@@ -324,6 +370,7 @@ export default {
                 });
         },
         deletePeminjamanRuangan(peminjamanruanganid, PeminjamanID) {
+            this.itemToDelete.loading = true;
             console.log(peminjamanruanganid);
             const tanggalhariini = new Date();
             console.log(tanggalhariini);
@@ -347,21 +394,25 @@ export default {
                                             this.alatbridge = this.alatbridge.filter(item => item.peminjamanalatid !== peminjamanalatid);
                                         }).catch(error => {
                                             console.error("Error deleting PeminjamanAlat:", error);
+                                            this.itemToDelete.loading = false;
                                         });
                                 }
 
                                 axios.delete(`http://127.0.0.1:8000/api/peminjaman/${PeminjamanID}`)
                                     .then(response => {
                                         console.log("Peminjaman deleted successfully:", response.data);
+                                        this.itemToDelete.loading = false;
                                         this.dialogVisible = false;
                                     })
                                     .catch(error => {
                                         console.error("Error deleting Peminjaman:", error);
+                                        this.itemToDelete.loading = false;
                                     });
 
                                 this.dialogVisible = false;
                             }).catch(error => {
                                 console.error("Error deleting PeminjamanRuangan:", error);
+                                this.itemToDelete.loading = false;
                             });
                     } else {
                         if (count <= 1) {
@@ -372,28 +423,35 @@ export default {
                                     axios.delete(`http://127.0.0.1:8000/api/peminjaman/${PeminjamanID}`)
                                         .then(response => {
                                             console.log("Peminjaman deleted successfully:", response.data);
+                                            this.itemToDelete.loading = false;
                                             this.dialogVisible = false;
                                         })
                                         .catch(error => {
                                             console.error("Error deleting Peminjaman:", error);
+                                            this.itemToDelete.loading = false;
                                         });
                                 }).catch(error => {
                                     console.error("Error deleting PeminjamanRuangan:", error);
+                                    this.itemToDelete.loading = false;
                                 });
                         } else {
                             axios.delete(`http://127.0.0.1:8000/api/peminjamanRuangan/${peminjamanruanganid}`)
                                 .then(response => {
                                     console.log("PeminjamanRuangan deleted successfully:", response.data);
                                     this.ruanganbridge = this.ruanganbridge.filter(item => item.peminjamanruanganid !== peminjamanruanganid);
+                                    this.itemToDelete.loading = false;
                                     this.dialogVisible = false;
                                 }).catch(error => {
                                     console.error("Error deleting PeminjamanRuangan:", error);
+                                    this.itemToDelete.loading = false;
+                                    this.itemToDelete.loading = false;
                                 });
                         }
                     }
                 })
         },
         deletePeminjamanAlat(peminjamanalatid, PeminjamanID) {
+            this.itemToDeleteAlat.loading = true;
             console.log(peminjamanalatid);
             const count = this.alatbridge.filter(item => item.peminjamanid === PeminjamanID).length;
             axios.get(`http://127.0.0.1:8000/api/peminjamanAlat/checkRelation/${PeminjamanID}`)
@@ -405,9 +463,11 @@ export default {
                             .then(response => {
                                 console.log("PeminjamanAlat deleted successfully:", response.data);
                                 this.alatbridge = this.alatbridge.filter(item => item.peminjamanalatid !== peminjamanalatid);
+                                this.itemToDeleteAlat.loading = false;
                                 this.dialogVisibleAlat = false;
                             }).catch(error => {
                                 console.error("Error deleting PeminjamanAlat:", error);
+                                this.itemToDeleteAlat.loading = false;
                             });
                     } else {
                         if (count <= 1) {
@@ -418,22 +478,27 @@ export default {
                                     axios.delete(`http://127.0.0.1:8000/api/peminjaman/${PeminjamanID}`)
                                         .then(response => {
                                             console.log("Peminjaman deleted successfully:", response.data);
+                                            this.itemToDeleteAlat.loading = false;
                                             this.dialogVisibleAlat = false;
                                         })
                                         .catch(error => {
                                             console.error("Error deleting Peminjaman:", error);
+                                            this.itemToDeleteAlat.loading = false;
                                         });
                                 }).catch(error => {
                                     console.error("Error deleting PeminjamanAlat:", error);
+                                    this.itemToDeleteAlat.loading = false;
                                 });
                         } else {
                             axios.delete(`http://127.0.0.1:8000/api/peminjamanAlat/${peminjamanalatid}`)
                                 .then(response => {
                                     console.log("PeminjamanAlat deleted successfully:", response.data);
                                     this.alatbridge = this.alatbridge.filter(item => item.peminjamanalatid !== peminjamanalatid);
+                                    this.itemToDeleteAlat.loading = false;
                                     this.dialogVisibleAlat = false;
                                 }).catch(error => {
                                     console.error("Error deleting PeminjamanAlat:", error);
+                                    this.itemToDeleteAlat.loading = false;
                                 });
                         }
                     }
@@ -442,17 +507,17 @@ export default {
         downloadPDF(UserID, $desiredPeminjamanID, $peminjamanruanganid, $peminjamanalatid) {
             window.open(`/generate-pdf/${UserID}/${$desiredPeminjamanID}/${$peminjamanruanganid}/${$peminjamanalatid}`, '_blank');
         },
-        getPeminjamanRuangan() {
+        async getPeminjamanRuangan() {
             const UserID = localStorage.getItem('UserID');
-            axios.get(`http://127.0.0.1:8000/api/peminjamanRuangan/getPeminjamanRuangan/${UserID}`)
+            await axios.get(`http://127.0.0.1:8000/api/peminjamanRuangan/getPeminjamanRuangan/${UserID}`)
                 .then(response => {
                     this.ruanganbridge = response.data;
                     console.log(this.ruanganbridge);
                 })
         },
-        getPeminjamanAlat() {
+        async getPeminjamanAlat() {
             const UserID = localStorage.getItem('UserID');
-            axios.get(`http://127.0.0.1:8000/api/peminjamanAlat/getPeminjamanAlat/${UserID}`)
+            await axios.get(`http://127.0.0.1:8000/api/peminjamanAlat/getPeminjamanAlat/${UserID}`)
                 .then(response => {
                     this.alatbridge = response.data;
                     console.log(this.alatbridge);
@@ -479,7 +544,8 @@ export default {
             this.itemToDelete = {
                 peminjamanruanganid,
                 peminjamanid,
-                namaruangan
+                namaruangan,
+                loading: false
             };
         },
         confirmDeleteAlat(peminjamanalatid, peminjamanid, namaalat) {
@@ -487,7 +553,8 @@ export default {
             this.itemToDeleteAlat = {
                 peminjamanalatid,
                 peminjamanid,
-                namaalat
+                namaalat,
+                loading: false
             };
         }
     }

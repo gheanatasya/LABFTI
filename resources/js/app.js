@@ -42,7 +42,7 @@ if ('serviceWorker' in navigator) {
 
 onMessage(messaging, (payload) => {
     console.log('Message received. ', payload);
-    alert('ada notifikasi baru');
+    //alert('ada notifikasi baru');
 });
 
 getToken(messaging, {

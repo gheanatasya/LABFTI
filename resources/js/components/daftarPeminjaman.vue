@@ -5,6 +5,19 @@
     <headerDekanat v-if="User_role === 'Dekan' || User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'"
         style="z-index: 1"></headerDekanat>
 
+    <v-overlay v-model="overlay" style="background-color: white; z-index: 0">
+        <v-container style="height: 660px; margin-left: 440px;">
+            <v-row align-content="center" class="fill-height" justify="center">
+                <v-col class="text-subtitle-1 text-center" cols="12" style="font-family: Lexend-Regular;">
+                    Memuat halaman
+                </v-col>
+                <v-col cols="6">
+                    <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
+                </v-col>
+            </v-row>
+        </v-container>
+    </v-overlay>
+
     <div id="filter" style="margin-top: 30px; margin-right: 60px;">
         <v-row style="font-family: 'Lexend-Regular';">
             <v-spacer></v-spacer>
@@ -64,7 +77,7 @@
 
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody v-if="filteredRooms.length > 0">
                         <tr v-for="(ruangan, index) in filteredRooms" :key="index"
                             style="background-color: white; font-family: 'Lexend-Regular; font-size: 15px;">
                             <td style="width: 20px;"> {{ index + 1 }} </td>
@@ -163,6 +176,22 @@
                             </td>
                         </tr>
                     </tbody>
+
+                    <tbody v-else>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <div class="py-1 text-center" style="content: center; margin-top: 80px; margin-left: 50px;">
+                            <v-icon class="mb-6" color="primary" icon="mdi-alert-circle-outline" size="40"></v-icon>
+                            <div class="text-h7 font-weight-bold">Maaf, tidak ada data yang bisa ditampilkan.</div>
+                        </div>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tbody>
                 </v-table>
             </v-card>
         </v-container>
@@ -228,7 +257,7 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody v-if="this.filteredTools.length > 0">
                         <tr v-for="(alat, index) in filteredTools" :key="index"
                             style=" font-family: 'Lexend-Regular; font-size: 15px;">
                             <td style="width: 20px;"> {{ index + 1 }} </td>
@@ -321,6 +350,22 @@
                             </td>
                         </tr>
                     </tbody>
+
+                    <tbody v-else>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <div class="py-1 text-center" style="content: center; margin-top: 80px; margin-left: 50px;">
+                            <v-icon class="mb-6" color="primary" icon="mdi-alert-circle-outline" size="40"></v-icon>
+                            <div class="text-h7 font-weight-bold">Maaf, tidak ada data yang bisa ditampilkan.</div>
+                        </div>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tbody>
                 </v-table>
             </v-card>
 
@@ -367,7 +412,7 @@
                         <v-btn
                             style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                             @click="editActionAlat = false">Batal</v-btn>
-                        <v-btn @click="konfirmasiAlatLebih(alat)"
+                        <v-btn @click="konfirmasiAlatLebih(alat), this.loadingAlat = true" :loading="this.loadingAlat"
                             style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
                     </v-card-actions>
                 </v-card>
@@ -413,7 +458,7 @@
                         <v-btn
                             style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                             @click="editActionRuangan = false">Batal</v-btn>
-                        <v-btn @click="confirmRuangan(ruangan)"
+                        <v-btn @click="confirmRuangan(ruangan), this.loadingRuangan = true" :loading="this.loadingRuangan"
                             style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
                     </v-card-actions>
                 </v-card>
@@ -437,7 +482,7 @@
                         <v-btn
                             style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;"
                             @click="konfirmasiTools = false, confirmAlat(this.alat)">Tidak</v-btn>
-                        <v-btn @click="confirmAlat2(this.alat)"
+                        <v-btn @click="confirmAlat2(this.alat), this.loadingAlat2 = true" :loading="this.loadingAlat2"
                             style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;">Ya</v-btn>
                     </v-card-actions>
                 </v-card>
@@ -483,12 +528,16 @@ export default {
             currentPageAlat: 1,
             itemsPerPage: 5,
             sameTools: {},
+            overlay: true,
+            loadingAlat: false,
+            loadingRuangan: false,
+            loadingAlat2: false,
         }
     },
     methods: {
-        getAllPeminjamanRuangan() {
+        async getAllPeminjamanRuangan() {
             if (this.User_role === 'Koordinator Lab' || this.User_role === 'Kepala Lab' || this.User_role === 'Petugas') {
-                axios.get("http://127.0.0.1:8000/api/getAllPeminjamanforAccRuangan")
+                await axios.get("http://127.0.0.1:8000/api/getAllPeminjamanforAccRuangan")
                     .then(response => {
                         const options = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric' };
                         const options2 = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' };
@@ -510,7 +559,7 @@ export default {
                         console.log(error)
                     })
             } else if (this.User_role === 'Dekan') {
-                axios.get("http://127.0.0.1:8000/api/getAllPeminjamanforAccRuanganDekan")
+                await axios.get("http://127.0.0.1:8000/api/getAllPeminjamanforAccRuanganDekan")
                     .then(response => {
                         const options = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric' };
                         const options2 = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' };
@@ -532,7 +581,7 @@ export default {
                         console.log(error)
                     })
             } else if (this.User_role === 'WD2') {
-                axios.get("http://127.0.0.1:8000/api/getAllPeminjamanforAccRuanganWD2")
+                await axios.get("http://127.0.0.1:8000/api/getAllPeminjamanforAccRuanganWD2")
                     .then(response => {
                         const options = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric' };
                         const options2 = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' };
@@ -554,7 +603,7 @@ export default {
                         console.log(error)
                     })
             } else if (this.User_role === 'WD3') {
-                axios.get("http://127.0.0.1:8000/api/getAllPeminjamanforAccRuanganWD3")
+                await axios.get("http://127.0.0.1:8000/api/getAllPeminjamanforAccRuanganWD3")
                     .then(response => {
                         const options = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric' };
                         const options2 = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' };
@@ -579,9 +628,9 @@ export default {
 
             console.log(this.User_role)
         },
-        getAllPeminjamanAlat() {
+        async getAllPeminjamanAlat() {
             if (this.User_role === 'Koordinator Lab' || this.User_role === 'Kepala Lab' || this.User_role === 'Petugas') {
-                axios.get("http://127.0.0.1:8000/api/getAllPeminjamanforAccAlat")
+                await axios.get("http://127.0.0.1:8000/api/getAllPeminjamanforAccAlat")
                     .then(response => {
                         const options = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric' };
                         const options2 = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' };
@@ -603,7 +652,7 @@ export default {
                         console.log(error)
                     })
             } else if (this.User_role === 'WD2') {
-                axios.get("http://127.0.0.1:8000/api/getAllPeminjamanforAccAlatWD2")
+                await axios.get("http://127.0.0.1:8000/api/getAllPeminjamanforAccAlatWD2")
                     .then(response => {
                         const options = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric' };
                         const options2 = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' };
@@ -625,7 +674,7 @@ export default {
                         console.log(error)
                     })
             } else if (this.User_role === 'WD3') {
-                axios.get("http://127.0.0.1:8000/api/getAllPeminjamanforAccAlatWD3")
+                await axios.get("http://127.0.0.1:8000/api/getAllPeminjamanforAccAlatWD3")
                     .then(response => {
                         const options = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric' };
                         const options2 = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' };
@@ -647,7 +696,7 @@ export default {
                         console.log(error)
                     })
             } else if (this.User_role === 'Dekan') {
-                axios.get("http://127.0.0.1:8000/api/getAllPeminjamanforAccAlatDekan")
+                await axios.get("http://127.0.0.1:8000/api/getAllPeminjamanforAccAlatDekan")
                     .then(response => {
                         const options = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric' };
                         const options2 = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' };
@@ -672,12 +721,18 @@ export default {
         },
         persetujuanAlat(alat) {
             this.editActionAlat = !this.editActionAlat;
-            this.alat = alat;
+            this.alat = {
+                ...alat,
+                loading: false
+            }; 
             console.log(this.alat);
         },
         persetujuanRuangan(ruangan) {
             this.editActionRuangan = !this.editActionRuangan;
-            this.ruangan = ruangan;
+            this.ruangan = {
+                ...ruangan,
+                loading: false
+            };
             console.log(this.ruangan);
         },
         konfirmasiAlatLebih(alat) {
@@ -697,6 +752,7 @@ export default {
                 })
         },
         confirmRuangan(ruangan) {
+            this.loadingRuangan = true;
             const peminjamanid = ruangan.peminjamanruanganid;
             const userrole = localStorage.getItem('User_role');
             const namastatus = ruangan.currentStatus;
@@ -713,16 +769,21 @@ export default {
                 then(response => {
                     if (response.status === 200) {
                         console.log("Konfirmasi success:", response.data);
+                        this.loadingRuangan = false;
                         this.editActionRuangan = false;
                     } else {
                         console.error("Error konfirmasi failed:", response.data.message);
+                        this.loadingRuangan = false;
                     }
                 })
                 .catch(error => {
                     console.error("Error konfirmasi failed:", error);
+                    this.loadingRuangan = false;
                 });
+                this.loadingRuangan = false;
         },
         confirmAlat(alat) {
+            this.loadingAlat = true;
             const peminjamanid = alat.peminjamanalatid;
             const userrole = localStorage.getItem('User_role');
             const namastatus = alat.currentStatus;
@@ -738,45 +799,54 @@ export default {
                 then(response => {
                     if (response.status === 200) {
                         console.log("Konfirmasi success:", response.data);
+                        this.loadingAlat = false;
                         this.editActionAlat = false;
                     } else {
                         console.error("Error konfirmasi failed:", response.data.message);
+                        this.loadingAlat = false;
                     }
                 })
                 .catch(error => {
                     console.error("Error konfirmasi failed:", error);
+                    this.loadingAlat = false;
                 });
-        },
+                this.loadingAlat = false;
+            },
         confirmAlat2(alat) {
+            this.loadingAlat2 = true;
             const pengecekan = this.allPeminjamanAlat.filter(data => data.peminjamanid === alat.peminjamanid);
 
             //for (let i = 0; i < pengecekan.length; i++) {
-                const peminjamanid = alat.peminjamanalatid;
-                const userrole = localStorage.getItem('User_role');
-                const namastatus = alat.currentStatus;
-                const catatan = alat.catatan;
+            const peminjamanid = alat.peminjamanalatid;
+            const userrole = localStorage.getItem('User_role');
+            const namastatus = alat.currentStatus;
+            const catatan = alat.catatan;
 
-                console.log(peminjamanid, userrole, namastatus, catatan);
-                axios.put(`http://127.0.0.1:8000/api/persetujuan/confirmBookingAlat2/${peminjamanid}/${userrole}/${namastatus}/${catatan}`, {
-                    withCredentials: true,
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            console.log(peminjamanid, userrole, namastatus, catatan);
+            axios.put(`http://127.0.0.1:8000/api/persetujuan/confirmBookingAlat2/${peminjamanid}/${userrole}/${namastatus}/${catatan}`, {
+                withCredentials: true,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            }).
+                then(response => {
+                    if (response.status === 200) {
+                        console.log("Konfirmasi success:", response.data);
+                        this.loadingAlat2 = false;
+                    } else {
+                        console.error("Error konfirmasi failed:", response.data.message);
+                        this.loadingAlat2 = false;
                     }
-                }).
-                    then(response => {
-                        if (response.status === 200) {
-                            console.log("Konfirmasi success:", response.data);
-                        } else {
-                            console.error("Error konfirmasi failed:", response.data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error konfirmasi failed:", error);
-                    });
+                })
+                .catch(error => {
+                    console.error("Error konfirmasi failed:", error);
+                    this.loadingAlat2 = false;
+                });
 
-                //console.log('berhasil memperbarui');
+            //console.log('berhasil memperbarui');
             //}
             console.log('berhasil memperbarui semuanya');
+            this.loadingAlat2 = false;
             this.konfirmasiTools = false;
             this.editActionAlat = false;
         },
@@ -812,10 +882,18 @@ export default {
         },
     },
     mounted() {
-        this.getAllPeminjamanRuangan();
-        this.getAllPeminjamanAlat();
-        this.getAllDataofRoom();
-        this.getAllDataofTools();
+        Promise.all([
+            this.getAllPeminjamanRuangan(),
+            this.getAllPeminjamanAlat(),
+            this.getAllDataofRoom(),
+            this.getAllDataofTools()
+        ])
+            .then(() => {
+                this.overlay = false;
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     },
     computed: {
         filteredRooms() {

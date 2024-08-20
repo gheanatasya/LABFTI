@@ -1,5 +1,18 @@
 <template>
   <div style="background-color: #34743B; height: 100%">
+    <v-overlay v-model="overlay" style="background-color: white; z-index: 0">
+      <v-container style="height: 660px; margin-left: 440px;">
+        <v-row align-content="center" class="fill-height" justify="center">
+          <v-col class="text-subtitle-1 text-center" cols="12" style="font-family: Lexend-Regular;">
+            Memuat halaman
+          </v-col>
+          <v-col cols="6">
+            <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-overlay>
+
     <v-container id="logo"
       style="background-color: #10511B; display: flex; justify-content: space-between; width: 30%;">
       <v-img :width="90" :height="70" src="../picture/logo-ukdw.png"></v-img>
@@ -17,20 +30,48 @@
       <div id="calendar" style="width: 1000px; float: left; margin-left: -80px; margin-right: 50px;"></div>
       <div style="float: clear; font-family:Lexend-Regular; font-size: 20px; color: white; margin-top: 30px;">
         <p style="margin-bottom: 10px;">Keterangan : </p>
-        <p style="background-color: #fff5aa; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">SIC</p>
-        <p style="background-color: #ffd2dc; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">Byte</p>
-        <p style="background-color: #dafff0; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">Debug</p>
-        <p style="background-color: #d2e7ff; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">Firewall</p>
-        <p style="background-color: #f0e0b4; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">Gateway</p>
-        <p style="background-color: #ab826c; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">Interface</p>
-        <p style="background-color: #b5ad8b; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">Hypertext</p>
-        <p style="background-color: #c2d49b; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">Java</p>
-        <p style="background-color: #c2f2b6; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">Kernel</p>
-        <p style="background-color: #b9f0c7; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">L.Mobile</p>
-        <p style="background-color: #91abb8; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">L.BigData</p>
-        <p style="background-color: #6c5b6e; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">L.AI</p>
-        <p style="background-color: #a38c8e; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">L.MIS</p>
-        <p style="background-color: #f5c9e2; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">Alat</p>
+        <p
+          style="background-color: #fff5aa; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
+          SIC</p>
+        <p
+          style="background-color: #ffd2dc; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
+          Byte</p>
+        <p
+          style="background-color: #dafff0; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
+          Debug</p>
+        <p
+          style="background-color: #d2e7ff; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
+          Firewall</p>
+        <p
+          style="background-color: #f0e0b4; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
+          Gateway</p>
+        <p
+          style="background-color: #ab826c; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
+          Interface</p>
+        <p
+          style="background-color: #b5ad8b; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
+          Hypertext</p>
+        <p
+          style="background-color: #c2d49b; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
+          Java</p>
+        <p
+          style="background-color: #c2f2b6; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
+          Kernel</p>
+        <p
+          style="background-color: #b9f0c7; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
+          L.Mobile</p>
+        <p
+          style="background-color: #91abb8; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
+          L.BigData</p>
+        <p
+          style="background-color: #6c5b6e; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
+          L.AI</p>
+        <p
+          style="background-color: #a38c8e; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
+          L.MIS</p>
+        <p
+          style="background-color: #f5c9e2; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
+          Alat</p>
       </div>
     </v-container>
   </div>
@@ -47,7 +88,9 @@ import {
 import '@schedule-x/theme-default/dist/index.css'
 import axios from 'axios';
 import { createEventModalPlugin } from '@schedule-x/event-modal'
+import { ref } from 'vue';
 
+const overlay = ref(true);
 const today = new Date();
 const year = today.getFullYear();
 const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -271,5 +314,6 @@ async function initializeCalendar() {
 
 initializeCalendar().then((calendarApp) => {
   calendarApp.render(document.getElementById('calendar'));
+  overlay.value = false;
 });
 </script>

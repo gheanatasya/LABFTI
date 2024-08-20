@@ -27,7 +27,7 @@
             <v-card-actions style="justify-content:center;">
                 <v-btn style="position: absolute; top: 0; left: 0; margin-top: 17px;" @click="navigateBack"><v-icon
                         style="font-size: 30px;">mdi-arrow-left</v-icon></v-btn>
-                <v-btn @click="navigateToFilteredRooms(filteredData())" style="position: absolute; bottom: 30px; right: 35px; background-color: rgb(2,39, 10, 0.9); color: white;
+                <v-btn :loading="this.loading" @click="navigateToFilteredRooms(filteredData()), this.loading = true" style="position: absolute; bottom: 30px; right: 35px; background-color: rgb(2,39, 10, 0.9); color: white;
                 border-radius: 20px; width: 150px;">Terapkan</v-btn>
             </v-card-actions>
         </v-card>
@@ -96,7 +96,8 @@ export default {
             allRoomsData: [],
             roomAfterSelected: false,
             picture: './picture/regis-login.jpeg',
-            filteredRoom: []
+            filteredRoom: [],
+            loading: false,
         }
     },
     methods: {
@@ -161,6 +162,7 @@ export default {
             return filteredData;
         },
         navigateToFilteredRooms(filteredRooms) {
+            this.loading = true;
             this.showRekomendasi = false;
             this.roomAfterSelected = true;
             this.filteredRoom = filteredRooms;

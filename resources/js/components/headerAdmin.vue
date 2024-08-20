@@ -275,6 +275,20 @@
                 </v-menu>
             </template>
         </v-toolbar-items>
+
+        <!-- dialog logout -->
+        <v-overlay v-model="overlay" style="background-color: white; z-index: 1">
+            <v-container style="height: 660px; margin-left: 440px;">
+                <v-row align-content="center" class="fill-height" justify="center">
+                    <v-col class="text-subtitle-1 text-center" cols="12" style="font-family: Lexend-Regular;">
+                        Logout
+                    </v-col>
+                    <v-col cols="6">
+                        <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
+                    </v-col>
+                </v-row>
+            </v-container>
+        </v-overlay>
     </v-toolbar>
 </template>
 
@@ -288,7 +302,7 @@ export default {
             menusCenter: [
                 { title: 'Ruangan', route: 'ruangan' },
                 { title: 'Alat', route: 'alat' },
-                { title: 'Beranda', route: 'berandaSuperAdmin' },
+                { title: 'Beranda', route: 'berandaUser' },
                 { title: 'Peminjaman', submenus: [{ title: 'Peminjaman Ruangan & Alat', route: 'peminjamanRuangan' }, { title: 'Peminjaman Alat', route: 'peminjamanAlat' }], isOpen: false, },
                 { title: 'Daftar Alat', route: 'daftarAlat' },
                 { title: 'Daftar Ruangan', route: 'daftarRuangan' },
@@ -302,6 +316,7 @@ export default {
             allNotifications: [],
             UserID: localStorage.getItem('UserID'),
             unread: 0,
+            overlay: false,
         }
     },
     mounted() {
@@ -312,18 +327,43 @@ export default {
         };
 
         this.getNotification()
+
+        const loginTime = localStorage.getItem("loginTime");
+
+        if (loginTime) {
+            const timeDiff = Date.now() - parseInt(loginTime);
+            const oneDay = 24 * 60 * 60 * 1000;
+
+            if (timeDiff >= oneDay) {
+                localStorage.removeItem("loggedIn");
+                localStorage.removeItem("token");
+                localStorage.removeItem("UserID");
+                localStorage.removeItem("User_role");
+                localStorage.removeItem("Total_batal");
+                localStorage.removeItem("loginTime");
+                this.$router.push({ name: 'loginPage' });
+            }
+        }
     },
     methods: {
         logout() {
+            this.overlay = true;
             axios.get('http://localhost:8000/api/logout')
                 .then(() => {
                     // Remove localStorage
                     localStorage.removeItem("loggedIn");
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("UserID");
+                    localStorage.removeItem("User_role");
+                    localStorage.removeItem("Total_batal");  
+                    localStorage.removeItem("loginTime");
+                    this.overlay = false;
                     // Redirect
                     return this.$router.push({ name: 'loginPage' });
                 })
                 .catch(error => {
                     console.error('Logout failed:', error);
+                    this.overlay = false;
                 });
         },
         getNotification() {

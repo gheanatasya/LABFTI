@@ -8,6 +8,19 @@
         style="z-index: 1"></headerDekanat>
 
     <div style="margin-top: 100px;">
+        <v-overlay v-model="overlay" style="background-color: white; z-index: 0">
+            <v-container style="height: 660px; margin-left: 440px;">
+                <v-row align-content="center" class="fill-height" justify="center">
+                    <v-col class="text-subtitle-1 text-center" cols="12" style="font-family: Lexend-Regular;">
+                        Memuat halaman
+                    </v-col>
+                    <v-col cols="6">
+                        <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
+                    </v-col>
+                </v-row>
+            </v-container>
+        </v-overlay>
+
         <p style="font-family: 'Lexend-Medium'; font-size: 25px; margin-top: -20px; margin-left: 30px">Ruangan</p>
 
         <div id="filter" style="margin-top: 30px; margin-right: 60px;">
@@ -78,8 +91,8 @@
                                     </div>
                                     <v-img v-if="room.Foto != null" :src="'../storage/' + room.Foto[0]"
                                         style="width: 40%; height: 100%;" cover></v-img>
-                                    <v-img v-else src="../storage/ruangan/no-image.png" style="width: 40%; height: 100%;"
-                                        cover></v-img>
+                                    <v-img v-else src="../storage/ruangan/no-image.png"
+                                        style="width: 40%; height: 100%;" cover></v-img>
                                 </div>
                             </v-card>
                         </v-col>
@@ -138,6 +151,7 @@ export default {
             pictures: [],
             dataLoaded: false,
             User_role: localStorage.getItem('User_role'),
+            overlay: true
         }
     },
     methods: {
@@ -177,7 +191,15 @@ export default {
         },
     },
     mounted() {
-        this.getAllDataofRoom()
+        Promise.all([
+            this.getAllDataofRoom()
+        ])
+            .then(() => {
+                this.overlay = false;
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     },
     computed: {
         filteredData() {

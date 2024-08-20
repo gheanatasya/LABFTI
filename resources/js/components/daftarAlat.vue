@@ -3,6 +3,19 @@
     </headerSuperAdmin>
     <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1"></headerAdmin>
 
+    <v-overlay v-model="overlay" style="background-color: white; z-index: 0">
+        <v-container style="height: 660px; margin-left: 440px;">
+            <v-row align-content="center" class="fill-height" justify="center">
+                <v-col class="text-subtitle-1 text-center" cols="12" style="font-family: Lexend-Regular;">
+                    Memuat halaman
+                </v-col>
+                <v-col cols="6">
+                    <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
+                </v-col>
+            </v-row>
+        </v-container>
+    </v-overlay>
+
     <div style="font-family: 'Lexend-Medium'; font-size: 25px; text-align: center; margin-top: 30px;"> Daftar Alat LAB
         FTI UKDW </div>
 
@@ -34,44 +47,59 @@
     </div>
 
     <div style="margin-top: 20px; margin-left: 50px; margin-right: 50px;">
-        <v-table>
-            <thead style="font-family: Lexend-Regular; font-size: 15px;">
-                <tr>
-                    <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">No</th>
-                    <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Nama Alat</th>
-                    <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Kode Alat</th>
-                    <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Jumlah</th>
-                    <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Jumlah Rusak</th>
-                    <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Status</th>
-                    <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(alat, index) in filteredTools" :key="index"
-                    style="background-color: white; font-family: 'Lexend-Regular; font-size: 15px;">
-                    <td style="width: 20px; text-align: center;"> {{ index + 1 }} </td>
+        <v-card>
+            <v-table style="height: 400px;">
+                <thead style="font-family: Lexend-Regular; font-size: 15px;">
+                    <tr>
+                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">No</th>
+                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Nama Alat</th>
+                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Kode Alat</th>
+                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Jumlah</th>
+                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Jumlah Rusak</th>
+                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Status</th>
+                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Action</th>
+                    </tr>
+                </thead>
+                <tbody v-if="this.filteredTools.length > 0">
+                    <tr v-for="(alat, index) in filteredTools" :key="index"
+                        style="background-color: white; font-family: 'Lexend-Regular; font-size: 15px;">
+                        <td style="width: 20px; text-align: center;"> {{ index + 1 }} </td>
 
-                    <td style="width: 150px;"> {{ alat.Nama }} </td>
+                        <td style="width: 150px;"> {{ alat.Nama }} </td>
 
-                    <td style="width: 100px; text-align: center;"> {{ alat.KodeAlat }} </td>
+                        <td style="width: 100px; text-align: center;"> {{ alat.KodeAlat }} </td>
 
-                    <td style="width: 100px; text-align: center;"> {{ alat.JumlahAlat }} </td>
+                        <td style="width: 100px; text-align: center;"> {{ alat.JumlahAlat }} </td>
 
-                    <td style="width: 100px; text-align: center;"> {{ alat.JumlahRusak }} </td>
+                        <td style="width: 100px; text-align: center;"> {{ alat.JumlahRusak }} </td>
 
-                    <td style="width: 100px; text-align: center;"> {{ alat.StatusAlat }} </td>
+                        <td style="width: 100px; text-align: center;"> {{ alat.StatusAlat }} </td>
 
-                    <td style="width: 100px; font-size: 25px; text-align: center;">
-                        <v-icon style="color: rgb(2, 39, 10, 1);"
-                            @click="editDataAlat(alat.Nama, alat.KodeAlat, alat.StatusAlat)">mdi-pencil-circle</v-icon>
-                        <v-icon style="color: rgb(206, 0, 0, 0.91);"
-                            @click="confirmDeleteAlat(alat.KodeAlat, alat.Nama)">mdi-delete-circle</v-icon>
-                        <v-icon style="color:  rgb(0, 0, 0, 0.5);"
-                            @click="moreData(alat.detailAlat, alat.KodeAlat)">mdi-dots-horizontal-circle</v-icon>
-                    </td>
-                </tr>
-            </tbody>
-        </v-table>
+                        <td style="width: 100px; font-size: 25px; text-align: center;">
+                            <v-icon style="color: rgb(2, 39, 10, 1);"
+                                @click="editDataAlat(alat.Nama, alat.KodeAlat, alat.StatusAlat)">mdi-pencil-circle</v-icon>
+                            <v-icon style="color: rgb(206, 0, 0, 0.91);"
+                                @click="confirmDeleteAlat(alat.KodeAlat, alat.Nama)">mdi-delete-circle</v-icon>
+                            <v-icon style="color:  rgb(0, 0, 0, 0.5);"
+                                @click="moreData(alat.detailAlat, alat.KodeAlat)">mdi-dots-horizontal-circle</v-icon>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tbody v-else>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <div class="py-1 text-center" style="content: center; margin-top: 80px;">
+                        <v-icon class="mb-6" color="primary" icon="mdi-alert-circle-outline" size="40"></v-icon>
+                        <div class="text-h7 font-weight-bold">Maaf, tidak ada data yang bisa ditampilkan.</div>
+                    </div>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tbody>
+            </v-table>
+        </v-card>
 
         <!-- data tabel detail alat -->
         <v-dialog v-model="expanded" persistent>
@@ -109,11 +137,11 @@
                                 <td style="width: 150px; text-align: center;"> {{ detail.KodeDetailAlat }} </td>
                                 <td style="width: 200px; text-align: center;"> {{ detail.StatusKebergunaan }} </td>
                                 <td style="width: 200px; text-align: center;"> {{ detail.StatusPeminjaman }} </td>
-                                <td style="width: 500px;"> 
+                                <td style="width: 500px;">
                                     <v-btn @click="morePicture(detail.Foto)" style="color: rgb(2,39, 10, 0.9); margin-left: 90px; background: none;
                                                 text-decoration: underline; box-shadow: none; 
                                                 ">L<p style="text-transform: lowercase;">ihat lebih banyak
-                                gambar>></p></v-btn>
+                                            gambar>></p></v-btn>
                                 </td>
                                 <td style="width: 150px; font-size: 25px;">
                                     <v-icon style="color: rgb(2, 39, 10, 1);"
@@ -147,7 +175,7 @@
                     <v-btn
                         style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                         @click="editActionAlat = false">Batal</v-btn>
-                    <v-btn @click="updateAlat(alatEdit.namaAlat, alatEdit.kodeAlat, alatEdit.statusAlat)"
+                    <v-btn @click="updateAlat(alatEdit.namaAlat, alatEdit.kodeAlat, alatEdit.statusAlat)" :loading="this.alatEdit.loading"
                         style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
                 </v-card-actions>
             </v-card>
@@ -176,14 +204,14 @@
                         label="Status Peminjaman">
                     </v-select>
 
-                    <v-file-input label="Foto" variant="outlined" v-model="this.detailalatEdit.foto" multiple id="editFotoAlat"
-                        style="margin-right: 100px; margin-left:0px;"></v-file-input>
+                    <v-file-input label="Foto" variant="outlined" v-model="this.detailalatEdit.foto" multiple
+                        id="editFotoAlat" style="margin-right: 100px; margin-left:0px;"></v-file-input>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
                         style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                         @click="editActionDetailAlat = false">Batal</v-btn>
-                    <v-btn
+                    <v-btn :loading="this.detailalatEdit.loading"
                         @click="updateDetailAlat(detailalatEdit.namaDetailAlat, detailalatEdit.kodeDetailAlat, detailalatEdit.statusKebergunaan, detailalatEdit.statusPeminjaman, detailalatEdit.foto)"
                         style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
                 </v-card-actions>
@@ -201,7 +229,7 @@
                     <v-btn
                         style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                         @click="dialogHapusAlat = false">Batal</v-btn>
-                    <v-btn
+                    <v-btn :loading="this.itemforHapusAlat.loading"
                         style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;"
                         @click="deleteAlat(itemforHapusAlat.KodeAlat)">Hapus</v-btn>
                 </v-card-actions>
@@ -240,7 +268,7 @@
                     <v-btn
                         style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                         @click="dialogTambahAlat = false">Batal</v-btn>
-                    <v-btn @click="tambahAlat(this.alatTambah)"
+                    <v-btn @click="tambahAlat(this.alatTambah)" :loading="this.alatTambah.loading"
                         style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Tambah</v-btn>
                 </v-card-actions>
             </v-card>
@@ -266,14 +294,14 @@
                         persistent-hint variant="outlined" style="margin-right: 100px; margin-left:40px;"
                         label="Status Peminjaman">
                     </v-select>
-                    <v-file-input label="Foto" variant="outlined" v-model="this.detailalatTambah.foto" multiple id="tambahFotoAlat"
-                        style="margin-right: 100px; margin-left:0px;"></v-file-input>
+                    <v-file-input label="Foto" variant="outlined" v-model="this.detailalatTambah.foto" multiple
+                        id="tambahFotoAlat" style="margin-right: 100px; margin-left:0px;"></v-file-input>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
                         style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                         @click="dialogTambahDetailAlat = false">Batal</v-btn>
-                    <v-btn @click="tambahDetailAlat(detailalatTambah)"
+                    <v-btn @click="tambahDetailAlat(detailalatTambah)" :loading="this.detailalatTambah.loading"
                         style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Tambah</v-btn>
                 </v-card-actions>
             </v-card>
@@ -281,7 +309,8 @@
 
         <!-- grafik peminjaman perbulan -->
         <v-dialog style="justify-content:center;" v-model="grafikDialog" persistent max-width="500">
-            <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 500px; height: 500px;">
+            <v-card
+                style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 500px; height: 500px;">
                 <v-card-actions class="d-flex justify-end">
                     <v-icon @click="grafikDialog = false">mdi-close-circle</v-icon>
                 </v-card-actions>
@@ -289,7 +318,7 @@
                     Grafik Peminjaman Alat
                 </v-card-title>
                 <v-card-text style="text-align: center;">
-                    <v-btn @click="createChart()">Lihat Grafik</v-btn>
+                    <v-btn @click="createChart()" :loading="this.loadinggrafik">Lihat Grafik</v-btn>
                     <canvas id="chart" max-width="300" height="200"></canvas>
                 </v-card-text>
             </v-card>
@@ -338,13 +367,15 @@ export default {
             alatEdit: {
                 namaAlat: null,
                 kodeAlat: null,
-                statusAlat: null
+                statusAlat: null,
+                loading: false,
             },
             alatTambah: {
                 namaAlat: null,
                 kodeAlat: null,
                 statusAlat: null,
-                jumlahKetersediaan: 0
+                jumlahKetersediaan: 0,
+                loading: false,
             },
             detailalatTambah: {
                 namaDetailAlat: null,
@@ -352,18 +383,28 @@ export default {
                 kodeDetailAlat: null,
                 statusKebergunaan: null,
                 statusPeminjaman: null,
-                foto: null
+                foto: null,
+                loading: false,
             },
             editActionDetailAlat: false,
-            detailalatEdit: null,
+            detailalatEdit: {
+                namaDetailAlat: null,
+                kodeDetailAlat: null,
+                statusKebergunaan: null,
+                statusPeminjaman: null,
+                foto: null,
+                loading: false
+            },
             dialogHapusAlat: false,
-            itemforHapusAlat: [],
+            itemforHapusAlat: null,
             gagalDeleteAlat: false,
             dialogTambahAlat: false,
             dialogTambahDetailAlat: false,
             allData: [],
             showImageDialog: false,
-            gambarTampil: []
+            gambarTampil: [],
+            overlay: true,
+            loadinggrafik: false,
         }
     },
     methods: {
@@ -391,7 +432,8 @@ export default {
             this.alatEdit = {
                 namaAlat,
                 kodeAlat,
-                statusAlat
+                statusAlat,
+                loading: false
             }
             console.log(this.alatEdit)
         },
@@ -402,7 +444,8 @@ export default {
                 kodeDetailAlat,
                 statusKebergunaan,
                 statusPeminjaman,
-                foto
+                foto,
+                loading: false
             }
             //console.log(this.detailalatEdit)
         },
@@ -414,22 +457,27 @@ export default {
             }
         },
         deleteAlat(KodeAlat) {
+            this.itemforHapusAlat.loading = true;
             axios.delete(`http://127.0.0.1:8000/api/alat/${KodeAlat}`)
                 .then(response => {
                     if (response.data != 'Gagal') {
                         console.log("Alat deleted successfully:", response.data);
+                        this.itemforHapusAlat.loading = false;
                         this.dialogHapusAlat = false;
                     } else {
+                        this.itemforHapusAlat.loading = false;
                         this.gagalDeleteAlat = true;
                         this.dialogHapusAlat = false;
                     }
                 }).catch(error => {
                     console.error("Error deleting Alat:", error);
+                    this.itemforHapusAlat.loading = false;
                     this.gagalDeleteAlat = true;
                     this.dialogHapusAlat = false;
                 });
         },
         updateAlat(namaAlat, kodeAlat, statusAlat) {
+            this.alatEdit.loading = true;
             const updateData = {
                 namaAlat,
                 statusAlat
@@ -447,17 +495,21 @@ export default {
                         then(response => {
                             if (response.status === 200) {
                                 console.log("Alat updated successfully:", response.data);
+                                this.alatEdit.loading = false;
                                 this.editActionAlat = false;
                             } else {
                                 console.error("Error updating Alat:", response.data.message);
+                                this.alatEdit.loading = false;
                             }
                         })
                         .catch(error => {
                             console.error("Error updating Alat:", error);
+                            this.alatEdit.loading = false;
                         });
                 })
         },
         updateDetailAlat(namaDetailAlat, kodeDetailAlat, statusKebergunaan, statusPeminjaman, foto) {
+            this.detailalatEdit.loading = true;
             const formData = new FormData();
 
             if (foto !== null) {
@@ -490,29 +542,38 @@ export default {
                             axios.post(`http://127.0.0.1:8000/api/detail/tambahFoto/${kodeDetailAlat}`, formData)
                                 .then(res => {
                                     console.log("Foto ditambahkan successfully:", res.data);
+                                    this.detailalatEdit.loading = false;
                                     this.editActionDetailAlat = false;
                                 }).catch(error => {
                                     console.error("Foto gagal ditambahkan", error);
+                                    this.detailalatEdit.loading = false;
                                 })
                         }
+                        this.detailalatEdit.loading = false;
                     } else {
                         console.error("Error updating detail alat:", response.data.message);
+                        this.detailalatEdit.loading = false;
                     }
                 }).catch(error => {
                     console.error("Error updating detail alat:", error);
+                    this.detailalatEdit.loading = false;
                 });
         },
         tambahAlat(alatTambah) {
+            this.alatTambah.loading = true;
             axios.post(`http://127.0.0.1:8000/api/alat`, alatTambah)
                 .then(response => {
                     console.log("Data berhasil masuk ke tabel Alat", response.data)
+                    this.alatTambah.loading = false;
                     this.dialogTambahAlat = false
                 })
                 .catch(Error => {
                     console.error("Data tidak berhasil dimasukkan ke tabel Alat", Error);
+                    this.alatTambah.loading = false;
                 });
         },
         tambahDetailAlat(detailalatTambah) {
+            this.detailalatTambah.loading = true;
             //console.log(detailalatTambah)
             const formData = new FormData();
 
@@ -530,21 +591,25 @@ export default {
                 .then(response => {
                     console.log("Data berhasil masuk ke tabel Detail Alat", response.data);
                     if (detailalatTambah.foto !== null) {
-                            axios.post(`http://127.0.0.1:8000/api/detail/tambahFoto/${detailalatTambah.kodeDetailAlat}`, formData)
-                                .then(res => {
-                                    console.log("Foto ditambahkan successfully:", res.data);
-                                    this.dialogTambahDetailAlat = false
-                                }).catch(error => {
-                                    console.error("Foto gagal ditambahkan", error);
-                                })
-                        }
+                        axios.post(`http://127.0.0.1:8000/api/detail/tambahFoto/${detailalatTambah.kodeDetailAlat}`, formData)
+                            .then(res => {
+                                console.log("Foto ditambahkan successfully:", res.data);
+                                this.detailalatTambah.loading = false;
+                                this.dialogTambahDetailAlat = false
+                            }).catch(error => {
+                                console.error("Foto gagal ditambahkan", error);
+                                this.detailalatTambah.loading = false;
+                            })
+                    }
                 })
                 .catch(Error => {
                     console.error("Data tidak berhasil dimasukkan ke tabel Detail Alat", Error);
+                    this.detailalatTambah.loading = false;
                 });
         },
         async createChart() {
             try {
+                this.loadinggrafik = true;
                 await axios.get("http://127.0.0.1:8000/api/alattotalPerbulan").
                     then(response => {
                         const dataAlat = response.data;
@@ -572,9 +637,9 @@ export default {
 
                             const record = {
                                 label,
-                                data 
+                                data
                             }
-                            
+
                             dataset.push(record);
                         }
 
@@ -633,10 +698,13 @@ export default {
                             },
 
                         })
+                        this.loadinggrafik = false;
                     }).catch(error => {
                         console.error("Error gagal mengambil data alat perbulan", error);
+                        this.loadinggrafik = false;
                     });
             } catch {
+                this.loadinggrafik = false;
                 console.error()
             }
         },
@@ -648,7 +716,15 @@ export default {
         }
     },
     mounted() {
-        this.fetchAlat()
+        Promise.all([
+            this.fetchAlat()
+        ])
+            .then(() => {
+                this.overlay = false;
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     },
     computed: {
         filteredTools() {

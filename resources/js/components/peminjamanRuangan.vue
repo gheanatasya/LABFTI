@@ -68,8 +68,8 @@
                 <v-text-field type="datetime-local" label="Tanggal Selesai" v-model="item.tanggalSelesai"
                   variant="outlined"
                   style="width: 300px; margin-left: -75px; margin-top: 100px; margin-right: 20px;"></v-text-field>
-                <v-btn
-                  @click="availableRoom(item.tanggalAwal, item.tanggalSelesai), fetchAlat(item.tanggalAwal, item.tanggalSelesai)"
+                <v-btn :loading="item.loading"
+                  @click="availableRoom(item.tanggalAwal, item.tanggalSelesai, index), fetchAlat(item.tanggalAwal, item.tanggalSelesai, index), item.loading = true"
                   style="width: 120px; margin-left: 10px; margin-top: 80px; font-size: 11px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
                   color="primary">
                   Cek ruangan</v-btn>
@@ -130,7 +130,7 @@
                 </v-combobox>
 
                 <div>
-                  
+
                   <v-text-field type="number" label="Jumlah" v-model="alatItem.jumlahPinjam" variant="outlined"
                     clearable v-if="alatItem.maxValue = item.itemsAll.find(item => item.NamaAlat === alatItem.nama)"
                     min="0" :max="alatItem.maxValue.Jumlah_ketersediaan"
@@ -164,7 +164,7 @@
                   Peminjaman</v-btn>
               </div>
             </div>
-            <v-btn @click="saveItem" id="simpan"
+            <v-btn @click="saveItem()" id="simpan" :loading="loading"
               style="margin-left: 430px; margin-top: -5px; border-radius: 20px; font-size: 15px; width: 250px;"
               color="primary">
               Pinjam Ruangan </v-btn>
@@ -214,6 +214,22 @@
           </v-card>
         </div>
       </v-container>
+
+      <v-overlay v-model="dialog">
+        <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 400px; height: 250px; margin-left: 550px; margin-top: 200px;">
+          <v-card-title style="font-family: 'Lexend-Medium'; text-align: center; margin-top: 20px;">
+            <div class="py-1 text-center">
+              <v-icon class="mb-6" color="success" icon="mdi-check-circle-outline" size="120"></v-icon>
+              <div class="text-h5 font-weight-bold">Peminjaman Berhasil</div>
+            </div>
+          </v-card-title>
+          <v-card-text>
+          </v-card-text>
+          <v-card-actions style="position: absolute; top: 0; right: 0; margin-right: -15px;">
+            <v-btn @click="dialog = false"><v-icon style="font-size: 30px;">mdi-close-circle</v-icon></v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-overlay>
     </div>
 
     <footerPage></footerPage>
@@ -239,6 +255,9 @@ export default {
     headerSuperAdmin
   },
   setup() {
+    const loading = ref(false);
+    const dialog = ref(false);
+
     const form = reactive([
       {
         dateDialogAwal: false,
@@ -267,6 +286,7 @@ export default {
         keterangan: '',
         dokumen: null,
         detailRuangan: [],
+        loading: false
       }
     ])
 
@@ -298,6 +318,7 @@ export default {
         keterangan: '',
         dokumen: null,
         detailRuangan: [],
+        loading: false
       })
     }
 
@@ -308,6 +329,7 @@ export default {
     }
 
     const saveItem = async () => {
+      loading.value = true;
       const savedItems = [];
       const dataSend = [];
 
@@ -390,11 +412,14 @@ export default {
           console.log('Peminjaman saved successfully:', response.data);
         } catch (error) {
           console.error('Error menyimpan data peminjaman ruangan', error);
+          loading.value = false;
         }
       }
+      dialog.value = true;
+      loading.value = false;
     }
 
-    const fetchAlat = async (tanggalAwal, tanggalSelesai) => {
+    const fetchAlat = async (tanggalAwal, tanggalSelesai, index) => {
       if (tanggalAwal && tanggalSelesai) {
         try {
           const response = await axios.get(
@@ -411,42 +436,36 @@ export default {
             jumlahAlat.push(alat[i].Jumlah_ketersediaan);
           }
 
-          const index = form.findIndex(item => item.tanggalAwal === tanggalAwal && item.tanggalSelesai === tanggalSelesai);
-          if (index > -1) {
-            form[index].items = namaAlat;
-            form[index].itemsAll = alat;
-          } else {
-            console.warn("Could not find matching form item for fetched alat");
-          }
+          form[index].items = namaAlat;
+          form[index].itemsAll = alat;
+          form[index].loading = false;
+
         } catch (error) {
           console.error("Error gagal mengambil data Alat", error);
+          form[index].loading = false;
         }
       }
     }
 
-    const availableRoom = async (tanggalAwal, tanggalSelesai) => {
-      if (tanggalAwal && tanggalSelesai) {
-        try {
-          const response = await axios.get(
-            `http://127.0.0.1:8000/api/peminjamanRuangan/jadwalPeminjaman/${tanggalAwal}/${tanggalSelesai}`
-          );
-          const availableRuangan = response.data.availableRoom;
-          const roomdetail = response.data.detailRuangan;
+    const availableRoom = async (tanggalAwal, tanggalSelesai, index) => {
+      try {
+        console.log('oke')
+        const response = await axios.get(
+          `http://127.0.0.1:8000/api/peminjamanRuangan/jadwalPeminjaman/${tanggalAwal}/${tanggalSelesai}`
+        );
+        const availableRuangan = response.data.availableRoom;
+        const roomdetail = response.data.detailRuangan;
 
-          console.log(availableRuangan);
-          console.log(roomdetail);
+        console.log(availableRuangan);
+        console.log(roomdetail);
 
-          const index = form.findIndex(item => item.tanggalAwal === tanggalAwal && item.tanggalSelesai === tanggalSelesai);
-          if (index > -1) {
-            form[index].Ruangan = availableRuangan;
-            form[index].detailRuangan = roomdetail;
-          } else {
-            console.warn("Could not find matching form item for fetched available rooms.");
-          }
-
-        } catch (error) {
-          console.error("Error fetching available rooms:", error);
-        }
+        form[index].Ruangan = availableRuangan;
+        form[index].detailRuangan = roomdetail;
+        form[index].loading = false;
+      } catch (error) {
+        console.error("Error fetching available rooms:", error);
+        form[index].loading = false;
+        alert('Tidak ada tanggal yang dipilih');
       }
     };
 
@@ -474,7 +493,7 @@ export default {
       }
     }
 
-    return { form, addNewForm, removeForm, fetchAlat, saveItem, availableRoom, tambahAlat, hapusAlat };
+    return { form, loading, dialog, addNewForm, removeForm, fetchAlat, saveItem, availableRoom, tambahAlat, hapusAlat };
   },
   data() {
     return {

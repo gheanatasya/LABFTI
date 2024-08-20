@@ -3,6 +3,19 @@
     </headerSuperAdmin>
     <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1"></headerAdmin>
 
+    <v-overlay v-model="overlay" style="background-color: white; z-index: 0">
+        <v-container style="height: 660px; margin-left: 440px;">
+            <v-row align-content="center" class="fill-height" justify="center">
+                <v-col class="text-subtitle-1 text-center" cols="12" style="font-family: Lexend-Regular;">
+                    Memuat halaman
+                </v-col>
+                <v-col cols="6">
+                    <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
+                </v-col>
+            </v-row>
+        </v-container>
+    </v-overlay>
+
     <div style="font-family: 'Lexend-Medium'; font-size: 25px; text-align: center; margin-top: 30px;"> Daftar Ruangan
         LAB
         FTI UKDW </div>
@@ -32,7 +45,8 @@
     </div>
 
     <div style="margin-top: 20px; margin-left: 50px; margin-right: 50px;">
-        <v-table>
+        <v-card>
+        <v-table style="height: 400px;">
             <thead style="font-family: Lexend-Regular; font-size: 15px;">
                 <tr>
                     <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">No</th>
@@ -47,8 +61,8 @@
                     <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Action</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr v-for="(ruangan, index) in allRoom" :key="index"
+            <tbody v-if="this.filteredRooms.length > 0">
+                <tr v-for="(ruangan, index) in filteredRooms" :key="index"
                     style="background-color: white; font-family: 'Lexend-Regular; font-size: 15px;">
                     <td style="width: 20px; text-align: center;"> {{ index + 1 }} </td>
 
@@ -86,7 +100,23 @@
                     </td>
                 </tr>
             </tbody>
+            <tbody v-else>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <div class="py-1 text-center" style="content: center; margin-top: 80px; margin-left: 50px;">
+                    <v-icon class="mb-6" color="primary" icon="mdi-alert-circle-outline" size="40"></v-icon>
+                    <div class="text-h7 font-weight-bold">Maaf, tidak ada data yang bisa ditampilkan.</div>
+                </div>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tbody>
         </v-table>
+    </v-card>
 
         <!-- edit ruangan -->
         <v-dialog style="justify-content:center; margin-top: -50px;" v-model="editActionRuangan" persistent
@@ -130,7 +160,7 @@
                     <v-btn
                         style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                         @click="editActionRuangan = false">Batal</v-btn>
-                    <v-btn
+                    <v-btn :loading="this.ruanganEdit.loading"
                         @click="updateRuangan(ruanganEdit.RuanganID, ruanganEdit.Nama_ruangan, ruanganEdit.Lokasi, ruanganEdit.Kapasitas, ruanganEdit.Kategori, ruanganEdit.fasilitas, ruanganEdit.foto, ruanganEdit.Status)"
                         style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
                 </v-card-actions>
@@ -148,7 +178,7 @@
                     <v-btn
                         style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                         @click="dialogHapusRuangan = false">Batal</v-btn>
-                    <v-btn
+                    <v-btn :loading="this.ruanganHapus.loading"
                         style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;"
                         @click="deleteRuangan(ruanganHapus.RuanganID)">Hapus</v-btn>
                 </v-card-actions>
@@ -204,14 +234,14 @@
                         label="Status">
                     </v-select>
 
-                    <v-file-input label="Foto" variant="outlined" v-model="this.ruanganTambah.foto" multiple id="tambahFotoRuangan"
-                        style="margin-right: 100px; margin-left:0px;"></v-file-input>
+                    <v-file-input label="Foto" variant="outlined" v-model="this.ruanganTambah.foto" multiple
+                        id="tambahFotoRuangan" style="margin-right: 100px; margin-left:0px;"></v-file-input>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
                         style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                         @click="this.dialogTambahRuangan = false">Batal</v-btn>
-                    <v-btn @click="tambahRuangan(ruanganTambah)"
+                    <v-btn @click="tambahRuangan(ruanganTambah)" :loading="this.ruanganTambah.loading"
                         style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Tambah</v-btn>
                 </v-card-actions>
             </v-card>
@@ -228,7 +258,7 @@
                     Grafik Peminjaman Ruangan
                 </v-card-title>
                 <v-card-text style="text-align: center;">
-                    <v-btn @click="createChart()">Lihat Grafik</v-btn>
+                    <v-btn @click="createChart()" :loading="this.loadinggrafik">Lihat Grafik</v-btn>
                     <canvas id="chart" max-width="300" height="200"></canvas>
                 </v-card-text>
             </v-card>
@@ -268,13 +298,13 @@ export default {
     data() {
         return {
             User_role: localStorage.getItem('User_role'),
-            searchRuangan: null,
+            searchRuangan: '',
             dialogTambahRuangan: false,
             editActionRuangan: false,
             gagalDeleteRuangan: false,
             grafikDialog: false,
             allRoom: [],
-            ruanganHapus: undefined,
+            ruanganHapus: null,
             dialogHapusRuangan: false,
             ruanganEdit: {
                 RuanganID: null,
@@ -285,6 +315,7 @@ export default {
                 foto: null,
                 Nama_ruangan: null,
                 Status: null,
+                loading: false
             },
             ruanganTambah: {
                 RuanganID: null,
@@ -294,10 +325,13 @@ export default {
                 fasilitas: null,
                 Foto: null,
                 Nama_ruangan: null,
-                Status: null
+                Status: null,
+                loading: false
             },
             gambarTampil: [],
             showImageDialog: false,
+            overlay: true,
+            loadinggrafik: false
         }
     },
     methods: {
@@ -333,6 +367,7 @@ export default {
             this.ruanganEdit.Status = ruangan.Status;
         },
         updateRuangan(RuanganID, Nama_ruangan, Lokasi, Kapasitas, Kategori, fasilitas, foto, Status) {
+            this.ruanganEdit.loading = true;
             const updatebaru = fasilitas.toString();
             const formData = new FormData();
 
@@ -374,39 +409,47 @@ export default {
                             axios.post(`http://127.0.0.1:8000/api/ruangan/tambahFoto/${RuanganID}`, formData)
                                 .then(res => {
                                     console.log("Foto ditambahkan successfully:", res.data);
+                                    this.ruanganEdit.loading = false;
                                     this.editActionRuangan = false;
                                 }).catch(error => {
                                     console.error("Foto gagal ditambahkan", error);
+                                    this.ruanganEdit.loading = false;
                                 })
                         }
-
                     } else {
                         console.error("Error updating Ruangan:", response.data.message);
+                        this.ruanganEdit.loading = false;
                     }
                 }).catch(error => {
                     console.error("Error updating Ruangan:", error);
+                    this.ruanganEdit.loading = false;
                 });
         },
         konfirmasiHapusRuangan(RuanganID, Nama_ruangan) {
             this.dialogHapusRuangan = true;
             this.ruanganHapus = {
                 RuanganID,
-                Nama_ruangan
+                Nama_ruangan,
+                loading: false
             }
         },
         deleteRuangan(RuanganID) {
+            this.ruanganHapus.loading = true;
             axios.delete(`http://127.0.0.1:8000/api/ruangan/${RuanganID}`)
                 .then(response => {
                     console.log("Ruangan deleted successfully:", response.data);
+                    this.ruanganHapus.loading = false;
                     this.dialogHapusRuangan = false;
                 }).catch(error => {
                     console.error("Error deleting Ruangan:", error);
                     this.gagalDeleteRuangan = true;
+                    this.ruanganHapus.loading = false;
                     this.dialogHapusRuangan = false;
                 });
         },
         async createChart() {
             try {
+                this.loadinggrafik = true;
                 await axios.get("http://127.0.0.1:8000/api/ruangantotalPerbulan").
                     then(response => {
                         const dataRuangan = response.data;
@@ -468,24 +511,29 @@ export default {
                                     legend: {
                                         position: "bottom",
                                         fullSize: true,
-                                    },                               },
+                                    },
+                                },
                             },
 
                         })
                     }).catch(error => {
                         console.error("Error gagal mengambil data alat perbulan", error);
+                        this.loadinggrafik = false;
                     });
+                    this.loadinggrafik = false;
             } catch {
                 console.error()
+                this.loadinggrafik = false;
             }
         },
         tambahRuangan(ruanganTambah) {
+            this.ruanganTambah.loading = true;
             const facilitiesString = ruanganTambah.fasilitas;
             const facilitiesArray = facilitiesString.split(/,/);
             const fasilit = facilitiesArray.filter(facility => facility.trim());
             //const postgresqlArrayString = `{"${fasilit.map(facility => `"${facility.trim()}"`).join('", "')}"}`;
             console.log(fasilit)
-            
+
             const formData = new FormData();
 
             if (ruanganTambah.foto !== null) {
@@ -518,25 +566,46 @@ export default {
                         axios.post(`http://127.0.0.1:8000/api/ruangan/tambahFoto/${ruanganTambah.RuanganID}`, formData)
                             .then(res => {
                                 console.log("Foto ditambahkan successfully:", res.data);
+                                this.ruanganTambah.loading = false;
                                 this.dialogTambahRuangan = false
                             }).catch(error => {
                                 console.error("Foto gagal ditambahkan", error);
+                                this.ruanganTambah.loading = false;
                             })
                     }
                 })
                 .catch(Error => {
                     console.error("Data tidak berhasil dimasukkan ke tabel Ruangan", Error);
+                    this.ruanganTambah.loading = false;
                 });
+                this.ruanganTambah.loading = false;
         },
-        morePicture(foto) {
+        morePicture(Foto) {
             this.showImageDialog = true;
-            const fotoArray = foto.split(":").filter(pict => pict);
+            const fotoString = Foto.join(':');
+            console.log(fotoString);
+            const fotoArray = fotoString.split(":").filter(pict => pict);
             this.gambarTampil = fotoArray;
             console.log(fotoArray);
         }
     },
     mounted() {
-        this.getAllDataofRoom()
+        Promise.all([
+            this.getAllDataofRoom()
+        ])
+            .then(() => {
+                this.overlay = false;
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    },
+    computed: {
+        filteredRooms() {
+            return this.allRoom.filter(room => {
+                return room.Nama_ruangan.toLowerCase().includes(this.searchRuangan.toLowerCase());
+            });
+        }
     },
 }
 </script>

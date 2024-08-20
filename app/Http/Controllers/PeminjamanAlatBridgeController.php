@@ -37,9 +37,9 @@ class PeminjamanAlatBridgeController extends Controller
         setlocale(LC_ALL, 'id_ID');
         $input = $request->all();
         //dd($input);
-        $user = Peminjam::where('UserID', $request[0]['UserID'])->first();
+        $user = Peminjam::where('UserID', $request['UserID'])->first();
         $peminjamID = $user->PeminjamID;
-        $USER = User::where('UserID', $request[0]['UserID'])->first();
+        $USER = User::where('UserID', $request['UserID'])->first();
         $userrole = $USER->User_role;
         $email = $USER->Email;
         $prodiid = $user->ProdiID;
@@ -66,62 +66,60 @@ class PeminjamanAlatBridgeController extends Controller
         $detailalat = [];
         $detailruangan = [];
 
-        for ($i = 0; $i < count($input); $i++) {
-            if (count($input[$i]['alat']) > 0) {
-                foreach ($input[$i]['alat'] as $tool) {
-                    if (!empty($tool['nama']) && $tool['jumlahPinjam'] > 0) {
-                        $detail = Alat::where('Nama', $tool['nama'])->first();
-                        $jumlahpinjam = $tool['jumlahPinjam'];
-                        $alatID = $detail->AlatID;
-                        $datanotif = [
-                            'namaalat' => $tool['nama'],
-                            'jumlahPinjam' => $tool['jumlahPinjam'],
-                            'tanggalawal' => $input[$i]['tanggalAwal'],
-                            'tanggalakhir' => $input[$i]['tanggalSelesai'],
-                        ];
-                        $detailalat[] = $datanotif;
+        if (count($input['alat']) > 0) {
+            foreach ($input['alat'] as $tool) {
+                if (!empty($tool['nama']) && $tool['jumlahPinjam'] > 0) {
+                    $detail = Alat::where('Nama', $tool['nama'])->first();
+                    $jumlahpinjam = $tool['jumlahPinjam'];
+                    $alatID = $detail->AlatID;
+                    $datanotif = [
+                        'namaalat' => $tool['nama'],
+                        'jumlahPinjam' => $tool['jumlahPinjam'],
+                        'tanggalawal' => $input['tanggalAwal'],
+                        'tanggalakhir' => $input['tanggalSelesai'],
+                    ];
+                    $detailalat[] = $datanotif;
 
-                        $peminjaman_alat = Peminjaman_Alat_Bridge::create([
-                            'PeminjamanID' => $peminjamanid,
-                            'AlatID' => $alatID,
-                            'Tanggal_pakai_awal' => $input[$i]['tanggalAwal'],
-                            'Tanggal_pakai_akhir' => $input[$i]['tanggalSelesai'],
-                            'Jumlah_pinjam' => $jumlahpinjam,
-                            'Is_Personal' => $input[$i]['selectedOptionPersonal'],
-                            'Is_Organisation' => $input[$i]['selectedOptionOrganisation'],
-                            'Is_Eksternal' => $input[$i]['selectedOptionEksternal'],
-                            'DokumenID' => $input[$i]['dokumen'],
-                            'Keterangan' => $input[$i]['keterangan'],
-                            'RuanganID' => null,
-                        ]);
+                    $peminjaman_alat = Peminjaman_Alat_Bridge::create([
+                        'PeminjamanID' => $peminjamanid,
+                        'AlatID' => $alatID,
+                        'Tanggal_pakai_awal' => $input['tanggalAwal'],
+                        'Tanggal_pakai_akhir' => $input['tanggalSelesai'],
+                        'Jumlah_pinjam' => $jumlahpinjam,
+                        'Is_Personal' => $input['selectedOptionPersonal'],
+                        'Is_Organisation' => $input['selectedOptionOrganisation'],
+                        'Is_Eksternal' => $input['selectedOptionEksternal'],
+                        'DokumenID' => null,
+                        'Keterangan' => $input['keterangan'],
+                        'RuanganID' => null,
+                    ]);
 
-                        $accAlat = Persetujuan::create([
-                            'Peminjaman_Ruangan_ID' => null,
-                            'Peminjaman_Alat_ID' => $peminjaman_alat->Peminjaman_Alat_ID,
-                            'Dekan_Approve' => null,
-                            'WD2_Approve' => null,
-                            'WD3_Approve' => null,
-                            'Kepala Lab' => null,
-                            'Koordinator Lab' => null,
-                            'Petugas' => null
-                        ]);
+                    $accAlat = Persetujuan::create([
+                        'Peminjaman_Ruangan_ID' => null,
+                        'Peminjaman_Alat_ID' => $peminjaman_alat->Peminjaman_Alat_ID,
+                        'Dekan_Approve' => null,
+                        'WD2_Approve' => null,
+                        'WD3_Approve' => null,
+                        'Kepala Lab' => null,
+                        'Koordinator Lab' => null,
+                        'Petugas' => null
+                    ]);
 
-                        $statuspeminjamanA = Status_Peminjaman::create([
-                            'Peminjaman_Ruangan_ID' => null,
-                            'Peminjaman_Alat_ID' => $peminjaman_alat->Peminjaman_Alat_ID,
-                            'StatusID' => 1,
-                            'Tanggal_Acc' => date('d-m-Y')
-                        ]);
+                    $statuspeminjamanA = Status_Peminjaman::create([
+                        'Peminjaman_Ruangan_ID' => null,
+                        'Peminjaman_Alat_ID' => $peminjaman_alat->Peminjaman_Alat_ID,
+                        'StatusID' => 1,
+                        'Tanggal_Acc' => date('d-m-Y')
+                    ]);
 
-                        /* $stokSedia = $detail->Jumlah_ketersediaan;
+                    /* $stokSedia = $detail->Jumlah_ketersediaan;
                         $stokAkhir = $stokSedia - $jumlahpinjam;
                         $currentStok = Alat::where('AlatID', $alatID)->update(['Jumlah_ketersediaan' => $stokAkhir]); */
-                        $totalpinjamalat[] = $peminjaman_alat;
-                        $persetujuanAlat[] = $accAlat;
-                        $statuspeminjamanAlat[] = $statuspeminjamanA;
-                    }
-                };
-            }
+                    $totalpinjamalat[] = $peminjaman_alat;
+                    $persetujuanAlat[] = $accAlat;
+                    $statuspeminjamanAlat[] = $statuspeminjamanA;
+                }
+            };
         }
 
         $dataNotifikasi = [
@@ -132,10 +130,10 @@ class PeminjamanAlatBridgeController extends Controller
 
         $title = 'Peminjaman Alat Baru';
 
-        if (count($detailalat) >  1){
+        if (count($detailalat) >  1) {
             $body = $detailalat[0]['namaalat'] . ' dan lainnya dipinjam. Segera berikan konfirmasi.';
         } else {
-            $body = $detailalat['namaalat'] . ' dipinjam. Segera berikan konfirmasi.';
+            $body = $detailalat[0]['namaalat'] . ' dipinjam. Segera berikan konfirmasi.';
         }
 
         $userAll = User::whereIn('User_role', ['Petugas', 'Kepala Lab', 'Koordinator Lab'])->get();
@@ -176,8 +174,12 @@ class PeminjamanAlatBridgeController extends Controller
         }
 
         return response()->json([
-            'status' => true, 'message' => "Registration Success", 'peminjaman_alat_bridge' => $totalpinjamalat, 'persetujuan' => $persetujuanAlat,
-            'statuspeminjamanalat' => $statuspeminjamanAlat, 'notifikasi berhasil dikirim' => $dataNotifikasi
+            'status' => true,
+            'message' => "Registration Success",
+            'peminjaman_alat_bridge' => $totalpinjamalat,
+            'persetujuan' => $persetujuanAlat,
+            'statuspeminjamanalat' => $statuspeminjamanAlat,
+            'notifikasi berhasil dikirim' => $dataNotifikasi
         ]);
     }
     //mengubah data semua row

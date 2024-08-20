@@ -54,7 +54,9 @@
                                     </template>
                                 </v-tooltip>
 
-                                <v-btn @click="alatAvailable(item.tanggalAwal, item.tanggalSelesai)"
+                                <v-btn
+                                    @click="alatAvailable(item.tanggalAwal, item.tanggalSelesai, index), item.loading = true"
+                                    :loading="item.loading"
                                     style="width: 120px; margin-left: 10px; margin-top: 80px; font-size: 11px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
                                     color="primary">
                                     Cek Alat</v-btn>
@@ -139,7 +141,7 @@
                                 v-if="item.selectedOptionOrganisation === 'True' || item.selectedOptionEksternal === 'True'"
                                 type="file" accept="file/pdf" :no-icon="true" v-model="item.dokumen"
                                 style="width: 505px; margin-left: 303px; margin-top: 5px;" variant="outlined"
-                                label="Surat Peminjaman"></v-file-input>
+                                label="Surat Peminjaman" ref="dokumenPendukung" :id="'dokumen-' + index"></v-file-input>
 
                             <div
                                 style="display: flex; justify-content: space-between; margin-left: 320px; margin-right: 20px; margin-bottom: 50px; margin-top: 20px;">
@@ -154,9 +156,9 @@
 
                         <v-checkbox label="Apabila terjadi kerusakan alat atau kehilangan alat 
                         maka bersedia untuk ganti rugi sesuai dengan persyaratan yang telah ditentukan." value="true"
-                            style="margin-left: 295px; margin-right: -80px;" v-model="this.ketentuan"></v-checkbox>
+                            style="margin-left: 295px; margin-right: -80px;" v-model="ketentuan"></v-checkbox>
 
-                        <v-btn @click="saveItem" id="simpan"
+                        <v-btn @click="saveItem" id="simpan" :loading="loading"
                             style="margin-left: 430px; margin-top: -5px; border-radius: 20px; font-size: 15px; width: 250px;"
                             color="primary">
                             Pinjam Alat </v-btn>
@@ -164,12 +166,19 @@
                 </div>
             </v-container>
 
-            <v-container style="font-family: Lexend-Regular; width: 45%; margin-left: 300px; margin-right: 20px;">
+            <v-container
+                style="font-family: Lexend-Regular; width: 45%; margin-left: 300px; margin-right: 20px; margin-bottom: 0px; height: 400px;">
                 <div v-for="(item, index) in form" :key="'alattersedia-' + index" :id="'alattersedia-' + index"
-                    style="border-radius: 10px; border: 1px solid; padding: 30px; margin-bottom: 750px;">
-                    <p style="font-size: 20px; font-family: Lexend-Medium; margin-bottom: 20px;">Daftar Peralatan FTI
-                        UKDW</p>
-                    <v-card
+                    style="border-radius: 10px; border: 1px solid; padding: 30px; margin-bottom: 750px; height: 550px; overflow-y: auto; margin-bottom: 280px;">
+                    <p v-if="item.itemsAll.length > 0"
+                        style="font-size: 25px; font-family: Lexend-Medium; margin-bottom: 20px;">
+                        Daftar Peralatan FTI UKDW</p>
+                    <p v-else
+                        style="font-size: 25px; font-family: Lexend-Medium; margin-bottom: 20px; text-align: center; margin-top: 200px;">
+                        Silahkan masukkan tanggal penggunaan alat untuk melihat
+                        alat yang tersedia.
+                    </p>
+                    <v-card v-if="item.itemsAll.length > 0"
                         style="border-radius: 10px; background-color: rgb(3, 138, 33, 0.3); box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3)">
                         <v-table style="overflow: hidden;">
                             <thead style="font-family: Lexend-Regular; font-size: 15px;">
@@ -197,13 +206,29 @@
             </v-container>
         </div>
 
+        <v-overlay v-model="dialog">
+            <v-card
+                style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 400px; height: 250px; margin-left: 550px; margin-top: 200px;">
+                <v-card-title style="font-family: 'Lexend-Medium'; text-align: center; margin-top: 20px;">
+                    <div class="py-1 text-center">
+                        <v-icon class="mb-6" color="success" icon="mdi-check-circle-outline" size="120"></v-icon>
+                        <div class="text-h5 font-weight-bold">Peminjaman Berhasil</div>
+                    </div>
+                </v-card-title>
+                <v-card-text>
+                </v-card-text>
+                <v-card-actions style="position: absolute; top: 0; right: 0; margin-right: -15px;">
+                    <v-btn @click="dialog = false"><v-icon style="font-size: 30px;">mdi-close-circle</v-icon></v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-overlay>
     </div>
 
     <footerPage></footerPage>
 </template>
 
 <script>
-import { reactive, onMounted } from 'vue';
+import { reactive, onMounted, ref } from 'vue';
 import headerUser from '../components/headerUser.vue'
 import footerPage from '../components/footerPage.vue'
 import headerSuperAdmin from '../components/headerSuperAdmin.vue'
@@ -220,6 +245,10 @@ export default {
         headerAdmin
     },
     setup() {
+        const loading = ref(false);
+        const dialog = ref(false);
+        const ketentuan = ref(false);
+
         const form = reactive([
             {
                 tanggalAwal: '',
@@ -236,11 +265,12 @@ export default {
                 daftarAlat: [],
                 alat: reactive([{
                     nama: '',
-                    jumlahKetersediaan: 0,
+                    jumlahPinjam: 0,
                     maxValue: null,
                 }]),
                 keterangan: '',
                 dokumen: null,
+                loading: false,
             }
         ])
 
@@ -265,6 +295,7 @@ export default {
                 keterangan: '',
                 dokumen: null,
                 daftarAlat: [],
+                loading: false
             })
         }
 
@@ -275,56 +306,96 @@ export default {
         }
 
         const saveItem = async () => {
-            const savedItems = [];
-            const dataSend = [];
+            loading.value = true;
 
-            const UserID = localStorage.getItem('UserID');
-
-            for (const formData of form) {
-                const dataToSave = {
-                    tanggalSelesai: formData.tanggalSelesai,
-                    tanggalAwal: formData.tanggalAwal,
-                    selectedOptionPersonal: formData.selectedOptionPersonal,
-                    selectedOptionEksternal: formData.selectedOptionEksternal,
-                    selectedOptionOrganisation: formData.selectedOptionOrganisation,
-                    alat: formData.alat,
-                    keterangan: formData.keterangan,
-                    dokumen: formData.dokumen,
-                    UserID: UserID
-                };
-                dataSend.push(dataToSave);
+            if (ketentuan.value === false){
+                alert('Wajib mengisi persetujuan ketentuan.')
+                loading.value = false;
+                return;
             }
 
-            for (const formData of form) {
-                const dataToSave = {
-                    tanggalSelesai: formData.tanggalSelesai,
-                    tanggalAwal: formData.tanggalAwal,
-                    selectedRuangan: formData.selectedRuangan,
-                    selectedOptionPersonal: formData.selectedOptionPersonal,
-                    selectedOptionEksternal: formData.selectedOptionEksternal,
-                    selectedOptionOrganisation: formData.selectedOptionOrganisation,
-                    alat: formData.alat,
-                    keterangan: formData.keterangan,
-                    dokumen: formData.dokumen,
-                    UserID: UserID
-                };
+            if (ketentuan.value === 'true') {
+                //alert('tunggu, peminjamanmu sedang diproses')
+                const savedItems = [];
+                const dataSend = [];
 
-                console.log(dataToSave);
-                try {
-                    const response = await axios({
-                        method: 'POST',
-                        url: 'http://localhost:8000/api/peminjamanAlat/',
-                        data: dataSend,
-                        headers: {
-                            'Access-Control-Allow-Origin': '*',
-                            'Content-Type': 'application/json'
-                        },
-                    });
-                    savedItems.push(response.data);
-                    console.log('Peminjaman saved successfully:', response.data);
-                } catch (error) {
-                    console.error('Error menyimpan data peminjaman alat', error);
+                const UserID = localStorage.getItem('UserID');
+
+                for (let i = 0; i < form.length; i++) {
+                    if (form[i].alat.length > 0) {
+                        for (let j = 0; j < form[i].alat.length; j++) {
+                            if (form[i].alat[j].jumlahPinjam > form[i].alat[j].maxValue.Jumlah_ketersediaan) {
+                                alert('Jumlah pinjam melebihi jumlah ketersediaan alat!');
+                                loading.value = false;
+                                return;
+                            }
+                        }
+                    }
+
+                    const FORMDATA = new FormData();
+                    const file = document.querySelector('#dokumen-' + i);
+                    const today = new Date();
+                    const formattedDate = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+
+                    if (file !== null) {
+                        FORMDATA.append('dokumen', file.files[0]);
+                        FORMDATA.append('UserID', UserID);
+                        FORMDATA.append('Tanggal_pinjam', formattedDate);
+                    }
+
+                    const dataToSave = {
+                        tanggalSelesai: form[i].tanggalSelesai,
+                        tanggalAwal: form[i].tanggalAwal,
+                        selectedRuangan: form[i].selectedRuangan,
+                        selectedOptionPersonal: form[i].selectedOptionPersonal,
+                        selectedOptionEksternal: form[i].selectedOptionEksternal,
+                        selectedOptionOrganisation: form[i].selectedOptionOrganisation,
+                        alat: form[i].alat,
+                        keterangan: form[i].keterangan,
+                        dokumen: null,
+                        UserID: UserID
+                    };
+
+                    try {
+                        const response = await axios({
+                            method: 'POST',
+                            url: 'http://localhost:8000/api/peminjamanAlat/',
+                            data: dataToSave,
+                            headers: {
+                                'Access-Control-Allow-Origin': '*',
+                                'Content-Type': 'application/json'
+                            },
+                        });
+
+                        if (response.data.peminjaman_alat_bridge.length > 0) {
+                            for (let j = 0; j < response.data.peminjaman_alat_bridge.length; j++) {
+                                const peminjamanalatid = response.data.peminjaman_alat_bridge[j]['Peminjaman_Alat_ID'];
+                                FORMDATA.append('peminjamanalatid' + j, peminjamanalatid);
+                            }
+                            FORMDATA.append('totalalat', response.data.peminjaman_alat_bridge.length);
+                        }
+
+                        if (file !== null) {
+                            const response2 = await axios({
+                                method: 'POST',
+                                url: 'http://localhost:8000/api/dokumenAlat/',
+                                data: FORMDATA,
+                                headers: {
+                                    'Access-Control-Allow-Origin': '*',
+                                    'Content-Type': 'multipart/form-data',
+                                },
+                            });
+                            console.log('Peminjaman saved successfully: response2', response2.data);
+                        }
+
+                        console.log('Peminjaman saved successfully:', response.data);
+                    } catch (error) {
+                        console.error('Error menyimpan data peminjaman alat', error);
+                        loading.value = false;
+                    }
                 }
+                loading.value = false;
+                dialog.value = true;
             }
         }
 
@@ -372,33 +443,29 @@ export default {
             }
         }
 
-        const alatAvailable = async (tanggalAwal, tanggalSelesai) => {
-            if (tanggalAwal && tanggalSelesai) {
-                try {
-                    const response = await axios.get(
-                        `http://127.0.0.1:8000/api/peminjamanAlat/jadwalAlat/${tanggalAwal}/${tanggalSelesai}`
-                    );
+        const alatAvailable = async (tanggalAwal, tanggalSelesai, index) => {
+            try {
+                const response = await axios.get(
+                    `http://127.0.0.1:8000/api/peminjamanAlat/jadwalAlat/${tanggalAwal}/${tanggalSelesai}`
+                );
 
-                    const alat = response.data.daftarAlatfix;
-                    let namaAlat = [];
-                    let jumlahAlat = [];
-                    console.log(alat);
+                const alat = response.data.daftarAlatfix;
+                let namaAlat = [];
+                let jumlahAlat = [];
+                console.log(alat);
 
-                    for (let i = 0; i < alat.length; i++) {
-                        namaAlat.push(alat[i].NamaAlat);
-                        jumlahAlat.push(alat[i].Jumlah_ketersediaan);
-                    }
-
-                    const index = form.findIndex(item => item.tanggalAwal === tanggalAwal && item.tanggalSelesai === tanggalSelesai);
-                    if (index > -1) {
-                        form[index].items = namaAlat;
-                        form[index].itemsAll = alat;
-                    } else {
-                        console.warn("Could not find matching form item for fetched alat");
-                    }
-                } catch (error) {
-                    console.error("Error gagal mengambil data Alat", error);
+                for (let i = 0; i < alat.length; i++) {
+                    namaAlat.push(alat[i].NamaAlat);
+                    jumlahAlat.push(alat[i].Jumlah_ketersediaan);
                 }
+
+                form[index].items = namaAlat;
+                form[index].itemsAll = alat;
+                form[index].loading = false;
+            } catch (error) {
+                console.error("Error gagal mengambil data Alat", error);
+                form[index].loading = false;
+                alert('Tidak ada tanggal yang dipilih');
             }
         }
 
@@ -406,11 +473,10 @@ export default {
 
         });
 
-        return { form, addNewForm, removeForm, fetchAlat, saveItem, tambahAlat, hapusAlat, alatAvailable }
+        return { form, loading, dialog, ketentuan, addNewForm, removeForm, fetchAlat, saveItem, tambahAlat, hapusAlat, alatAvailable }
     },
     data() {
         return {
-            ketentuan: false,
             User_role: localStorage.getItem('User_role'),
             Total_batal: localStorage.getItem('Total_batal'),
             confirmBeforeCancel: true

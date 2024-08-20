@@ -56,4 +56,42 @@ class DokumenController extends Controller
         //return $tanggalpinjam;
         return response()->json(['message' => 'File uploaded successfully!']);
     }
+
+    public function forDokumenPeminjamanAlat(StoreDokumenRequest $request){
+        $data = $request->file('dokumen');
+        $userid = $request->input('UserID');
+        $tanggalpinjam = $request->input('Tanggal_pinjam');
+        $totalalat = $request->input('totalalat');
+        $a = []; 
+
+        $peminjam = Peminjam::where('UserID', $userid)->first();
+        $nama = $peminjam->Nama;
+        $peminjamid = $peminjam->PeminjamID;
+        $directory = 'dokumen/' . $nama;
+
+        $fileInfo = [
+            'originalName' => $data->getClientOriginalName(),
+            'size' => $data->getSize(),
+            'mimeType' => $data->getClientMimeType(),
+        ];
+
+        $path = Storage::putFileAs($directory, $data, $fileInfo['originalName']);
+
+        $dokumen = Dokumen::create([
+            'Nama_dokumen' => $fileInfo['originalName'],
+            'Path' => $path,
+        ]);
+
+        for ($i = 0; $i < $totalalat; $i++) {
+            $peminjamanalatid = $request->input('peminjamanalatid'.$i);
+            $a[] = $peminjamanalatid; 
+
+            $peminjamanalat = Peminjaman_Alat_Bridge::where('Peminjaman_Alat_ID', $peminjamanalatid)->first();
+            $peminjamanalat->DokumenID = $dokumen->DokumenID;
+            $peminjamanalat->save();
+        }
+
+        //return $tanggalpinjam;
+        return response()->json(['message' => 'File uploaded successfully!']);
+    }
 }

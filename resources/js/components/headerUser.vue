@@ -152,6 +152,20 @@
                 </template>
             </v-toolbar-items>
         </v-toolbar>
+
+        <!-- dialog logout -->
+        <v-overlay v-model="overlay" style="background-color: white; z-index: 1">
+            <v-container style="height: 660px; margin-left: 440px;">
+                <v-row align-content="center" class="fill-height" justify="center">
+                    <v-col class="text-subtitle-1 text-center" cols="12" style="font-family: Lexend-Regular;">
+                        Logout
+                    </v-col>
+                    <v-col cols="6">
+                        <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
+                    </v-col>
+                </v-row>
+            </v-container>
+        </v-overlay>
     </div>
 </template>
 
@@ -162,8 +176,7 @@ export default {
     name: "headerUser",
     data() {
         return {
-/*             isNotify: false,
- */            menusCenter: [
+            menusCenter: [
                 { title: 'Ruangan', to: 'ruangan' },
                 { title: 'Alat', to: 'alat' },
                 { title: 'Beranda', to: 'berandaUser' },
@@ -176,7 +189,8 @@ export default {
             ],
             UserID: localStorage.getItem("UserID"),
             allNotifications: [],
-            unread: 0
+            unread: 0,
+            overlay: false,
         }
     },
     mounted() {
@@ -187,18 +201,43 @@ export default {
         };
 
         this.getNotification()
+
+        const loginTime = localStorage.getItem("loginTime");
+
+        if (loginTime) {
+            const timeDiff = Date.now() - parseInt(loginTime);
+            const oneDay = 24 * 60 * 60 * 1000;
+
+            if (timeDiff >= oneDay) {
+                localStorage.removeItem("loggedIn");
+                localStorage.removeItem("token");
+                localStorage.removeItem("UserID");
+                localStorage.removeItem("User_role");
+                localStorage.removeItem("Total_batal");
+                localStorage.removeItem("loginTime");
+                this.$router.push({ name: 'loginPage' });
+            }
+        }
     },
     methods: {
         logout() {
+            this.overlay = true;
             axios.get('http://localhost:8000/api/logout')
                 .then(() => {
                     // Remove localStorage
                     localStorage.removeItem("loggedIn");
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("UserID");
+                    localStorage.removeItem("User_role");
+                    localStorage.removeItem("Total_batal");
+                    localStorage.removeItem("loginTime");
                     // Redirect
+                    this.overlay = false;
                     return this.$router.push({ name: 'loginPage' });
                 })
                 .catch(error => {
                     console.error('Logout failed:', error);
+                    this.overlay = false;
                 });
         },
         getNotification() {
