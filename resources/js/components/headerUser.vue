@@ -1,172 +1,175 @@
 <template>
-    <div class="" style="position: fixed; top: 0; width: 100%;">
-        <v-toolbar style="background-color: rgb(2,39,10,0.9); font-family: 'Lexend-Regular'; ">
-            <v-toolbar-title>
-                <router-link to="/" style="cursor: pointer">
-                    <v-img :width="80" cover src="../picture/fti-ukdw.png"></v-img>
-                </router-link>
-            </v-toolbar-title>
-            <v-toolbar-items class="flex-grow-1 justify-center" style="color: white">
-                <v-btn flat v-for="menu in menusCenter" :key="menu.title" :to="menu.to">
-                    {{ menu.title }}
-                </v-btn>
-            </v-toolbar-items>
-            <v-spacer></v-spacer>
-            <v-toolbar-items class="hidden-xs-only" style="color: white">
-                <template v-for="menu1 in menusLeft" :key="menu1.title">
-                    <v-menu v-if="menu1.title === 'Pengaturan'">
-                        <template v-slot:activator="{ on, props }">
-                            <v-btn flat v-on="on" v-bind="props">
-                                <v-icon left dark>{{ menu1.icon }}</v-icon>
-                            </v-btn>
-                        </template>
-                        <v-list>
-                            <v-list-item v-for="(item, i) in menu1.submenus" :key="i">
-                                <v-list-item-title>
-                                    <v-icon>{{ item.icon }}</v-icon>
-                                    <v-btn flat @click="logout" v-if="item.title === 'Logout'">
-                                        {{ item.title }}
-                                    </v-btn>
-                                    <v-btn :to="item.to" v-else flat>
-                                        {{ item.title }}
-                                    </v-btn>
-                                </v-list-item-title>
-                            </v-list-item>
-                        </v-list>
-                    </v-menu>
+    <v-card>
+        <div class="" style="position: fixed; top: 0; width: 100%;">
+            <v-toolbar style="background-color: rgb(2,39,10,0.9); font-family: 'Lexend-Regular'; ">
+                <v-toolbar-title>
+                    <router-link to="/" style="cursor: pointer">
+                        <v-img :width="80" cover src="../picture/fti-ukdw.png"></v-img>
+                    </router-link>
+                </v-toolbar-title>
+                <v-toolbar-items class="flex-grow-1 justify-center" style="color: white">
+                    <v-btn flat v-for="menu in menusCenter" :key="menu.title" :to="menu.to">
+                        {{ menu.title }}
+                    </v-btn>
+                </v-toolbar-items>
+                <v-spacer></v-spacer>
+                <v-toolbar-items class="hidden-xs-only" style="color: white">
+                    <template v-for="menu1 in menusLeft" :key="menu1.title">
+                        <v-menu v-if="menu1.title === 'Pengaturan'">
+                            <template v-slot:activator="{ on, props }">
+                                <v-btn flat v-on="on" v-bind="props">
+                                    <v-icon left dark>{{ menu1.icon }}</v-icon>
+                                </v-btn>
+                            </template>
+                            <v-list>
+                                <v-list-item v-for="(item, i) in menu1.submenus" :key="i">
+                                    <v-list-item-title>
+                                        <v-icon>{{ item.icon }}</v-icon>
+                                        <v-btn flat @click="logout" v-if="item.title === 'Logout'">
+                                            {{ item.title }}
+                                        </v-btn>
+                                        <v-btn :to="item.to" v-else flat>
+                                            {{ item.title }}
+                                        </v-btn>
+                                    </v-list-item-title>
+                                </v-list-item>
+                            </v-list>
+                        </v-menu>
 
-                    <v-menu v-if="menu1.title === 'Pemberitahuan'">
-                        <template v-slot:activator="{ on, props }">
-                            <v-btn flat v-on="on" v-bind="props">
-                                <v-badge :content="this.unread">
-                                    <v-icon left dark size="x-large">{{ menu1.icon }}</v-icon></v-badge>
-                            </v-btn>
-                        </template>
+                        <v-menu v-if="menu1.title === 'Pemberitahuan'">
+                            <template v-slot:activator="{ on, props }">
+                                <v-btn flat v-on="on" v-bind="props">
+                                    <v-badge :content="this.unread">
+                                        <v-icon left dark size="x-large">{{ menu1.icon }}</v-icon></v-badge>
+                                </v-btn>
+                            </template>
 
-                        <v-list style="width: 600px;">
+                            <v-list style="width: 600px;">
 
-                            <v-list-item v-for="(item, i) in this.allNotifications" :key="i">
-                                <v-hover>
-                                    <template v-slot:default="{ isHovering, props }" v-if="item.read_at === null">
-                                        <v-list-item-title v-if="item.read_at === null" v-bind="props" :style="{
-                                            backgroundColor: isHovering ? 'rgba(3, 138, 33, 0.4)' : 'rgb(3, 138, 33, 0.3)',
-                                            cursor: 'pointer',
-                                            paddingLeft: '10px',
-                                            borderBottom: '1px solid rgb(0, 0, 0, 0.1)',
-                                            paddingBottom: '15px',
-                                            paddingRight: '10px',
-                                            paddingTop: '10px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between'
-                                        }">
-                                            <div style="margin-right: 20px; text-align: justify;">
-                                                <h4>{{ item.data.subject }}</h4>
-                                                <p @click="readNotification(item.id)">Peminjaman ruangan {{
-                                                    item.data.detailruangan.namaruangan }}
-                                                    untuk tanggal <br>{{ new
-                                                        Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
-                                                            {
-                                                                year:
-                                                                    'numeric', month:
-                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
-                                                            }) }} - {{
-                                                        new
-                                                            Date(item.data.detailruangan.tanggalakhir).toLocaleTimeString('id-ID',
+                                <v-list-item v-for="(item, i) in this.allNotifications" :key="i">
+                                    <v-hover>
+                                        <template v-slot:default="{ isHovering, props }" v-if="item.read_at === null">
+                                            <v-list-item-title v-if="item.read_at === null" v-bind="props" :style="{
+                                                backgroundColor: isHovering ? 'rgba(3, 138, 33, 0.4)' : 'rgb(3, 138, 33, 0.3)',
+                                                cursor: 'pointer',
+                                                paddingLeft: '10px',
+                                                borderBottom: '1px solid rgb(0, 0, 0, 0.1)',
+                                                paddingBottom: '15px',
+                                                paddingRight: '10px',
+                                                paddingTop: '10px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between'
+                                            }">
+                                                <div style="margin-right: 20px; text-align: justify;">
+                                                    <h4>{{ item.data.subject }}</h4>
+                                                    <p @click="readNotification(item.id)">Peminjaman ruangan {{
+                                                        item.data.detailruangan.namaruangan }}
+                                                        untuk tanggal <br>{{ new
+                                                            Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
                                                                 {
                                                                     year:
                                                                         'numeric', month:
                                                                         'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
-                                                                }) }} <br>telah {{
-                                                        item.data.namastatus
-                                                    }}
-                                                    oleh {{ item.data.accby }} pada {{ new
-                                                        Date(item.created_at).toLocaleTimeString('id-ID',
-                                                            {
-                                                                year:
-                                                                    'numeric', month:
-                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
-                                                            }) }}. <br>Catatan :
-                                                    {{
-                                                        item.data.catatan }}
-                                                </p>
-                                            </div>
-                                            <v-icon size="small" style="color: rgb(2,39,10,0.9);">mdi-circle</v-icon>
-                                        </v-list-item-title>
-                                    </template>
-                                </v-hover>
-
-
-                                <v-hover>
-                                    <template v-slot:default="{ isHovering2, props2 }" v-if="item.read_at !== null">
-                                        <v-list-item-title v-if="item.read_at !== null" v-bind="props2" :style="{
-                                            backgroundColor: isHovering2 ? 'rgba(0, 0, 0, 0.1)' : '',
-                                            cursor: 'pointer',
-                                            paddingLeft: '10px',
-                                            borderBottom: '1px solid rgb(0, 0, 0, 0.1)',
-                                            paddingBottom: '15px',
-                                            paddingRight: '10px',
-                                            paddingTop: '10px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between'
-                                        }">
-                                            <div style="margin-right: 20px; text-align: justify;">
-                                                <h4>{{ item.data.subject }}</h4>
-                                                <p @click="readNotification(item.id)">Peminjaman ruangan {{
-                                                    item.data.detailruangan.namaruangan }}
-                                                    untuk tanggal <br>{{ new
-                                                        Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
-                                                            {
-                                                                year:
-                                                                    'numeric', month:
-                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
-                                                            }) }} - {{
-                                                        new
-                                                            Date(item.data.detailruangan.tanggalakhir).toLocaleTimeString('id-ID',
+                                                                }) }} - {{
+                                                            new
+                                                                Date(item.data.detailruangan.tanggalakhir).toLocaleTimeString('id-ID',
+                                                                    {
+                                                                        year:
+                                                                            'numeric', month:
+                                                                            'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                                    }) }} <br>telah {{
+                                                            item.data.namastatus
+                                                        }}
+                                                        oleh {{ item.data.accby }} pada {{ new
+                                                            Date(item.created_at).toLocaleTimeString('id-ID',
                                                                 {
                                                                     year:
                                                                         'numeric', month:
                                                                         'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
-                                                                })
-                                                    }} <br>telah {{
-                                                        item.data.namastatus
-                                                    }}
-                                                    oleh {{ item.data.accby }} pada {{ new
-                                                        Date(item.created_at).toLocaleTimeString('id-ID',
-                                                            {
-                                                                year:
-                                                                    'numeric', month:
-                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
-                                                            }) }}. <br>Catatan :
-                                                    {{
-                                                        item.data.catatan }}
-                                                </p>
-                                            </div>
-                                        </v-list-item-title>
-                                    </template>
-                                </v-hover>
-                            </v-list-item>
-                        </v-list>
-                    </v-menu>
-                </template>
-            </v-toolbar-items>
-        </v-toolbar>
+                                                                }) }}. <br>Catatan :
+                                                        {{
+                                                            item.data.catatan }}
+                                                    </p>
+                                                </div>
+                                                <v-icon size="small"
+                                                    style="color: rgb(2,39,10,0.9);">mdi-circle</v-icon>
+                                            </v-list-item-title>
+                                        </template>
+                                    </v-hover>
 
-        <!-- dialog logout -->
-        <v-overlay v-model="overlay" style="background-color: white; z-index: 1">
-            <v-container style="height: 660px; margin-left: 440px;">
-                <v-row align-content="center" class="fill-height" justify="center">
-                    <v-col class="text-subtitle-1 text-center" cols="12" style="font-family: Lexend-Regular;">
-                        Logout
-                    </v-col>
-                    <v-col cols="6">
-                        <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
-                    </v-col>
-                </v-row>
-            </v-container>
-        </v-overlay>
-    </div>
+
+                                    <v-hover>
+                                        <template v-slot:default="{ isHovering2, props2 }" v-if="item.read_at !== null">
+                                            <v-list-item-title v-if="item.read_at !== null" v-bind="props2" :style="{
+                                                backgroundColor: isHovering2 ? 'rgba(0, 0, 0, 0.1)' : '',
+                                                cursor: 'pointer',
+                                                paddingLeft: '10px',
+                                                borderBottom: '1px solid rgb(0, 0, 0, 0.1)',
+                                                paddingBottom: '15px',
+                                                paddingRight: '10px',
+                                                paddingTop: '10px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between'
+                                            }">
+                                                <div style="margin-right: 20px; text-align: justify;">
+                                                    <h4>{{ item.data.subject }}</h4>
+                                                    <p @click="readNotification(item.id)">Peminjaman ruangan {{
+                                                        item.data.detailruangan.namaruangan }}
+                                                        untuk tanggal <br>{{ new
+                                                            Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
+                                                                {
+                                                                    year:
+                                                                        'numeric', month:
+                                                                        'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                                }) }} - {{
+                                                            new
+                                                                Date(item.data.detailruangan.tanggalakhir).toLocaleTimeString('id-ID',
+                                                                    {
+                                                                        year:
+                                                                            'numeric', month:
+                                                                            'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                                    })
+                                                        }} <br>telah {{
+                                                            item.data.namastatus
+                                                        }}
+                                                        oleh {{ item.data.accby }} pada {{ new
+                                                            Date(item.created_at).toLocaleTimeString('id-ID',
+                                                                {
+                                                                    year:
+                                                                        'numeric', month:
+                                                                        'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                                }) }}. <br>Catatan :
+                                                        {{
+                                                            item.data.catatan }}
+                                                    </p>
+                                                </div>
+                                            </v-list-item-title>
+                                        </template>
+                                    </v-hover>
+                                </v-list-item>
+                            </v-list>
+                        </v-menu>
+                    </template>
+                </v-toolbar-items>
+            </v-toolbar>
+
+            <!-- dialog logout -->
+            <v-overlay v-model="overlay" style="background-color: white; z-index: 1">
+                <v-container style="height: 660px; margin-left: 440px;">
+                    <v-row align-content="center" class="fill-height" justify="center">
+                        <v-col class="text-subtitle-1 text-center" cols="12" style="font-family: Lexend-Regular;">
+                            Logout
+                        </v-col>
+                        <v-col cols="6">
+                            <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
+                        </v-col>
+                    </v-row>
+                </v-container>
+            </v-overlay>
+        </div>
+    </v-card>
 </template>
 
 <script>

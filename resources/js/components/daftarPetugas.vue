@@ -1,5 +1,5 @@
 <template>
-    <headerSuperAdmin style="z-index: 1;"></headerSuperAdmin>
+    <headerSuperAdmin style="z-index: 1; position: fixed; width: 100%;"></headerSuperAdmin>
 
     <v-overlay v-model="overlay" style="background-color: white; z-index: 0">
         <v-container style="height: 660px; margin-left: 440px;">
@@ -14,7 +14,7 @@
         </v-container>
     </v-overlay>
 
-    <div style="font-family: 'Lexend-Medium'; font-size: 25px; text-align: center; margin-top: 30px;"> Daftar Petugas
+    <div style="font-family: 'Lexend-Medium'; font-size: 25px; text-align: center; padding-top: 100px;"> Daftar Petugas
         LAB
         FTI UKDW </div>
 

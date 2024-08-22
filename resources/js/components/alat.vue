@@ -1,8 +1,8 @@
 <template>
-    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1;"></headerUser>
-    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1"></headerSuperAdmin>
-    <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1"></headerAdmin>
-    <headerDekanat v-if="User_role === 'Dekan'|| User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'" style="z-index: 1"></headerDekanat>
+    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1; position: fixed; width: 100%;"></headerUser>
+    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1; position: fixed; width: 100%;"></headerSuperAdmin>
+    <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1; position: fixed; width: 100%;"></headerAdmin>
+    <headerDekanat v-if="User_role === 'Dekan'|| User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'" style="z-index: 1; position: fixed; width: 100%;"></headerDekanat>
 
     <div style="margin-top: 100px;">
         <v-overlay v-model="overlay" style="background-color: white; z-index: 0">
@@ -26,7 +26,7 @@
         </div>
 
         <div id="cardAlat">
-            <v-row>
+            <v-row v-if="filteredTools.length > 0">
                 <v-col cols="12">
                     <v-row style="margin-left: -60px; margin-right: 150px;">
                         <v-col v-for="(tool, index) in filteredTools" :key="index" cols="4">
@@ -60,6 +60,11 @@
                     </v-row>
                 </v-col>
             </v-row>
+
+            <div v-else style="font-family: 'Lexend-Regular'; text-align: center; margin-top: 50px;">
+                <v-icon icon="mdi-magnify" style="font-size: 100px; color: grey"></v-icon>
+                <p style="color: grey">Maaf, tidak ada data yang sesuai dengan pencarian.</p>
+            </div>
 
             <v-dialog v-model="showImageDialog">
                 <v-container fluid>

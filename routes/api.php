@@ -140,6 +140,7 @@ Route::get('/peminjamanAlat/getAllPeminjamanAlatByPeminjamanID/{PeminjamanID}', 
 Route::get('/peminjamanAlat/getPeminjamanAlat/{UserID}', [PeminjamanAlatBridgeController::class, 'getPeminjamanAlat']);
 Route::get('/peminjamanAlat/jadwalAlat/{Tanggal_pakai_awal}/{Tanggal_pakai_akhir}', [PeminjamanAlatBridgeController::class, 'jadwalAlat'])->middleware('throttle:500,1');
 Route::get('/peminjamanAlat/checkAlat/{peminjamanid}', [PeminjamanAlatBridgeController::class, 'checkMoreTools'])->middleware('throttle:500,1');
+Route::get('/peminjamanAlat/jadwalAlatforDosen/{Tanggal_pakai_awal}/{Tanggal_pakai_akhir}', [PeminjamanAlatBridgeController::class, 'jadwalAlatforDosen'])->middleware('throttle:500,1');
 
 //route untuk peminjaman ruangan bridge
 Route::get('/peminjamanRuangan', [PeminjamanRuanganBridgeController::class, 'getAllPeminjamanRuangan']);
@@ -163,6 +164,8 @@ Route::get('/getAllPeminjamanforAccAlatWD2', [PeminjamanRuanganBridgeController:
 Route::get('/getAllPeminjamanforAccAlatWD3', [PeminjamanRuanganBridgeController::class, 'getAllPeminjamanforAccAlatWD3']);
 Route::get('/getAllforPDF/{UserID}/{desiredPeminjamanID}/{peminjamanruanganid}', [PeminjamanRuanganBridgeController::class, 'generatePDF']);
 Route::get('/getDataforCalender', [PeminjamanRuanganBridgeController::class, 'getDataforCalender']);
+Route::get('/peminjamanRuangan/jadwalPeminjamanforDosen/{Tanggal_pakai_awal}/{Tanggal_pakai_akhir}', [PeminjamanRuanganBridgeController::class, 'jadwalPeminjamanforDosen'])->middleware('throttle:500,1');
+Route::get('/peminjamanRuangan/jadwalPeminjamanforRekomendasiDosen/{Tanggal_pakai_awal}/{Tanggal_pakai_akhir}/{Kapasitas}/{Kategori}/{Lokasi}', [PeminjamanRuanganBridgeController::class, 'jadwalPeminjamanforRekomendasiDosen'])->middleware('throttle:500,1');
 
 //route untuk petugas
 Route::get('/petugas', [PetugasController::class, 'allPetugas']);

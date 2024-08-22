@@ -1,7 +1,7 @@
 <template>
-    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1">
+    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1; position: fixed; width: 100%;">
     </headerSuperAdmin>
-    <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1"></headerAdmin>
+    <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1; position: fixed; width: 100%;"></headerAdmin>
 
     <v-overlay v-model="overlay" style="background-color: white; z-index: 0">
         <v-container style="height: 660px; margin-left: 440px;">
@@ -16,7 +16,7 @@
         </v-container>
     </v-overlay>
 
-    <div style="font-family: 'Lexend-Medium'; font-size: 25px; text-align: center; margin-top: 30px;"> Daftar Alat LAB
+    <div style="font-family: 'Lexend-Medium'; font-size: 25px; text-align: center; padding-top: 100px;"> Daftar Alat LAB
         FTI UKDW </div>
 
     <div style="margin-top: 30px;">

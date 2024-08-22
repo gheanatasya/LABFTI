@@ -1,13 +1,13 @@
 <template>
-    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1">
+    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1; position: fixed; width: 100%;">
     </headerUser>
-    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1">
+    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1; position: fixed; width: 100%;">
     </headerSuperAdmin>
-    <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1"></headerAdmin>
+    <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1; position: fixed; width: 100%;"></headerAdmin>
     <headerDekanat v-if="User_role === 'Dekan' || User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'"
-        style="z-index: 1"></headerDekanat>
+        style="z-index: 1; position: fixed; width: 100%;"></headerDekanat>
 
-    <div style="margin-top: 70px;">
+    <div style="padding-top: 70px;">
         <p style="font-family: Lexend-Medium; font-size: 28px; margin-left: 40px; margin-top: 20px;">Profil</p>
 
         <div style="width: 100%; display: flex;">
@@ -21,7 +21,6 @@
                     }}</p>
                 <p style="font-family: Lexend-Regular; font-size: 30px; justify-content: center;"> {{
                     this.user.Role }}</p>
-
             </v-container>
 
             <v-container style="width:55%;">

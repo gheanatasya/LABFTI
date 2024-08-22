@@ -1,18 +1,18 @@
 <template>
-    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1">
+    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1; position: fixed; width: 100%;">
     </headerUser>
-    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1">
+    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1; position: fixed; width: 100%;">
     </headerSuperAdmin>
-    <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1"></headerAdmin>
+    <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1; position: fixed; width: 100%;"></headerAdmin>
     <headerDekanat v-if="User_role === 'Dekan' || User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'"
-        style="z-index: 1"></headerDekanat>
+        style="z-index: 1; position: fixed; width: 100%;"></headerDekanat>
 
     <div style="margin-top: 100px;">
         <v-overlay v-model="overlay" style="background-color: white; z-index: 0">
             <v-container style="height: 660px; margin-left: 440px;">
                 <v-row align-content="center" class="fill-height" justify="center">
                     <v-col class="text-subtitle-1 text-center" cols="12" style="font-family: Lexend-Regular;">
-                        Memuat halaman
+                        Memuat halaman  
                     </v-col>
                     <v-col cols="6">
                         <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
@@ -54,7 +54,7 @@
         </div>
 
         <div id="cardRuangan">
-            <v-row>
+            <v-row v-if="filteredData.length > 0">
                 <v-col cols="15">
                     <v-row>
                         <v-col v-for="(room, index) in filteredData" :key="index" cols="5">
@@ -99,6 +99,11 @@
                     </v-row>
                 </v-col>
             </v-row>
+
+            <div v-else style="font-family: 'Lexend-Regular'; text-align: center; margin-top: 50px;">
+                <v-icon icon="mdi-magnify" style="font-size: 100px; color: grey"></v-icon>
+                <p style="color: grey">Maaf, tidak ada data yang sesuai dengan pencarian.</p>
+            </div>
 
             <v-dialog v-model="showImageDialog">
                 <v-container fluid>

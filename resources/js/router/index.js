@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import berandaUser from '../components/berandaUser.vue'
-import berandaSuperAdmin from '../components/berandaSuperAdmin.vue'
 import daftarAlat from '../components/daftarAlat.vue'
 import daftarRuangan from '../components/daftarRuangan.vue'
 import daftarPetugas from '../components/daftarPetugas.vue'
@@ -16,8 +15,6 @@ import editProfil from '../components/editProfil.vue'
 import rekomendasiRuangan from '../components/rekomendasiRuangan.vue'
 import afterRegistration from '../components/afterRegistration.vue'
 import alat from '../components/alat.vue'
-
-
 
 const routes = [
     {
@@ -94,11 +91,6 @@ const routes = [
         path: '/alat',
         name: 'alat',
         component: alat
-    },
-    {
-        path: '/berandaSuperAdmin',
-        name: 'berandaSuperAdmin',
-        component: berandaSuperAdmin
     },
     {
         path: '/daftarRuangan',

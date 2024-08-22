@@ -1,10 +1,10 @@
 <template>
-    <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1"></headerAdmin>
-    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1">
+    <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1; position: fixed; width: 100%;"></headerAdmin>
+    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1; position: fixed; width: 100%;">
     </headerSuperAdmin>
     <headerDekanat v-if="User_role === 'Dekan' || User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'"
-        style="z-index: 1"></headerDekanat>
-    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1">
+        style="z-index: 1; position: fixed; width: 100%;"></headerDekanat>
+    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1; position: fixed; width: 100%;">
     </headerUser>
 
     <div style="padding-top: 90px">
@@ -82,7 +82,7 @@
                         <td></td>
                         <div class="py-1 text-center" style="content: center; margin-top: 60px; margin-left: 150px; margin-right: -50px;">
                             <v-icon class="mb-6" color="primary" icon="mdi-alert-circle-outline" size="40"></v-icon>
-                            <div class="text-h7 font-weight-bold">Maaf, tidak ada data yang bisa ditampilkan.</div>
+                            <div class="text-h7 font-weight-bold">Kamu belum melakukan peminjaman ruangan.</div>
                         </div>
                         <td></td>
                         <td></td>
@@ -208,7 +208,7 @@
                         <td></td>
                         <div class="py-1 text-center" style="content: center; margin-top: 60px; margin-left: 30px;">
                             <v-icon class="mb-6" color="primary" icon="mdi-alert-circle-outline" size="40"></v-icon>
-                            <div class="text-h7 font-weight-bold">Maaf, tidak ada data yang bisa ditampilkan.</div>
+                            <div class="text-h7 font-weight-bold">Kamu belum melakukan peminjaman alat.</div>
                         </div>
                         <td></td>
                         <td></td>

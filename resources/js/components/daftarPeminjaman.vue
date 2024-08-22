@@ -1,9 +1,9 @@
 <template>
-    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1">
+    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1; position: fixed; width: 100%;">
     </headerSuperAdmin>
-    <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1"></headerAdmin>
+    <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1; position: fixed; width: 100%;"></headerAdmin>
     <headerDekanat v-if="User_role === 'Dekan' || User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'"
-        style="z-index: 1"></headerDekanat>
+        style="z-index: 1; position: fixed; width: 100%;"></headerDekanat>
 
     <v-overlay v-model="overlay" style="background-color: white; z-index: 0">
         <v-container style="height: 660px; margin-left: 440px;">
@@ -18,7 +18,7 @@
         </v-container>
     </v-overlay>
 
-    <div id="filter" style="margin-top: 30px; margin-right: 60px;">
+    <div id="filter" style="padding-top: 100px; margin-right: 60px;">
         <v-row style="font-family: 'Lexend-Regular';">
             <v-spacer></v-spacer>
 

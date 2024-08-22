@@ -224,9 +224,16 @@ class PeminjamanRuanganBridgeController extends Controller
         }
 
         return response()->json([
-            'status' => true, 'message' => "Registration Success", 'peminjaman_ruangan_bridge' => $semuapeminjaman,
-            'peminjaman' => $peminjaman, 'peminjaman_alat_bridge' => $totalpinjamalat, 'persetujuanRuangan' => $persetujuanRuangan, 'persetujuanAlat' => $persetujuanAlat,
-            'statuspeminjamanruangan' => $statuspeminjamanRuangan, 'statuspeminjamanalat' => $statuspeminjamanAlat, 'notifikasi berhasil dikirim' => $dataNotifikasi
+            'status' => true,
+            'message' => "Registration Success",
+            'peminjaman_ruangan_bridge' => $semuapeminjaman,
+            'peminjaman' => $peminjaman,
+            'peminjaman_alat_bridge' => $totalpinjamalat,
+            'persetujuanRuangan' => $persetujuanRuangan,
+            'persetujuanAlat' => $persetujuanAlat,
+            'statuspeminjamanruangan' => $statuspeminjamanRuangan,
+            'statuspeminjamanalat' => $statuspeminjamanAlat,
+            'notifikasi berhasil dikirim' => $dataNotifikasi
         ]);
     }
 
@@ -1974,7 +1981,7 @@ class PeminjamanRuanganBridgeController extends Controller
                             };
 
                             $collection = collect($daftarAlat);
-                            $desc = $collection->map(function ($item){
+                            $desc = $collection->map(function ($item) {
                                 return $item['namaalat'] . ' : ' . $item['jumlahPinjam'];
                             })->implode(', ');
 
@@ -1984,7 +1991,7 @@ class PeminjamanRuanganBridgeController extends Controller
                                 'start' => $tanggalawal_baru,
                                 'end' => $tanggalakhir_baru,
                                 'desc' => $desc,
-                                'calendarId' => 'alat' 
+                                'calendarId' => 'alat'
                             ];
 
                             $peminjamanalat[] = $record;
@@ -2030,7 +2037,7 @@ class PeminjamanRuanganBridgeController extends Controller
                             };
 
                             $collection = collect($daftarAlat);
-                            $desc = $collection->map(function ($item){
+                            $desc = $collection->map(function ($item) {
                                 return $item['namaalat'] . ' : ' . $item['jumlahPinjam'];
                             })->implode(', ');
 
@@ -2086,7 +2093,7 @@ class PeminjamanRuanganBridgeController extends Controller
                             };
 
                             $collection = collect($daftarAlat);
-                            $desc = $collection->map(function ($item){
+                            $desc = $collection->map(function ($item) {
                                 return $item['namaalat'] . ' : ' . $item['jumlahPinjam'];
                             })->implode(', ');
 
@@ -2142,7 +2149,7 @@ class PeminjamanRuanganBridgeController extends Controller
                             };
 
                             $collection = collect($daftarAlat);
-                            $desc = $collection->map(function ($item){
+                            $desc = $collection->map(function ($item) {
                                 return $item['namaalat'] . ' : ' . $item['jumlahPinjam'];
                             })->implode(', ');
 
@@ -2181,5 +2188,75 @@ class PeminjamanRuanganBridgeController extends Controller
         ];
 
         return $allData;
+    }
+
+    // cek jadwal tabrakan untuk dosen
+    public function jadwalPeminjamanforDosen($Tanggal_pakai_awal, $Tanggal_pakai_akhir)
+    {
+        //$statuspeminjaman = Status_Peminjaman::whereNot('StatusID', 7)->get();
+        $peminjamanruangan = Peminjaman_Ruangan_Bridge::where('Tanggal_pakai_awal', "<=", $Tanggal_pakai_awal)
+            ->where('Tanggal_pakai_akhir', ">=", $Tanggal_pakai_akhir)
+            ->where('DokumenID', '!=', null)
+            ->where('Is_Personal', false)
+            ->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
+                $query->where('Tanggal_pakai_awal', '>', $Tanggal_pakai_awal)
+                    ->where('Tanggal_pakai_akhir', '<=', $Tanggal_pakai_akhir);
+            })->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
+                $query->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_awal)
+                    ->where('Tanggal_pakai_akhir', '>', $Tanggal_pakai_akhir);
+            })
+            ->pluck('RuanganID')->unique();
+
+        $dataruangan = Ruangan::pluck('RuanganID', 'Nama_ruangan');
+        $ruangan = $dataruangan->diff($peminjamanruangan);
+
+        $room = $ruangan->toArray();
+        $array = array_keys($room);
+        $detailRoom = [];
+
+        foreach ($array as $availableRoom) {
+            $ambildata = Ruangan::where('Nama_ruangan', $availableRoom)->first();
+            $detailRoom[] = $ambildata;
+        }
+
+        return response()->json(['availableRoom' => $array, 'detailRuangan' => $detailRoom]);
+    }
+
+    // cek jadwal tabrakan untuk rekomendasi ruangan
+    public function jadwalPeminjamanforRekomendasiDosen($Tanggal_pakai_awal, $Tanggal_pakai_akhir, $Kapasitas, $Kategori, $Lokasi)
+    {
+        $peminjamanruangan = Peminjaman_Ruangan_Bridge::where('Tanggal_pakai_awal', "<=", $Tanggal_pakai_awal)
+            ->where('Tanggal_pakai_akhir', ">=", $Tanggal_pakai_akhir)
+            ->where('DokumenID', '!=', null)
+            ->where('Is_Personal', false)
+            ->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
+                $query->where('Tanggal_pakai_awal', '>', $Tanggal_pakai_awal)
+                    ->where('Tanggal_pakai_akhir', '<=', $Tanggal_pakai_akhir);
+            })->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
+                $query->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_awal)
+                    ->where('Tanggal_pakai_akhir', '>', $Tanggal_pakai_akhir);
+            })
+            ->pluck('RuanganID')->unique();
+
+        $dataruangan = Ruangan::pluck('RuanganID', 'Nama_ruangan');
+        $ruangan = $dataruangan->diff($peminjamanruangan);
+
+        $room = $ruangan->toArray();
+        $array = array_keys($room);
+        $detailRoom = [];
+
+        foreach ($array as $availableRoom) {
+            $ambildata = Ruangan::where('Nama_ruangan', $availableRoom)->first();
+            $detailRoom[] = $ambildata;
+        }
+
+        $filteredDetailRoom = array_filter($detailRoom, function ($room) use ($Lokasi, $Kategori, $Kapasitas) {
+            return $room->Lokasi === $Lokasi &&
+                $room->Kategori === $Kategori &&
+                $room->Kapasitas === $Kapasitas;
+        });
+        
+
+        return response()->json(['availableRoom' => $array, 'detailRuangan' => $detailRoom, 'fixRoom' => $filteredDetailRoom]);
     }
 }

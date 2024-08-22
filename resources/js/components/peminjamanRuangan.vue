@@ -1,12 +1,12 @@
 <template>
   <v-app>
-    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1">
+    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1; position: fixed; width: 100%;">
     </headerUser>
-    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1">
+    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1; position: fixed; width: 100%;">
     </headerSuperAdmin>
-    <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1"></headerAdmin>
+    <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1; position: fixed; width: 100%;"></headerAdmin>
     <headerDekanat v-if="User_role === 'Dekan' || User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'"
-      style="z-index: 1"></headerDekanat>
+      style="z-index: 1; position: fixed; width: 100%;"></headerDekanat>
 
     <v-dialog v-if="Total_batal > 3" v-model="confirmBeforeCancel"
       style="justify-content: center; background-color: rgb(2, 39, 10, 0.7); z-index: 0;" persistent max-width="500">
@@ -68,8 +68,14 @@
                 <v-text-field type="datetime-local" label="Tanggal Selesai" v-model="item.tanggalSelesai"
                   variant="outlined"
                   style="width: 300px; margin-left: -75px; margin-top: 100px; margin-right: 20px;"></v-text-field>
-                <v-btn :loading="item.loading"
+                <v-btn :loading="item.loading" v-if="User_role === 'Mahasiswa' || User_role === 'Petugas'"
                   @click="availableRoom(item.tanggalAwal, item.tanggalSelesai, index), fetchAlat(item.tanggalAwal, item.tanggalSelesai, index), item.loading = true"
+                  style="width: 120px; margin-left: 10px; margin-top: 80px; font-size: 11px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
+                  color="primary">
+                  Cek ruangan</v-btn>
+
+                  <v-btn :loading="item.loading" v-else
+                  @click="availableRoomDosen(item.tanggalAwal, item.tanggalSelesai, index), fetchAlatDosen(item.tanggalAwal, item.tanggalSelesai, index), item.loading = true"
                   style="width: 120px; margin-left: 10px; margin-top: 80px; font-size: 11px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
                   color="primary">
                   Cek ruangan</v-btn>
@@ -210,7 +216,6 @@
                 </div>
               </template>
             </v-hover>
-
           </v-card>
         </div>
       </v-container>
@@ -447,6 +452,34 @@ export default {
       }
     }
 
+    const fetchAlatDosen = async (tanggalAwal, tanggalSelesai, index) => {
+      if (tanggalAwal && tanggalSelesai) {
+        try {
+          const response = await axios.get(
+            `http://127.0.0.1:8000/api/peminjamanAlat/jadwalAlatforDosen/${tanggalAwal}/${tanggalSelesai}`
+          );
+
+          const alat = response.data.daftarAlatfix;
+          let namaAlat = [];
+          let jumlahAlat = [];
+          console.log(alat);
+
+          for (let i = 0; i < alat.length; i++) {
+            namaAlat.push(alat[i].NamaAlat);
+            jumlahAlat.push(alat[i].Jumlah_ketersediaan);
+          }
+
+          form[index].items = namaAlat;
+          form[index].itemsAll = alat;
+          form[index].loading = false;
+
+        } catch (error) {
+          console.error("Error gagal mengambil data Alat", error);
+          form[index].loading = false;
+        }
+      }
+    }
+
     const availableRoom = async (tanggalAwal, tanggalSelesai, index) => {
       try {
         console.log('oke')
@@ -458,6 +491,30 @@ export default {
 
         console.log(availableRuangan);
         console.log(roomdetail);
+        console.log(response);
+
+        form[index].Ruangan = availableRuangan;
+        form[index].detailRuangan = roomdetail;
+        form[index].loading = false;
+      } catch (error) {
+        console.error("Error fetching available rooms:", error);
+        form[index].loading = false;
+        alert('Tidak ada tanggal yang dipilih');
+      }
+    };
+
+    const availableRoomDosen = async (tanggalAwal, tanggalSelesai, index) => {
+      try {
+        console.log('oke')
+        const response = await axios.get(
+          `http://127.0.0.1:8000/api/peminjamanRuangan/jadwalPeminjamanforDosen/${tanggalAwal}/${tanggalSelesai}`
+        );
+        const availableRuangan = response.data.availableRoom;
+        const roomdetail = response.data.detailRuangan;
+
+        console.log(availableRuangan);
+        console.log(roomdetail);
+        console.log(response);
 
         form[index].Ruangan = availableRuangan;
         form[index].detailRuangan = roomdetail;
@@ -493,7 +550,7 @@ export default {
       }
     }
 
-    return { form, loading, dialog, addNewForm, removeForm, fetchAlat, saveItem, availableRoom, tambahAlat, hapusAlat };
+    return { form, loading, dialog, addNewForm, removeForm, fetchAlat, fetchAlatDosen, saveItem, availableRoom, availableRoomDosen, tambahAlat, hapusAlat };
   },
   data() {
     return {

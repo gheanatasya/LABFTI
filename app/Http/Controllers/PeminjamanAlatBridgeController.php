@@ -534,6 +534,82 @@ class PeminjamanAlatBridgeController extends Controller
         return response()->json(['daftarAlat' => $daftarAlat, 'daftaralattabrakan' => $daftarAlatTabrakan, 'daftarAlatfix' => $fixAlat]);
     }
 
+    //cek jadwal tabrakan untuk dosen
+    public function jadwalAlatforDosen($Tanggal_pakai_awal, $Tanggal_pakai_akhir)
+    {
+        $peminjamanalat = Peminjaman_Alat_Bridge::where('Tanggal_pakai_awal', "<=", $Tanggal_pakai_awal)
+            ->where('Tanggal_pakai_akhir', ">=", $Tanggal_pakai_akhir)
+            ->where('DokumenID', '!=', null)
+            ->where('Is_Personal', false)
+            ->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
+                $query->where('Tanggal_pakai_awal', '>', $Tanggal_pakai_awal)
+                    ->where('Tanggal_pakai_akhir', '<=', $Tanggal_pakai_akhir);
+            })->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
+                $query->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_awal)
+                    ->where('Tanggal_pakai_akhir', '>', $Tanggal_pakai_akhir);
+            })->get();
+
+        $daftarAlatTabrakan = [];
+
+        foreach ($peminjamanalat as $tool) {
+            $alatid = $tool->AlatID;
+            $jumlahpinjam = $tool->Jumlah_pinjam;
+            $found = false;
+            $ALAT = Alat::where('AlatID', $alatid)->first();
+            $namaAlat = $ALAT->Nama;
+
+            foreach ($daftarAlatTabrakan as &$existingAlat) {
+                if ($existingAlat['AlatID'] === $alatid) {
+                    $found = true;
+                    $newtotal = $existingAlat['Jumlah_pinjam'] + $jumlahpinjam;
+                    $existingAlat['Jumlah_pinjam'] = $newtotal;
+                    break;
+                }
+            }
+
+            if ($found === false) {
+                $daftarAlatTabrakan[] = [
+                    'AlatID' => $alatid,
+                    'Jumlah_pinjam' => $jumlahpinjam,
+                    'NamaAlat' => $namaAlat
+                ];
+            }
+        }
+
+        $allAlat = Alat::all();
+        $daftarAlat = [];
+        foreach ($allAlat as $alat) {
+            $alatid = $alat->AlatID;
+            $jumlah = $alat->Jumlah_ketersediaan;
+            $nama = $alat->Nama;
+            $daftarAlat[] = [
+                'AlatID' => $alatid,
+                'Jumlah_ketersediaan' => $jumlah,
+                'NamaAlat' => $nama
+            ];
+        }
+
+        $fixAlat = [];
+        foreach ($daftarAlat as $tool1) {
+            $fixAlat[] = [
+                'AlatID' => $tool1['AlatID'],
+                'Jumlah_ketersediaan' => $tool1['Jumlah_ketersediaan'],
+                'NamaAlat' => $tool1['NamaAlat']
+            ];
+
+            foreach ($daftarAlatTabrakan as $tool2) {
+                if ($tool1['AlatID'] === $tool2['AlatID']) {
+                    $newJumlahPinjam = $tool1['Jumlah_ketersediaan'] - $tool2['Jumlah_pinjam'];
+                    if ($newJumlahPinjam >= 0) {
+                        $fixAlat[count($fixAlat) - 1]['Jumlah_ketersediaan'] = $newJumlahPinjam;
+                    }
+                }
+            }
+        }
+
+        return response()->json(['daftarAlat' => $daftarAlat, 'daftaralattabrakan' => $daftarAlatTabrakan, 'daftarAlatfix' => $fixAlat]);
+    }
+
     //lihat apakah peminjaman alat lebih dari satu alat dalam satu form 
     public function checkMoreTools($peminjamanid)
     {
