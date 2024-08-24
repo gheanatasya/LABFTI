@@ -1,7 +1,9 @@
 <template>
-    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1; position: fixed; width: 100%;">
+    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'"
+        style="z-index: 1; position: fixed; width: 100%;">
     </headerUser>
-    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1; position: fixed; width: 100%;">
+    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'"
+        style="z-index: 1; position: fixed; width: 100%;">
     </headerSuperAdmin>
     <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1; position: fixed; width: 100%;"></headerAdmin>
     <headerDekanat v-if="User_role === 'Dekan' || User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'"
@@ -308,7 +310,7 @@ export default {
         const saveItem = async () => {
             loading.value = true;
 
-            if (ketentuan.value === false){
+            if (ketentuan.value === false) {
                 alert('Wajib mengisi persetujuan ketentuan.')
                 loading.value = false;
                 return;
@@ -322,16 +324,6 @@ export default {
                 const UserID = localStorage.getItem('UserID');
 
                 for (let i = 0; i < form.length; i++) {
-                    if (form[i].alat.length > 0) {
-                        for (let j = 0; j < form[i].alat.length; j++) {
-                            if (form[i].alat[j].jumlahPinjam > form[i].alat[j].maxValue.Jumlah_ketersediaan) {
-                                alert('Jumlah pinjam melebihi jumlah ketersediaan alat!');
-                                loading.value = false;
-                                return;
-                            }
-                        }
-                    }
-
                     const FORMDATA = new FormData();
                     const file = document.querySelector('#dokumen-' + i);
                     const today = new Date();
@@ -341,6 +333,22 @@ export default {
                         FORMDATA.append('dokumen', file.files[0]);
                         FORMDATA.append('UserID', UserID);
                         FORMDATA.append('Tanggal_pinjam', formattedDate);
+                    }
+
+                    if (form[i].alat.length > 0) {
+                        for (let j = 0; j < form[i].alat.length; j++) {
+                            if (form[i].alat[j].jumlahPinjam > form[i].alat[j].maxValue.Jumlah_ketersediaan) {
+                                alert('Jumlah pinjam melebihi jumlah ketersediaan alat!');
+                                loading.value = false;
+                                return;
+                            }
+
+                            if (form[i].alat[j].maxValue.WajibSurat === true && (file === null || file === undefined)) {
+                                alert('Alat ini memerlukan surat peminjaman! Silahkan mengupload surat pendukung peminjaman alat.');
+                                loading.value = false;
+                                return;
+                            }
+                        }
                     }
 
                     const dataToSave = {

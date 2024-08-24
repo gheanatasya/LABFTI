@@ -69,7 +69,7 @@
                             <v-card-actions>
                                 <div style="position: absolute; bottom: 0; right: 60px; margin-bottom: 0px;">
                                     <v-btn style="background-color: rgb(2,39, 10, 0.9); color: white; border-radius: 20px; margin-left: 90px; width: 130px; height: 25px; margin-bottom: -10px;
-                            font-size: 10px;" @click="pinjamRuang">Pinjam Ruangan</v-btn>
+                            font-size: 10px;" @click="pinjamRuang(room.Nama_ruangan)">Pinjam Ruangan</v-btn>
                                     <br>
                                     <v-btn @click="navigateToRuangan" style="color: rgb(2,39, 10, 0.9); margin-left: 90px; background: none;
                                 text-decoration: underline; box-shadow: none; font-size: 12px;
@@ -134,7 +134,6 @@ export default {
         navigateBack() {
             this.roomAfterSelected = false;
             this.showRekomendasi = true;
-            this.$router.push('/peminjamanRuangan')
         },
         navigateToPeminjaman() {
             this.roomAfterSelected = false;
@@ -144,29 +143,21 @@ export default {
             this.roomAfterSelected = false;
             this.$router.push('/ruangan')
         },
- /*        async getAllDataofRoom() {
-            try {
-                await axios.get("http://127.0.0.1:8000/api/ruangan/")
-                    .then(response => {
-                        this.allRoomsData = response.data.map(room => {
-                            if (room.fasilitas) {
-                                const facilitiesArray = room.fasilitas.split(", ").filter(facilit => facilit);
-                                room.fasilitas = facilitiesArray;
-                            }
-                            return room;
-                        });
-                        console.log(this.allRoomsData);
-                    })
-                    .catch(error => {
-                        console.error("Error gagal mengambil data total ruangan", error);
-                    });
-            } catch {
-                console.error()
-            }
-        }, */
         async jadwalPeminjaman() {
             try {
-                if (this.User_role !== null) {
+                if (this.User_role === 'Mahasiswa' || this.User_role === 'Petugas') {
+                    await axios.get(`http://127.0.0.1:8000/api/peminjamanRuangan/jadwalPeminjamanforRekomendasi/${this.tanggalAwal}/${this.tanggalSelesai}/${this.selectedKapasitas}/${this.selectedKategori}/${this.selectedLokasi}`)
+                        .then(response => {
+                            this.fixRooms = response.data.fixRoom;
+                            console.log(this.fixRooms);
+                            this.loading = false;
+                        })
+                        .catch(error => {
+                            console.error("Error gagal mengambil data jadwal peminjaman ruangan", error);
+                            this.loading = false;
+                            this.roomAfterSelected = true;
+                        });
+                } else {
                     await axios.get(`http://127.0.0.1:8000/api/peminjamanRuangan/jadwalPeminjamanforRekomendasiDosen/${this.tanggalAwal}/${this.tanggalSelesai}/${this.selectedKapasitas}/${this.selectedKategori}/${this.selectedLokasi}`)
                         .then(response => {
                             this.fixRooms = response.data.fixRoom;
@@ -176,6 +167,7 @@ export default {
                         .catch(error => {
                             console.error("Error gagal mengambil data jadwal peminjaman ruangan", error);
                             this.loading = false;
+                            this.roomAfterSelected = true;
                         });
                 }
                 this.showRekomendasi = false;
@@ -185,41 +177,17 @@ export default {
                 this.loading = false;
             }
         },
-        filteredData() {
-            let filteredData = this.allRoomsData;
-
-            //filter berdasarkan lokasi
-            if (this.selectedLokasi) {
-                filteredData = filteredData.filter((room) => room.Lokasi === this.selectedLokasi);
-            }
-
-            //filter berdasarkan kategori
-            if (this.selectedKategori) {
-                filteredData = filteredData.filter((room) => room.Kategori === this.selectedKategori);
-            }
-
-            //filter berdasarkan kapasitas
-            if (this.selectedKapasitas) {
-                filteredData = filteredData.filter((room) => room.Kapasitas === this.selectedKapasitas);
-            }
-
-            console.log(filteredData);
-            return filteredData;
+        pinjamRuang(Nama_ruangan) {
+            this.$router.push({
+                name: 'peminjamanRuanganRekomendasi',
+                query: {
+                    tanggalAwal: this.tanggalAwal,
+                    tanggalSelesai: this.tanggalSelesai,
+                    Nama_ruangan: Nama_ruangan
+                }
+            });
         },
-        navigateToFilteredRooms(filteredRooms) {
-            this.loading = true;
-            this.showRekomendasi = false;
-            this.roomAfterSelected = true;
-            this.filteredRoom = filteredRooms;
-            console.log(this.filteredRoom);
-        },
-        pinjamRuang() {
-            this.$router.push('/peminjamanRuangan');
-        },
-    },
-    mounted() {
-        this.getAllDataofRoom()
-    },
+    }
 }
 </script>
 

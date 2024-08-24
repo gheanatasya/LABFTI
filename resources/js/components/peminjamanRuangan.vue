@@ -1,8 +1,10 @@
 <template>
   <v-app>
-    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1; position: fixed; width: 100%;">
+    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'"
+      style="z-index: 1; position: fixed; width: 100%;">
     </headerUser>
-    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1; position: fixed; width: 100%;">
+    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'"
+      style="z-index: 1; position: fixed; width: 100%;">
     </headerSuperAdmin>
     <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1; position: fixed; width: 100%;"></headerAdmin>
     <headerDekanat v-if="User_role === 'Dekan' || User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'"
@@ -74,7 +76,7 @@
                   color="primary">
                   Cek ruangan</v-btn>
 
-                  <v-btn :loading="item.loading" v-else
+                <v-btn :loading="item.loading" v-else
                   @click="availableRoomDosen(item.tanggalAwal, item.tanggalSelesai, index), fetchAlatDosen(item.tanggalAwal, item.tanggalSelesai, index), item.loading = true"
                   style="width: 120px; margin-left: 10px; margin-top: 80px; font-size: 11px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
                   color="primary">
@@ -221,7 +223,8 @@
       </v-container>
 
       <v-overlay v-model="dialog">
-        <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 400px; height: 250px; margin-left: 550px; margin-top: 200px;">
+        <v-card
+          style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 400px; height: 250px; margin-left: 550px; margin-top: 200px;">
           <v-card-title style="font-family: 'Lexend-Medium'; text-align: center; margin-top: 20px;">
             <div class="py-1 text-center">
               <v-icon class="mb-6" color="success" icon="mdi-check-circle-outline" size="120"></v-icon>
@@ -251,7 +254,7 @@ import headerDekanat from './headerDekanat.vue'
 import headerSuperAdmin from './headerSuperAdmin.vue'
 
 export default {
-  name: 'berandaUser',
+  name: 'peminjamanRuangan',
   components: {
     headerUser,
     footerPage,
@@ -291,7 +294,8 @@ export default {
         keterangan: '',
         dokumen: null,
         detailRuangan: [],
-        loading: false
+        loading: false,
+        datatabrak: [],
       }
     ])
 
@@ -323,7 +327,8 @@ export default {
         keterangan: '',
         dokumen: null,
         detailRuangan: [],
-        loading: false
+        loading: false,
+        datatabrak: [],
       })
     }
 
@@ -342,15 +347,6 @@ export default {
 
       //console.log(form);
       for (let i = 0; i < form.length; i++) {
-        if (form[i].alat.length > 0) {
-          for (let j = 0; j < form[i].alat.length; j++) {
-            if (form[i].alat[j].jumlahPinjam > form[i].alat[j].maxValue.Jumlah_ketersediaan) {
-              alert('Jumlah pinjam melebihi jumlah ketersediaan alat!');
-              return;
-            }
-          }
-        }
-
         const FORMDATA = new FormData();
         const file = document.querySelector('#dokumen-' + i);
         const today = new Date();
@@ -360,6 +356,22 @@ export default {
           FORMDATA.append('dokumen', file.files[0]);
           FORMDATA.append('UserID', UserID);
           FORMDATA.append('Tanggal_pinjam', formattedDate);
+        }
+
+        if (form[i].alat.length > 0) {
+          for (let j = 0; j < form[i].alat.length; j++) {
+            if (form[i].alat[j].jumlahPinjam > form[i].alat[j].maxValue.Jumlah_ketersediaan) {
+              alert('Jumlah pinjam melebihi jumlah ketersediaan alat!');
+              loading.value = false;
+              return;
+            }
+
+            if (form[i].alat[j].maxValue.WajibSurat === true && (file === null || file === undefined)) {
+              alert('Alat ini memerlukan surat peminjaman! Silahkan mengupload surat pendukung peminjaman alat.');
+              loading.value = false;
+              return;
+            }
+          }
         }
 
         const dataToSave = {
@@ -376,10 +388,31 @@ export default {
         };
 
         //dataSend.push(dataToSave);
-        //console.log(dataSend);
+        console.log(dataToSave);
+        console.log(form[i].datatabrak);
+
+        if (form[i].datatabrak.length > 0) {
+          for (let j = 0; j < form[i].datatabrak.length; j++) {
+            if (form[i].datatabrak[j].Nama_ruangan === form[i].selectedRuangan) {
+              const dataCancel = form[i].datatabrak[j].Peminjaman_Ruangan_ID;
+              console.log(dataCancel);
+
+              const response = await axios({
+                method: 'GET',
+                url: `http://127.0.0.1:8000/api/peminjamanRuangan/cancelPeminjaman/${dataCancel}`,
+                headers: {
+                  'Access-Control-Allow-Origin': '*',
+                  'Content-Type': 'multipart/form-data',
+                }
+              })
+              console.log(response.data.message);
+
+            }
+          }
+        }
 
         try {
-          const response = await axios({
+          /* const response = await axios({
             method: 'POST',
             url: 'http://localhost:8000/api/peminjamanRuangan/',
             data: dataToSave,
@@ -414,7 +447,7 @@ export default {
             console.log('Peminjaman saved successfully: response2', response2.data);
           }
           //savedItems.push(response.data);
-          console.log('Peminjaman saved successfully:', response.data);
+          console.log('Peminjaman saved successfully:', response.data); */
         } catch (error) {
           console.error('Error menyimpan data peminjaman ruangan', error);
           loading.value = false;
@@ -519,6 +552,8 @@ export default {
         form[index].Ruangan = availableRuangan;
         form[index].detailRuangan = roomdetail;
         form[index].loading = false;
+        form[index].datatabrak = response.data.datatabrak;
+
       } catch (error) {
         console.error("Error fetching available rooms:", error);
         form[index].loading = false;

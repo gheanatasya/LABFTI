@@ -133,7 +133,6 @@ class PersetujuanController extends Controller
 
         if ($peminjamanalat != null) {
             foreach ($peminjamanalat as $alat) {
-
                 $alatid = $alat->AlatID;
                 $ALAT = Alat::where('AlatID', $alatid)->first();
                 $namaalat = $ALAT->Nama;

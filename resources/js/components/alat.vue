@@ -4,7 +4,7 @@
     <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1; position: fixed; width: 100%;"></headerAdmin>
     <headerDekanat v-if="User_role === 'Dekan'|| User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'" style="z-index: 1; position: fixed; width: 100%;"></headerDekanat>
 
-    <div style="margin-top: 100px;">
+    <div style="padding-top: 100px;">
         <v-overlay v-model="overlay" style="background-color: white; z-index: 0">
             <v-container style="height: 660px; margin-left: 440px;">
                 <v-row align-content="center" class="fill-height" justify="center">

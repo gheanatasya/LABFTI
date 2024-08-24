@@ -166,6 +166,8 @@ Route::get('/getAllforPDF/{UserID}/{desiredPeminjamanID}/{peminjamanruanganid}',
 Route::get('/getDataforCalender', [PeminjamanRuanganBridgeController::class, 'getDataforCalender']);
 Route::get('/peminjamanRuangan/jadwalPeminjamanforDosen/{Tanggal_pakai_awal}/{Tanggal_pakai_akhir}', [PeminjamanRuanganBridgeController::class, 'jadwalPeminjamanforDosen'])->middleware('throttle:500,1');
 Route::get('/peminjamanRuangan/jadwalPeminjamanforRekomendasiDosen/{Tanggal_pakai_awal}/{Tanggal_pakai_akhir}/{Kapasitas}/{Kategori}/{Lokasi}', [PeminjamanRuanganBridgeController::class, 'jadwalPeminjamanforRekomendasiDosen'])->middleware('throttle:500,1');
+Route::get('/peminjamanRuangan/jadwalPeminjamanforRekomendasi/{Tanggal_pakai_awal}/{Tanggal_pakai_akhir}/{Kapasitas}/{Kategori}/{Lokasi}', [PeminjamanRuanganBridgeController::class, 'jadwalPeminjamanforRekomendasi'])->middleware('throttle:500,1');
+Route::get('/peminjamanRuangan/cancelPeminjaman/{Peminjaman_Ruangan_ID}', [PeminjamanRuanganBridgeController::class, 'cancelPeminjaman']);
 
 //route untuk petugas
 Route::get('/petugas', [PetugasController::class, 'allPetugas']);

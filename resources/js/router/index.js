@@ -7,6 +7,7 @@ import daftarPeminjaman from '../components/daftarPeminjaman.vue'
 import loginPage from '../components/loginPage.vue'
 import peminjamanAlat from '../components/peminjamanAlat.vue'
 import peminjamanRuangan from '../components/peminjamanRuangan.vue'
+import peminjamanRuanganRekomendasi from '../components/peminjamanRuanganRekomendasi.vue'
 import profil from '../components/profil.vue'
 import registrationPage from '../components/registrationPage.vue'
 import ruangan from '../components/ruangan.vue'
@@ -56,6 +57,11 @@ const routes = [
         path: '/peminjamanRuangan',
         name: 'peminjamanRuangan',
         component: peminjamanRuangan
+    },
+    {
+        path: '/peminjamanRuanganRekomendasi',
+        name: 'peminjamanRuanganRekomendasi',
+        component: peminjamanRuanganRekomendasi
     },
     {
         path: '/profil',

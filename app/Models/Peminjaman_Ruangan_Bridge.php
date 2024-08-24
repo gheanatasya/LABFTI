@@ -39,6 +39,6 @@ class Peminjaman_Ruangan_Bridge extends Model
     protected $primaryKey = 'Peminjaman_Ruangan_ID';
     protected $fillable = [
         'PeminjamanID', 'RuanganID', 'Tanggal_pakai_awal', 'Tanggal_pakai_akhir', 'Waktu_pakai', 'Waktu_selesai',
-        'Is_Personal', 'Is_Organisation', 'Is_Eksternal', 'Keterangan', 'DokumenID'
+        'Is_Personal', 'Is_Organisation', 'Is_Eksternal', 'Keterangan', 'DokumenID', 'Prioritas'
     ];
 }
