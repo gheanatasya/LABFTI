@@ -71,13 +71,13 @@
                   variant="outlined"
                   style="width: 300px; margin-left: -75px; margin-top: 100px; margin-right: 20px;"></v-text-field>
                 <v-btn :loading="item.loading" v-if="User_role === 'Mahasiswa' || User_role === 'Petugas'"
-                  @click="availableRoom(item.tanggalAwal, item.tanggalSelesai, index), fetchAlat(item.tanggalAwal, item.tanggalSelesai, index), item.loading = true"
+                  @click="availableRoom(item.tanggalAwal, item.tanggalSelesai, index), fetchAlat(item.tanggalAwal, item.tanggalSelesai, index)"
                   style="width: 120px; margin-left: 10px; margin-top: 80px; font-size: 11px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
                   color="primary">
                   Cek ruangan</v-btn>
 
                 <v-btn :loading="item.loading" v-else
-                  @click="availableRoomDosen(item.tanggalAwal, item.tanggalSelesai, index), fetchAlatDosen(item.tanggalAwal, item.tanggalSelesai, index), item.loading = true"
+                  @click="availableRoomDosen(item.tanggalAwal, item.tanggalSelesai, index), fetchAlatDosen(item.tanggalAwal, item.tanggalSelesai, index)"
                   style="width: 120px; margin-left: 10px; margin-top: 80px; font-size: 11px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
                   color="primary">
                   Cek ruangan</v-btn>
@@ -165,7 +165,7 @@
 
               <div
                 style="display: flex; justify-content: space-between; margin-left: 320px; margin-right: 20px; margin-bottom: 50px; margin-top: 20px;">
-                <v-btn @click="addNewForm" id="tambah" style="margin-right: 10px; margin-left: -5px;"
+                <v-btn @click="addNewForm(index)" id="tambah" style="margin-right: 10px; margin-left: -5px;"
                   prepend-icon=mdi-plus-circle color="primary">Tambah
                   Peminjaman</v-btn>
                 <v-btn @click="removeForm(index)" id="hapus" prepend-icon="mdi-minus-circle" color="error">Hapus
@@ -296,10 +296,34 @@ export default {
         detailRuangan: [],
         loading: false,
         datatabrak: [],
+        tambahformbaru: 0
       }
     ])
 
-    const addNewForm = () => {
+    const addNewForm = (index) => {
+      if (form[index].tambahformbaru === 1) {
+        alert('Form baru sudah ditambahkan sebelumnya!');
+        return
+      } else if (form[index].selectedOptionPersonal === '' || form[index].selectedOptionOrganisation === '' || form[index].selectedOptionEksternal === '') {
+        alert('Pilihlah salah satu dari peminjaman untuk Personal, Organisasi, dan Eksternal!');
+        return
+      } else if (form[index].selectedOptionPersonal === 'False' && form[index].selectedOptionOrganisation === 'False' && form[index].selectedOptionEksternal === 'False') {
+        alert('Pilihlah salah satu dari peminjaman untuk Personal, Organisasi, dan Eksternal!');
+        return
+      } else if (form[index].selectedOptionPersonal === 'True' && form[index].selectedOptionOrganisation === 'True' && form[index].selectedOptionEksternal === 'True') {
+        alert('Pilihlah salah satu dari peminjaman untuk Personal, Organisasi, dan Eksternal!');
+        return
+      } else if (form[index].selectedOptionPersonal === 'True' && form[index].selectedOptionOrganisation === 'True') {
+        alert('Pilihlah salah satu dari peminjaman untuk Personal atau Organisasi!');
+        return
+      } else if (form[index].selectedOptionPersonal === 'True' && form[index].selectedOptionEksternal === 'True') {
+        alert('Pilihlah salah satu dari peminjaman untuk Personal atau Eksternal!');
+        return
+      } else if (form[index].selectedOptionOrganisation === 'True' && form[index].selectedOptionEksternal === 'True') {
+        alert('Pilihlah salah satu dari peminjaman untuk Organisasi atau Eksternal!');
+        return
+      }
+
       form.push({
         dateDialogAwal: false,
         dateDialogAkhir: false,
@@ -329,12 +353,48 @@ export default {
         detailRuangan: [],
         loading: false,
         datatabrak: [],
+        tambahformbaru: 0
       })
+      form[index].tambahformbaru = form[index].tambahformbaru + 1;
+      console.log('form baru ditambahkan');
     }
 
     const removeForm = (index) => {
       if (form.length > 1) {
         form.splice(index, 1)
+      } else {
+        form.splice(0, form.length);
+        form.push({
+          dateDialogAwal: false,
+          dateDialogAkhir: false,
+          tanggalAwal: '',
+          modal: false,
+          tanggalSelesai: '',
+          waktuPakai: null,
+          waktuSelesai: null,
+          Ruangan: [],
+          selectedRuangan: '',
+          isPersonal: '',
+          isOrganisation: '',
+          isEksternal: '',
+          selectedOptionPersonal: '',
+          selectedOptionEksternal: '',
+          selectedOptionOrganisation: '',
+          items: [],
+          itemsAll: [],
+          alat: reactive([{
+            nama: '',
+            jumlahPinjam: 0,
+            maxValue: null,
+          }]),
+          selectedItems: '',
+          keterangan: '',
+          dokumen: null,
+          detailRuangan: [],
+          loading: false,
+          datatabrak: [],
+          tambahformbaru: 0
+        })
       }
     }
 
@@ -344,6 +404,36 @@ export default {
       const dataSend = [];
 
       const UserID = localStorage.getItem('UserID');
+      const aman = ref(false);
+
+      for (let i = 0; i < form.length; i++) {
+        if ((form[i].tanggalSelesai === '') || (form[i].tanggalAwal === '') || (form[i].selectedRuangan === '')
+          || (form[i].selectedOptionPersonal === '') || (form[i].selectedOptionOrganisation === '') || (form[i].selectedOptionEksternal === '')
+          || (form[i].keterangan === '')) {
+          aman.value = false;
+          alert('Terdapat data yang kosong!');
+          loading.value = false;
+          return
+        } else {
+          aman.value = true;
+        }
+
+        if (form[i].alat.length > 0 && form[i].alat[0].nama !== '') {
+          for (let j = 0; j < form[i].alat.length; j++) {
+            if (form[i].alat[j].jumlahPinjam > form[i].alat[j].maxValue.Jumlah_ketersediaan) {
+              alert('Jumlah pinjam melebihi jumlah ketersediaan alat! Pada form ke - ' + (i + 1));
+              loading.value = false;
+              return;
+            }
+
+            if (form[i].alat[j].maxValue.WajibSurat === true && (file === null || file === undefined)) {
+              alert('Alat ' + form[i].alat[j].nama + ' memerlukan surat peminjaman! Silahkan mengupload surat pendukung peminjaman alat atau lakukan peminjaman alat secara terpisah.');
+              loading.value = false;
+              return;
+            }
+          }
+        }
+      }
 
       //console.log(form);
       for (let i = 0; i < form.length; i++) {
@@ -356,22 +446,6 @@ export default {
           FORMDATA.append('dokumen', file.files[0]);
           FORMDATA.append('UserID', UserID);
           FORMDATA.append('Tanggal_pinjam', formattedDate);
-        }
-
-        if (form[i].alat.length > 0) {
-          for (let j = 0; j < form[i].alat.length; j++) {
-            if (form[i].alat[j].jumlahPinjam > form[i].alat[j].maxValue.Jumlah_ketersediaan) {
-              alert('Jumlah pinjam melebihi jumlah ketersediaan alat!');
-              loading.value = false;
-              return;
-            }
-
-            if (form[i].alat[j].maxValue.WajibSurat === true && (file === null || file === undefined)) {
-              alert('Alat ini memerlukan surat peminjaman! Silahkan mengupload surat pendukung peminjaman alat.');
-              loading.value = false;
-              return;
-            }
-          }
         }
 
         const dataToSave = {
@@ -396,7 +470,6 @@ export default {
             if (form[i].datatabrak[j].Nama_ruangan === form[i].selectedRuangan) {
               const dataCancel = form[i].datatabrak[j].Peminjaman_Ruangan_ID;
               console.log(dataCancel);
-
               const response = await axios({
                 method: 'GET',
                 url: `http://127.0.0.1:8000/api/peminjamanRuangan/cancelPeminjaman/${dataCancel}`,
@@ -406,13 +479,12 @@ export default {
                 }
               })
               console.log(response.data.message);
-
             }
           }
         }
 
         try {
-          /* const response = await axios({
+          const response = await axios({
             method: 'POST',
             url: 'http://localhost:8000/api/peminjamanRuangan/',
             data: dataToSave,
@@ -447,7 +519,7 @@ export default {
             console.log('Peminjaman saved successfully: response2', response2.data);
           }
           //savedItems.push(response.data);
-          console.log('Peminjaman saved successfully:', response.data); */
+          console.log('Peminjaman saved successfully:', response.data);
         } catch (error) {
           console.error('Error menyimpan data peminjaman ruangan', error);
           loading.value = false;
@@ -458,62 +530,85 @@ export default {
     }
 
     const fetchAlat = async (tanggalAwal, tanggalSelesai, index) => {
-      if (tanggalAwal && tanggalSelesai) {
-        try {
-          const response = await axios.get(
-            `http://127.0.0.1:8000/api/peminjamanAlat/jadwalAlat/${tanggalAwal}/${tanggalSelesai}`
-          );
+      if (tanggalAwal > tanggalSelesai) {
+        form[index].loading = false;
+        return;
+      } else if (tanggalAwal === '' || tanggalSelesai === '') {
+        form[index].loading = false;
+        return;
+      }
 
-          const alat = response.data.daftarAlatfix;
-          let namaAlat = [];
-          let jumlahAlat = [];
-          console.log(alat);
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/api/peminjamanAlat/jadwalAlat/${tanggalAwal}/${tanggalSelesai}`
+        );
 
-          for (let i = 0; i < alat.length; i++) {
-            namaAlat.push(alat[i].NamaAlat);
-            jumlahAlat.push(alat[i].Jumlah_ketersediaan);
-          }
+        const alat = response.data.daftarAlatfix;
+        let namaAlat = [];
+        let jumlahAlat = [];
+        console.log(alat);
 
-          form[index].items = namaAlat;
-          form[index].itemsAll = alat;
-          form[index].loading = false;
-
-        } catch (error) {
-          console.error("Error gagal mengambil data Alat", error);
-          form[index].loading = false;
+        for (let i = 0; i < alat.length; i++) {
+          namaAlat.push(alat[i].NamaAlat);
+          jumlahAlat.push(alat[i].Jumlah_ketersediaan);
         }
+
+        form[index].items = namaAlat;
+        form[index].itemsAll = alat;
+        form[index].loading = false;
+
+      } catch (error) {
+        console.error("Error gagal mengambil data Alat", error);
+        form[index].loading = false;
       }
     }
 
     const fetchAlatDosen = async (tanggalAwal, tanggalSelesai, index) => {
-      if (tanggalAwal && tanggalSelesai) {
-        try {
-          const response = await axios.get(
-            `http://127.0.0.1:8000/api/peminjamanAlat/jadwalAlatforDosen/${tanggalAwal}/${tanggalSelesai}`
-          );
+      if (tanggalAwal > tanggalSelesai) {
+        form[index].loading = false;
+        return;
+      } else if (tanggalAwal === '' || tanggalSelesai === '') {
+        form[index].loading = false;
+        return;
+      }
 
-          const alat = response.data.daftarAlatfix;
-          let namaAlat = [];
-          let jumlahAlat = [];
-          console.log(alat);
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/api/peminjamanAlat/jadwalAlatforDosen/${tanggalAwal}/${tanggalSelesai}`
+        );
 
-          for (let i = 0; i < alat.length; i++) {
-            namaAlat.push(alat[i].NamaAlat);
-            jumlahAlat.push(alat[i].Jumlah_ketersediaan);
-          }
+        const alat = response.data.daftarAlatfix;
+        let namaAlat = [];
+        let jumlahAlat = [];
+        console.log(alat);
 
-          form[index].items = namaAlat;
-          form[index].itemsAll = alat;
-          form[index].loading = false;
-
-        } catch (error) {
-          console.error("Error gagal mengambil data Alat", error);
-          form[index].loading = false;
+        for (let i = 0; i < alat.length; i++) {
+          namaAlat.push(alat[i].NamaAlat);
+          jumlahAlat.push(alat[i].Jumlah_ketersediaan);
         }
+
+        form[index].items = namaAlat;
+        form[index].itemsAll = alat;
+        form[index].loading = false;
+
+      } catch (error) {
+        console.error("Error gagal mengambil data Alat", error);
+        form[index].loading = false;
       }
     }
 
     const availableRoom = async (tanggalAwal, tanggalSelesai, index) => {
+      form[index].loading = true;
+      if (tanggalAwal > tanggalSelesai) {
+        alert('Tanggal awal peminjaman melebihi tanggal selesai peminjaman!');
+        form[index].loading = false;
+        return;
+      } else if (tanggalAwal === '' || tanggalSelesai === '') {
+        alert('Salah satu tanggal belum dipilih!');
+        form[index].loading = false;
+        return;
+      }
+
       try {
         console.log('oke')
         const response = await axios.get(
@@ -537,6 +632,17 @@ export default {
     };
 
     const availableRoomDosen = async (tanggalAwal, tanggalSelesai, index) => {
+      form[index].loading = true;
+      if (tanggalAwal > tanggalSelesai) {
+        alert('Tanggal awal peminjaman melebihi tanggal selesai peminjaman!');
+        form[index].loading = false;
+        return;
+      } else if (tanggalAwal === '' || tanggalSelesai === '') {
+        alert('Salah satu tanggal belum dipilih!');
+        form[index].loading = false;
+        return;
+      }
+
       try {
         console.log('oke')
         const response = await axios.get(
@@ -553,7 +659,6 @@ export default {
         form[index].detailRuangan = roomdetail;
         form[index].loading = false;
         form[index].datatabrak = response.data.datatabrak;
-
       } catch (error) {
         console.error("Error fetching available rooms:", error);
         form[index].loading = false;
@@ -566,10 +671,18 @@ export default {
       console.log('Form length:', form.length);
       console.log('Form', form[index])
 
+      for (let i = 0; i < form[index].alat.length; i++) {
+        if (form[index].alat[i].nama === '') {
+          alert('Pilih alat lebih dahulu!');
+          return;
+        }
+      }
+
       const alat = form[index].alat;
       const newAlat = {
         nama: '',
         jumlahPinjam: 0,
+        maxValue: null,
       };
 
       alat.push(newAlat);
@@ -581,10 +694,14 @@ export default {
         console.log('Form', form[index]);
       } else {
         // kalau tinggal 1 peminjaman
-        console.warn('Tidak dapat menghapus alat atau form');
+        form[index].alat.splice(0, form[index].alat.length);
+        form[index].alat.push({
+          nama: '',
+          jumlahPinjam: 0,
+          maxValue: null,
+        });
       }
     }
-
     return { form, loading, dialog, addNewForm, removeForm, fetchAlat, fetchAlatDosen, saveItem, availableRoom, availableRoomDosen, tambahAlat, hapusAlat };
   },
   data() {

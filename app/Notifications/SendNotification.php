@@ -45,6 +45,7 @@ class SendNotification extends Notification
             'namastatus' => $this->data['namastatus'],
             'accby' => $this->data['accby'],
             'catatan' => $this->data['catatan'],
+            'statusacc' => true
         ];
     }
 }

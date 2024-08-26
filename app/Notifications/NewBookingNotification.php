@@ -43,6 +43,7 @@ class NewBookingNotification extends Notification
             'detailruangan' => $this->data['detailruangan'],
             'detailalat' => $this->data['detailalat'],
             'namastatus' => 'Peminjaman Baru',
+            'newbooking' => true
         ];
     }
 }

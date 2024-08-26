@@ -42,7 +42,8 @@ class CancelNotification extends Notification
             'subject' => $this->data['subject'],
             'Nama_ruangan' => $this->data['Nama_ruangan'],
             'tanggalAwal' => $this->data['tanggalAwal'],
-            'tanggalSelesai' => $this->data['tanggalSelesai']
+            'tanggalSelesai' => $this->data['tanggalSelesai'],
+            'cancel' => true
         ];
     }
 }

@@ -127,7 +127,7 @@ class PeminjamanRuanganBridgeController extends Controller
 
         if (count($input['alat']) > 0) {
             foreach ($input['alat'] as $tool) {
-                if (!empty($tool['nama']) && $tool['jumlahPinjam'] > 0) {
+                if ($tool['nama'] !== '' && $tool['jumlahPinjam'] > 0) {
                     $detail = Alat::where('Nama', $tool['nama'])->first();
                     $jumlahpinjam = $tool['jumlahPinjam'];
                     $alatID = $detail->AlatID;
@@ -2271,22 +2271,6 @@ class PeminjamanRuanganBridgeController extends Controller
             })
             ->get();
 
-        /* $peminjamanruangan2 = Peminjaman_Ruangan_Bridge::orWhere(function ($query) {
-                $query->where('Prioritas', 1)->whereNotNull('DokumenID');
-            })
-            ->orWhere(function ($query) {
-                $query->where('Prioritas', 2);
-            })->where('Tanggal_pakai_awal', "<=", $Tanggal_pakai_awal)
-                ->where('Tanggal_pakai_akhir', ">=", $Tanggal_pakai_akhir)
-                ->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
-                    $query->where('Tanggal_pakai_awal', '>', $Tanggal_pakai_awal)
-                        ->where('Tanggal_pakai_akhir', '<=', $Tanggal_pakai_akhir);
-                })->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
-                    $query->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_awal)
-                        ->where('Tanggal_pakai_akhir', '>', $Tanggal_pakai_akhir);
-                })
-                ->get(); */
-
         $datatabrak = [];
         foreach ($peminjamanruangan2 as $record) {
             $ruanganid = $record->RuanganID;
@@ -2388,7 +2372,6 @@ class PeminjamanRuanganBridgeController extends Controller
     // cek jadwal tabrakan untuk rekomendasi 
     public function jadwalPeminjamanforRekomendasi($Tanggal_pakai_awal, $Tanggal_pakai_akhir, $Kapasitas, $Kategori, $Lokasi)
     {
-        //$statuspeminjaman = Status_Peminjaman::whereNot('StatusID', 7)->get();
         $peminjamanruangan = Peminjaman_Ruangan_Bridge::where('Tanggal_pakai_awal', "<=", $Tanggal_pakai_awal)
             ->where('Tanggal_pakai_akhir', ">=", $Tanggal_pakai_akhir)
             ->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {

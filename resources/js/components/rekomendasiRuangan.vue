@@ -35,16 +35,13 @@
                     style="background-color: rgb(3, 138, 33, 0.3); color: black; height: 56px; margin-bottom: 25px;">
                 </v-select>
 
-                <v-select v-model="selectedFasilitas" :items="fasilitas" label="Fasilitas" variant="outlined" clearable
-                    style="background-color: rgb(3, 138, 33, 0.3); color: black; height: 56px; margin-bottom: 25px;">
-                </v-select>
             </v-card-text>
 
             <v-card-actions style="justify-content:center;">
-                <v-btn style="position: absolute; top: 0; left: 0; margin-top: 17px;" @click="navigateBack"><v-icon
+                <v-btn style="position: absolute; top: 0; left: 0; margin-top: 17px;" @click="navigateBackPeminjaman"><v-icon
                         style="font-size: 30px;">mdi-arrow-left</v-icon></v-btn>
                 <v-btn :loading="this.loading"
-                    @click="jadwalPeminjaman(tanggalAwal, tanggalSelesai, selectedKapasitas, selectedKategori, selectedLokasi), this.loading = true"
+                    @click="jadwalPeminjaman(tanggalAwal, tanggalSelesai, selectedKapasitas, selectedKategori, selectedLokasi)"
                     style="bottom: 20px; right: 0px; background-color: rgb(2,39, 10, 0.9); color: white;
                 border-radius: 20px; width: 150px;">Terapkan</v-btn>
             </v-card-actions>
@@ -54,7 +51,7 @@
     <v-dialog v-model="roomAfterSelected" max-width="850" persistent>
         <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; width: 880px; height: 450px;">
             <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;">
-                Terdapat {{ this.fixRooms.length }} rekomendasi ruangan yang sesuai</v-card-title>
+                Terdapat {{ Object.keys(fixRooms).length }} rekomendasi ruangan yang sesuai</v-card-title>
             <v-card-text style="text-align: center;">
                 <v-row cols="10">
                     <v-col v-for="(room, index) in this.fixRooms" :key="index" cols="5" style="margin-left: 0px;">
@@ -113,9 +110,7 @@ export default {
             showRekomendasi: true,
             lokasi: ['Lab FTI 2', 'Lab FTI 3', 'Fakultas', 'Lab FTI 4'],
             kapasitas: ['1-4 Orang', '5-10 Orang', '11-20 Orang', '21-40 Orang'],
-            kategori: ['Ruang Diskusi/Rapat', 'Ruang Perkuliahan', 'Ruang Bebas'],
-            fasilitas: ['TV', 'Proyektor', 'TV dan Proyektor'],
-            selectedFasilitas: '',
+            kategori: ['Ruang Diskusi(Rapat)', 'Ruang Perkuliahan', 'Ruang Bebas'],
             selectedKapasitas: '',
             selectedKategori: '',
             selectedLokasi: '',
@@ -135,6 +130,10 @@ export default {
             this.roomAfterSelected = false;
             this.showRekomendasi = true;
         },
+        navigateBackPeminjaman() {
+            this.showRekomendasi = true;
+            this.$router.push('/peminjamanRuangan')
+        },
         navigateToPeminjaman() {
             this.roomAfterSelected = false;
             this.$router.push('/peminjamanRuangan')
@@ -144,18 +143,31 @@ export default {
             this.$router.push('/ruangan')
         },
         async jadwalPeminjaman() {
+            this.loading = true
+            if (this.tanggalAwal > this.tanggalSelesai){
+                alert('Tanggal awal peminjaman melebihi tanggal selesai peminjaman!');
+                this.loading = false
+                return
+            } else if (this.tanggalAwal === '' || this.tanggalSelesai === '' || this.selectedKapasitas === null || this.selectedKategori === null || this.selectedLokasi === null){
+                alert('Terdapat data yang kosong!')
+                this.loading = false
+                return
+            } 
+
             try {
                 if (this.User_role === 'Mahasiswa' || this.User_role === 'Petugas') {
                     await axios.get(`http://127.0.0.1:8000/api/peminjamanRuangan/jadwalPeminjamanforRekomendasi/${this.tanggalAwal}/${this.tanggalSelesai}/${this.selectedKapasitas}/${this.selectedKategori}/${this.selectedLokasi}`)
                         .then(response => {
+                            console.log(this.tanggalAwal, this.tanggalSelesai, this.selectedKapasitas, this.selectedKategori, this.selectedLokasi);
                             this.fixRooms = response.data.fixRoom;
                             console.log(this.fixRooms);
                             this.loading = false;
+                            this.showRekomendasi = false;
+                            this.roomAfterSelected = true;
                         })
                         .catch(error => {
                             console.error("Error gagal mengambil data jadwal peminjaman ruangan", error);
                             this.loading = false;
-                            this.roomAfterSelected = true;
                         });
                 } else {
                     await axios.get(`http://127.0.0.1:8000/api/peminjamanRuangan/jadwalPeminjamanforRekomendasiDosen/${this.tanggalAwal}/${this.tanggalSelesai}/${this.selectedKapasitas}/${this.selectedKategori}/${this.selectedLokasi}`)
@@ -163,15 +175,14 @@ export default {
                             this.fixRooms = response.data.fixRoom;
                             console.log(this.fixRooms);
                             this.loading = false;
+                            this.showRekomendasi = false;
+                            this.roomAfterSelected = true;
                         })
                         .catch(error => {
                             console.error("Error gagal mengambil data jadwal peminjaman ruangan", error);
                             this.loading = false;
-                            this.roomAfterSelected = true;
                         });
                 }
-                this.showRekomendasi = false;
-                this.roomAfterSelected = true;
             } catch {
                 console.error()
                 this.loading = false;

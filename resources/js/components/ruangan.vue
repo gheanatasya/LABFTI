@@ -149,7 +149,7 @@ export default {
             selectedKategori: '',
             lokasi: ['Lab FTI 2', 'Lab FTI 3', 'Fakultas', 'Lab FTI 4'],
             kapasitas: ['1-4 Orang', '5-10 Orang', '11-20 Orang', '21-40 Orang'],
-            kategori: ['Ruang Diskusi/Rapat', 'Ruang Perkuliahan', 'Ruang Bebas'],
+            kategori: ['Ruang Diskusi(Rapat)', 'Ruang Perkuliahan', 'Ruang Bebas'],
             allRoomsData: [],
             showImageDialog: false,
             itemToShow: null,
