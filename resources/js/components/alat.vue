@@ -41,8 +41,6 @@
                                             {{ tool.Nama }}</p>
 
                                         <div style="position: absolute; bottom: 0; left: 0; margin-bottom: 10px;">
-                                            <v-btn style="background-color: rgb(2,39, 10, 0.9); color: white; border-radius: 20px; margin-left: 50px;
-                                            font-size: 12px;" @click="pinjamAlat">Pinjam Alat</v-btn>
                                             <br>
                                             <v-btn @click="morePicture(tool.Nama, tool.Foto)" style="color: rgb(2,39, 10, 0.9); margin-left: 0px; background: none;
                                                 text-decoration: underline; box-shadow: none; font-size: 12px;

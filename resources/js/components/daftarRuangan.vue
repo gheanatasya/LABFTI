@@ -368,6 +368,12 @@ export default {
         },
         updateRuangan(RuanganID, Nama_ruangan, Lokasi, Kapasitas, Kategori, fasilitas, foto, Status) {
             this.ruanganEdit.loading = true;
+            if (Nama_ruangan === '' || Lokasi === '' || Kapasitas === '' || Kategori === '' || fasilitas === '' || Status === '') {
+                alert('Terdapat data yang belum diisi');
+                this.ruanganEdit.loading = false
+                return
+            }
+
             const updatebaru = fasilitas.toString();
             const formData = new FormData();
 
@@ -424,6 +430,8 @@ export default {
                     console.error("Error updating Ruangan:", error);
                     this.ruanganEdit.loading = false;
                 });
+                this.ruanganEdit.loading = false;
+
         },
         konfirmasiHapusRuangan(RuanganID, Nama_ruangan) {
             this.dialogHapusRuangan = true;
@@ -528,6 +536,12 @@ export default {
         },
         tambahRuangan(ruanganTambah) {
             this.ruanganTambah.loading = true;
+            if (this.ruanganTambah.Kapasitas === null || this.ruanganTambah.Kapasitas === null || this.ruanganTambah.Lokasi === null || this.ruanganTambah.Kategori === null || this.ruanganTambah.Nama_ruangan === null || this.ruanganTambah.fasilitas === null || this.ruanganTambah.Status === null || this.ruanganTambah.Foto === null) {
+                alert('Terdapat data yang belum diisi!');
+                this.ruanganTambah.loading = false;
+                return
+            }
+
             const facilitiesString = ruanganTambah.fasilitas;
             const facilitiesArray = facilitiesString.split(/,/);
             const fasilit = facilitiesArray.filter(facility => facility.trim());

@@ -380,6 +380,31 @@ export default {
             const aman = ref(false);
 
             for (let i = 0; i < form.length; i++) {
+                if (form[i].selectedOptionPersonal === '' || form[i].selectedOptionOrganisation === '' || form[i].selectedOptionEksternal === '') {
+                    alert('Pilihlah salah satu dari peminjaman untuk Personal, Organisasi, dan Eksternal!');
+                    loading.value = false;
+                    return
+                } else if (form[i].selectedOptionPersonal === 'False' && form[i].selectedOptionOrganisation === 'False' && form[i].selectedOptionEksternal === 'False') {
+                    alert('Pilihlah salah satu dari peminjaman untuk Personal, Organisasi, dan Eksternal!');
+                    loading.value = false;
+                    return
+                } else if (form[i].selectedOptionPersonal === 'True' && form[i].selectedOptionOrganisation === 'True' && form[i].selectedOptionEksternal === 'True') {
+                    alert('Pilihlah salah satu dari peminjaman untuk Personal, Organisasi, dan Eksternal!');
+                    loading.value = false;
+                    return
+                } else if (form[i].selectedOptionPersonal === 'True' && form[i].selectedOptionOrganisation === 'True') {
+                    alert('Pilihlah salah satu dari peminjaman untuk Personal atau Organisasi!');
+                    loading.value = false;
+                    return
+                } else if (form[i].selectedOptionPersonal === 'True' && form[i].selectedOptionEksternal === 'True') {
+                    alert('Pilihlah salah satu dari peminjaman untuk Personal atau Eksternal!');
+                    loading.value = false;
+                    return
+                } else if (form[i].selectedOptionOrganisation === 'True' && form[i].selectedOptionEksternal === 'True') {
+                    alert('Pilihlah salah satu dari peminjaman untuk Organisasi atau Eksternal!');
+                    loading.value = false;
+                    return
+                }
                 if ((form[i].tanggalSelesai === '') || (form[i].tanggalAwal === '') || (form[i].selectedRuangan === '')
                     || (form[i].selectedOptionPersonal === '') || (form[i].selectedOptionOrganisation === '') || (form[i].selectedOptionEksternal === '')
                     || (form[i].keterangan === '')) {
@@ -387,8 +412,16 @@ export default {
                     alert('Terdapat data yang kosong!');
                     loading.value = false;
                     return
-                } else {
-                    aman.value = true;
+                }
+                if (form[i].selectedOptionEksternal === 'True' && form[i].dokumen === null) {
+                    alert('Peminjaman dengan pihak Eksternal memerlukan surat pendukung peminjaman!');
+                    loading.value = false;
+                    return
+                }
+                if (form[i].selectedOptionOrganisation === 'True' && form[i].dokumen === null) {
+                    alert('Peminjaman dengan pihak Organisasi memerlukan surat pendukung peminjaman!');
+                    loading.value = false;
+                    return
                 }
 
                 if (form[i].alat.length > 0 && form[i].alat[0].nama !== '') {
@@ -399,7 +432,7 @@ export default {
                             return;
                         }
 
-                        if (form[i].alat[j].maxValue.WajibSurat === true && (file === null || file === undefined)) {
+                        if (form[i].alat[j].maxValue.WajibSurat === true && form[i].dokumen === null) {
                             alert('Alat ' + form[i].alat[j].nama + ' memerlukan surat peminjaman! Silahkan mengupload surat pendukung peminjaman alat atau lakukan peminjaman alat secara terpisah.');
                             loading.value = false;
                             return;
@@ -415,7 +448,7 @@ export default {
                 const today = new Date();
                 const formattedDate = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
 
-                if (file !== null) {
+                if (form[i].dokumen !== null) {
                     FORMDATA.append('dokumen', file.files[0]);
                     FORMDATA.append('UserID', UserID);
                     FORMDATA.append('Tanggal_pinjam', formattedDate);
@@ -434,7 +467,6 @@ export default {
                     UserID: UserID
                 };
 
-                //dataSend.push(dataToSave);
                 console.log(dataToSave);
                 console.log(form[i].datatabrak);
 
@@ -479,7 +511,7 @@ export default {
                     }
                     console.log(peminjamanruanganid);
 
-                    if (file !== null) {
+                    if (form[i].dokumen !== null) {
                         const response2 = await axios({
                             method: 'POST',
                             url: 'http://localhost:8000/api/dokumen/',
@@ -491,14 +523,13 @@ export default {
                         });
                         console.log('Peminjaman saved successfully: response2', response2.data);
                     }
-                    //savedItems.push(response.data);
                     console.log('Peminjaman saved successfully:', response.data);
+                    dialog.value = true;
                 } catch (error) {
                     console.error('Error menyimpan data peminjaman ruangan', error);
                     loading.value = false;
                 }
             }
-            dialog.value = true;
             loading.value = false;
         }
 
@@ -695,13 +726,19 @@ export default {
         navigateToBeranda() {
             this.confirmBefore = false;
             this.$router.push('/berandaUser')
-        }
+        },
     },
     mounted() {
         const { tanggalAwal, tanggalSelesai, Nama_ruangan } = this.$route.query;
         this.form[0].tanggalAwal = tanggalAwal;
         this.form[0].tanggalSelesai = tanggalSelesai;
         this.form[0].selectedRuangan = Nama_ruangan;
+
+        if (this.User_role === 'Mahasiswa' || this.User_role === 'Petugas') {
+            this.fetchAlat(tanggalAwal, tanggalSelesai, 0);
+        } else {
+            this.fetchAlatDosen(tanggalAwal, tanggalSelesai, 0);
+        }
     }
 };
 </script>

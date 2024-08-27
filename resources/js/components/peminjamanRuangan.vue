@@ -161,7 +161,7 @@
               <v-file-input v-if="item.selectedOptionOrganisation === 'True' || item.selectedOptionEksternal === 'True'"
                 type="file" accept="file/pdf" :no-icon="true" v-model="item.dokumen"
                 style="width: 505px; margin-left: 303px; margin-top: 5px;" variant="outlined" label="Surat Peminjaman"
-                ref="dokumenPendukung" :id="'dokumen-' + index" @change="handleFileChange(index)"></v-file-input>
+                ref="dokumenPendukung" :id="'dokumen-' + index"></v-file-input>
 
               <div
                 style="display: flex; justify-content: space-between; margin-left: 320px; margin-right: 20px; margin-bottom: 50px; margin-top: 20px;">
@@ -407,6 +407,33 @@ export default {
       const aman = ref(false);
 
       for (let i = 0; i < form.length; i++) {
+        if (form[i].selectedOptionPersonal === '' || form[i].selectedOptionOrganisation === '' || form[i].selectedOptionEksternal === '') {
+          alert('Pilihlah salah satu dari peminjaman untuk Personal, Organisasi, dan Eksternal!');
+          loading.value = false;
+          return
+        } else if (form[i].selectedOptionPersonal === 'False' && form[i].selectedOptionOrganisation === 'False' && form[i].selectedOptionEksternal === 'False') {
+          alert('Pilihlah salah satu dari peminjaman untuk Personal, Organisasi, dan Eksternal!');
+          loading.value = false;
+          return
+        } else if (form[i].selectedOptionPersonal === 'True' && form[i].selectedOptionOrganisation === 'True' && form[i].selectedOptionEksternal === 'True') {
+          alert('Pilihlah salah satu dari peminjaman untuk Personal, Organisasi, dan Eksternal!');
+          loading.value = false;
+          return
+        } else if (form[i].selectedOptionPersonal === 'True' && form[i].selectedOptionOrganisation === 'True') {
+          alert('Pilihlah salah satu dari peminjaman untuk Personal atau Organisasi!');
+          loading.value = false;
+          return
+        } else if (form[i].selectedOptionPersonal === 'True' && form[i].selectedOptionEksternal === 'True') {
+          alert('Pilihlah salah satu dari peminjaman untuk Personal atau Eksternal!');
+          loading.value = false;
+          return
+        } else if (form[i].selectedOptionOrganisation === 'True' && form[i].selectedOptionEksternal === 'True') {
+          alert('Pilihlah salah satu dari peminjaman untuk Organisasi atau Eksternal!');
+          loading.value = false;
+          return
+        }
+
+        console.log(form[i].dokumen);
         if ((form[i].tanggalSelesai === '') || (form[i].tanggalAwal === '') || (form[i].selectedRuangan === '')
           || (form[i].selectedOptionPersonal === '') || (form[i].selectedOptionOrganisation === '') || (form[i].selectedOptionEksternal === '')
           || (form[i].keterangan === '')) {
@@ -414,8 +441,16 @@ export default {
           alert('Terdapat data yang kosong!');
           loading.value = false;
           return
-        } else {
-          aman.value = true;
+        }
+        if (form[i].selectedOptionEksternal === 'True' && form[i].dokumen === null) {
+          alert('Peminjaman dengan pihak Eksternal memerlukan surat pendukung peminjaman!');
+          loading.value = false;
+          return
+        }
+        if (form[i].selectedOptionOrganisation === 'True' && form[i].dokumen === null) {
+          alert('Peminjaman dengan pihak Organisasi memerlukan surat pendukung peminjaman!');
+          loading.value = false;
+          return
         }
 
         if (form[i].alat.length > 0 && form[i].alat[0].nama !== '') {
@@ -426,7 +461,7 @@ export default {
               return;
             }
 
-            if (form[i].alat[j].maxValue.WajibSurat === true && (file === null || file === undefined)) {
+            if (form[i].alat[j].maxValue.WajibSurat === true && form[i].dokumen === null) {
               alert('Alat ' + form[i].alat[j].nama + ' memerlukan surat peminjaman! Silahkan mengupload surat pendukung peminjaman alat atau lakukan peminjaman alat secara terpisah.');
               loading.value = false;
               return;
@@ -442,7 +477,7 @@ export default {
         const today = new Date();
         const formattedDate = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
 
-        if (file !== null) {
+        if (form[i].dokumen !== null) {
           FORMDATA.append('dokumen', file.files[0]);
           FORMDATA.append('UserID', UserID);
           FORMDATA.append('Tanggal_pinjam', formattedDate);
@@ -506,7 +541,7 @@ export default {
           }
           console.log(peminjamanruanganid);
 
-          if (file !== null) {
+          if (form[i].dokumen !== null) {
             const response2 = await axios({
               method: 'POST',
               url: 'http://localhost:8000/api/dokumen/',
@@ -520,12 +555,12 @@ export default {
           }
           //savedItems.push(response.data);
           console.log('Peminjaman saved successfully:', response.data);
+          dialog.value = true;
         } catch (error) {
           console.error('Error menyimpan data peminjaman ruangan', error);
           loading.value = false;
         }
       }
-      dialog.value = true;
       loading.value = false;
     }
 

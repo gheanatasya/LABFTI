@@ -16,7 +16,7 @@
                         style="margin-left: 100px; display: grid; grid-template-columns: 1fr 1fr; grid-gap: 40px; font-family: Lexend-Regular;">
                         <v-text-field type="input" variant="outlined" v-model="this.name" label="Nama Lengkap"
                             style="grid-column: span 2; height: 30px; margin-right: 450px;"></v-text-field>
-                        <v-text-field type="input" variant="outlined" v-model="this.NIM_NIDN" label="NIM / NIDN"
+                        <v-text-field type="input" variant="outlined" v-model="this.NIM_NIDN" label="NIM / NIDN" 
                             style="grid-column: span 2; height: 30px; margin-right: 500px;"></v-text-field>
                         <v-text-field variant="outlined" v-model="this.email" label="Email" type="email" :rules="emailRules"
                             style="grid-column: span 2; height: 50px; margin-right: 450px;"></v-text-field>
@@ -75,7 +75,7 @@ export default {
             show1: true,
             konfpassErrorMessages: [],
             name: "",
-            NIM_NIDN: "",
+            NIM_NIDN: undefined,
             email: "",
             password: "",
             konfpass: "",
@@ -112,7 +112,7 @@ export default {
         email: function (newEmail) {
             this.setRole();
         },
-        nim: function (newNim) {
+        NIM_NIDN: function (newNim) {
             this.setRole();
         },
         selectedInstansi: function (newInstansi) {
@@ -161,6 +161,55 @@ export default {
             this.loading = true;
             if (this.password !== this.konfpass) {
                 this.konfpassErrorMessages = ['Password tidak sesuai'];
+                this.loading = false;
+                return;
+            }
+
+            if (this.name === "" || this.NIM_NIDN === "" || this.email === "" || this.password === "" || this.konfpass === "") {
+                alert('Terdapat kolom yang belum terisi!');
+                this.loading = false;
+                return;
+            } else if (this.selectedFakultas === "Lainnya" && this.selectedProdi === "Lainnya" && this.selectedInstansi === "Lainnya") {
+                alert('Silahkan memilih salah satu dari Instansi atau Fakultas dan Prodi!');
+                this.loading = false;
+                return;
+            } else if (this.selectedFakultas !== "Lainnya" && this.selectedProdi !== "Lainnya" && this.selectedInstansi !== "Lainnya") {
+                alert('Silahkan memilih salah satu dari Instansi atau Fakultas dan Prodi!');
+                this.loading = false;
+                return;
+            } else if ((this.selectedFakultas === "Lainnya" && this.selectedProdi !== "Lainnya") || (this.selectedFakultas !== "Lainnya" && this.selectedProdi === "Lainnya")) {
+                alert('Silahkan memilih Fakultas atau Prodi!');
+                this.loading = false;
+                return;
+            } else if (this.user_role === 'Role tidak valid') {
+                alert('User role tidak valid!');
+                this.loading = false;
+                return;
+            } else if (isNaN(this.NIM_NIDN)){
+                alert('NIM/NIDN harus berupa angka!');
+                this.loading = false;
+                return;
+            } else if (this.user_role === 'Mahasiswa' && this.NIM_NIDN.toString().length !== 8 && !isNaN(this.NIM_NIDN)) {
+                alert('NIM/NIDN harus 8 digit!');
+                this.loading = false;
+                return;
+            } else if (this.user_role === 'Dosen' && this.NIM_NIDN.toString().length !== 10 && !isNaN(this.NIM_NIDN)) {
+                alert('NIM/NIDN harus 10 digit!');
+                this.loading = false;
+                return;
+            } else if (this.user_role === 'Staff' && this.NIM_NIDN.toString().length !== 10 && !isNaN(this.NIM_NIDN)) {
+                alert('NIM/NIDN harus 10 digit!');
+                this.loading = false;
+                return;
+            }
+
+            const domain = this.email.split('@')[1].toLowerCase();
+            console.log(domain)
+
+            if (domain === 'ti.ukdw.ac.id' || domain === 'si.ukdw.ac.id' || domain === 'staff.ukdw.ac.id' || domain === 'students.ukdw.ac.id') {
+                console.log('aman')
+            } else {
+                alert('Gunakan email domain UKDW');
                 this.loading = false;
                 return;
             }
@@ -224,6 +273,7 @@ export default {
                     console.error('Error fetching ProdiID:', error);
                     this.loading = false;
                 });
+                this.loading = false
         },
         setRole() {
             if (!this.email) return '';
@@ -233,23 +283,26 @@ export default {
             const selInstansi = this.selectedInstansi;
             const selFakultas = this.selectedFakultas;
             const selProdi = this.selectedProdi;
-            if ((domain === 'ti.ukdw.ac.id' || domain === 'si.ukdw.ac.id') && (nimPrefix === '71' || nimPrefix === '72')) {
+            console.log(nimPrefix)
+            console.log(typeof nimPrefix)
+            console.log(!isNaN(nimPrefix))
+            if ((domain === 'ti.ukdw.ac.id' || domain === 'si.ukdw.ac.id') && (nimPrefix === '71' || nimPrefix === '72') && (selFakultas !== 'Lainnya') && (selProdi !== 'Lainnya') && (selInstansi === 'Lainnya')) {
                 return this.user_role = 'Mahasiswa',
                     this.user_priority = 1;
-            } else if ((domain === 'ti.ukdw.ac.id' || domain === 'si.ukdw.ac.id') && (nimPrefix !== '71' || nimPrefix !== '72')) {
+            } else if ((domain === 'ti.ukdw.ac.id' || domain === 'si.ukdw.ac.id') && (nimPrefix !== '71' || nimPrefix !== '72') && (selFakultas !== 'Lainnya') && (selProdi !== 'Lainnya') && (selInstansi === 'Lainnya')) {
                 return this.user_role = 'Dosen',
                     this.user_priority = 2;
-            } else if ((domain === 'students.ukdw.ac.id')) {
+            } else if ((domain === 'students.ukdw.ac.id') && (selProdi !== 'Lainnya') && (selFakultas !== 'Lainnya') && (selInstansi === 'Lainnya')) {
                 return this.user_role = 'Mahasiswa',
                     this.user_priority = 1;
-            } else if ((domain === 'staff.ukdw.ac.id') && (selInstansi) && (selFakultas === 'Lainnya')) {
+            } else if ((domain === 'staff.ukdw.ac.id') && (selInstansi !== 'Lainnya') && (selProdi === 'Lainnya') && (selFakultas === 'Lainnya')) {
                 return this.user_role = 'Staff',
                     this.user_priority = 2;
-            } else if ((domain === 'staff.ukdw.ac.id') && (selFakultas) && (selProdi) && (selInstansi === 'Lainnya')) {
+            } else if ((domain === 'staff.ukdw.ac.id') && (selFakultas !== 'Lainnya') && (selProdi !== 'Lainnya') && (selInstansi === 'Lainnya')) {
                 return this.user_role = 'Dosen',
                     this.user_priority = 2;
             } else {
-                return 'Silahkan gunakan email UKDW.'
+                return this.user_role = 'Role tidak valid'
             }
         },
         fetchProdiByFakultas() {

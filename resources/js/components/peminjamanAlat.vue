@@ -56,9 +56,15 @@
                                     </template>
                                 </v-tooltip>
 
-                                <v-btn
-                                    @click="alatAvailable(item.tanggalAwal, item.tanggalSelesai, index), item.loading = true"
-                                    :loading="item.loading"
+                                <v-btn :loading="item.loading"
+                                    v-if="User_role === 'Mahasiswa' || User_role === 'Petugas'"
+                                    @click="fetchAlat(item.tanggalAwal, item.tanggalSelesai, index)"
+                                    style="width: 120px; margin-left: 10px; margin-top: 80px; font-size: 11px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
+                                    color="primary">
+                                    Cek Alat</v-btn>
+
+                                <v-btn :loading="item.loading" v-else
+                                    @click="fetchAlatDosen(item.tanggalAwal, item.tanggalSelesai, index)"
                                     style="width: 120px; margin-left: 10px; margin-top: 80px; font-size: 11px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
                                     color="primary">
                                     Cek Alat</v-btn>
@@ -147,8 +153,9 @@
 
                             <div
                                 style="display: flex; justify-content: space-between; margin-left: 320px; margin-right: 20px; margin-bottom: 50px; margin-top: 20px;">
-                                <v-btn @click="addNewForm" id="tambah" style="margin-right: 10px; margin-left: -5px;"
-                                    prepend-icon=mdi-plus-circle color="primary">Tambah
+                                <v-btn @click="addNewForm(index)" id="tambah"
+                                    style="margin-right: 10px; margin-left: -5px;" prepend-icon=mdi-plus-circle
+                                    color="primary">Tambah
                                     Peminjaman</v-btn>
                                 <v-btn @click="removeForm(index)" id="hapus" prepend-icon="mdi-minus-circle"
                                     color="error">Hapus
@@ -273,10 +280,34 @@ export default {
                 keterangan: '',
                 dokumen: null,
                 loading: false,
+                tambahformbaru: 0
             }
         ])
 
-        const addNewForm = () => {
+        const addNewForm = (index) => {
+            if (form[index].tambahformbaru === 1) {
+                alert('Form baru sudah ditambahkan sebelumnya!');
+                return
+            } else if (form[index].selectedOptionPersonal === '' || form[index].selectedOptionOrganisation === '' || form[index].selectedOptionEksternal === '') {
+                alert('Pilihlah salah satu dari peminjaman untuk Personal, Organisasi, dan Eksternal!');
+                return
+            } else if (form[index].selectedOptionPersonal === 'False' && form[index].selectedOptionOrganisation === 'False' && form[index].selectedOptionEksternal === 'False') {
+                alert('Pilihlah salah satu dari peminjaman untuk Personal, Organisasi, dan Eksternal!');
+                return
+            } else if (form[index].selectedOptionPersonal === 'True' && form[index].selectedOptionOrganisation === 'True' && form[index].selectedOptionEksternal === 'True') {
+                alert('Pilihlah salah satu dari peminjaman untuk Personal, Organisasi, dan Eksternal!');
+                return
+            } else if (form[index].selectedOptionPersonal === 'True' && form[index].selectedOptionOrganisation === 'True') {
+                alert('Pilihlah salah satu dari peminjaman untuk Personal atau Organisasi!');
+                return
+            } else if (form[index].selectedOptionPersonal === 'True' && form[index].selectedOptionEksternal === 'True') {
+                alert('Pilihlah salah satu dari peminjaman untuk Personal atau Eksternal!');
+                return
+            } else if (form[index].selectedOptionOrganisation === 'True' && form[index].selectedOptionEksternal === 'True') {
+                alert('Pilihlah salah satu dari peminjaman untuk Organisasi atau Eksternal!');
+                return
+            }
+
             form.push({
                 tanggalAwal: '',
                 modal: false,
@@ -297,13 +328,49 @@ export default {
                 keterangan: '',
                 dokumen: null,
                 daftarAlat: [],
-                loading: false
+                loading: false,
+                tambahformbaru: 0
             })
+            form[index].tambahformbaru = form[index].tambahformbaru + 1;
+            console.log('form baru ditambahkan');
         }
 
         const removeForm = (index) => {
             if (form.length > 1) {
                 form.splice(index, 1)
+            } else {
+                form.splice(0, form.length);
+                form.push({
+                    dateDialogAwal: false,
+                    dateDialogAkhir: false,
+                    tanggalAwal: '',
+                    modal: false,
+                    tanggalSelesai: '',
+                    waktuPakai: null,
+                    waktuSelesai: null,
+                    Ruangan: [],
+                    selectedRuangan: '',
+                    isPersonal: '',
+                    isOrganisation: '',
+                    isEksternal: '',
+                    selectedOptionPersonal: '',
+                    selectedOptionEksternal: '',
+                    selectedOptionOrganisation: '',
+                    items: [],
+                    itemsAll: [],
+                    alat: reactive([{
+                        nama: '',
+                        jumlahPinjam: 0,
+                        maxValue: null,
+                    }]),
+                    selectedItems: '',
+                    keterangan: '',
+                    dokumen: null,
+                    detailRuangan: [],
+                    loading: false,
+                    datatabrak: [],
+                    tambahformbaru: 0
+                })
             }
         }
 
@@ -324,31 +391,78 @@ export default {
                 const UserID = localStorage.getItem('UserID');
 
                 for (let i = 0; i < form.length; i++) {
+                    if (form[i].selectedOptionPersonal === '' || form[i].selectedOptionOrganisation === '' || form[i].selectedOptionEksternal === '') {
+                        alert('Pilihlah salah satu dari peminjaman untuk Personal, Organisasi, dan Eksternal!');
+                        loading.value = false;
+                        return
+                    } else if (form[i].selectedOptionPersonal === 'False' && form[i].selectedOptionOrganisation === 'False' && form[i].selectedOptionEksternal === 'False') {
+                        alert('Pilihlah salah satu dari peminjaman untuk Personal, Organisasi, dan Eksternal!');
+                        loading.value = false;
+                        return
+                    } else if (form[i].selectedOptionPersonal === 'True' && form[i].selectedOptionOrganisation === 'True' && form[i].selectedOptionEksternal === 'True') {
+                        alert('Pilihlah salah satu dari peminjaman untuk Personal, Organisasi, dan Eksternal!');
+                        loading.value = false;
+                        return
+                    } else if (form[i].selectedOptionPersonal === 'True' && form[i].selectedOptionOrganisation === 'True') {
+                        alert('Pilihlah salah satu dari peminjaman untuk Personal atau Organisasi!');
+                        loading.value = false;
+                        return
+                    } else if (form[i].selectedOptionPersonal === 'True' && form[i].selectedOptionEksternal === 'True') {
+                        alert('Pilihlah salah satu dari peminjaman untuk Personal atau Eksternal!');
+                        loading.value = false;
+                        return
+                    } else if (form[i].selectedOptionOrganisation === 'True' && form[i].selectedOptionEksternal === 'True') {
+                        alert('Pilihlah salah satu dari peminjaman untuk Organisasi atau Eksternal!');
+                        loading.value = false;
+                        return
+                    }
+
+                    console.log(form[i].dokumen);
+                    if ((form[i].tanggalSelesai === '') || (form[i].tanggalAwal === '') || (form[i].alat.length === 0) || (form[i].alat.length === 1 && form[i].alat[0].nama === '')
+                        || (form[i].selectedOptionPersonal === '') || (form[i].selectedOptionOrganisation === '') || (form[i].selectedOptionEksternal === '')
+                        || (form[i].keterangan === '')) {
+                        alert('Terdapat data yang kosong!');
+                        loading.value = false;
+                        return
+                    }
+                    if (form[i].selectedOptionEksternal === 'True' && form[i].dokumen === null) {
+                        alert('Peminjaman dengan pihak Eksternal memerlukan surat pendukung peminjaman!');
+                        loading.value = false;
+                        return
+                    }
+                    if (form[i].selectedOptionOrganisation === 'True' && form[i].dokumen === null) {
+                        alert('Peminjaman dengan pihak Organisasi memerlukan surat pendukung peminjaman!');
+                        loading.value = false;
+                        return
+                    }
+
+                    if (form[i].alat.length > 0 && form[i].alat[0].nama !== '') {
+                        for (let j = 0; j < form[i].alat.length; j++) {
+                            if (form[i].alat[j].jumlahPinjam > form[i].alat[j].maxValue.Jumlah_ketersediaan) {
+                                alert('Jumlah pinjam melebihi jumlah ketersediaan alat! Pada form ke - ' + (i + 1));
+                                loading.value = false;
+                                return;
+                            }
+
+                            if (form[i].alat[j].maxValue.WajibSurat === true && form[i].dokumen === null) {
+                                alert('Alat ' + form[i].alat[j].nama + ' memerlukan surat peminjaman! Silahkan mengupload surat pendukung peminjaman alat atau lakukan peminjaman alat secara terpisah.');
+                                loading.value = false;
+                                return;
+                            }
+                        }
+                    }
+                }
+
+                for (let i = 0; i < form.length; i++) {
                     const FORMDATA = new FormData();
                     const file = document.querySelector('#dokumen-' + i);
                     const today = new Date();
                     const formattedDate = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
 
-                    if (file !== null) {
+                    if (form[i].dokumen !== null) {
                         FORMDATA.append('dokumen', file.files[0]);
                         FORMDATA.append('UserID', UserID);
                         FORMDATA.append('Tanggal_pinjam', formattedDate);
-                    }
-
-                    if (form[i].alat.length > 0) {
-                        for (let j = 0; j < form[i].alat.length; j++) {
-                            if (form[i].alat[j].jumlahPinjam > form[i].alat[j].maxValue.Jumlah_ketersediaan) {
-                                alert('Jumlah pinjam melebihi jumlah ketersediaan alat!');
-                                loading.value = false;
-                                return;
-                            }
-
-                            if (form[i].alat[j].maxValue.WajibSurat === true && (file === null || file === undefined)) {
-                                alert('Alat ini memerlukan surat peminjaman! Silahkan mengupload surat pendukung peminjaman alat.');
-                                loading.value = false;
-                                return;
-                            }
-                        }
                     }
 
                     const dataToSave = {
@@ -383,7 +497,7 @@ export default {
                             FORMDATA.append('totalalat', response.data.peminjaman_alat_bridge.length);
                         }
 
-                        if (file !== null) {
+                        if (form[i].dokumen !== null) {
                             const response2 = await axios({
                                 method: 'POST',
                                 url: 'http://localhost:8000/api/dokumenAlat/',
@@ -395,7 +509,7 @@ export default {
                             });
                             console.log('Peminjaman saved successfully: response2', response2.data);
                         }
-
+                        dialog.value = true;
                         console.log('Peminjaman saved successfully:', response.data);
                     } catch (error) {
                         console.error('Error menyimpan data peminjaman alat', error);
@@ -403,55 +517,21 @@ export default {
                     }
                 }
                 loading.value = false;
-                dialog.value = true;
             }
         }
 
-        const fetchAlat = () => {
-            axios.get("http://127.0.0.1:8000/api/alat/")
-                .then(response => {
-                    form.forEach(item => {
-                        const dataAlat = response.data;
-                        dataAlat.forEach(alat => {
-                            item.items.push({
-                                nama: alat.Nama,
-                                jumlahKetersediaan: alat.Jumlah_ketersediaan
-                            })
-                        })
-                        item.daftarAlat = response.data.map(alat => alat.Nama);
-                        console.log("item", item.items);
-                    });
-                })
-                .catch(error => {
-                    console.error("Error gagal mengambil data Alat", error);
-                });
-        }
-
-        const tambahAlat = (index) => {
-            console.log('Index:', index);
-            console.log('Form length:', form.length);
-            console.log('Form', form[index])
-
-            const alat = form[index].alat;
-            const newAlat = {
-                nama: '',
-                jumlahPinjam: 0,
-            };
-
-            alat.push(newAlat);
-        };
-
-        const hapusAlat = (index, alatIndex) => {
-            if (form.length > 0 && form[index].alat.length > 1) {
-                form[index].alat.splice(alatIndex, 1);
-                console.log('Form', form[index]);
-            } else {
-                // kalau tinggal 1 peminjaman
-                console.warn('Cannot remove the last alat or form.');
+        const fetchAlat = async (tanggalAwal, tanggalSelesai, index) => {
+            form[index].loading = true;
+            if (tanggalAwal > tanggalSelesai) {
+                alert('Tanggal awal peminjaman melebihi tanggal selesai peminjaman!');
+                form[index].loading = false;
+                return;
+            } else if (tanggalAwal === '' || tanggalSelesai === '') {
+                alert('Salah satu tanggal belum dipilih!');
+                form[index].loading = false;
+                return;
             }
-        }
 
-        const alatAvailable = async (tanggalAwal, tanggalSelesai, index) => {
             try {
                 const response = await axios.get(
                     `http://127.0.0.1:8000/api/peminjamanAlat/jadwalAlat/${tanggalAwal}/${tanggalSelesai}`
@@ -470,18 +550,88 @@ export default {
                 form[index].items = namaAlat;
                 form[index].itemsAll = alat;
                 form[index].loading = false;
+
             } catch (error) {
                 console.error("Error gagal mengambil data Alat", error);
                 form[index].loading = false;
-                alert('Tidak ada tanggal yang dipilih');
             }
         }
 
-        onMounted(() => {
+        const fetchAlatDosen = async (tanggalAwal, tanggalSelesai, index) => {
+            form[index].loading = true;
+            if (tanggalAwal > tanggalSelesai) {
+                alert('Tanggal awal peminjaman melebihi tanggal selesai peminjaman!');
+                form[index].loading = false;
+                return;
+            } else if (tanggalAwal === '' || tanggalSelesai === '') {
+                alert('Salah satu tanggal belum dipilih!');
+                form[index].loading = false;
+                return;
+            }
 
-        });
+            try {
+                const response = await axios.get(
+                    `http://127.0.0.1:8000/api/peminjamanAlat/jadwalAlatforDosen/${tanggalAwal}/${tanggalSelesai}`
+                );
 
-        return { form, loading, dialog, ketentuan, addNewForm, removeForm, fetchAlat, saveItem, tambahAlat, hapusAlat, alatAvailable }
+                const alat = response.data.daftarAlatfix;
+                let namaAlat = [];
+                let jumlahAlat = [];
+                console.log(alat);
+
+                for (let i = 0; i < alat.length; i++) {
+                    namaAlat.push(alat[i].NamaAlat);
+                    jumlahAlat.push(alat[i].Jumlah_ketersediaan);
+                }
+
+                form[index].items = namaAlat;
+                form[index].itemsAll = alat;
+                form[index].loading = false;
+
+            } catch (error) {
+                console.error("Error gagal mengambil data Alat", error);
+                form[index].loading = false;
+            }
+        }
+
+        const tambahAlat = (index) => {
+            console.log('Index:', index);
+            console.log('Form length:', form.length);
+            console.log('Form', form[index])
+
+            for (let i = 0; i < form[index].alat.length; i++) {
+                if (form[index].alat[i].nama === '') {
+                    alert('Pilih alat lebih dahulu!');
+                    return;
+                }
+            }
+
+            const alat = form[index].alat;
+            const newAlat = {
+                nama: '',
+                jumlahPinjam: 0,
+                maxValue: null
+            };
+
+            alat.push(newAlat);
+        };
+
+        const hapusAlat = (index, alatIndex) => {
+            if (form.length > 0 && form[index].alat.length > 1) {
+                form[index].alat.splice(alatIndex, 1);
+                console.log('Form', form[index]);
+            } else {
+                // kalau tinggal 1 peminjaman
+                form[index].alat.splice(0, form[index].alat.length);
+                form[index].alat.push({
+                    nama: '',
+                    jumlahPinjam: 0,
+                    maxValue: null,
+                });
+            }
+        }
+
+        return { form, loading, dialog, ketentuan, addNewForm, removeForm, fetchAlat, saveItem, tambahAlat, hapusAlat, fetchAlatDosen, fetchAlat }
     },
     data() {
         return {

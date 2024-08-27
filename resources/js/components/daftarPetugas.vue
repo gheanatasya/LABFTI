@@ -138,7 +138,7 @@
                         style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                         @click="editActionPetugas = false">Batal</v-btn>
                     <v-btn :loading="this.loadingEdit"
-                        @click="updatePetugas(petugasEdit.Nama, petugasEdit.NIM, petugasEdit.Email, petugasEdit.Prodi, petugasEdit.Tgl_Bekerja, petugasEdit.Tgl_Berhenti, petugasEdit.Foto, petugasEdit.UserID), this.loadingEdit = true"
+                        @click="updatePetugas(petugasEdit.Nama, petugasEdit.NIM, petugasEdit.Email, petugasEdit.Prodi, petugasEdit.Tgl_Bekerja, petugasEdit.Tgl_Berhenti, petugasEdit.Foto, petugasEdit.UserID)"
                         style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
                 </v-card-actions>
             </v-card>
@@ -197,7 +197,7 @@
                     <v-btn
                         style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                         @click="tambahActionPetugas = false">Batal</v-btn>
-                    <v-btn @click="tambahPetugas(petugasTambah), this.loadingTambah = true" :loading="this.loadingTambah"
+                    <v-btn @click="tambahPetugas(petugasTambah)" :loading="this.loadingTambah"
                         style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
                 </v-card-actions>
             </v-card>
@@ -284,6 +284,12 @@ export default {
         },
         updatePetugas(Nama, NIM, Email, Prodi, Tgl_Bekerja, Tgl_Berhenti, Foto, UserID) {
             this.loadingEdit = true;
+            if (Nama === '' || NIM === '' || Email === '' || Prodi === '' || Tgl_Bekerja === '') {
+                alert('Terdapat data yang belum diisi!');
+                this.loadingEdit = false;
+                return
+            }
+
             const formData = new FormData();
 
             if (typeof Foto === 'object' && Foto instanceof File) {
@@ -367,6 +373,11 @@ export default {
             },
         tambahPetugas(petugasTambah) {
             this.loadingTambah = true;
+            if (petugasTambah.Email === null || petugasTambah.NIM === null || petugasTambah.Tgl_Bekerja === null || petugasTambah.Foto === null){
+                alert('Terdapat data yang belum diisi!');
+                this.loadingTambah = false;
+                return
+            }
             console.log(petugasTambah)
 
             const formData = new FormData();

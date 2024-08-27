@@ -79,9 +79,6 @@
                                         </div>
 
                                         <div style="position: absolute; bottom: 0; left: 0; margin-bottom: 10px;">
-                                            <v-btn style="background-color: rgb(2,39, 10, 0.9); color: white; border-radius: 20px; margin-left: 90px;
-                                            font-size: 12px;" @click="pinjamRuang">Pinjam Ruangan</v-btn>
-                                            <br>
                                             <v-btn @click="morePicture(room.Nama_ruangan, room.Lokasi, room.Foto)"
                                                 style="color: rgb(2,39, 10, 0.9); margin-left: 90px; background: none;
                                                 text-decoration: underline; box-shadow: none; 

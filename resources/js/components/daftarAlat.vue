@@ -1,5 +1,6 @@
 <template>
-    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1; position: fixed; width: 100%;">
+    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'"
+        style="z-index: 1; position: fixed; width: 100%;">
     </headerSuperAdmin>
     <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1; position: fixed; width: 100%;"></headerAdmin>
 
@@ -175,7 +176,8 @@
                     <v-btn
                         style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                         @click="editActionAlat = false">Batal</v-btn>
-                    <v-btn @click="updateAlat(alatEdit.namaAlat, alatEdit.kodeAlat, alatEdit.statusAlat)" :loading="this.alatEdit.loading"
+                    <v-btn @click="updateAlat(alatEdit.namaAlat, alatEdit.kodeAlat, alatEdit.statusAlat)"
+                        :loading="this.alatEdit.loading"
                         style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
                 </v-card-actions>
             </v-card>
@@ -478,6 +480,12 @@ export default {
         },
         updateAlat(namaAlat, kodeAlat, statusAlat) {
             this.alatEdit.loading = true;
+            if (namaAlat === '' || statusAlat === '') {
+                alert('Terdapat data yang belum diisi!');
+                this.alatEdit.loading = false;
+                return
+            }
+
             const updateData = {
                 namaAlat,
                 statusAlat
@@ -507,9 +515,16 @@ export default {
                             this.alatEdit.loading = false;
                         });
                 })
+                this.alatEdit.loading = false;
         },
         updateDetailAlat(namaDetailAlat, kodeDetailAlat, statusKebergunaan, statusPeminjaman, foto) {
             this.detailalatEdit.loading = true;
+            if (namaDetailAlat === '' || statusKebergunaan === '' || statusPeminjaman === '') {
+                alert('Terdapat data yang belum diisi!');
+                this.detailalatEdit.loading = false;
+                return
+            }
+
             const formData = new FormData();
 
             if (foto !== null) {
@@ -558,9 +573,16 @@ export default {
                     console.error("Error updating detail alat:", error);
                     this.detailalatEdit.loading = false;
                 });
+                this.detailalatEdit.loading = false;
         },
         tambahAlat(alatTambah) {
             this.alatTambah.loading = true;
+            if (alatTambah.namaAlat === null || alatTambah.statusAlat === null) {
+                alert('Terdapat data yang belum diisi!')
+                this.alatTambah.loading = false;
+                return
+            }
+
             axios.post(`http://127.0.0.1:8000/api/alat`, alatTambah)
                 .then(response => {
                     console.log("Data berhasil masuk ke tabel Alat", response.data)
@@ -571,9 +593,15 @@ export default {
                     console.error("Data tidak berhasil dimasukkan ke tabel Alat", Error);
                     this.alatTambah.loading = false;
                 });
+            this.alatTambah.loading = false;
         },
         tambahDetailAlat(detailalatTambah) {
             this.detailalatTambah.loading = true;
+            if (this.detailalatTambah.namaDetailAlat === null || this.detailalatTambah.statusKebergunaan === null || this.detailalatTammbah.statusPeminjaman === null || this.detailalatTambah.foto === null) {
+                alert('Terdapat data yang belum diisi');
+                this.detailalatTambah.loading = false;
+                return  
+            }
             //console.log(detailalatTambah)
             const formData = new FormData();
 
@@ -606,6 +634,8 @@ export default {
                     console.error("Data tidak berhasil dimasukkan ke tabel Detail Alat", Error);
                     this.detailalatTambah.loading = false;
                 });
+                this.detailalatTambah.loading = true;
+
         },
         async createChart() {
             try {
@@ -649,29 +679,7 @@ export default {
                             type: "line",
                             data: {
                                 labels: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
-                                datasets: dataset/* [
-                                    {
-                                        label: "Tanah",
-                                        data: [
-                                            88,
-                                            88,
-                                        ],
-                                        backgroundColor: ["#134280"],
-                                    },
-                                    {
-                                        label: "Tanaman",
-                                        data: [
-                                            88,
-                                            88,
-                                        ],
-                                        backgroundColor: ["#426799"],
-                                    },
-                                    {
-                                        label: "Lingkungan",
-                                        data: ["", 88],
-                                        backgroundColor: ["#718db2"],
-                                    },
-                                ], */
+                                datasets: dataset
                             },
                             options: {
                                 responsive: true,

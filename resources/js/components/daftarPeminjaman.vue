@@ -1,5 +1,6 @@
 <template>
-    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1; position: fixed; width: 100%;">
+    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'"
+        style="z-index: 1; position: fixed; width: 100%;">
     </headerSuperAdmin>
     <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1; position: fixed; width: 100%;"></headerAdmin>
     <headerDekanat v-if="User_role === 'Dekan' || User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'"
@@ -458,7 +459,8 @@
                         <v-btn
                             style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                             @click="editActionRuangan = false">Batal</v-btn>
-                        <v-btn @click="confirmRuangan(ruangan), this.loadingRuangan = true" :loading="this.loadingRuangan"
+                        <v-btn @click="confirmRuangan(ruangan), this.loadingRuangan = true"
+                            :loading="this.loadingRuangan"
                             style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
                     </v-card-actions>
                 </v-card>
@@ -724,7 +726,7 @@ export default {
             this.alat = {
                 ...alat,
                 loading: false
-            }; 
+            };
             console.log(this.alat);
         },
         persetujuanRuangan(ruangan) {
@@ -753,6 +755,12 @@ export default {
         },
         confirmRuangan(ruangan) {
             this.loadingRuangan = true;
+            if (ruangan.currentStatus === '' || ruangan.currentStatus === null) {
+                alert('Tidak ada status yang dipilih!');
+                this.loadingRuangan = false
+                return
+            }
+
             const peminjamanid = ruangan.peminjamanruanganid;
             const userrole = localStorage.getItem('User_role');
             const namastatus = ruangan.currentStatus;
@@ -780,10 +788,16 @@ export default {
                     console.error("Error konfirmasi failed:", error);
                     this.loadingRuangan = false;
                 });
-                this.loadingRuangan = false;
+            this.loadingRuangan = false;
         },
         confirmAlat(alat) {
             this.loadingAlat = true;
+            if (alat.currentStatus === '' || alat.currentStatus === null) {
+                alert('Tidak ada status yang dipilih!');
+                this.loadingAlat = false
+                return
+            }
+
             const peminjamanid = alat.peminjamanalatid;
             const userrole = localStorage.getItem('User_role');
             const namastatus = alat.currentStatus;
@@ -810,10 +824,16 @@ export default {
                     console.error("Error konfirmasi failed:", error);
                     this.loadingAlat = false;
                 });
-                this.loadingAlat = false;
-            },
+            this.loadingAlat = false;
+        },
         confirmAlat2(alat) {
             this.loadingAlat2 = true;
+            if(alat.currentStatus === '' || alat.currentStatus === null) {
+                alert('Tidak ada status yang dipilih!');
+                this.loadingAlat2 = false
+                return
+            }
+            
             const pengecekan = this.allPeminjamanAlat.filter(data => data.peminjamanid === alat.peminjamanid);
 
             //for (let i = 0; i < pengecekan.length; i++) {
