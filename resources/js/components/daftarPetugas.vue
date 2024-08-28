@@ -293,7 +293,7 @@ export default {
 
             const formData = new FormData();
 
-            if (Foto !== null) {
+            if (Foto[0].name && Foto[0].size && Foto[0].type) {
                 const file = document.getElementById('editFotoPetugas');
                 formData.append('foto', file.files[0]);
                 formData.append('userid', UserID);
@@ -321,7 +321,7 @@ export default {
                 then(response => {
                     if (response.status === 200) {
                         console.log("Petugas updated successfully:", response.data);
-                        if (typeof Foto === 'object' && Foto instanceof File) {
+                        if (Foto[0].name && Foto[0].size && Foto[0].type) {
                             axios.post(`http://127.0.0.1:8000/api/petugas/tambahFoto/`, formData)
                                 .then(res => {
                                     console.log("Petugas picture updated successfully:", res.data);
@@ -344,7 +344,6 @@ export default {
                     console.error("Error updating Petugas:", error);
                     this.loadingEdit = false;
                 });
-                this.loadingEdit = false;
             },
         konfirmasiHapusPetugas(UserID, Nama) {
             this.dialogHapusPetugas = true
@@ -368,7 +367,6 @@ export default {
                     this.gagalDeletePetugas = true;
                     this.dialogHapusPetugas = false;
                 });
-                this.loadingHapus = false;
             },
         tambahPetugas(petugasTambah) {
             this.loadingTambah = true;
@@ -405,7 +403,6 @@ export default {
                     alert('User dengan email dan NIM tersebut tidak ditemukan!');
                     this.loadingTambah = false;
                 });
-                this.loadingTambah = false;
         }
     },
     mounted() {

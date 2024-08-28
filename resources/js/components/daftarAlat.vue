@@ -62,9 +62,10 @@
                     </tr>
                 </thead>
                 <tbody v-if="this.filteredTools.length > 0">
-                    <tr v-for="(alat, index) in filteredTools" :key="index"
+                    <tr v-for="(alat, index) in paginatedTools" :key="index"
                         style="background-color: white; font-family: 'Lexend-Regular; font-size: 15px;">
-                        <td style="width: 20px; text-align: center;"> {{ index + 1 }} </td>
+                        <td style="width: 20px; text-align: center;"> {{ (currentPageAlat - 1) * itemsPerPage + index +
+                            1 }} </td>
 
                         <td style="width: 150px;"> {{ alat.Nama }} </td>
 
@@ -100,6 +101,8 @@
                     <td></td>
                 </tbody>
             </v-table>
+            <v-pagination v-model="currentPageAlat" :length="Math.ceil(filteredTools.length / itemsPerPage)"
+                    @change="updateCurrentPageAlat"></v-pagination>
         </v-card>
 
         <!-- data tabel detail alat -->
@@ -130,10 +133,11 @@
                                 <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr v-for="(detail, index) in this.itemforDetailAlat" :key="index"
+                        <tbody v-if="this.itemforDetailAlat.length > 0">
+                            <tr v-for="(detail, index) in paginatedDetailAlat(currentPageDetailAlat)" :key="index"
                                 style="background-color: white; font-family: 'Lexend-Regular; font-size: 15px;">
-                                <td style="width: 20px; text-align: center;"> {{ index + 1 }} </td>
+                                <td style="width: 20px; text-align: center;"> {{ (currentPageDetailAlat - 1) *
+                                    itemsPerPage + index + 1 }} </td>
                                 <td style="width: 150px;"> {{ detail.NamaDetailAlat }} </td>
                                 <td style="width: 150px; text-align: center;"> {{ detail.KodeDetailAlat }} </td>
                                 <td style="width: 200px; text-align: center;"> {{ detail.StatusKebergunaan }} </td>
@@ -150,7 +154,22 @@
                                 </td>
                             </tr>
                         </tbody>
+                        <tbody v-else>
+                            <td></td>
+                            <td></td>
+                            <div class="py-1 text-center"
+                                style="content: center; margin-top: 60px; margin-left: 150px; margin-right: -50px;">
+                                <v-icon class="mb-6" color="primary" icon="mdi-alert-circle-outline" size="40"></v-icon>
+                                <div class="text-h7 font-weight-bold">Kamu belum melakukan peminjaman ruangan.</div>
+                            </div>
+                            <td></td>
+                            <td></td>
+                        </tbody>
                     </v-table>
+
+                    <v-pagination v-model="currentPageDetailAlat"
+                        :length="Math.ceil(this.itemforDetailAlat.length / itemsPerPage)"
+                        @change="updateCurrentPageDetailAlat"></v-pagination>
                 </v-card-text>
             </v-card>
         </v-dialog>
@@ -414,6 +433,9 @@ export default {
             gambarTampil: [],
             overlay: true,
             loadinggrafik: false,
+            currentPageAlat: 1,
+            currentPageDetailAlat: 1,
+            itemsPerPage: 6
         }
     },
     methods: {
@@ -500,7 +522,7 @@ export default {
 
             const updateData = {
                 namaAlat,
-                statusAlat, 
+                statusAlat,
                 kodeAlat
             }
 
@@ -541,7 +563,7 @@ export default {
 
             const formData = new FormData();
 
-            if (foto !== null) {
+            if (foto[0].name && foto[0].size && foto[0].type) {
                 const file = document.getElementById('editFotoAlat');
                 for (let i = 0; i < file.files.length; i++) {
                     formData.append('foto[]', file.files[i]);
@@ -568,7 +590,7 @@ export default {
                 .then(response => {
                     if (response.status === 200) {
                         console.log("Detail alat updated successfully:", response.data);
-                        if (foto !== null) {
+                        if (foto[0].name && foto[0].size && foto[0].type) {
                             axios.post(`http://127.0.0.1:8000/api/detail/tambahFoto/${detailalatID}`, formData)
                                 .then(res => {
                                     console.log("Foto ditambahkan successfully:", res.data);
@@ -624,7 +646,7 @@ export default {
                 alert('Terdapat data yang belum diisi');
                 this.detailalatTambah.loading = false;
                 return
-            } else if (alatYangDicari){
+            } else if (alatYangDicari) {
                 alert('Kode detail alat tersebut sudah ada! Berikan kode yang berbeda')
                 this.detailalatTambah.loading = false;
                 return
@@ -747,7 +769,18 @@ export default {
             const fotoArray = foto.split(":").filter(pict => pict);
             this.gambarTampil = fotoArray;
             console.log(fotoArray);
-        }
+        },
+        updateCurrentPageAlat(val) {
+            this.currentPageAlat = val;
+        },
+        updateCurrentPageDetailAlat(val) {
+            this.currentPageDetailAlat = val;
+        },
+        paginatedDetailAlat(currentPageDetailAlat) {
+            const startIndex = (currentPageDetailAlat - 1) * this.itemsPerPage;
+            const endIndex = startIndex + this.itemsPerPage;
+            return this.itemforDetailAlat.slice(startIndex, endIndex);
+        },
     },
     mounted() {
         Promise.all([
@@ -765,7 +798,13 @@ export default {
             return this.allData.filter(tool => {
                 return tool.Nama.toLowerCase().includes(this.searchAlat.toLowerCase());
             });
-        }
+        },
+        paginatedTools() {
+            const startIndex = (this.currentPageAlat - 1) * this.itemsPerPage;
+            const endIndex = startIndex + this.itemsPerPage;
+            return this.filteredTools.slice(startIndex,
+                endIndex);
+        },
     },
 
 }

@@ -26,7 +26,7 @@
         </v-card>
     </v-dialog>
 
-    <div style="margin-top: 80px; height: 80%">
+    <div style="padding-top: 80px; height: 80%">
         <router-link to="/berandaUser"
             style="width: 200px; font-size:17px; color: rgb(2,39, 10, 0.9); margin-left: 20px; margin-top: 70px; font-family: 'Lexend-Regular'"><v-icon
                 style="font-size: 25px;">mdi-keyboard-backspace</v-icon> Beranda</router-link>

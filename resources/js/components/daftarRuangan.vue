@@ -62,9 +62,9 @@
                 </tr>
             </thead>
             <tbody v-if="this.filteredRooms.length > 0">
-                <tr v-for="(ruangan, index) in filteredRooms" :key="index"
+                <tr v-for="(ruangan, index) in paginatedRuangan" :key="index"
                     style="background-color: white; font-family: 'Lexend-Regular; font-size: 15px;">
-                    <td style="width: 20px; text-align: center;"> {{ index + 1 }} </td>
+                    <td style="width: 20px; text-align: center;"> {{ (currentPageRuangan - 1) * itemsPerPage + index + 1 }} </td>
 
                     <td style="width: 150px;"> {{ ruangan.Nama_ruangan }} </td>
 
@@ -116,6 +116,9 @@
                 <td></td>
             </tbody>
         </v-table>
+
+        <v-pagination v-model="currentPageRuangan" :length="Math.ceil(filteredRooms.length / itemsPerPage)"
+                    @change="updateCurrentPageRuangan"></v-pagination>
     </v-card>
 
         <!-- edit ruangan -->
@@ -323,7 +326,7 @@ export default {
                 Lokasi: null,
                 Kategori: null,
                 fasilitas: null,
-                Foto: null,
+                foto: null,
                 Nama_ruangan: null,
                 Status: null,
                 loading: false
@@ -331,7 +334,9 @@ export default {
             gambarTampil: [],
             showImageDialog: false,
             overlay: true,
-            loadinggrafik: false
+            loadinggrafik: false,
+            currentPageRuangan: 1,
+            itemsPerPage: 6
         }
     },
     methods: {
@@ -377,7 +382,7 @@ export default {
             const updatebaru = fasilitas.toString();
             const formData = new FormData();
 
-            if (foto !== null) {
+            if (foto[0].name && foto[0].size && foto[0].type) {
                 const file = document.getElementById('editFotoRuangan');
                 for (let i = 0; i < file.files.length; i++) {
                     formData.append('foto[]', file.files[i]);
@@ -389,6 +394,7 @@ export default {
 
 
             console.log(foto);
+            console.log(foto[0].name, foto[0].size,foto[0].type)
             const updateData = {
                 RuanganID,
                 Nama_ruangan,
@@ -411,7 +417,7 @@ export default {
                     if (response.status === 200) {
                         console.log("Ruangan updated successfully:", response.data);
 
-                        if (foto !== null) {
+                        if (foto[0].name && foto[0].size && foto[0].type) {
                             axios.post(`http://127.0.0.1:8000/api/ruangan/tambahFoto/${RuanganID}`, formData)
                                 .then(res => {
                                     console.log("Foto ditambahkan successfully:", res.data);
@@ -422,6 +428,8 @@ export default {
                                     this.ruanganEdit.loading = false;
                                 })
                         }
+                        this.ruanganEdit.loading = false;
+                        this.editActionRuangan = false;
                     } else {
                         console.error("Error updating Ruangan:", response.data.message);
                         this.ruanganEdit.loading = false;
@@ -430,8 +438,6 @@ export default {
                     console.error("Error updating Ruangan:", error);
                     this.ruanganEdit.loading = false;
                 });
-                this.ruanganEdit.loading = false;
-
         },
         konfirmasiHapusRuangan(RuanganID, Nama_ruangan) {
             this.dialogHapusRuangan = true;
@@ -536,8 +542,14 @@ export default {
         },
         tambahRuangan(ruanganTambah) {
             this.ruanganTambah.loading = true;
-            if (this.ruanganTambah.Kapasitas === null || this.ruanganTambah.Kapasitas === null || this.ruanganTambah.Lokasi === null || this.ruanganTambah.Kategori === null || this.ruanganTambah.Nama_ruangan === null || this.ruanganTambah.fasilitas === null || this.ruanganTambah.Status === null || this.ruanganTambah.Foto === null) {
+            console.log(ruanganTambah)
+            const regex = /^[a-zA-Z,\s]+$/;
+            if (this.ruanganTambah.Kapasitas === null || this.ruanganTambah.Kapasitas === null || this.ruanganTambah.Lokasi === null || this.ruanganTambah.Kategori === null || this.ruanganTambah.Nama_ruangan === null || this.ruanganTambah.fasilitas === null || this.ruanganTambah.Status === null || this.ruanganTambah.foto === null) {
                 alert('Terdapat data yang belum diisi!');
+                this.ruanganTambah.loading = false;
+                return
+            } else if (!regex.test(this.ruanganTambah.fasilitas)) {
+                alert('Format fasilitas tidak sesuai placeholder!')
                 this.ruanganTambah.loading = false;
                 return
             }
@@ -587,6 +599,7 @@ export default {
                                 this.ruanganTambah.loading = false;
                             })
                     }
+                    this.ruanganTambah.loading = false;
                 })
                 .catch(Error => {
                     console.error("Data tidak berhasil dimasukkan ke tabel Ruangan", Error);
@@ -601,6 +614,9 @@ export default {
             const fotoArray = fotoString.split(":").filter(pict => pict);
             this.gambarTampil = fotoArray;
             console.log(fotoArray);
+        },
+        updateCurrentPageRuangan(val){
+            this.currentPageRuangan = val
         }
     },
     mounted() {
@@ -619,6 +635,11 @@ export default {
             return this.allRoom.filter(room => {
                 return room.Nama_ruangan.toLowerCase().includes(this.searchRuangan.toLowerCase());
             });
+        },
+        paginatedRuangan(){
+            const startIndex = (this.currentPageRuangan - 1) * this.itemsPerPage;
+            const endIndex = startIndex + this.itemsPerPage;
+            return this.filteredRooms.slice(startIndex, endIndex);
         }
     },
 }
