@@ -200,6 +200,12 @@ export default {
         },
         updateNama() {
             this.loading = true;
+            if (this.peminjam.Nama === null || this.peminjam.Nama === '' || this.peminjam.Nama === undefined){
+                alert('Terdapat data yang kosong!');
+                this.loading = false
+                return
+            }
+
             const updatedNama = {
                 nama: this.peminjam.Nama
             }
@@ -229,6 +235,19 @@ export default {
         },
         updateEmail(email) {
             this.loadingEmail = true;
+            const domain = email.split('@')[1] ? email.split('@')[1] : null;
+            if (email === '' || email === null || email === undefined){
+                alert('Email tidak boleh kosong!')
+                this.loadingEmail = false
+                return
+            } else if (domain.toLowerCase() === 'ti.ukdw.ac.id' || domain.toLowerCase() === 'si.ukdw.ac.id' || domain.toLowerCase() === 'staff.ukdw.ac.id' || domain.toLowerCase() === 'students.ukdw.ac.id'){
+                console.log('aman')
+            } else {
+                alert('Gunakan email domain UKDW');
+                this.loadingEmail = false
+                return
+            }
+
             const emailUpdate = { email: email };
             const UserID = localStorage.getItem('UserID');
             axios.put(`http://127.0.0.1:8000/api/userEmail/${UserID}`, emailUpdate, {
@@ -249,6 +268,12 @@ export default {
         },
         updatePassword(password) {
             this.loadingPassword = true;
+            if (password === '' || password === null || password === undefined){
+                alert('Password tidak boleh kosong')
+                this.loadingPassword = false
+                return
+            }
+
             const passwordUpdate = { password: password };
             const UserID = localStorage.getItem('UserID');
             axios.put(`http://127.0.0.1:8000/api/userPassword/${UserID}`, passwordUpdate, {

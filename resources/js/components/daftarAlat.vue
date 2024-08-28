@@ -78,11 +78,11 @@
 
                         <td style="width: 100px; font-size: 25px; text-align: center;">
                             <v-icon style="color: rgb(2, 39, 10, 1);"
-                                @click="editDataAlat(alat.Nama, alat.KodeAlat, alat.StatusAlat)">mdi-pencil-circle</v-icon>
+                                @click="editDataAlat(alat.Nama, alat.KodeAlat, alat.StatusAlat, alat.AlatID)">mdi-pencil-circle</v-icon>
                             <v-icon style="color: rgb(206, 0, 0, 0.91);"
-                                @click="confirmDeleteAlat(alat.KodeAlat, alat.Nama)">mdi-delete-circle</v-icon>
+                                @click="confirmDeleteAlat(alat.KodeAlat, alat.Nama, alat.AlatID)">mdi-delete-circle</v-icon>
                             <v-icon style="color:  rgb(0, 0, 0, 0.5);"
-                                @click="moreData(alat.detailAlat, alat.KodeAlat)">mdi-dots-horizontal-circle</v-icon>
+                                @click="moreData(alat.detailAlat, alat.KodeAlat, alat.AlatID)">mdi-dots-horizontal-circle</v-icon>
                         </td>
                     </tr>
                 </tbody>
@@ -146,7 +146,7 @@
                                 </td>
                                 <td style="width: 150px; font-size: 25px;">
                                     <v-icon style="color: rgb(2, 39, 10, 1);"
-                                        @click="editDataDetailAlat(detail.NamaDetailAlat, detail.KodeDetailAlat, detail.StatusKebergunaan, detail.StatusPeminjaman, detail.Foto)">mdi-pencil-circle</v-icon>
+                                        @click="editDataDetailAlat(detail.NamaDetailAlat, detail.KodeDetailAlat, detail.StatusKebergunaan, detail.StatusPeminjaman, detail.Foto, detail.DetailAlatID)">mdi-pencil-circle</v-icon>
                                 </td>
                             </tr>
                         </tbody>
@@ -176,7 +176,8 @@
                     <v-btn
                         style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                         @click="editActionAlat = false">Batal</v-btn>
-                    <v-btn @click="updateAlat(alatEdit.namaAlat, alatEdit.kodeAlat, alatEdit.statusAlat)"
+                    <v-btn
+                        @click="updateAlat(alatEdit.namaAlat, alatEdit.kodeAlat, alatEdit.statusAlat, alatEdit.alatID)"
                         :loading="this.alatEdit.loading"
                         style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
                 </v-card-actions>
@@ -214,7 +215,7 @@
                         style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                         @click="editActionDetailAlat = false">Batal</v-btn>
                     <v-btn :loading="this.detailalatEdit.loading"
-                        @click="updateDetailAlat(detailalatEdit.namaDetailAlat, detailalatEdit.kodeDetailAlat, detailalatEdit.statusKebergunaan, detailalatEdit.statusPeminjaman, detailalatEdit.foto)"
+                        @click="updateDetailAlat(detailalatEdit.namaDetailAlat, detailalatEdit.kodeDetailAlat, detailalatEdit.statusKebergunaan, detailalatEdit.statusPeminjaman, detailalatEdit.foto, detailalatEdit.detailalatID)"
                         style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
                 </v-card-actions>
             </v-card>
@@ -233,7 +234,7 @@
                         @click="dialogHapusAlat = false">Batal</v-btn>
                     <v-btn :loading="this.itemforHapusAlat.loading"
                         style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;"
-                        @click="deleteAlat(itemforHapusAlat.KodeAlat)">Hapus</v-btn>
+                        @click="deleteAlat(itemforHapusAlat.AlatID)">Hapus</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -371,6 +372,7 @@ export default {
                 kodeAlat: null,
                 statusAlat: null,
                 loading: false,
+                alatID: null
             },
             alatTambah: {
                 namaAlat: null,
@@ -378,6 +380,7 @@ export default {
                 statusAlat: null,
                 jumlahKetersediaan: 0,
                 loading: false,
+                alatID: null
             },
             detailalatTambah: {
                 namaDetailAlat: null,
@@ -387,15 +390,19 @@ export default {
                 statusPeminjaman: null,
                 foto: null,
                 loading: false,
+                detailalatID: null,
+                AlatID: null
             },
             editActionDetailAlat: false,
             detailalatEdit: {
                 namaDetailAlat: null,
                 kodeDetailAlat: null,
+                kodeAlat: null,
                 statusKebergunaan: null,
                 statusPeminjaman: null,
                 foto: null,
-                loading: false
+                loading: false,
+                detailalatID: null
             },
             dialogHapusAlat: false,
             itemforHapusAlat: null,
@@ -423,23 +430,25 @@ export default {
                 console.error()
             }
         },
-        moreData(detailAlat, kodeAlat) {
+        moreData(detailAlat, kodeAlat, AlatID) {
             this.expanded = !this.expanded;
             this.itemforDetailAlat = detailAlat;
             this.detailalatTambah.kodeAlat = kodeAlat;
+            this.detailalatTambah.AlatID = AlatID;
             //console.log(this.itemforDetailAlat);
         },
-        editDataAlat(namaAlat, kodeAlat, statusAlat) {
+        editDataAlat(namaAlat, kodeAlat, statusAlat, alatID) {
             this.editActionAlat = !this.editActionAlat;
             this.alatEdit = {
                 namaAlat,
                 kodeAlat,
                 statusAlat,
-                loading: false
+                loading: false,
+                alatID: alatID
             }
             console.log(this.alatEdit)
         },
-        editDataDetailAlat(namaDetailAlat, kodeDetailAlat, statusKebergunaan, statusPeminjaman, foto) {
+        editDataDetailAlat(namaDetailAlat, kodeDetailAlat, statusKebergunaan, statusPeminjaman, foto, detailalatID) {
             this.editActionDetailAlat = !this.editActionDetailAlat;
             this.detailalatEdit = {
                 namaDetailAlat,
@@ -447,20 +456,22 @@ export default {
                 statusKebergunaan,
                 statusPeminjaman,
                 foto,
-                loading: false
+                loading: false,
+                detailalatID
             }
             //console.log(this.detailalatEdit)
         },
-        confirmDeleteAlat(KodeAlat, Nama) {
+        confirmDeleteAlat(KodeAlat, Nama, AlatID) {
             this.dialogHapusAlat = !this.dialogHapusAlat;
             this.itemforHapusAlat = {
                 KodeAlat,
-                Nama
+                Nama,
+                AlatID
             }
         },
-        deleteAlat(KodeAlat) {
+        deleteAlat(AlatID) {
             this.itemforHapusAlat.loading = true;
-            axios.delete(`http://127.0.0.1:8000/api/alat/${KodeAlat}`)
+            axios.delete(`http://127.0.0.1:8000/api/alat/${AlatID}`)
                 .then(response => {
                     if (response.data != 'Gagal') {
                         console.log("Alat deleted successfully:", response.data);
@@ -478,9 +489,10 @@ export default {
                     this.dialogHapusAlat = false;
                 });
         },
-        updateAlat(namaAlat, kodeAlat, statusAlat) {
+        updateAlat(namaAlat, kodeAlat, statusAlat, alatID) {
             this.alatEdit.loading = true;
-            if (namaAlat === '' || statusAlat === '') {
+            console.log(namaAlat, kodeAlat, statusAlat, alatID);
+            if (namaAlat === '' || statusAlat === '' || kodeAlat === '') {
                 alert('Terdapat data yang belum diisi!');
                 this.alatEdit.loading = false;
                 return
@@ -488,13 +500,14 @@ export default {
 
             const updateData = {
                 namaAlat,
-                statusAlat
+                statusAlat, 
+                kodeAlat
             }
 
             console.log(updateData);
             axios.get('http://localhost:8000/sanctum/csrf-cookie')
                 .then(res => {
-                    axios.put(`http://127.0.0.1:8000/api/alat/${kodeAlat}`, updateData, {
+                    axios.put(`http://127.0.0.1:8000/api/alat/${alatID}`, updateData, {
                         withCredentials: true,
                         headers: {
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -515,11 +528,12 @@ export default {
                             this.alatEdit.loading = false;
                         });
                 })
-                this.alatEdit.loading = false;
         },
-        updateDetailAlat(namaDetailAlat, kodeDetailAlat, statusKebergunaan, statusPeminjaman, foto) {
+        updateDetailAlat(namaDetailAlat, kodeDetailAlat, statusKebergunaan, statusPeminjaman, foto, detailalatID) {
             this.detailalatEdit.loading = true;
-            if (namaDetailAlat === '' || statusKebergunaan === '' || statusPeminjaman === '') {
+            console.log(foto)
+
+            if (namaDetailAlat === '' || statusKebergunaan === '' || statusPeminjaman === '' || kodeDetailAlat === '') {
                 alert('Terdapat data yang belum diisi!');
                 this.detailalatEdit.loading = false;
                 return
@@ -541,10 +555,11 @@ export default {
                 namaDetailAlat,
                 statusKebergunaan,
                 statusPeminjaman,
+                kodeDetailAlat
             }
             console.log(updateData);
 
-            axios.put(`http://127.0.0.1:8000/api/detail/${kodeDetailAlat}`, updateData, {
+            axios.put(`http://127.0.0.1:8000/api/detail/${detailalatID}`, updateData, {
                 withCredentials: true,
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -554,7 +569,7 @@ export default {
                     if (response.status === 200) {
                         console.log("Detail alat updated successfully:", response.data);
                         if (foto !== null) {
-                            axios.post(`http://127.0.0.1:8000/api/detail/tambahFoto/${kodeDetailAlat}`, formData)
+                            axios.post(`http://127.0.0.1:8000/api/detail/tambahFoto/${detailalatID}`, formData)
                                 .then(res => {
                                     console.log("Foto ditambahkan successfully:", res.data);
                                     this.detailalatEdit.loading = false;
@@ -565,6 +580,7 @@ export default {
                                 })
                         }
                         this.detailalatEdit.loading = false;
+                        this.editActionDetailAlat = false;
                     } else {
                         console.error("Error updating detail alat:", response.data.message);
                         this.detailalatEdit.loading = false;
@@ -573,12 +589,16 @@ export default {
                     console.error("Error updating detail alat:", error);
                     this.detailalatEdit.loading = false;
                 });
-                this.detailalatEdit.loading = false;
         },
         tambahAlat(alatTambah) {
             this.alatTambah.loading = true;
-            if (alatTambah.namaAlat === null || alatTambah.statusAlat === null) {
+            const alatYangDicari = this.allData.find(alat => alat.KodeAlat === alatTambah.kodeAlat);
+            if (alatTambah.namaAlat === null || alatTambah.statusAlat === null || alatTambah.kodeAlat === null) {
                 alert('Terdapat data yang belum diisi!')
+                this.alatTambah.loading = false;
+                return
+            } else if (alatYangDicari) {
+                alert('Kode tersebut sudah ada! Berikan kode yang berbeda')
                 this.alatTambah.loading = false;
                 return
             }
@@ -593,14 +613,21 @@ export default {
                     console.error("Data tidak berhasil dimasukkan ke tabel Alat", Error);
                     this.alatTambah.loading = false;
                 });
-            this.alatTambah.loading = false;
         },
         tambahDetailAlat(detailalatTambah) {
             this.detailalatTambah.loading = true;
-            if (this.detailalatTambah.namaDetailAlat === null || this.detailalatTambah.statusKebergunaan === null || this.detailalatTammbah.statusPeminjaman === null || this.detailalatTambah.foto === null) {
+            const alatYangDicari = this.allData.some(alat =>
+                alat.detailAlat.some(detailAlat => detailAlat.KodeDetailAlat === detailalatTambah.kodeDetailAlat)
+            );
+            console.log(alatYangDicari);
+            if (this.detailalatTambah.namaDetailAlat === null || this.detailalatTambah.statusKebergunaan === null || this.detailalatTambah.statusPeminjaman === null || this.detailalatTambah.foto === null || this.detailalatTambah.kodeDetailAlat === null) {
                 alert('Terdapat data yang belum diisi');
                 this.detailalatTambah.loading = false;
-                return  
+                return
+            } else if (alatYangDicari){
+                alert('Kode detail alat tersebut sudah ada! Berikan kode yang berbeda')
+                this.detailalatTambah.loading = false;
+                return
             }
             //console.log(detailalatTambah)
             const formData = new FormData();
@@ -618,8 +645,9 @@ export default {
             axios.post(`http://127.0.0.1:8000/api/detail`, detailalatTambah)
                 .then(response => {
                     console.log("Data berhasil masuk ke tabel Detail Alat", response.data);
+                    const detailalat = response.data.DetailAlatID
                     if (detailalatTambah.foto !== null) {
-                        axios.post(`http://127.0.0.1:8000/api/detail/tambahFoto/${detailalatTambah.kodeDetailAlat}`, formData)
+                        axios.post(`http://127.0.0.1:8000/api/detail/tambahFoto/${detailalat}`, formData)
                             .then(res => {
                                 console.log("Foto ditambahkan successfully:", res.data);
                                 this.detailalatTambah.loading = false;
@@ -634,8 +662,6 @@ export default {
                     console.error("Data tidak berhasil dimasukkan ke tabel Detail Alat", Error);
                     this.detailalatTambah.loading = false;
                 });
-                this.detailalatTambah.loading = true;
-
         },
         async createChart() {
             try {

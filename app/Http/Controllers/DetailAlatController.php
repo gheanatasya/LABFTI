@@ -25,20 +25,20 @@ class DetailAlatController extends Controller
     public function store(StoreDetail_AlatRequest $request)
     {
         $input = $request->all();
-        Detail_Alat::create([
-            'DetailAlatID' => $input['kodeDetailAlat'],
-            'AlatID' => $input['kodeAlat'],
+        $detail = Detail_Alat::create([
+            'KodeDetailAlat' => $input['kodeDetailAlat'],
+            'AlatID' => $input['AlatID'],
             'Nama_alat' => $input['namaDetailAlat'],
             'Status_Kebergunaan' => $input['statusKebergunaan'],
             'Status_Peminjaman' => $input['statusPeminjaman'],
             'Foto' => null
         ]);
 
-        $alat = Alat::where('AlatID', $input['kodeAlat'])->first();
+        $alat = Alat::where('AlatID', $input['AlatID'])->first();
         $jumlahalat = $alat->Jumlah_ketersediaan;
         $alat->Jumlah_ketersediaan = $jumlahalat + 1;
         $alat->save();
-        return response()->json(['status' => true, 'message' => "Registration Success"]);
+        return response()->json(['status' => true, 'message' => "Registration Success", 'DetailAlatID' => $detail->DetailAlatID]);
     }
 
     //mengubah data detail alat
@@ -54,12 +54,14 @@ class DetailAlatController extends Controller
             'namaDetailAlat' => 'required',
             'statusKebergunaan' => 'required',
             'statusPeminjaman' => 'required',
+            'kodeDetailAlat' => 'required'
         ]);
 
         $detailalat->Nama_alat = $request->get('namaDetailAlat');
         $detailalat->Status_Kebergunaan = $request->get('statusKebergunaan');
         $detailalat->Status_Peminjaman = $request->get('statusPeminjaman');
         $detailalat->Foto = $request->get('foto');
+        $detailalat->KodeDetailAlat = $request->get('kodeDetailAlat');
         $detailalat->save();
 
         return response()->json(['message' => 'Detail alat berhasil diperbarui', 'data' => $detailalat]);

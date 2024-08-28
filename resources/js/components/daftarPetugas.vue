@@ -284,22 +284,21 @@ export default {
         },
         updatePetugas(Nama, NIM, Email, Prodi, Tgl_Bekerja, Tgl_Berhenti, Foto, UserID) {
             this.loadingEdit = true;
+            console.log(Foto)
             if (Nama === '' || NIM === '' || Email === '' || Prodi === '' || Tgl_Bekerja === '') {
-                alert('Terdapat data yang belum diisi!');
                 this.loadingEdit = false;
+                alert('Terdapat data yang belum diisi!');
                 return
             }
 
             const formData = new FormData();
 
-            if (typeof Foto === 'object' && Foto instanceof File) {
+            if (Foto !== null) {
                 const file = document.getElementById('editFotoPetugas');
                 formData.append('foto', file.files[0]);
                 formData.append('userid', UserID);
                 //console.log('ada')
-            } /* else {
-                console.log('tidak ada')
-            } */
+            }
 
             const updateData = {
                 Nama,
@@ -377,6 +376,10 @@ export default {
                 alert('Terdapat data yang belum diisi!');
                 this.loadingTambah = false;
                 return
+            } else if (isNaN(petugasTambah.NIM)){
+                alert('NIM harus berupa angka!');
+                this.loadingTambah = false;
+                return
             }
             console.log(petugasTambah)
 
@@ -399,6 +402,7 @@ export default {
                         })
                 }).catch(error => {
                     console.error("Data gagal ditambahkan", error);
+                    alert('User dengan email dan NIM tersebut tidak ditemukan!');
                     this.loadingTambah = false;
                 });
                 this.loadingTambah = false;

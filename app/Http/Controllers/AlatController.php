@@ -35,6 +35,7 @@ class AlatController extends Controller
             
             $fixRecord = [
                 'AlatID' => $tool->AlatID,
+                'KodeAlat' => $tool->KodeAlat,
                 'Nama' => $tool->Nama,
                 'Status' => $tool->Status,
                 'Jumlah_ketersediaan' => $tool->Jumlah_ketersediaan,
@@ -58,7 +59,7 @@ class AlatController extends Controller
     {
         $input = $request->all();
         Alat::create([
-            'AlatID' => $input['kodeAlat'],
+            'KodeAlat' => $input['kodeAlat'],
             'Nama' => $input['namaAlat'],
             'Status' => $input['statusAlat'],
             'Jumlah_ketersediaan' => 0
@@ -78,10 +79,12 @@ class AlatController extends Controller
         $request->validate([
             'namaAlat' => 'required',
             'statusAlat' => 'required',
+            'kodeAlat' => 'required'
         ]);
 
         $alat->Nama = $request->get('namaAlat');
         $alat->Status = $request->get('statusAlat');
+        $alat->KodeAlat = $request->get('kodeAlat');
         $alat->save();
 
         return response()->json(['message' => 'Alat berhasil diperbarui', 'data' => $alat]);
@@ -118,14 +121,16 @@ class AlatController extends Controller
 
         foreach ($alat as $tool) {
             $namaAlat = $tool->Nama;
-            $kodeAlat = $tool->AlatID;
+            $AlatID = $tool->AlatID;
+            $kodeAlat = $tool->KodeAlat;
             $statusAlat = $tool->Status;
-            $detailAlat = Detail_Alat::where('AlatID', $kodeAlat)->get();
+            $detailAlat = Detail_Alat::where('AlatID', $AlatID)->get();
             $jumlahAlat = count($detailAlat);
             $jumlahRusak = $detailAlat->where('Status_Kebergunaan', 'Rusak')->count();
             $recordData = [
                 'Nama' => $namaAlat,
                 'KodeAlat' => $kodeAlat,
+                'AlatID' => $AlatID,
                 'JumlahAlat' => $jumlahAlat,
                 'JumlahRusak' => $jumlahRusak,
                 'StatusAlat' => $statusAlat,
@@ -133,7 +138,8 @@ class AlatController extends Controller
             ];
 
             foreach ($detailAlat as $detail) {
-                $kodeDetailAlat = $detail->DetailAlatID;
+                $DetailAlatID = $detail->DetailAlatID;
+                $kodeDetailAlat = $detail->KodeDetailAlat;
                 $namaDetailAlat = $detail->Nama_alat;
                 $statusKebergunaan = $detail->Status_Kebergunaan;
                 $statusPeminjaman = $detail->Status_Peminjaman;
@@ -141,10 +147,12 @@ class AlatController extends Controller
 
                 $recordPerDetail = [
                     'KodeDetailAlat' => $kodeDetailAlat,
+                    'DetailAlatID' => $DetailAlatID,
                     'NamaDetailAlat' => $namaDetailAlat,
                     'StatusKebergunaan' => $statusKebergunaan,
                     'StatusPeminjaman' => $statusPeminjaman,
-                    'Foto' => $foto
+                    'Foto' => $foto,
+                    'AlatID' => $detail->AlatID
                 ];
 
                 $recordData['detailAlat'][] = $recordPerDetail;

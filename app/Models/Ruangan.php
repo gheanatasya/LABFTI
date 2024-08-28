@@ -18,5 +18,5 @@ class Ruangan extends Model
     public $timestamps = false;
     protected $table = 'ruangan';
     protected $primaryKey = 'RuanganID';
-    protected $fillable = ['RuanganID', 'Nama_ruangan', 'Kapasitas', 'Lokasi', 'Kategori', 'fasilitas', 'Foto', 'Status'];
+    protected $fillable = ['RuanganID', 'Nama_ruangan', 'Kapasitas', 'Lokasi', 'Kategori', 'fasilitas', 'Foto', 'Status', 'KodeRuangan'];
 }

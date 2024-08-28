@@ -353,7 +353,7 @@ class PersetujuanController extends Controller
                         ->where('Status_PeminjamanID', $statuspeminjamanid)
                         ->delete();
                     $statuspeminjaman->delete();
-                    $peminjamanalat->delete();
+                    //$peminjamanalat->delete();
                 }
             }
 

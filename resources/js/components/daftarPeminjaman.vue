@@ -412,8 +412,8 @@
                     <v-card-actions style="justify-content:center;">
                         <v-btn
                             style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
-                            @click="editActionAlat = false">Batal</v-btn>
-                        <v-btn @click="konfirmasiAlatLebih(alat), this.loadingAlat = true" :loading="this.loadingAlat"
+                            @click="editActionAlat = false, this.loadingAlat = false">Batal</v-btn>
+                        <v-btn @click="konfirmasiAlatLebih(alat)" :loading="this.loadingAlat"
                             style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
                     </v-card-actions>
                 </v-card>
@@ -458,8 +458,8 @@
                     <v-card-actions style="justify-content:center;">
                         <v-btn
                             style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
-                            @click="editActionRuangan = false">Batal</v-btn>
-                        <v-btn @click="confirmRuangan(ruangan), this.loadingRuangan = true"
+                            @click="editActionRuangan = false, this.loadingRuangan = false">Batal</v-btn>
+                        <v-btn @click="confirmRuangan(ruangan)"
                             :loading="this.loadingRuangan"
                             style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
                     </v-card-actions>
@@ -483,8 +483,8 @@
                     <v-card-actions style="justify-content:center;">
                         <v-btn
                             style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;"
-                            @click="konfirmasiTools = false, confirmAlat(this.alat)">Tidak</v-btn>
-                        <v-btn @click="confirmAlat2(this.alat), this.loadingAlat2 = true" :loading="this.loadingAlat2"
+                            @click="konfirmasiTools = false, confirmAlat(this.alat), this.loadingAlat2 = false">Tidak</v-btn>
+                        <v-btn @click="confirmAlat2(this.alat)" :loading="this.loadingAlat2"
                             style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;">Ya</v-btn>
                     </v-card-actions>
                 </v-card>
@@ -627,7 +627,6 @@ export default {
                         console.log(error)
                     })
             }
-
             console.log(this.User_role)
         },
         async getAllPeminjamanAlat() {
@@ -738,6 +737,7 @@ export default {
             console.log(this.ruangan);
         },
         konfirmasiAlatLebih(alat) {
+            this.loadingAlat = true;
             const peminjamanid = alat.peminjamanid;
             axios.get(`http://127.0.0.1:8000/api/peminjamanAlat/checkAlat/${peminjamanid}`)
                 .then(response => {
@@ -751,20 +751,22 @@ export default {
                 })
                 .catch(error => {
                     console.log(error)
+                    this.loadingAlat = true;
                 })
+                this.loadingAlat = true;
         },
         confirmRuangan(ruangan) {
             this.loadingRuangan = true;
             if (ruangan.currentStatus === '' || ruangan.currentStatus === null) {
                 alert('Tidak ada status yang dipilih!');
-                this.loadingRuangan = false
+                this.loadingRuangan = false;
                 return
             }
 
             const peminjamanid = ruangan.peminjamanruanganid;
             const userrole = localStorage.getItem('User_role');
             const namastatus = ruangan.currentStatus;
-            const catatan = ruangan.catatan;
+            const catatan = ruangan.catatan ? ruangan.catatan : null;
 
             console.log(peminjamanid, userrole, namastatus, catatan);
 
@@ -788,6 +790,7 @@ export default {
                     console.error("Error konfirmasi failed:", error);
                     this.loadingRuangan = false;
                 });
+
             this.loadingRuangan = false;
         },
         confirmAlat(alat) {
@@ -801,7 +804,7 @@ export default {
             const peminjamanid = alat.peminjamanalatid;
             const userrole = localStorage.getItem('User_role');
             const namastatus = alat.currentStatus;
-            const catatan = alat.catatan;
+            const catatan = alat.catatan ? alat.catatan : null;
 
             console.log(peminjamanid, userrole, namastatus, catatan);
             axios.put(`http://127.0.0.1:8000/api/persetujuan/confirmBookingAlat/${peminjamanid}/${userrole}/${namastatus}/${catatan}`, {
@@ -831,6 +834,8 @@ export default {
             if(alat.currentStatus === '' || alat.currentStatus === null) {
                 alert('Tidak ada status yang dipilih!');
                 this.loadingAlat2 = false
+                this.konfirmasiTools = false
+                this.loadingAlat = false
                 return
             }
             
@@ -840,7 +845,7 @@ export default {
             const peminjamanid = alat.peminjamanalatid;
             const userrole = localStorage.getItem('User_role');
             const namastatus = alat.currentStatus;
-            const catatan = alat.catatan;
+            const catatan = alat.catatan ? alat.catatan : null;
 
             console.log(peminjamanid, userrole, namastatus, catatan);
             axios.put(`http://127.0.0.1:8000/api/persetujuan/confirmBookingAlat2/${peminjamanid}/${userrole}/${namastatus}/${catatan}`, {
@@ -869,6 +874,7 @@ export default {
             this.loadingAlat2 = false;
             this.konfirmasiTools = false;
             this.editActionAlat = false;
+            this.loadingAlat = false;
         },
         async getAllDataofRoom() {
             try {
