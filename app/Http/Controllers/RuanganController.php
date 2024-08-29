@@ -52,7 +52,6 @@ class RuanganController extends Controller
         return $fasilitasPostgresArray; */
 
         $ruangan = Ruangan::create([
-            'RuanganID' => $input['RuanganID'],
             'Nama_ruangan' => $input['Nama_ruangan'],
             'Kapasitas' => $input['Kapasitas'],
             'Lokasi' => $input['Lokasi'],
@@ -64,7 +63,7 @@ class RuanganController extends Controller
 
         $ruanganWithId = Ruangan::find($ruangan->RuanganID);
 
-        return response()->json(['status' => true, 'message' => "Tambahkan Ruangan Success", 'data' => $ruanganWithId]);
+        return response()->json(['status' => true, 'message' => "Tambahkan Ruangan Success", 'data' => $ruanganWithId, 'ruanganid' => $ruangan->RuanganID]);
     }
     //mengubah data
     public function update(UpdateRuanganRequest $request, $RuanganID)

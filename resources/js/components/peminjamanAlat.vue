@@ -145,9 +145,7 @@
                                     <v-icon>mdi-minus-circle</v-icon></v-btn>
                             </div>
 
-                            <v-file-input
-                                v-if="item.selectedOptionOrganisation === 'True' || item.selectedOptionEksternal === 'True'"
-                                type="file" accept="file/pdf" :no-icon="true" v-model="item.dokumen"
+                            <v-file-input type="file" accept="file/pdf" :no-icon="true" v-model="item.dokumen"
                                 style="width: 505px; margin-left: 303px; margin-top: 5px;" variant="outlined"
                                 label="Surat Peminjaman" ref="dokumenPendukung" :id="'dokumen-' + index"></v-file-input>
 
@@ -436,10 +434,17 @@ export default {
                         return
                     }
 
+                    let total = 0;
                     if (form[i].alat.length > 0 && form[i].alat[0].nama !== '') {
                         for (let j = 0; j < form[i].alat.length; j++) {
                             if (form[i].alat[j].jumlahPinjam > form[i].alat[j].maxValue.Jumlah_ketersediaan) {
                                 alert('Jumlah pinjam melebihi jumlah ketersediaan alat! Pada form ke - ' + (i + 1));
+                                loading.value = false;
+                                return;
+                            }
+
+                            if (form[i].alat[j].jumlahPinjam == 0 || form[i].alat[j].jumlahPinjam < 0) {
+                                alert('Jumlah pinjam alat tidak valid! Pada form ke - ' + (i + 1));
                                 loading.value = false;
                                 return;
                             }
@@ -449,7 +454,16 @@ export default {
                                 loading.value = false;
                                 return;
                             }
+
+                            if (form[i].alat[j].maxValue.WajibSurat === false) {
+                                total += 1;
+                            }
                         }
+                    }
+
+                    if (form[i].selectedOptionEksternal === 'False' && form[i].selectedOptionOrganisation === 'False' && form[i].alat.length === total) {
+                        form[i].dokumen = null;
+                        console.log('berhasil')
                     }
                 }
 
@@ -498,7 +512,7 @@ export default {
                         }
 
                         if (form[i].dokumen !== null) {
-                            const response2 = await axios({
+                            const response2 = axios({
                                 method: 'POST',
                                 url: 'http://localhost:8000/api/dokumenAlat/',
                                 data: FORMDATA,
@@ -511,9 +525,51 @@ export default {
                         }
                         dialog.value = true;
                         console.log('Peminjaman saved successfully:', response.data);
+                        form[i].tanggalAwal = '',
+                            form[i].modal = false,
+                            form[i].tanggalSelesai = '',
+                            form[i].isPersonal = '',
+                            form[i].isOrganisation = '',
+                            form[i].isEksternal = '',
+                            form[i].selectedOptionPersonal = '',
+                            form[i].selectedOptionEksternal = '',
+                            form[i].selectedOptionOrganisation = '',
+                            form[i].items = [],
+                            form[i].itemsAll = [],
+                            form[i].daftarAlat = [],
+                            form[i].alat = reactive([{
+                                nama: '',
+                                jumlahPinjam: 0,
+                                maxValue: null,
+                            }]),
+                            form[i].keterangan = '',
+                            form[i].dokumen = null,
+                            form[i].loading = false,
+                            form[i].tambahformbaru = 0
                     } catch (error) {
                         console.error('Error menyimpan data peminjaman alat', error);
                         loading.value = false;
+                        form[i].tanggalAwal = '',
+                            form[i].modal = false,
+                            form[i].tanggalSelesai = '',
+                            form[i].isPersonal = '',
+                            form[i].isOrganisation = '',
+                            form[i].isEksternal = '',
+                            form[i].selectedOptionPersonal = '',
+                            form[i].selectedOptionEksternal = '',
+                            form[i].selectedOptionOrganisation = '',
+                            form[i].items = [],
+                            form[i].itemsAll = [],
+                            form[i].daftarAlat = [],
+                            form[i].alat = reactive([{
+                                nama: '',
+                                jumlahPinjam: 0,
+                                maxValue: null,
+                            }]),
+                            form[i].keterangan = '',
+                            form[i].dokumen = null,
+                            form[i].loading = false,
+                            form[i].tambahformbaru = 0
                     }
                 }
                 loading.value = false;

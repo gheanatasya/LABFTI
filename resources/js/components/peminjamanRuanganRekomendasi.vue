@@ -439,6 +439,11 @@ export default {
                         }
                     }
                 }
+
+                if (form[i].selectedOptionEksternal === 'False' && form[i].selectedOptionOrganisation === 'False') {
+                    form[i].dokumen = null;
+                    console.log('berhasil')
+                }
             }
 
             //console.log(form);

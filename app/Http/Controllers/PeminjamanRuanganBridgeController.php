@@ -626,6 +626,9 @@ class PeminjamanRuanganBridgeController extends Controller
                     $doc = Dokumen::where('DokumenID', $dokumenID)->first();
                     $path = $doc->Path;
                     $namadokumen = $doc->Nama_dokumen;
+                } else {
+                    $path = null;
+                    $namadokumen = null;
                 }
                 $cariroom = Ruangan::where('RuanganID', $ruanganid)->first();
                 $cekalat = Peminjaman_Alat_Bridge::where('RuanganID', $ruanganid)
@@ -778,6 +781,9 @@ class PeminjamanRuanganBridgeController extends Controller
                     $doc = Dokumen::where('DokumenID', $dokumenID)->first();
                     $path = $doc->Path;
                     $namadokumen = $doc->Nama_dokumen;
+                } else {
+                    $path = null;
+                    $namadokumen = null;
                 }
                 $alat = Alat::where('AlatID', $alatid)->first();
                 $namaalat = $alat->Nama;
@@ -911,6 +917,9 @@ class PeminjamanRuanganBridgeController extends Controller
                     $doc = Dokumen::where('DokumenID', $dokumenID)->first();
                     $path = $doc->Path;
                     $namadokumen = $doc->Nama_dokumen;
+                } else {
+                    $path = null;
+                    $namadokumen = null;
                 }
                 $cariroom = Ruangan::where('RuanganID', $ruanganid)->first();
                 $cekalat = Peminjaman_Alat_Bridge::where('RuanganID', $ruanganid)
@@ -1070,6 +1079,9 @@ class PeminjamanRuanganBridgeController extends Controller
                                 $doc = Dokumen::where('DokumenID', $dokumenID)->first();
                                 $path = $doc->Path;
                                 $namadokumen = $doc->Nama_dokumen;
+                            } else {
+                                $path = null;
+                                $namadokumen = null;
                             }
                             $cariroom = Ruangan::where('RuanganID', $ruanganid)->first();
                             $cekalat = Peminjaman_Alat_Bridge::where('RuanganID', $ruanganid)
@@ -1085,6 +1097,9 @@ class PeminjamanRuanganBridgeController extends Controller
                                     $docx = Dokumen::where('DokumenID', $dokumenid)->first();
                                     $path = $docx->Path;
                                     $namadokumen = $docx->Nama_dokumen;
+                                } else {
+                                    $path = null;
+                                    $namadokumen = null;
                                 }
                                 $alat = Alat::where('AlatID', $alatid)->first();
                                 $namaalat = $alat->Nama;
@@ -1221,6 +1236,9 @@ class PeminjamanRuanganBridgeController extends Controller
                     $doc = Dokumen::where('DokumenID', $dokumenID)->first();
                     $path = $doc->Path;
                     $namadokumen = $doc->Nama_dokumen;
+                } else {
+                    $path = null;
+                    $namadokumen = null;
                 }
                 $cariroom = Ruangan::where('RuanganID', $ruanganid)->first();
                 $cekalat = Peminjaman_Alat_Bridge::where('RuanganID', $ruanganid)
@@ -1236,6 +1254,9 @@ class PeminjamanRuanganBridgeController extends Controller
                         $docx = Dokumen::where('DokumenID', $dokumenid)->first();
                         $path = $docx->Path;
                         $namadokumen = $docx->Nama_dokumen;
+                    } else {
+                        $path = null;
+                        $namadokumen = null;
                     }
                     $alat = Alat::where('AlatID', $alatid)->first();
                     $namaalat = $alat->Nama;
@@ -1373,6 +1394,9 @@ class PeminjamanRuanganBridgeController extends Controller
                     $doc = Dokumen::where('DokumenID', $dokumenID)->first();
                     $path = $doc->Path;
                     $namadokumen = $doc->Nama_dokumen;
+                } else {
+                    $path = null;
+                    $namadokumen = null;
                 }
 
                 $alat = Alat::where('AlatID', $alatid)->first();
@@ -1506,6 +1530,9 @@ class PeminjamanRuanganBridgeController extends Controller
                     $doc = Dokumen::where('DokumenID', $dokumenID)->first();
                     $path = $doc->Path;
                     $namadokumen = $doc->Nama_dokumen;
+                } else {
+                    $path = null;
+                    $namadokumen = null;
                 }
 
                 $alat = Alat::where('AlatID', $alatid)->first();
@@ -1646,6 +1673,9 @@ class PeminjamanRuanganBridgeController extends Controller
                                 $doc = Dokumen::where('DokumenID', $dokumenID)->first();
                                 $path = $doc->Path;
                                 $namadokumen = $doc->Nama_dokumen;
+                            } else {
+                                $path = null;
+                                $namadokumen = null;
                             }
 
                             $alat = Alat::where('AlatID', $alatid)->first();

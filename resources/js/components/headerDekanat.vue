@@ -2,12 +2,12 @@
     <v-card>
         <v-toolbar style="background-color: rgb(2,39,10,0.9); font-family: 'Lexend-Regular'">
             <v-toolbar-title>
-                <router-link to="/" style="cursor: pointer">
+                <router-link to="/beranda" style="cursor: pointer">
                     <v-img :width="80" cover src="fti-ukdw.png"></v-img>
                 </router-link>
             </v-toolbar-title>
             <v-toolbar-items class="flex-grow-1 justify-center" style="color: white">
-                <v-btn flat v-for="menu in menusCenter" :key="menu.title">
+                <v-btn flat v-for="menu in menusCenter" :key="menu.title" :to="menu.route">
                     {{ menu.title }}
                 </v-btn>
             </v-toolbar-items>
@@ -34,6 +34,7 @@
                             </v-list-item>
                         </v-list>
                     </v-menu>
+
                     <v-menu v-if="menu1.title === 'Pemberitahuan'">
                         <template v-slot:activator="{ on, props }">
                             <v-btn flat v-on="on" v-bind="props">
@@ -43,9 +44,9 @@
                         </template>
 
                         <v-list style="width: 600px;">
-
                             <v-list-item v-for="(item, i) in this.allNotifications" :key="i">
-                                <v-hover>
+                                <!-- new booking -->
+                                <v-hover v-if="item.data.newbooking">
                                     <template v-slot:default="{ isHovering, props }" v-if="item.read_at === null">
                                         <v-list-item-title v-if="item.read_at === null" v-bind="props" :style="{
                                             backgroundColor: isHovering ? 'rgba(3, 138, 33, 0.4)' : 'rgb(3, 138, 33, 0.3)',
@@ -152,8 +153,7 @@
                                     </template>
                                 </v-hover>
 
-
-                                <v-hover>
+                                <v-hover v-if="item.data.newbooking">
                                     <template v-slot:default="{ isHovering2, props2 }" v-if="item.read_at !== null">
                                         <v-list-item-title v-if="item.read_at !== null" v-bind="props2" :style="{
                                             backgroundColor: isHovering2 ? 'rgba(0, 0, 0, 0.1)' : '',
@@ -258,6 +258,107 @@
                                         </v-list-item-title>
                                     </template>
                                 </v-hover>
+
+                                <!-- status acc peminjaman -->
+                                <v-hover v-if="item.data.statusacc">
+                                    <template v-slot:default="{ isHovering3, props3 }" v-if="item.read_at === null">
+                                        <v-list-item-title v-if="item.read_at === null" v-bind="props3" :style="{
+                                            backgroundColor: isHovering3 ? 'rgba(3, 138, 33, 0.4)' : 'rgb(3, 138, 33, 0.3)',
+                                            cursor: 'pointer',
+                                            paddingLeft: '10px',
+                                            borderBottom: '1px solid rgb(0, 0, 0, 0.1)',
+                                            paddingBottom: '15px',
+                                            paddingRight: '10px',
+                                            paddingTop: '10px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between'
+                                        }">
+                                            <div style="margin-right: 20px; text-align: justify;">
+                                                <h4>{{ item.data.subject }}</h4>
+                                                <p @click="readNotification(item.id)">Peminjaman ruangan {{
+                                                    item.data.detailruangan.namaruangan }}
+                                                    untuk tanggal <br>{{ new
+                                                        Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
+                                                            {
+                                                                year:
+                                                                    'numeric', month:
+                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                            }) }} - {{
+                                                        new
+                                                            Date(item.data.detailruangan.tanggalakhir).toLocaleTimeString('id-ID',
+                                                                {
+                                                                    year:
+                                                                        'numeric', month:
+                                                                        'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                                }) }} <br>telah {{
+                                                        item.data.namastatus
+                                                    }}
+                                                    oleh {{ item.data.accby }} pada {{ new
+                                                        Date(item.created_at).toLocaleTimeString('id-ID',
+                                                            {
+                                                                year:
+                                                                    'numeric', month:
+                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                            }) }}. <br>Catatan :
+                                                    {{
+                                                        item.data.catatan }}
+                                                </p>
+                                            </div>
+                                            <v-icon size="small" style="color: rgb(2,39,10,0.9);">mdi-circle</v-icon>
+                                        </v-list-item-title>
+                                    </template>
+                                </v-hover>
+
+                                <v-hover v-if="item.data.statusacc">
+                                    <template v-slot:default="{ isHovering4, props4 }" v-if="item.read_at !== null">
+                                        <v-list-item-title v-if="item.read_at !== null" v-bind="props4" :style="{
+                                            backgroundColor: isHovering4 ? 'rgba(0, 0, 0, 0.1)' : '',
+                                            cursor: 'pointer',
+                                            paddingLeft: '10px',
+                                            borderBottom: '1px solid rgb(0, 0, 0, 0.1)',
+                                            paddingBottom: '15px',
+                                            paddingRight: '10px',
+                                            paddingTop: '10px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between'
+                                        }">
+                                            <div style="margin-right: 20px; text-align: justify;">
+                                                <h4>{{ item.data.subject }}</h4>
+                                                <p @click="readNotification(item.id)">Peminjaman ruangan {{
+                                                    item.data.detailruangan.namaruangan }}
+                                                    untuk tanggal <br>{{ new
+                                                        Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
+                                                            {
+                                                                year:
+                                                                    'numeric', month:
+                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                            }) }} - {{
+                                                        new
+                                                            Date(item.data.detailruangan.tanggalakhir).toLocaleTimeString('id-ID',
+                                                                {
+                                                                    year:
+                                                                        'numeric', month:
+                                                                        'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                                })
+                                                    }} <br>telah {{
+                                                        item.data.namastatus
+                                                    }}
+                                                    oleh {{ item.data.accby }} pada {{ new
+                                                        Date(item.created_at).toLocaleTimeString('id-ID',
+                                                            {
+                                                                year:
+                                                                    'numeric', month:
+                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                            }) }}. <br>Catatan :
+                                                    {{
+                                                        item.data.catatan }}
+                                                </p>
+                                            </div>
+                                        </v-list-item-title>
+                                    </template>
+                                </v-hover>
                             </v-list-item>
                         </v-list>
                     </v-menu>
@@ -282,20 +383,24 @@
 </template>
 
 <script>
+import '@mdi/font/css/materialdesignicons.min.css';
+
 export default {
     name: "headerDekanat",
     data() {
         return {
             menusCenter: [
-                { title: 'Beranda' },
-                { title: 'Peminjaman Ruangan' },
-                { title: 'Peminjaman Alat' },
-                { title: 'Daftar Peminjaman' },
-                { title: 'Ruangan' },
+                { title: 'Ruangan', route: 'ruangan' },
+                { title: 'Alat', route: 'alat' },
+                { title: 'Beranda', route: 'berandaUser' },
+                { title: 'Peminjaman Ruangan & Alat', route: 'peminjamanRuangan' },
+                { title: 'Peminjaman Alat', route: 'peminjamanAlat' },
+                { title: 'Daftar Peminjaman', route: 'daftarPeminjaman' },
             ],
+
             menusLeft: [
                 { title: 'Pemberitahuan', icon: 'mdi-bell' },
-                { title: 'Pengaturan', icon: 'mdi-cog', submenus: [{ title: 'Profil', icon: 'mdi-account-circle', route: 'profil' }, { title: 'Logout', icon: 'mdi-logout' }] },
+                { title: 'Pengaturan', icon: 'mdi-cog', submenus: [{ title: 'Profil', icon: 'mdi-account-circle', route: 'profil' }, { title: 'Logout', icon: 'mdi-logout', route: 'landingPage' }] },
             ],
             allNotifications: [],
             UserID: localStorage.getItem('UserID'),

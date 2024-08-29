@@ -119,7 +119,7 @@
                             <td style="width: 1000px; font-size: 25px;">
                                 <!-- eksternal -->
                                 <v-icon @click="persetujuanRuangan(ruangan)"
-                                    v-if="(this.User_role === 'Dekan') && (ruangan.eksternal === true) && (ruangan.dekan === true || ruangan.dekan === false)"
+                                    v-if="(this.User_role === 'Dekan') && (ruangan.eksternal === true) && (ruangan.dekan === true || ruangan.dekan === false || ruangan.dekan === null)"
                                     style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanRuangan(ruangan)"
@@ -136,7 +136,7 @@
 
                                 <!-- organisasi -->
                                 <v-icon @click="persetujuanRuangan(ruangan)"
-                                    v-if="(this.User_role === 'Wakil Dekan 3') && (ruangan.organisasi === true) && (ruangan.wd3 === true || ruangan.wd3 === false)"
+                                    v-if="(this.User_role === 'Wakil Dekan 3') && (ruangan.organisasi === true) && (ruangan.wd3 === true || ruangan.wd3 === false || ruangan.wd3 === null)"
                                     style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanRuangan(ruangan)"
@@ -153,7 +153,7 @@
 
                                 <!-- diluar fakultas -->
                                 <v-icon @click="persetujuanRuangan(ruangan)"
-                                    v-if="(this.User_role === 'Wakil Dekan 2') && (ruangan.email != null) && (ruangan.wd2 === true || ruangan.wd2 === false)"
+                                    v-if="(this.User_role === 'Wakil Dekan 2') && (ruangan.email != null) && (ruangan.wd2 === true || ruangan.wd2 === false || ruangan.wd2 === null)"
                                     style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanRuangan(ruangan)"
@@ -173,7 +173,7 @@
                                     v-if="(this.User_role === 'Petugas') && (ruangan.personal === true)"
                                     style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
 
-                                <v-icon v-else style="color: rgb(30, 30, 30, 0.7);">mdi-pencil-circle</v-icon>
+                                <!-- <v-icon v-else style="color: rgb(30, 30, 30, 0.7);">mdi-pencil-circle</v-icon> -->
                             </td>
                         </tr>
                     </tbody>
@@ -293,7 +293,7 @@
                             <td style="width: 700px; font-size: 25px;">
                                 <!-- eksternal -->
                                 <v-icon @click="persetujuanAlat(alat)"
-                                    v-if="(this.User_role === 'Dekan') && (alat.eksternal === true) && (alat.dekan === true || alat.dekan === false)"
+                                    v-if="(this.User_role === 'Dekanat') && (alat.eksternal === true) && (alat.dekan === true || alat.dekan === false || alat.dekan === null)"
                                     style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanAlat(alat)"
@@ -310,7 +310,7 @@
 
                                 <!-- organisasi -->
                                 <v-icon @click="persetujuanAlat(alat)"
-                                    v-if="(this.User_role === 'Wakil Dekan 3') && (alat.organisasi === true) && (alat.wd3 === true || alat.wd3 === false)"
+                                    v-if="(this.User_role === 'Wakil Dekan 3') && (alat.organisasi === true) && (alat.wd3 === true || alat.wd3 === false || alat.wd3 === null)"
                                     style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanAlat(alat)"
@@ -327,7 +327,7 @@
 
                                 <!-- diluar fakultas -->
                                 <v-icon @click="persetujuanAlat(alat)"
-                                    v-if="(this.User_role === 'Wakil Dekan 2') && (alat.email != null) && (alat.wd2 === true || alat.wd2 === false)"
+                                    v-if="(this.User_role === 'Wakil Dekan 2') && (alat.email != null) && (alat.wd2 === true || alat.wd2 === false || alat.wd2 === null)"
                                     style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanAlat(alat)"
@@ -347,7 +347,7 @@
                                     v-if="(this.User_role === 'Petugas') && (alat.personal === true)"
                                     style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
 
-                                <v-icon v-else style="color: rgb(30, 30, 30, 0.7);">mdi-pencil-circle</v-icon>
+                                <!-- <v-icon v-else style="color: rgb(30, 30, 30, 0.7);">mdi-pencil-circle</v-icon> -->
                             </td>
                         </tr>
                     </tbody>
@@ -560,7 +560,7 @@ export default {
                     .catch(error => {
                         console.log(error)
                     })
-            } else if (this.User_role === 'Dekan') {
+            } else if (this.User_role === 'Dekanat') {
                 await axios.get("http://127.0.0.1:8000/api/getAllPeminjamanforAccRuanganDekan")
                     .then(response => {
                         const options = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric' };
@@ -582,7 +582,7 @@ export default {
                     .catch(error => {
                         console.log(error)
                     })
-            } else if (this.User_role === 'WD2') {
+            } else if (this.User_role === 'Wakil Dekan 2') {
                 await axios.get("http://127.0.0.1:8000/api/getAllPeminjamanforAccRuanganWD2")
                     .then(response => {
                         const options = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric' };
@@ -604,7 +604,7 @@ export default {
                     .catch(error => {
                         console.log(error)
                     })
-            } else if (this.User_role === 'WD3') {
+            } else if (this.User_role === 'Wakil Dekan 3') {
                 await axios.get("http://127.0.0.1:8000/api/getAllPeminjamanforAccRuanganWD3")
                     .then(response => {
                         const options = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric' };
@@ -652,7 +652,7 @@ export default {
                     .catch(error => {
                         console.log(error)
                     })
-            } else if (this.User_role === 'WD2') {
+            } else if (this.User_role === 'Wakil Dekan 2') {
                 await axios.get("http://127.0.0.1:8000/api/getAllPeminjamanforAccAlatWD2")
                     .then(response => {
                         const options = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric' };
@@ -674,7 +674,7 @@ export default {
                     .catch(error => {
                         console.log(error)
                     })
-            } else if (this.User_role === 'WD3') {
+            } else if (this.User_role === 'Wakil Dekan 3') {
                 await axios.get("http://127.0.0.1:8000/api/getAllPeminjamanforAccAlatWD3")
                     .then(response => {
                         const options = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric' };
@@ -696,7 +696,7 @@ export default {
                     .catch(error => {
                         console.log(error)
                     })
-            } else if (this.User_role === 'Dekan') {
+            } else if (this.User_role === 'Dekanat') {
                 await axios.get("http://127.0.0.1:8000/api/getAllPeminjamanforAccAlatDekan")
                     .then(response => {
                         const options = { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric' };

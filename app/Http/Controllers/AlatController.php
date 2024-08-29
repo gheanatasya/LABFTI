@@ -7,6 +7,7 @@ use App\Http\Requests\StoreAlatRequest;
 use App\Http\Requests\UpdateAlatRequest;
 use App\Models\Detail_Alat;
 use App\Models\Peminjaman_Alat_Bridge;
+use Google\Service\CloudSearch\Id;
 use Psy\Readline\Hoa\Console;
 
 use function Laravel\Prompts\error;
@@ -39,7 +40,8 @@ class AlatController extends Controller
                 'Nama' => $tool->Nama,
                 'Status' => $tool->Status,
                 'Jumlah_ketersediaan' => $tool->Jumlah_ketersediaan,
-                'Foto' => $gambarGabung
+                'Foto' => $gambarGabung,
+                'WajibSurat' => $tool->WajibSurat
             ];
 
             $alatReturn[] = $fixRecord;
@@ -58,11 +60,18 @@ class AlatController extends Controller
     public function store(StoreAlatRequest $request)
     {
         $input = $request->all();
+        if ($input['wajibSurat'] === 'Perlu Surat') {
+            $surat = true;
+        } elseif ($input['wajibSurat'] === 'Tidak Perlu Surat') {
+            $surat = false;
+        }
+
         Alat::create([
             'KodeAlat' => $input['kodeAlat'],
             'Nama' => $input['namaAlat'],
             'Status' => $input['statusAlat'],
-            'Jumlah_ketersediaan' => 0
+            'Jumlah_ketersediaan' => 0,
+            'WajibSurat' => $surat
         ]);
         return response()->json(['status' => true, 'message' => "Tambahkan Alat Success"]);
     }
@@ -76,15 +85,23 @@ class AlatController extends Controller
             return response()->json(['error' => 'Alat not found'], 404);
         }
 
+        if ($request['wajibSurat'] === 'Perlu Surat') {
+            $surat = true;
+        } elseif ($request['wajibSurat'] === 'Tidak Perlu Surat') {
+            $surat = false;
+        }
+
         $request->validate([
             'namaAlat' => 'required',
             'statusAlat' => 'required',
-            'kodeAlat' => 'required'
+            'kodeAlat' => 'required',
+            'wajibSurat' => 'required'
         ]);
 
         $alat->Nama = $request->get('namaAlat');
         $alat->Status = $request->get('statusAlat');
         $alat->KodeAlat = $request->get('kodeAlat');
+        $alat->WajibSurat = $surat;
         $alat->save();
 
         return response()->json(['message' => 'Alat berhasil diperbarui', 'data' => $alat]);
@@ -127,6 +144,12 @@ class AlatController extends Controller
             $detailAlat = Detail_Alat::where('AlatID', $AlatID)->get();
             $jumlahAlat = count($detailAlat);
             $jumlahRusak = $detailAlat->where('Status_Kebergunaan', 'Rusak')->count();
+            $surat = $tool->WajibSurat;
+            if ($surat === true) {
+                $wajibSurat = 'Perlu Surat';
+            } elseif ($surat === false) {
+                $wajibSurat = 'Tidak Perlu Surat';
+            }
             $recordData = [
                 'Nama' => $namaAlat,
                 'KodeAlat' => $kodeAlat,
@@ -135,6 +158,7 @@ class AlatController extends Controller
                 'JumlahRusak' => $jumlahRusak,
                 'StatusAlat' => $statusAlat,
                 'detailAlat' => [],
+                'WajibSurat' => $wajibSurat
             ];
 
             foreach ($detailAlat as $detail) {

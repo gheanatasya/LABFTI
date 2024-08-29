@@ -79,7 +79,7 @@
 
                         <td style="width: 100px; font-size: 25px; text-align: center;">
                             <v-icon style="color: rgb(2, 39, 10, 1);"
-                                @click="editDataAlat(alat.Nama, alat.KodeAlat, alat.StatusAlat, alat.AlatID)">mdi-pencil-circle</v-icon>
+                                @click="editDataAlat(alat.Nama, alat.KodeAlat, alat.StatusAlat, alat.AlatID, alat.WajibSurat)">mdi-pencil-circle</v-icon>
                             <v-icon style="color: rgb(206, 0, 0, 0.91);"
                                 @click="confirmDeleteAlat(alat.KodeAlat, alat.Nama, alat.AlatID)">mdi-delete-circle</v-icon>
                             <v-icon style="color:  rgb(0, 0, 0, 0.5);"
@@ -102,7 +102,7 @@
                 </tbody>
             </v-table>
             <v-pagination v-model="currentPageAlat" :length="Math.ceil(filteredTools.length / itemsPerPage)"
-                    @change="updateCurrentPageAlat"></v-pagination>
+                @change="updateCurrentPageAlat"></v-pagination>
         </v-card>
 
         <!-- data tabel detail alat -->
@@ -160,7 +160,7 @@
                             <div class="py-1 text-center"
                                 style="content: center; margin-top: 60px; margin-left: 150px; margin-right: -50px;">
                                 <v-icon class="mb-6" color="primary" icon="mdi-alert-circle-outline" size="40"></v-icon>
-                                <div class="text-h7 font-weight-bold">Kamu belum melakukan peminjaman ruangan.</div>
+                                <div class="text-h7 font-weight-bold">Tidak terdapat data detail alat.</div>
                             </div>
                             <td></td>
                             <td></td>
@@ -181,7 +181,7 @@
                 <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;">
                     Edit Alat</v-card-title>
                 <v-card-text style="text-align: center;">
-                    <v-text-field label="Kode Alat" v-model="this.alatEdit.kodeAlat" variant="outlined" readonly
+                    <v-text-field label="Kode Alat" v-model="this.alatEdit.kodeAlat" variant="outlined"
                         style="margin-right: 100px; margin-left:40px;"></v-text-field>
 
                     <v-text-field label="Nama Alat" v-model="this.alatEdit.namaAlat" variant="outlined"
@@ -190,13 +190,18 @@
                     <v-select v-model="this.alatEdit.statusAlat" :items="['Tersedia', 'Tidak Tersedia']" persistent-hint
                         variant="outlined" style="margin-right: 100px; margin-left:40px;" label="Status">
                     </v-select>
+
+                    <v-select v-model="this.alatEdit.wajibSurat" :items="['Perlu Surat', 'Tidak Perlu Surat']"
+                        persistent-hint variant="outlined" style="margin-right: 100px; margin-left:40px;"
+                        label="Ketentuan Surat">
+                    </v-select>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
                         style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
                         @click="editActionAlat = false">Batal</v-btn>
                     <v-btn
-                        @click="updateAlat(alatEdit.namaAlat, alatEdit.kodeAlat, alatEdit.statusAlat, alatEdit.alatID)"
+                        @click="updateAlat(alatEdit.namaAlat, alatEdit.kodeAlat, alatEdit.statusAlat, alatEdit.alatID, alatEdit.wajibSurat)"
                         :loading="this.alatEdit.loading"
                         style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
                 </v-card-actions>
@@ -284,6 +289,10 @@
                     <v-select v-model="this.alatTambah.statusAlat" :items="['Tersedia', 'Tidak Tersedia']"
                         persistent-hint variant="outlined" style="margin-right: 100px; margin-left:40px;"
                         label="Status">
+                    </v-select>
+                    <v-select v-model="this.alatTambah.wajibSurat" :items="['Perlu Surat', 'Tidak Perlu Surat']"
+                        persistent-hint variant="outlined" style="margin-right: 100px; margin-left:40px;"
+                        label="Ketentuan Surat">
                     </v-select>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
@@ -391,7 +400,8 @@ export default {
                 kodeAlat: null,
                 statusAlat: null,
                 loading: false,
-                alatID: null
+                alatID: null,
+                wajibSurat: null
             },
             alatTambah: {
                 namaAlat: null,
@@ -399,7 +409,8 @@ export default {
                 statusAlat: null,
                 jumlahKetersediaan: 0,
                 loading: false,
-                alatID: null
+                alatID: null,
+                wajibSurat: null,
             },
             detailalatTambah: {
                 namaDetailAlat: null,
@@ -459,14 +470,15 @@ export default {
             this.detailalatTambah.AlatID = AlatID;
             //console.log(this.itemforDetailAlat);
         },
-        editDataAlat(namaAlat, kodeAlat, statusAlat, alatID) {
+        editDataAlat(namaAlat, kodeAlat, statusAlat, alatID, wajibSurat) {
             this.editActionAlat = !this.editActionAlat;
             this.alatEdit = {
                 namaAlat,
                 kodeAlat,
                 statusAlat,
                 loading: false,
-                alatID: alatID
+                alatID: alatID,
+                wajibSurat
             }
             console.log(this.alatEdit)
         },
@@ -511,10 +523,10 @@ export default {
                     this.dialogHapusAlat = false;
                 });
         },
-        updateAlat(namaAlat, kodeAlat, statusAlat, alatID) {
+        updateAlat(namaAlat, kodeAlat, statusAlat, alatID, wajibSurat) {
             this.alatEdit.loading = true;
             console.log(namaAlat, kodeAlat, statusAlat, alatID);
-            if (namaAlat === '' || statusAlat === '' || kodeAlat === '') {
+            if (namaAlat === '' || statusAlat === '' || kodeAlat === '' || wajibSurat === '' || wajibSurat === undefined || wajibSurat === null) {
                 alert('Terdapat data yang belum diisi!');
                 this.alatEdit.loading = false;
                 return
@@ -523,7 +535,8 @@ export default {
             const updateData = {
                 namaAlat,
                 statusAlat,
-                kodeAlat
+                kodeAlat,
+                wajibSurat
             }
 
             console.log(updateData);
@@ -614,8 +627,13 @@ export default {
         },
         tambahAlat(alatTambah) {
             this.alatTambah.loading = true;
+            console.log(alatTambah)
             const alatYangDicari = this.allData.find(alat => alat.KodeAlat === alatTambah.kodeAlat);
-            if (alatTambah.namaAlat === null || alatTambah.statusAlat === null || alatTambah.kodeAlat === null) {
+            if (alatTambah.namaAlat === null || alatTambah.statusAlat === null || alatTambah.kodeAlat === null || alatTambah.wajibSurat === null) {
+                alert('Terdapat data yang belum diisi!')
+                this.alatTambah.loading = false;
+                return
+            } else if (alatTambah.namaAlat === '' || alatTambah.statusAlat === '' || alatTambah.kodeAlat === '' || alatTambah.wajibSurat === '') {
                 alert('Terdapat data yang belum diisi!')
                 this.alatTambah.loading = false;
                 return
@@ -625,15 +643,35 @@ export default {
                 return
             }
 
+            /* if (alatTambah.wajibSurat === 'Perlu Surat'){
+                alatTambah.wajibSurat = true
+            } else if (alatTambah.wajibSurat === 'Tidak Perlu Surat'){
+                alatTambah.wajibSurat = false
+            } */
+
             axios.post(`http://127.0.0.1:8000/api/alat`, alatTambah)
                 .then(response => {
                     console.log("Data berhasil masuk ke tabel Alat", response.data)
                     this.alatTambah.loading = false;
                     this.dialogTambahAlat = false
+                    this.alatTambah.namaAlat = null,
+                        this.alatTambah.kodeAlat = null,
+                        this.alatTambah.statusAlat = null,
+                        this.alatTambah.jumlahKetersediaan = 0,
+                        this.alatTambah.loading = false,
+                        this.alatTambah.alatID = null,
+                        this.alatTambah.wajibSurat = null
                 })
                 .catch(Error => {
                     console.error("Data tidak berhasil dimasukkan ke tabel Alat", Error);
                     this.alatTambah.loading = false;
+                    this.alatTambah.namaAlat = null,
+                        this.alatTambah.kodeAlat = null,
+                        this.alatTambah.statusAlat = null,
+                        this.alatTambah.jumlahKetersediaan = 0,
+                        this.alatTambah.loading = false,
+                        this.alatTambah.alatID = null,
+                        this.alatTambah.wajibSurat = null
                 });
         },
         tambahDetailAlat(detailalatTambah) {
@@ -679,10 +717,30 @@ export default {
                                 this.detailalatTambah.loading = false;
                             })
                     }
+                    this.detailalatTambah.namaDetailAlat = null,
+                        this.detailalatTambah.kodeAlat = null,
+                        this.detailalatTambah.kodeDetailAlat = null,
+                        this.detailalatTambah.statusKebergunaan = null,
+                        this.detailalatTambah.statusPeminjaman = null,
+                        this.detailalatTambah.foto = null,
+                        this.detailalatTambah.loading = false,
+                        this.detailalatTambah.detailalatID = null,
+                        this.detailalatTambah.AlatID = null
+                    formData.delete('foto[]')
                 })
                 .catch(Error => {
                     console.error("Data tidak berhasil dimasukkan ke tabel Detail Alat", Error);
                     this.detailalatTambah.loading = false;
+                    this.detailalatTambah.namaDetailAlat = null,
+                        this.detailalatTambah.kodeAlat = null,
+                        this.detailalatTambah.kodeDetailAlat = null,
+                        this.detailalatTambah.statusKebergunaan = null,
+                        this.detailalatTambah.statusPeminjaman = null,
+                        this.detailalatTambah.foto = null,
+                        this.detailalatTambah.loading = false,
+                        this.detailalatTambah.detailalatID = null,
+                        this.detailalatTambah.AlatID = null
+                    formData.delete('foto[]')
                 });
         },
         async createChart() {

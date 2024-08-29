@@ -273,7 +273,6 @@ export default {
                     console.error('Error fetching ProdiID:', error);
                     this.loading = false;
                 });
-                this.loading = false
         },
         setRole() {
             if (!this.email) return '';

@@ -530,6 +530,8 @@ class PeminjamanAlatBridgeController extends Controller
                     $newJumlahPinjam = $tool1['Jumlah_ketersediaan'] - $tool2['Jumlah_pinjam'];
                     if ($newJumlahPinjam >= 0) {
                         $fixAlat[count($fixAlat) - 1]['Jumlah_ketersediaan'] = $newJumlahPinjam;
+                    } else {
+                        $fixAlat[count($fixAlat) - 1]['Jumlah_ketersediaan'] = 0;
                     }
                 }
             }
@@ -541,10 +543,13 @@ class PeminjamanAlatBridgeController extends Controller
     //cek jadwal tabrakan untuk dosen
     public function jadwalAlatforDosen($Tanggal_pakai_awal, $Tanggal_pakai_akhir)
     {
-        $peminjamanalat = Peminjaman_Alat_Bridge::where('Tanggal_pakai_awal', "<=", $Tanggal_pakai_awal)
+        $peminjamanalat = Peminjaman_Alat_Bridge::orWhere(function ($query) {
+            $query->where('Prioritas', 1)->whereNotNull('DokumenID');
+        })
+            ->orWhere(function ($query) {
+                $query->where('Prioritas', 2);
+            })->where('Tanggal_pakai_awal', "<=", $Tanggal_pakai_awal)
             ->where('Tanggal_pakai_akhir', ">=", $Tanggal_pakai_akhir)
-            ->where('DokumenID', '!=', null)
-            ->where('Is_Personal', false)
             ->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
                 $query->where('Tanggal_pakai_awal', '>', $Tanggal_pakai_awal)
                     ->where('Tanggal_pakai_akhir', '<=', $Tanggal_pakai_akhir);

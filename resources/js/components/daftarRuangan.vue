@@ -1,5 +1,6 @@
 <template>
-    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1; position: fixed; width: 100%;">
+    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'"
+        style="z-index: 1; position: fixed; width: 100%;">
     </headerSuperAdmin>
     <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1; position: fixed; width: 100%;"></headerAdmin>
 
@@ -46,80 +47,81 @@
 
     <div style="margin-top: 20px; margin-left: 50px; margin-right: 50px;">
         <v-card>
-        <v-table style="height: 400px;">
-            <thead style="font-family: Lexend-Regular; font-size: 15px;">
-                <tr>
-                    <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">No</th>
-                    <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Nama Ruangan</th>
-                    <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Kode Ruangan</th>
-                    <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Lokasi</th>
-                    <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Kapasitas</th>
-                    <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Kategori</th>
-                    <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Fasilitas</th>
-                    <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Status</th>
-                    <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Foto</th>
-                    <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Action</th>
-                </tr>
-            </thead>
-            <tbody v-if="this.filteredRooms.length > 0">
-                <tr v-for="(ruangan, index) in paginatedRuangan" :key="index"
-                    style="background-color: white; font-family: 'Lexend-Regular; font-size: 15px;">
-                    <td style="width: 20px; text-align: center;"> {{ (currentPageRuangan - 1) * itemsPerPage + index + 1 }} </td>
+            <v-table style="height: 400px;">
+                <thead style="font-family: Lexend-Regular; font-size: 15px;">
+                    <tr>
+                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">No</th>
+                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Nama Ruangan</th>
+                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Kode Ruangan</th>
+                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Lokasi</th>
+                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Kapasitas</th>
+                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Kategori</th>
+                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Fasilitas</th>
+                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Status</th>
+                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Foto</th>
+                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Action</th>
+                    </tr>
+                </thead>
+                <tbody v-if="this.filteredRooms.length > 0">
+                    <tr v-for="(ruangan, index) in paginatedRuangan" :key="index"
+                        style="background-color: white; font-family: 'Lexend-Regular; font-size: 15px;">
+                        <td style="width: 20px; text-align: center;"> {{ (currentPageRuangan - 1) * itemsPerPage + index
+                            + 1 }} </td>
 
-                    <td style="width: 150px;"> {{ ruangan.Nama_ruangan }} </td>
+                        <td style="width: 150px;"> {{ ruangan.Nama_ruangan }} </td>
 
-                    <td style="width: 100px; text-align: center;"> {{ ruangan.RuanganID }} </td>
+                        <td style="width: 100px; text-align: center;"> {{ ruangan.RuanganID }} </td>
 
-                    <td style="width: 100px; text-align: center;"> {{ ruangan.Lokasi }} </td>
+                        <td style="width: 100px; text-align: center;"> {{ ruangan.Lokasi }} </td>
 
-                    <td style="width: 100px; text-align: center;"> {{ ruangan.Kapasitas }} </td>
+                        <td style="width: 100px; text-align: center;"> {{ ruangan.Kapasitas }} </td>
 
-                    <td style="width: 100px; text-align: center;"> {{ ruangan.Kategori }} </td>
+                        <td style="width: 100px; text-align: center;"> {{ ruangan.Kategori }} </td>
 
-                    <td style="width: 100px; text-align: center;">
-                        <p v-for="(facilit, index) in ruangan.fasilitas" :key="index"
-                            style="font-family: Lexend-Regular;">
-                            {{ index + 1 }}. {{ facilit }}
-                        </p>
-                    </td>
+                        <td style="width: 100px; text-align: center;">
+                            <p v-for="(facilit, index) in ruangan.fasilitas" :key="index"
+                                style="font-family: Lexend-Regular;">
+                                {{ index + 1 }}. {{ facilit }}
+                            </p>
+                        </td>
 
-                    <td style="width: 100px; text-align: center;"> {{ ruangan.Status }} </td>
+                        <td style="width: 100px; text-align: center;"> {{ ruangan.Status }} </td>
 
-                    <td style="width: 100px; text-align: center;">
-                        <v-btn @click="morePicture(ruangan.Foto)" style="color: rgb(2,39, 10, 0.9); margin-left: 90px; background: none;
+                        <td style="width: 100px; text-align: center;">
+                            <v-btn @click="morePicture(ruangan.Foto)" style="color: rgb(2,39, 10, 0.9); margin-left: 90px; background: none;
                                                 text-decoration: underline; box-shadow: none; 
                                                 ">L<p style="text-transform: lowercase;">ihat lebih banyak
-                                gambar>></p></v-btn>
-                    </td>
+                                    gambar>></p></v-btn>
+                        </td>
 
-                    <td style="width: 100px; font-size: 25px; text-align: center;">
-                        <v-icon @click="editRuangan(ruangan)"
-                            style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
-                        <v-icon @click="konfirmasiHapusRuangan(ruangan.RuanganID, ruangan.Nama_ruangan)"
-                            style="color: rgb(206, 0, 0, 0.91);">mdi-delete-circle</v-icon>
-                    </td>
-                </tr>
-            </tbody>
-            <tbody v-else>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <div class="py-1 text-center" style="content: center; margin-top: 80px; margin-left: 50px;">
-                    <v-icon class="mb-6" color="primary" icon="mdi-alert-circle-outline" size="40"></v-icon>
-                    <div class="text-h7 font-weight-bold">Maaf, tidak ada data yang bisa ditampilkan.</div>
-                </div>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tbody>
-        </v-table>
+                        <td style="width: 100px; font-size: 25px; text-align: center;">
+                            <v-icon @click="editRuangan(ruangan)"
+                                style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                            <v-icon @click="konfirmasiHapusRuangan(ruangan.RuanganID, ruangan.Nama_ruangan)"
+                                style="color: rgb(206, 0, 0, 0.91);">mdi-delete-circle</v-icon>
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody v-else>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <div class="py-1 text-center" style="content: center; margin-top: 80px; margin-left: 50px;">
+                        <v-icon class="mb-6" color="primary" icon="mdi-alert-circle-outline" size="40"></v-icon>
+                        <div class="text-h7 font-weight-bold">Maaf, tidak ada data yang bisa ditampilkan.</div>
+                    </div>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tbody>
+            </v-table>
 
-        <v-pagination v-model="currentPageRuangan" :length="Math.ceil(filteredRooms.length / itemsPerPage)"
-                    @change="updateCurrentPageRuangan"></v-pagination>
-    </v-card>
+            <v-pagination v-model="currentPageRuangan" :length="Math.ceil(filteredRooms.length / itemsPerPage)"
+                @change="updateCurrentPageRuangan"></v-pagination>
+        </v-card>
 
         <!-- edit ruangan -->
         <v-dialog style="justify-content:center; margin-top: -50px;" v-model="editActionRuangan" persistent
@@ -145,7 +147,7 @@
                     </v-select>
 
                     <v-select v-model="this.ruanganEdit.Kategori"
-                        :items="['Ruang Diskusi/Rapat', 'Ruang Bebas', 'Ruang Perkuliahan']" persistent-hint
+                        :items="['Ruang Diskusi(Rapat)', 'Ruang Bebas', 'Ruang Perkuliahan']" persistent-hint
                         variant="outlined" style="margin-right: 100px; margin-left:40px;" label="Kategori">
                     </v-select>
 
@@ -208,8 +210,8 @@
                 <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;">
                     Tambah Ruangan</v-card-title>
                 <v-card-text style="text-align: center;">
-                    <v-text-field label="Kode Ruangan" v-model="this.ruanganTambah.RuanganID" variant="outlined"
-                        style="margin-right: 100px; margin-left:40px;"></v-text-field>
+                    <!-- <v-text-field label="Kode Ruangan" v-model="this.ruanganTambah.RuanganID" variant="outlined"
+                        style="margin-right: 100px; margin-left:40px;"></v-text-field> -->
 
                     <v-text-field label="Nama Ruangan" v-model="this.ruanganTambah.Nama_ruangan" variant="outlined"
                         style="margin-right: 100px; margin-left:40px;"></v-text-field>
@@ -225,7 +227,7 @@
                     </v-select>
 
                     <v-select v-model="this.ruanganTambah.Kategori"
-                        :items="['Ruang Diskusi/Rapat', 'Ruang Bebas', 'Ruang Perkuliahan']" persistent-hint
+                        :items="['Ruang Diskusi(Rapat)', 'Ruang Bebas', 'Ruang Perkuliahan']" persistent-hint
                         variant="outlined" style="margin-right: 100px; margin-left:40px;" label="Kategori">
                     </v-select>
 
@@ -394,7 +396,7 @@ export default {
 
 
             console.log(foto);
-            console.log(foto[0].name, foto[0].size,foto[0].type)
+            console.log(foto[0].name, foto[0].size, foto[0].type)
             const updateData = {
                 RuanganID,
                 Nama_ruangan,
@@ -534,7 +536,7 @@ export default {
                         console.error("Error gagal mengambil data alat perbulan", error);
                         this.loadinggrafik = false;
                     });
-                    this.loadinggrafik = false;
+                this.loadinggrafik = false;
             } catch {
                 console.error()
                 this.loadinggrafik = false;
@@ -587,9 +589,10 @@ export default {
             axios.post(`http://127.0.0.1:8000/api/ruangan`, tambahData)
                 .then(response => {
                     console.log("Data berhasil masuk ke tabel Ruangan", response.data)
-
+                    const ruangan = response.data.ruanganid;
+                    console.log(ruangan)
                     if (ruanganTambah.foto !== null) {
-                        axios.post(`http://127.0.0.1:8000/api/ruangan/tambahFoto/${ruanganTambah.RuanganID}`, formData)
+                        axios.post(`http://127.0.0.1:8000/api/ruangan/tambahFoto/${ruangan}`, formData)
                             .then(res => {
                                 console.log("Foto ditambahkan successfully:", res.data);
                                 this.ruanganTambah.loading = false;
@@ -599,13 +602,27 @@ export default {
                                 this.ruanganTambah.loading = false;
                             })
                     }
-                    this.ruanganTambah.loading = false;
+                    this.ruanganTambah.Kapasitas = null,
+                        this.ruanganTambah.Kategori = null,
+                        this.ruanganTambah.Lokasi = null,
+                        this.ruanganTambah.Nama_ruangan = null,
+                        this.ruanganTambah.fasilitas = null,
+                        this.ruanganTambah.Status = null,
+                        this.ruanganTambah.foto = null
+                        formData.delete('foto[]')                       
                 })
                 .catch(Error => {
                     console.error("Data tidak berhasil dimasukkan ke tabel Ruangan", Error);
                     this.ruanganTambah.loading = false;
+                    this.ruanganTambah.Kapasitas = null,
+                        this.ruanganTambah.Kategori = null,
+                        this.ruanganTambah.Lokasi = null,
+                        this.ruanganTambah.Nama_ruangan = null,
+                        this.ruanganTambah.fasilitas = null,
+                        this.ruanganTambah.Status = null
+                        this.ruanganTambah.foto = null
+
                 });
-                this.ruanganTambah.loading = false;
         },
         morePicture(Foto) {
             this.showImageDialog = true;
@@ -615,7 +632,7 @@ export default {
             this.gambarTampil = fotoArray;
             console.log(fotoArray);
         },
-        updateCurrentPageRuangan(val){
+        updateCurrentPageRuangan(val) {
             this.currentPageRuangan = val
         }
     },
@@ -636,7 +653,7 @@ export default {
                 return room.Nama_ruangan.toLowerCase().includes(this.searchRuangan.toLowerCase());
             });
         },
-        paginatedRuangan(){
+        paginatedRuangan() {
             const startIndex = (this.currentPageRuangan - 1) * this.itemsPerPage;
             const endIndex = startIndex + this.itemsPerPage;
             return this.filteredRooms.slice(startIndex, endIndex);
