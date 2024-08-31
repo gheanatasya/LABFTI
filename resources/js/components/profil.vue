@@ -26,7 +26,6 @@
         <div style="width: 100%; display: flex;">
             <v-container style="width:40%; margin-left: 300px;">
                 <v-icon style="font-size: 250px;">mdi-account-circle</v-icon>
-                <v-icon style="font-size:30px;margin-top: 180px; margin-left: -50px;">mdi-pencil</v-icon>
 
                 <p style="font-family: Lexend-Regular; font-size: 30px; justify-content: center;"> {{ this.user.Nama }}
                 </p>

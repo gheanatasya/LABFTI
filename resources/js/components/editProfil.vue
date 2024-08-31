@@ -8,14 +8,26 @@
         style="z-index: 1; position: fixed; width: 100%;"></headerDekanat>
 
     <div style="padding-top: 70px;">
+        <v-overlay v-model="overlay" style="background-color: white; z-index: 0">
+            <v-container style="height: 660px; margin-left: 440px;">
+                <v-row align-content="center" class="fill-height" justify="center">
+                    <v-col class="text-subtitle-1 text-center" cols="12" style="font-family: Lexend-Regular;">
+                        Memuat halaman
+                    </v-col>
+                    <v-col cols="6">
+                        <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
+                    </v-col>
+                </v-row>
+            </v-container>
+        </v-overlay>
+        
         <p style="font-family: Lexend-Medium; font-size: 28px; margin-left: 40px; margin-top: 20px;">Profil</p>
 
         <div style="width: 100%; display: flex;">
             <v-container style="width:40%; margin-left: 200px;">
                 <v-icon style="font-size: 250px;">mdi-account-circle</v-icon>
-                <v-icon style="font-size:30px;margin-top: 180px; margin-left: -50px;">mdi-pencil</v-icon>
 
-                <p style="font-family: Lexend-Regular; font-size: 30px; justify-content: center;"> {{ this.user.Nama
+                <p style="font-family: Lexend-Regular; font-size: 30px; justify-content: center;"> {{ this.namaNotChange
                     }} </p>
                 <p style="font-family: Lexend-Regular; font-size: 30px; justify-content: center;"> {{ this.user.NIM_NIDN
                     }}</p>
@@ -76,7 +88,7 @@
                         <v-btn :to="'profil'"
                             style="margin-right: 20px;margin-top: 10px; margin-left: 420px; margin-bottom: 50px; font-family: Lexend-Bold; border: 3px solid rgb(2, 39, 10, 0.9);
                             box-shadow: none;background-color: none; color: rgb(2, 39, 10, 0.9); width: 150px; border-radius: 20px; font-size: 17px;">Batal</v-btn>
-                        <v-btn @click="updateNama" :loading="loading"
+                        <v-btn @click="updateNama(this.user.Nama)" :loading="loading"
                             style="margin-top: 10px; margin-right: 50px; margin-bottom: 50px; font-family: Lexend-Medium; 
                         background-color: rgb(2, 39, 10, 0.9); color: white; width: 150px; border-radius: 20px; font-size: 17px;">Simpan</v-btn>
                     </div>
@@ -156,11 +168,21 @@ export default {
             loadingPassword: false,
             User_role: localStorage.getItem('User_role'),
             ubahEmail: false,
-            ubahPassword: false
+            ubahPassword: false,
+            namaNotChange: null,
+            overlay: true
         }
     },
     mounted() {
-        this.getUserData()
+        Promise.all([
+            this.getUserData()
+        ])
+            .then(() => {
+                this.overlay = false;
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     },
     methods: {
         async getUserData() {
@@ -168,6 +190,7 @@ export default {
             await axios.get(`http://127.0.0.1:8000/api/peminjam/getDataforProfil/${UserID}`)
                 .then(response => {
                     this.user = response.data;
+                    this.namaNotChange = response.data.Nama;
                     console.log(this.user);
                 })
                 .catch(error => {
@@ -198,16 +221,17 @@ export default {
                     console.error('Error fetching data pada tabel Instansi', error);
                 })
         },
-        updateNama() {
+        updateNama(nama) {
             this.loading = true;
-            if (this.peminjam.Nama === null || this.peminjam.Nama === '' || this.peminjam.Nama === undefined){
+            console.log(nama);
+            if (nama === null || nama === '' || nama === undefined){
                 alert('Terdapat data yang kosong!');
                 this.loading = false
                 return
             }
 
             const updatedNama = {
-                nama: this.peminjam.Nama
+                nama: nama
             }
 
             console.log(updatedNama);

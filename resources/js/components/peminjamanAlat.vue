@@ -389,6 +389,7 @@ export default {
                 const UserID = localStorage.getItem('UserID');
 
                 for (let i = 0; i < form.length; i++) {
+                    const pdfRegex1 = /\.pdf$/i;
                     if (form[i].selectedOptionPersonal === '' || form[i].selectedOptionOrganisation === '' || form[i].selectedOptionEksternal === '') {
                         alert('Pilihlah salah satu dari peminjaman untuk Personal, Organisasi, dan Eksternal!');
                         loading.value = false;
@@ -464,6 +465,26 @@ export default {
                     if (form[i].selectedOptionEksternal === 'False' && form[i].selectedOptionOrganisation === 'False' && form[i].alat.length === total) {
                         form[i].dokumen = null;
                         console.log('berhasil')
+                    }
+
+                    if (form[i].selectedOptionEksternal === 'True' && form[i].dokumen !== null) {
+                        if (pdfRegex1.test(form[i].dokumen.name)) {
+                            console.log('aman')
+                        } else {
+                            alert('File harus berupa pdf!');
+                            loading.value = false;
+                            return
+                        }
+                    }
+
+                    if (form[i].selectedOptionOrganisation === 'True' && form[i].dokumen !== null) {
+                        if (pdfRegex1.test(form[i].dokumen.name)) {
+                            console.log('aman')
+                        } else {
+                            alert('File harus berupa pdf!');
+                            loading.value = false;
+                            return
+                        }
                     }
                 }
 
@@ -586,6 +607,10 @@ export default {
                 alert('Salah satu tanggal belum dipilih!');
                 form[index].loading = false;
                 return;
+            } else if (tanggalAwal === tanggalSelesai) {
+                alert('Tanggal tidak boleh sama persis!')
+                form[index].loading = false;
+                return
             }
 
             try {
@@ -623,6 +648,10 @@ export default {
                 alert('Salah satu tanggal belum dipilih!');
                 form[index].loading = false;
                 return;
+            } else if (tanggalAwal === tanggalSelesai) {
+                alert('Tanggal tidak boleh sama persis!')
+                form[index].loading = false;
+                return
             }
 
             try {

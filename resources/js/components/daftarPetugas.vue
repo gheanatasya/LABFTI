@@ -190,7 +190,7 @@
                     <v-text-field label="Tgl Bekerja" v-model="this.petugasTambah.Tgl_Bekerja" variant="outlined"
                         type="date" style="margin-right: 100px; margin-left:40px;"></v-text-field>
 
-                    <v-file-input label="Foto" variant="outlined" v-model="this.petugasTambah.Foto"
+                    <v-file-input label="Foto" variant="outlined" v-model="this.petugasTambah.Foto" accept="file/img"
                         style="margin-right: 100px; margin-left:0px;" id="fotoPetugasTambah"></v-file-input>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
@@ -291,13 +291,24 @@ export default {
                 return
             }
 
+            const imageRegex1 = /\.png$/i;
+            const imageRegex2 = /\.img$/i;
+            const imageRegex3 = /\.jpg$/i;
             const formData = new FormData();
 
-            if (Foto[0].name && Foto[0].size && Foto[0].type) {
+            if (Foto.name && Foto.size && Foto.type) {
                 const file = document.getElementById('editFotoPetugas');
                 formData.append('foto', file.files[0]);
                 formData.append('userid', UserID);
                 //console.log('ada')
+            }
+
+            if (imageRegex1.test(Foto.name) || imageRegex2.test(Foto.name) || imageRegex3.test(Foto.name)) {
+                console.log('file aman')
+            } else {
+                alert('File harus berupa gambar!');
+                this.loadingEdit = false
+                return
             }
 
             const updateData = {
@@ -321,7 +332,7 @@ export default {
                 then(response => {
                     if (response.status === 200) {
                         console.log("Petugas updated successfully:", response.data);
-                        if (Foto[0].name && Foto[0].size && Foto[0].type) {
+                        if (Foto.name && Foto.size && Foto.type) {
                             axios.post(`http://127.0.0.1:8000/api/petugas/tambahFoto/`, formData)
                                 .then(res => {
                                     console.log("Petugas picture updated successfully:", res.data);
@@ -344,7 +355,7 @@ export default {
                     console.error("Error updating Petugas:", error);
                     this.loadingEdit = false;
                 });
-            },
+        },
         konfirmasiHapusPetugas(UserID, Nama) {
             this.dialogHapusPetugas = true
             this.petugasHapus = {
@@ -354,7 +365,7 @@ export default {
             };
         },
         deletePetugas(UserID) {
-            console.log(UserID);    
+            console.log(UserID);
             this.loadingHapus = true;
             axios.delete(`http://127.0.0.1:8000/api/petugas/${UserID}`)
                 .then(response => {
@@ -367,19 +378,50 @@ export default {
                     this.gagalDeletePetugas = true;
                     this.dialogHapusPetugas = false;
                 });
-            },
+        },
         tambahPetugas(petugasTambah) {
             this.loadingTambah = true;
-            if (petugasTambah.Email === null || petugasTambah.NIM === null || petugasTambah.Tgl_Bekerja === null || petugasTambah.Foto === null){
+            console.log(petugasTambah)
+            console.log(petugasTambah.Foto)
+            console.log(petugasTambah.Foto.name)
+            const imageRegex1 = /\.png$/i;
+            const imageRegex2 = /\.img$/i;
+            const imageRegex3 = /\.jpg$/i;
+
+
+            if (petugasTambah.Email !== null && petugasTambah.Email !== undefined && petugasTambah.Email !== '') {
+                const domain = petugasTambah.Email.split('@')[1];
+                if (domain === 'ti.ukdw.ac.id' || domain === 'si.ukdw.ac.id') {
+                    console.log('aman')
+                } else {
+                    alert('Gunakan email yang valid!');
+                    this.loadingTambah = false
+                    return
+                }
+            } else if (petugasTambah.Email) {
+                alert('Email harus diisi!');
+                this.loadingTambah = false;
+                return
+            }
+
+            if (petugasTambah.Email === null || petugasTambah.NIM === null || petugasTambah.Tgl_Bekerja === null || petugasTambah.Foto === null) {
                 alert('Terdapat data yang belum diisi!');
                 this.loadingTambah = false;
                 return
-            } else if (isNaN(petugasTambah.NIM)){
+            } else if (isNaN(petugasTambah.NIM)) {
                 alert('NIM harus berupa angka!');
                 this.loadingTambah = false;
                 return
             }
-            console.log(petugasTambah)
+            
+            if (imageRegex1.test(petugasTambah.Foto.name) || imageRegex2.test(petugasTambah.Foto.name) || imageRegex3.test(petugasTambah.Foto.name)) {
+                console.log('file aman')
+            } else {
+                alert('File harus berupa format gambar!');
+                this.loadingTambah = false
+                return
+            }
+            
 
             const formData = new FormData();
             const file = document.getElementById('fotoPetugasTambah');;
@@ -387,22 +429,45 @@ export default {
 
             axios.post(`http://127.0.0.1:8000/api/petugas/`, petugasTambah)
                 .then(response => {
-                    formData.append('userid', response.data.UserID);
-                    console.log("Petugas ditambahkan successfully:", response.data);
-                    axios.post(`http://127.0.0.1:8000/api/petugas/tambahFoto/`, formData)
-                        .then(res => {
-                            console.log("Foto ditambahkan successfully:", res.data);
-                            this.loadingTambah = false;
-                            this.tambahActionPetugas = false;
-                        }).catch(error => {
-                            console.error("Foto gagal ditambahkan", error);
-                            this.loadingTambah = false;
-                        })
+                    if (response.data.status !== false) {
+                        formData.append('userid', response.data.UserID);
+                        console.log("Petugas ditambahkan successfully:", response.data);
+                        axios.post(`http://127.0.0.1:8000/api/petugas/tambahFoto/`, formData)
+                            .then(res => {
+                                console.log("Foto ditambahkan successfully:", res.data);
+                                this.loadingTambah = false;
+                                this.tambahActionPetugas = false;
+
+                                this.petugasTambah.Email = null
+                                this.petugasTambah.NIM = null
+                                this.petugasTambah.Tgl_Bekerja = null
+                                this.petugasTambah.Foto = null
+                                this.petugasTambah.Tgl_Berhenti = null
+                            }).catch(error => {
+                                console.error("Foto gagal ditambahkan", error);
+                                this.loadingTambah = false;
+                            })
+                    } else {
+                        alert('User dengan email dan NIM tersebut tidak ditemukan!');
+                        this.petugasTambah.Email = null
+                        this.petugasTambah.NIM = null
+                        this.petugasTambah.Tgl_Bekerja = null
+                        this.petugasTambah.Foto = null
+                        this.petugasTambah.Tgl_Berhenti = null
+                        this.loadingTambah = false;
+                        return
+                    }
                 }).catch(error => {
                     console.error("Data gagal ditambahkan", error);
                     alert('User dengan email dan NIM tersebut tidak ditemukan!');
+                    this.petugasTambah.Email = null
+                    this.petugasTambah.NIM = null
+                    this.petugasTambah.Tgl_Bekerja = null
+                    this.petugasTambah.Foto = null
+                    this.petugasTambah.Tgl_Berhenti = null
                     this.loadingTambah = false;
                 });
+            this.loadingTambah = false;
         }
     },
     mounted() {

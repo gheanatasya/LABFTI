@@ -91,6 +91,12 @@ class PetugasController extends Controller
         $input = $request->all();
         $user = User::where('Email', $input['Email'])->first();
         $userid = $user->UserID;
+        $nimnidn = $user->NIM_NIDN;
+        $niminput = $input['NIM'];
+
+        if ($nimnidn !== $niminput) {
+            return response()->json(['status' => false, 'message' => "NIM/NIDN tidak sesuai"]);
+        }
         // return $userid;
 
         $peminjam = Peminjam::where('UserID', $userid)->first();

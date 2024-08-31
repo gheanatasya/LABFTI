@@ -36,6 +36,10 @@ class RuanganController extends Controller
             $ruanganReturn[] = $fixRecord;
         }
 
+        usort($ruanganReturn, function($a, $b) {
+            return strcmp($a['Nama_ruangan'], $b['Nama_ruangan']);
+        });
+    
         return $ruanganReturn;
     }
     //ambil data sesuai id

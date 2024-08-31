@@ -160,8 +160,8 @@
 
               <v-file-input v-if="item.selectedOptionOrganisation === 'True' || item.selectedOptionEksternal === 'True'"
                 type="file" accept="file/pdf" :no-icon="true" v-model="item.dokumen"
-                style="width: 505px; margin-left: 303px; margin-top: 5px;" variant="outlined" label="Surat Peminjaman" @change="handleDokumen(index)"
-                ref="dokumenPendukung" :id="'dokumen-' + index"></v-file-input>
+                style="width: 505px; margin-left: 303px; margin-top: 5px;" variant="outlined" label="Surat Peminjaman"
+                @change="handleDokumen(index)" ref="dokumenPendukung" :id="'dokumen-' + index"></v-file-input>
 
               <div
                 style="display: flex; justify-content: space-between; margin-left: 320px; margin-right: 20px; margin-bottom: 50px; margin-top: 20px;">
@@ -407,6 +407,7 @@ export default {
       const aman = ref(false);
 
       for (let i = 0; i < form.length; i++) {
+        const pdfRegex1 = /\.pdf$/i;
         if (form[i].selectedOptionPersonal === '' || form[i].selectedOptionOrganisation === '' || form[i].selectedOptionEksternal === '') {
           alert('Pilihlah salah satu dari peminjaman untuk Personal, Organisasi, dan Eksternal!');
           loading.value = false;
@@ -468,7 +469,7 @@ export default {
             }
 
             if (form[i].alat[j].maxValue.WajibSurat === true && form[i].dokumen === null) {
-              alert('Alat ' + form[i].alat[j].nama + ' memerlukan surat peminjaman! Silahkan mengupload surat pendukung peminjaman alat atau lakukan peminjaman alat secara terpisah.');
+              alert('Alat ' + form[i].alat[j].nama + ' memerlukan surat peminjaman! Silahkan melakukan peminjaman alat secara terpisah.');
               loading.value = false;
               return;
             }
@@ -478,6 +479,26 @@ export default {
         if (form[i].selectedOptionEksternal === 'False' && form[i].selectedOptionOrganisation === 'False') {
           form[i].dokumen = null;
           console.log('berhasil')
+        }
+
+        if (form[i].selectedOptionEksternal === 'True' && form[i].dokumen !== null) {
+          if (pdfRegex1.test(form[i].dokumen.name)) {
+            console.log('aman')
+          } else {
+            alert('File harus berupa pdf!');
+            loading.value = false;
+            return
+          }
+        }
+
+        if (form[i].selectedOptionOrganisation === 'True' && form[i].dokumen !== null) {
+          if (pdfRegex1.test(form[i].dokumen.name)) {
+            console.log('aman')
+          } else {
+            alert('File harus berupa pdf!');
+            loading.value = false;
+            return
+          }
         }
       }
 
@@ -640,6 +661,9 @@ export default {
       } else if (tanggalAwal === '' || tanggalSelesai === '') {
         form[index].loading = false;
         return;
+      } else if (tanggalAwal === tanggalSelesai) {
+        form[index].loading = false;
+        return
       }
 
       try {
@@ -674,6 +698,9 @@ export default {
       } else if (tanggalAwal === '' || tanggalSelesai === '') {
         form[index].loading = false;
         return;
+      } else if (tanggalAwal === tanggalSelesai) {
+        form[index].loading = false;
+        return
       }
 
       try {
@@ -711,6 +738,10 @@ export default {
         alert('Salah satu tanggal belum dipilih!');
         form[index].loading = false;
         return;
+      } else if (tanggalAwal === tanggalSelesai) {
+        alert('Tanggal tidak boleh sama persis!')
+        form[index].loading = false;
+        return
       }
 
       try {
@@ -745,6 +776,10 @@ export default {
         alert('Salah satu tanggal belum dipilih!');
         form[index].loading = false;
         return;
+      } else if (tanggalAwal === tanggalSelesai) {
+        alert('Tanggal tidak boleh sama persis!')
+        form[index].loading = false;
+        return
       }
 
       try {
@@ -837,13 +872,13 @@ export default {
         console.log(this.form[index].dokumen)
       }
     },
-    handleDokumen(index){
+    handleDokumen(index) {
       if (this.form[index].selectedOptionOrganisation === 'False' && this.form[index].selectedOptionEksternal === 'False') {
         this.form[index].dokumen = null;
         console.log(this.form[index].dokumen, 'berhasil')
       }
     }
   },
-  
+
 };
 </script>

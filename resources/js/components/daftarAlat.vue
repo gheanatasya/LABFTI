@@ -576,10 +576,19 @@ export default {
 
             const formData = new FormData();
 
-            if (foto[0].name && foto[0].size && foto[0].type) {
+            if (foto !== null) {
                 const file = document.getElementById('editFotoAlat');
                 for (let i = 0; i < file.files.length; i++) {
-                    formData.append('foto[]', file.files[i]);
+                    const imageRegex1 = /\.png$/i;
+                    const imageRegex2 = /\.img$/i;
+                    const imageRegex3 = /\.jpg$/i;
+                    if (imageRegex1.test(file.files[i].name) || imageRegex2.test(file.files[i].name) || imageRegex3.test(file.files[i].name)) {
+                        formData.append('foto[]', file.files[i]);
+                    } else {
+                        alert('File harus berupa gambar!')
+                        this.detailalatEdit.loading = false;
+                        return
+                    }
                 }
                 console.log('ada')
             } else {
@@ -603,7 +612,7 @@ export default {
                 .then(response => {
                     if (response.status === 200) {
                         console.log("Detail alat updated successfully:", response.data);
-                        if (foto[0].name && foto[0].size && foto[0].type) {
+                        if (foto[0].name && foto[0].size &&  foto[0].type) {
                             axios.post(`http://127.0.0.1:8000/api/detail/tambahFoto/${detailalatID}`, formData)
                                 .then(res => {
                                     console.log("Foto ditambahkan successfully:", res.data);
@@ -695,7 +704,16 @@ export default {
             if (detailalatTambah.foto !== null) {
                 const file = document.getElementById('tambahFotoAlat');
                 for (let i = 0; i < file.files.length; i++) {
-                    formData.append('foto[]', file.files[i]);
+                    const imageRegex1 = /\.png$/i;
+                    const imageRegex2 = /\.img$/i;
+                    const imageRegex3 = /\.jpg$/i;
+                    if (imageRegex1.test(file.files[i].name) || imageRegex2.test(file.files[i].name) || imageRegex3.test(file.files[i].name)) {
+                        formData.append('foto[]', file.files[i]);
+                    } else {
+                        alert('File harus berupa gambar!')
+                        this.detailalatTambah.loading = false;
+                        return
+                    }
                 }
                 console.log('ada')
             } else {

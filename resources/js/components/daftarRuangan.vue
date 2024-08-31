@@ -353,6 +353,7 @@ export default {
                             }
                             return room;
                         });
+                        
                         console.log(this.allRoom);
                     })
                     .catch(error => {
@@ -384,10 +385,19 @@ export default {
             const updatebaru = fasilitas.toString();
             const formData = new FormData();
 
-            if (foto[0].name && foto[0].size && foto[0].type) {
+            if (foto !== null) {
                 const file = document.getElementById('editFotoRuangan');
                 for (let i = 0; i < file.files.length; i++) {
-                    formData.append('foto[]', file.files[i]);
+                    const imageRegex1 = /\.png$/i;
+                    const imageRegex2 = /\.img$/i;
+                    const imageRegex3 = /\.jpg$/i;
+                    if (imageRegex1.test(file.files[i].name) || imageRegex2.test(file.files[i].name) || imageRegex3.test(file.files[i].name)) {
+                        formData.append('foto[]', file.files[i]);
+                    } else {
+                        alert('File harus berupa gambar!');
+                        this.ruanganEdit.loading = false
+                        return
+                    }
                 }
                 console.log('ada')
             } else {
@@ -396,7 +406,7 @@ export default {
 
 
             console.log(foto);
-            console.log(foto[0].name, foto[0].size, foto[0].type)
+            console.log(foto.name, foto.size, foto.type)
             const updateData = {
                 RuanganID,
                 Nama_ruangan,
@@ -419,7 +429,7 @@ export default {
                     if (response.status === 200) {
                         console.log("Ruangan updated successfully:", response.data);
 
-                        if (foto[0].name && foto[0].size && foto[0].type) {
+                        if (foto !== null) {
                             axios.post(`http://127.0.0.1:8000/api/ruangan/tambahFoto/${RuanganID}`, formData)
                                 .then(res => {
                                     console.log("Foto ditambahkan successfully:", res.data);
@@ -546,6 +556,7 @@ export default {
             this.ruanganTambah.loading = true;
             console.log(ruanganTambah)
             const regex = /^[a-zA-Z,\s]+$/;
+
             if (this.ruanganTambah.Kapasitas === null || this.ruanganTambah.Kapasitas === null || this.ruanganTambah.Lokasi === null || this.ruanganTambah.Kategori === null || this.ruanganTambah.Nama_ruangan === null || this.ruanganTambah.fasilitas === null || this.ruanganTambah.Status === null || this.ruanganTambah.foto === null) {
                 alert('Terdapat data yang belum diisi!');
                 this.ruanganTambah.loading = false;
@@ -567,7 +578,16 @@ export default {
             if (ruanganTambah.foto !== null) {
                 const file = document.getElementById('tambahFotoRuangan');
                 for (let i = 0; i < file.files.length; i++) {
-                    formData.append('foto[]', file.files[i]);
+                    const imageRegex1 = /\.png$/i;
+                    const imageRegex2 = /\.img$/i;
+                    const imageRegex3 = /\.jpg$/i;
+                    if (imageRegex1.test(file.files[i].name) || imageRegex2.test(file.files[i].name) || imageRegex3.test(file.files[i].name)) {
+                        formData.append('foto[]', file.files[i]);
+                    } else {
+                        alert('File harus berupa gambar!')
+                        this.ruanganTambah.loading = false;
+                        return
+                    }
                 }
                 console.log('ada')
             } else {
@@ -609,7 +629,7 @@ export default {
                         this.ruanganTambah.fasilitas = null,
                         this.ruanganTambah.Status = null,
                         this.ruanganTambah.foto = null
-                        formData.delete('foto[]')                       
+                    formData.delete('foto[]')
                 })
                 .catch(Error => {
                     console.error("Data tidak berhasil dimasukkan ke tabel Ruangan", Error);
@@ -620,8 +640,7 @@ export default {
                         this.ruanganTambah.Nama_ruangan = null,
                         this.ruanganTambah.fasilitas = null,
                         this.ruanganTambah.Status = null
-                        this.ruanganTambah.foto = null
-
+                    this.ruanganTambah.foto = null
                 });
         },
         morePicture(Foto) {
