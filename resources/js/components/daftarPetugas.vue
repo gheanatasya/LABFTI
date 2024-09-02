@@ -67,9 +67,10 @@
 
                         <td style="width: 100px; text-align: center;"> {{ petugas.Prodi }} </td>
 
-                        <td style="width: 100px; text-align: center;"> {{ petugas.Tgl_Bekerja }} </td>
+                        <td style="width: 100px; text-align: center;"> {{ new Date(petugas.Tgl_Bekerja).toLocaleDateString('id-ID') }} </td>
 
-                        <td style="width: 100px; text-align: center;"> {{ petugas.Tgl_Berhenti }} </td>
+                        <td v-if="petugas.Tgl_Berhenti !== null" style="width: 100px; text-align: center;"> {{ new Date(petugas.Tgl_Berhenti).toLocaleDateString('id-ID') }} </td>
+                        <td v-else style="width: 100px; text-align: center;"> {{ petugas.Tgl_Berhenti }} </td>
 
                         <td style="width: 100px; text-align: center;">
                             <a :href="'../storage/' + petugas.Foto" target="_blank">
@@ -336,6 +337,11 @@ export default {
                             axios.post(`http://127.0.0.1:8000/api/petugas/tambahFoto/`, formData)
                                 .then(res => {
                                     console.log("Petugas picture updated successfully:", res.data);
+                                    const dataGanti = res.data.data
+                                    const index = this.allPetugas.findIndex(petugas => petugas.UserID === dataGanti.UserID);
+                                    if (index !== -1) {
+                                        this.allPetugas[index] = dataGanti;
+                                    }
                                     this.loadingEdit = false;
                                     this.editActionPetugas = false;
                                 })
@@ -343,7 +349,16 @@ export default {
                                     console.error("Error updating Petugas:", err);
                                     this.loadingEdit = false;
                                 });
+
+                            return
                         }
+
+                        const dataGanti = response.data.data
+                        const index = this.allPetugas.findIndex(petugas => petugas.UserID === dataGanti.UserID);
+                        if (index !== -1) {
+                            this.allPetugas[index] = dataGanti;
+                        }
+
                         this.editActionPetugas = false;
                         this.loadingEdit = false;
                     } else {
@@ -370,6 +385,11 @@ export default {
             axios.delete(`http://127.0.0.1:8000/api/petugas/${UserID}`)
                 .then(response => {
                     console.log("Petugas deleted successfully:", response.data);
+                    const dataGanti = response.data.UserID
+                    const index = this.allPetugas.findIndex(petugas => petugas.UserID === dataGanti);
+                    if (index !== -1) {
+                        this.allPetugas.splice(index, 1);
+                    }
                     this.loadingHapus = false;
                     this.dialogHapusPetugas = false;
                 }).catch(error => {
@@ -413,7 +433,7 @@ export default {
                 this.loadingTambah = false;
                 return
             }
-            
+
             if (imageRegex1.test(petugasTambah.Foto.name) || imageRegex2.test(petugasTambah.Foto.name) || imageRegex3.test(petugasTambah.Foto.name)) {
                 console.log('file aman')
             } else {
@@ -421,7 +441,7 @@ export default {
                 this.loadingTambah = false
                 return
             }
-            
+
 
             const formData = new FormData();
             const file = document.getElementById('fotoPetugasTambah');;
@@ -429,15 +449,23 @@ export default {
 
             axios.post(`http://127.0.0.1:8000/api/petugas/`, petugasTambah)
                 .then(response => {
+                    console.log(response.data)
                     if (response.data.status !== false) {
                         formData.append('userid', response.data.UserID);
                         console.log("Petugas ditambahkan successfully:", response.data);
                         axios.post(`http://127.0.0.1:8000/api/petugas/tambahFoto/`, formData)
                             .then(res => {
                                 console.log("Foto ditambahkan successfully:", res.data);
+                                const newData = res.data.data
+                                let index = 0;
+                                while (index < this.allPetugas.length &&
+                                    this.allPetugas[index].NIM < newData.NIM) {
+                                    index++;
+                                }
+                                this.allPetugas.splice(index, 0, newData);
+
                                 this.loadingTambah = false;
                                 this.tambahActionPetugas = false;
-
                                 this.petugasTambah.Email = null
                                 this.petugasTambah.NIM = null
                                 this.petugasTambah.Tgl_Bekerja = null
@@ -448,6 +476,7 @@ export default {
                                 this.loadingTambah = false;
                             })
                     } else {
+                        console.error("Data gagal ditambahkan", error);
                         alert('User dengan email dan NIM tersebut tidak ditemukan!');
                         this.petugasTambah.Email = null
                         this.petugasTambah.NIM = null
@@ -467,7 +496,6 @@ export default {
                     this.petugasTambah.Tgl_Berhenti = null
                     this.loadingTambah = false;
                 });
-            this.loadingTambah = false;
         }
     },
     mounted() {

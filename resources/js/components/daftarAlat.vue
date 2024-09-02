@@ -509,6 +509,9 @@ export default {
                 .then(response => {
                     if (response.data != 'Gagal') {
                         console.log("Alat deleted successfully:", response.data);
+                        const newData = response.data.data
+                        const indexAlat = this.allData.findIndex(alat => alat.AlatID === newData.AlatID);
+                        this.allData[indexAlat] = newData;
                         this.itemforHapusAlat.loading = false;
                         this.dialogHapusAlat = false;
                     } else {
@@ -551,6 +554,11 @@ export default {
                         then(response => {
                             if (response.status === 200) {
                                 console.log("Alat updated successfully:", response.data);
+
+                                const newData = response.data.data
+                                const indexAlat = this.allData.findIndex(alat => alat.AlatID === newData.AlatID);
+                                this.allData[indexAlat] = newData;
+
                                 this.alatEdit.loading = false;
                                 this.editActionAlat = false;
                             } else {
@@ -612,10 +620,15 @@ export default {
                 .then(response => {
                     if (response.status === 200) {
                         console.log("Detail alat updated successfully:", response.data);
-                        if (foto[0].name && foto[0].size &&  foto[0].type) {
+                        if (foto[0].name && foto[0].size && foto[0].type) {
                             axios.post(`http://127.0.0.1:8000/api/detail/tambahFoto/${detailalatID}`, formData)
                                 .then(res => {
                                     console.log("Foto ditambahkan successfully:", res.data);
+                                    const newData = res.data.dataTambah
+                                    const indexAlat = this.allData.findIndex(alat => alat.AlatID === newData.AlatID);
+                                    const indexDetailAlat = this.allData[indexAlat].detailAlat.findIndex(detailalat => detailalat.DetailAlatID === newData.DetailAlatID);
+                                    this.allData[indexAlat].detailAlat[indexDetailAlat] = newData;
+
                                     this.detailalatEdit.loading = false;
                                     this.editActionDetailAlat = false;
                                 }).catch(error => {
@@ -623,6 +636,12 @@ export default {
                                     this.detailalatEdit.loading = false;
                                 })
                         }
+
+                        const newData = response.data.data
+                        const indexAlat = this.allData.findIndex(alat => alat.AlatID === newData.AlatID);
+                        const indexDetailAlat = this.allData[indexAlat].detailAlat.findIndex(detailalat => detailalat.DetailAlatID === newData.DetailAlatID);
+                        this.allData[indexAlat].detailAlat[indexDetailAlat] = newData;
+
                         this.detailalatEdit.loading = false;
                         this.editActionDetailAlat = false;
                     } else {
@@ -661,6 +680,16 @@ export default {
             axios.post(`http://127.0.0.1:8000/api/alat`, alatTambah)
                 .then(response => {
                     console.log("Data berhasil masuk ke tabel Alat", response.data)
+
+                    const newData = response.data.data
+                    let indexAlat = 0;
+                    while (indexAlat < this.allData.length &&
+                        this.allData[indexAlat].Nama.toLowerCase() < newData.Nama.toLowerCase()) {
+                        indexAlat++;
+                    }
+                    this.allData.splice(indexAlat, 0, newData);
+
+
                     this.alatTambah.loading = false;
                     this.dialogTambahAlat = false
                     this.alatTambah.namaAlat = null,
@@ -728,37 +757,42 @@ export default {
                         axios.post(`http://127.0.0.1:8000/api/detail/tambahFoto/${detailalat}`, formData)
                             .then(res => {
                                 console.log("Foto ditambahkan successfully:", res.data);
+                                const newData = res.data.dataTambah
+                                let indexDetailAlat = 0;
+                                const indexAlat = this.allData.findIndex(alat => alat.AlatID === detailalatTambah.AlatID);
+                                while (indexDetailAlat < this.allData[indexAlat].detailAlat.length &&
+                                    this.allData[indexAlat].detailAlat[indexDetailAlat].NamaDetailAlat.toLowerCase() < newData.NamaDetailAlat.toLowerCase()) {
+                                    indexDetailAlat++;
+                                }
+                                this.allData[indexAlat].detailAlat.splice(indexDetailAlat, 0, newData);
+
                                 this.detailalatTambah.loading = false;
                                 this.dialogTambahDetailAlat = false
+                                this.detailalatTambah.namaDetailAlat = null,
+                                    this.detailalatTambah.kodeDetailAlat = null,
+                                    this.detailalatTambah.statusKebergunaan = null,
+                                    this.detailalatTambah.statusPeminjaman = null,
+                                    this.detailalatTambah.foto = null,
+                                    this.detailalatTambah.loading = false,
+                                    this.detailalatTambah.detailalatID = null,
+                                    formData.delete('foto[]')
                             }).catch(error => {
                                 console.error("Foto gagal ditambahkan", error);
                                 this.detailalatTambah.loading = false;
                             })
                     }
-                    this.detailalatTambah.namaDetailAlat = null,
-                        this.detailalatTambah.kodeAlat = null,
-                        this.detailalatTambah.kodeDetailAlat = null,
-                        this.detailalatTambah.statusKebergunaan = null,
-                        this.detailalatTambah.statusPeminjaman = null,
-                        this.detailalatTambah.foto = null,
-                        this.detailalatTambah.loading = false,
-                        this.detailalatTambah.detailalatID = null,
-                        this.detailalatTambah.AlatID = null
-                    formData.delete('foto[]')
                 })
                 .catch(Error => {
                     console.error("Data tidak berhasil dimasukkan ke tabel Detail Alat", Error);
                     this.detailalatTambah.loading = false;
                     this.detailalatTambah.namaDetailAlat = null,
-                        this.detailalatTambah.kodeAlat = null,
                         this.detailalatTambah.kodeDetailAlat = null,
                         this.detailalatTambah.statusKebergunaan = null,
                         this.detailalatTambah.statusPeminjaman = null,
                         this.detailalatTambah.foto = null,
                         this.detailalatTambah.loading = false,
                         this.detailalatTambah.detailalatID = null,
-                        this.detailalatTambah.AlatID = null
-                    formData.delete('foto[]')
+                        formData.delete('foto[]')
                 });
         },
         async createChart() {

@@ -106,7 +106,7 @@ class RuanganController extends Controller
         $ruangan->Status = 'Tidak Tersedia';
         $ruangan->save();
 
-        return response()->json(['message' => 'Ruangan berhasil dihapus'], 204);
+        return response()->json(['message' => 'Ruangan berhasil dihapus', 'dataHapus' => $ruangan]);
     }
 
     //ambil data untuk grafik 
@@ -176,6 +176,6 @@ class RuanganController extends Controller
         $ruangan->Foto = $namaDataString;
         $ruangan->save();
 
-        return response()->json(['message' => 'File uploaded successfully!']);
+        return response()->json(['message' => 'File uploaded successfully!', 'dataTambah' => $ruangan]);
     }
 }

@@ -49,6 +49,10 @@ class PetugasController extends Controller
             $allRecordPetugas[] = $record;
         }
 
+        usort($allRecordPetugas, function($a, $b) {
+            return strcmp($a['NIM'], $b['NIM']);
+        });
+
         return $allRecordPetugas;
     }
 
@@ -69,8 +73,28 @@ class PetugasController extends Controller
         $petugas->Tgl_Bekerja = $request->get('Tgl_Bekerja');
         $petugas->Tgl_Berhenti = $request->get('Tgl_Berhenti');
         $petugas->save();
+        $user = User::where('UserID', $UserID)->first();
+        $nim = $user->NIM_NIDN;
+        if (substr($nim, 0, 2) === '71') {
+            $prodi = 'Informatika';
+        } elseif (substr($nim, 0, 2) === '72') {
+            $prodi = 'Sistem Informasi';
+        } else {
+            $prodi = 'Prodi tidak dikenali';
+        }
 
-        return response()->json(['message' => 'Petugas berhasil diperbarui', 'data' => $petugas]);
+        $newPetugas = [
+            'Nama' => $petugas->Nama,
+            'Email' => $user->Email,
+            'NIM' => $user->NIM_NIDN,
+            'Prodi' => $prodi,
+            'Tgl_Bekerja' => $petugas->Tgl_Bekerja,
+            'Tgl_Berhenti' => $petugas->Tgl_Berhenti,
+            'Foto' => $petugas->Foto,
+            'UserID' => $UserID
+        ];
+
+        return response()->json(['message' => 'Petugas berhasil diperbarui', 'data' => $newPetugas]);
     }
 
     //hapus petugas
@@ -82,7 +106,7 @@ class PetugasController extends Controller
         $user->save();
         $petugas->delete();
 
-        return response()->json(['message' => 'Petugas berhasil dihapus'], 204);
+        return response()->json(['message' => 'Petugas berhasil dihapus', 'UserID' => $UserID]);
     }
 
     //tambah petugas
@@ -91,11 +115,11 @@ class PetugasController extends Controller
         $input = $request->all();
         $user = User::where('Email', $input['Email'])->first();
         $userid = $user->UserID;
-        $nimnidn = $user->NIM_NIDN;
+        $nim = $user->NIM_NIDN;
         $niminput = $input['NIM'];
 
-        if ($nimnidn !== $niminput) {
-            return response()->json(['status' => false, 'message' => "NIM/NIDN tidak sesuai"]);
+        if ($nim !== intval($niminput)) {
+            return response()->json(['status' => false, 'message' => "NIM/NIDN tidak sesuai", $niminput, $nim]);
         }
         // return $userid;
 
@@ -124,8 +148,16 @@ class PetugasController extends Controller
         $userid = $request->input('userid');
 
         $petugas = Petugas::where('UserID', $userid)->first();
+        $user = User::where('UserID', $userid)->first();
+        $nim = $user->NIM_NIDN;
         $directory = 'petugas/' . $petugas->Nama;
-
+        if (substr($nim, 0, 2) === '71') {
+            $prodi = 'Informatika';
+        } elseif (substr($nim, 0, 2) === '72') {
+            $prodi = 'Sistem Informasi';
+        } else {
+            $prodi = 'Prodi tidak dikenali';
+        }
         $fileInfo = [
             'originalName' => $data->getClientOriginalName(),
             'size' => $data->getSize(),
@@ -137,7 +169,18 @@ class PetugasController extends Controller
         $petugas->Foto = $path;
         $petugas->save();
 
-        return response()->json(['message' => 'File uploaded successfully!']);
+        $newPetugas = [
+            'Nama' => $petugas->Nama,
+            'Email' => $user->Email,
+            'NIM' => $user->NIM_NIDN,
+            'Prodi' => $prodi,
+            'Tgl_Bekerja' => $petugas->Tgl_Bekerja,
+            'Tgl_Berhenti' => $petugas->Tgl_Berhenti,
+            'Foto' => $petugas->Foto,
+            'UserID' => $userid
+        ];
+
+        return response()->json(['message' => 'File uploaded successfully!', 'data' => $newPetugas]);
     }
 
     public function editFoto(UpdatePetugasRequest $request){

@@ -210,7 +210,6 @@
                             icon="mdi-projector"></v-icon> Proyektor
                         </p>
                         <p> {{ ruangan.Kategori }} </p>
-                        <p> Pemakaian Selanjutnya : 13.00 - 16.00 </p>
                         <router-link to="/ruangan">Lihat detail</router-link>
                       </div>
                     </v-col>

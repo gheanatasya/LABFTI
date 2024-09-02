@@ -524,6 +524,10 @@ class PeminjamanRuanganBridgeController extends Controller
             }
         }
 
+        usort($allroombooking, function($a, $b) {
+            return strcmp($b['tanggalawal'], $a['tanggalawal']);
+        });
+
         return $allroombooking;
     }
 
@@ -595,6 +599,10 @@ class PeminjamanRuanganBridgeController extends Controller
             $ambildata = Ruangan::where('Nama_ruangan', $availableRoom)->first();
             $detailRoom[] = $ambildata;
         }
+
+        usort($detailRoom, function($a, $b) {
+            return strcmp($a['Nama_ruangan'], $b['Nama_ruangan']);
+        });
 
         return response()->json(['availableRoom' => $array, 'detailRuangan' => $detailRoom]);
     }
@@ -749,6 +757,11 @@ class PeminjamanRuanganBridgeController extends Controller
                 $totalsemuapeminjaman[] = $recordDataRoom;
             }
         }
+
+        usort($totalsemuapeminjaman, function($a, $b) {
+            return strcmp($b['tanggalpinjam'], $a['tanggalpinjam']);
+        });
+
         return $totalsemuapeminjaman;
     }
 
@@ -888,6 +901,11 @@ class PeminjamanRuanganBridgeController extends Controller
                 $totalsemuapeminjaman[] = $recordDataAlat;
             }
         }
+
+        usort($totalsemuapeminjaman, function($a, $b) {
+            return strcmp($b['tanggalpinjam'], $a['tanggalpinjam']);
+        });
+
         return $totalsemuapeminjaman;
     }
 
@@ -1041,6 +1059,10 @@ class PeminjamanRuanganBridgeController extends Controller
                 }
             }
         }
+        usort($totalsemuapeminjaman, function($a, $b) {
+            return strcmp($b['tanggalpinjam'], $a['tanggalpinjam']);
+        });
+
         return $totalsemuapeminjaman;
     }
 
@@ -1207,6 +1229,11 @@ class PeminjamanRuanganBridgeController extends Controller
                 }
             }
         }
+
+        usort($totalsemuapeminjaman, function($a, $b) {
+            return strcmp($b['tanggalpinjam'], $a['tanggalpinjam']);
+        });
+
         return $totalsemuapeminjaman;
     }
 
@@ -1363,6 +1390,10 @@ class PeminjamanRuanganBridgeController extends Controller
                 }
             }
         }
+        usort($totalsemuapeminjaman, function($a, $b) {
+            return strcmp($b['tanggalpinjam'], $a['tanggalpinjam']);
+        });
+
         return $totalsemuapeminjaman;
     }
 
@@ -1499,6 +1530,11 @@ class PeminjamanRuanganBridgeController extends Controller
                 }
             }
         }
+
+        usort($totalsemuapeminjaman, function($a, $b) {
+            return strcmp($b['tanggalpinjam'], $a['tanggalpinjam']);
+        });
+
         return $totalsemuapeminjaman;
     }
 
@@ -1635,6 +1671,11 @@ class PeminjamanRuanganBridgeController extends Controller
                 }
             }
         }
+
+        usort($totalsemuapeminjaman, function($a, $b) {
+            return strcmp($b['tanggalpinjam'], $a['tanggalpinjam']);
+        });
+
         return $totalsemuapeminjaman;
     }
 
@@ -1779,6 +1820,11 @@ class PeminjamanRuanganBridgeController extends Controller
                             }
                         }
                     }
+
+                    usort($totalsemuapeminjaman, function($a, $b) {
+                        return strcmp($b['tanggalpinjam'], $a['tanggalpinjam']);
+                    });
+
                     return $totalsemuapeminjaman;
                 }
             }
@@ -2322,6 +2368,10 @@ class PeminjamanRuanganBridgeController extends Controller
             $datatabrak[] = $data;
         }
 
+        usort($detailRoom, function($a, $b) {
+            return strcmp($a['Nama_ruangan'], $b['Nama_ruangan']);
+        });
+
         return response()->json(['availableRoom' => $array, 'detailRuangan' => $detailRoom, 'datatabrak' => $datatabrak]);
     }
 
@@ -2396,6 +2446,10 @@ class PeminjamanRuanganBridgeController extends Controller
             $datatabrak[] = $data;
         }
 
+        usort($detailRoom, function($a, $b) {
+            return strcmp($a['Nama_ruangan'], $b['Nama_ruangan']);
+        });
+
         return response()->json(['availableRoom' => $array, 'detailRuangan' => $detailRoom, 'fixRoom' => $filteredDetailRoom, 'datatabrak' => $datatabrak]);
     }
 
@@ -2428,6 +2482,10 @@ class PeminjamanRuanganBridgeController extends Controller
             return $room->Lokasi === $Lokasi &&
                 $room->Kategori === $Kategori &&
                 $room->Kapasitas === $Kapasitas;
+        });
+
+        usort($detailRoom, function($a, $b) {
+            return strcmp($a['Nama_ruangan'], $b['Nama_ruangan']);
         });
 
         return response()->json(['availableRoom' => $array, 'detailRuangan' => $detailRoom, 'fixRoom' => $filteredDetailRoom]);

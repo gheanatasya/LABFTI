@@ -364,6 +364,7 @@ class PeminjamanAlatBridgeController extends Controller
         foreach ($peminjaman as $booking) {
             $keterangan = $booking->Keterangan;
             $peminjamanID = $booking->PeminjamanID;
+            $tanggalpinjam = $booking->Tanggal_pinjam;
             $datapinjamalat = Peminjaman_Alat_Bridge::where('PeminjamanID', $peminjamanID)->get();
 
             foreach ($datapinjamalat as $data) {
@@ -450,13 +451,17 @@ class PeminjamanAlatBridgeController extends Controller
                     'namaalat' => $namaalat,
                     'status' => $namastatus,
                     'jumlahPinjam' => $jumlahPinjam,
-                    'histori' => $histori
+                    'histori' => $histori,
+                    'tanggalpinjam' => $tanggalpinjam
                 ];
 
                 $alltoolsbooking[] = $recordData;
             }
         }
 
+        usort($alltoolsbooking, function($a, $b) {
+            return strcmp($b['tanggalawal'], $a['tanggalawal']);
+        });
         return $alltoolsbooking;
     }
 
@@ -536,6 +541,10 @@ class PeminjamanAlatBridgeController extends Controller
                 }
             }
         }
+
+        usort($fixAlat, function($a, $b) {
+            return strcmp($a['NamaAlat'], $b['NamaAlat']);
+        });
 
         return response()->json(['daftarAlat' => $daftarAlat, 'daftaralattabrakan' => $daftarAlatTabrakan, 'daftarAlatfix' => $fixAlat]);
     }
@@ -619,6 +628,10 @@ class PeminjamanAlatBridgeController extends Controller
                 }
             }
         }
+
+        usort($fixAlat, function($a, $b) {
+            return strcmp($a['NamaAlat'], $b['NamaAlat']);
+        });
 
         return response()->json(['daftarAlat' => $daftarAlat, 'daftaralattabrakan' => $daftarAlatTabrakan, 'daftarAlatfix' => $fixAlat]);
     }

@@ -87,8 +87,8 @@
 
                         <td style="width: 100px; text-align: center;"> {{ ruangan.Status }} </td>
 
-                        <td style="width: 100px; text-align: center;">
-                            <v-btn @click="morePicture(ruangan.Foto)" style="color: rgb(2,39, 10, 0.9); margin-left: 90px; background: none;
+                        <td style="width: 80px; text-align: center;">
+                            <v-btn @click="morePicture(ruangan.Foto)" style="color: rgb(2,39, 10, 0.9); margin-left: 40px; background: none;
                                                 text-decoration: underline; box-shadow: none; 
                                                 ">L<p style="text-transform: lowercase;">ihat lebih banyak
                                     gambar>></p></v-btn>
@@ -348,12 +348,12 @@ export default {
                     .then(response => {
                         this.allRoom = response.data.map(room => {
                             if (room.fasilitas) {
-                                const facilitiesArray = room.fasilitas.split(/"(.*?)",|,/).filter(facilit => facilit);
-                                room.fasilitas = facilitiesArray.map(facility => facility.replace(/"/g, ""));
+                                const facilitiesArray = room.fasilitas.split(", ").filter(facilit => facilit);
+                                room.fasilitas = facilitiesArray;
                             }
                             return room;
                         });
-                        
+
                         console.log(this.allRoom);
                     })
                     .catch(error => {
@@ -433,15 +433,34 @@ export default {
                             axios.post(`http://127.0.0.1:8000/api/ruangan/tambahFoto/${RuanganID}`, formData)
                                 .then(res => {
                                     console.log("Foto ditambahkan successfully:", res.data);
+
+                                    const dataGanti = res.data.dataTambah
+                                    const fasilitasArrayGanti = dataGanti.fasilitas.split(", ").filter(facilit => facilit);
+                                    dataGanti.fasilitas = fasilitasArrayGanti;
+                                    console.log(dataGanti)
+                                    const index = this.allRoom.findIndex(room => room.RuanganID === dataGanti.RuanganID);
+                                    if (index !== -1) {
+                                        this.allRoom[index] = dataGanti;
+                                    }
                                     this.ruanganEdit.loading = false;
                                     this.editActionRuangan = false;
+                                    return
                                 }).catch(error => {
                                     console.error("Foto gagal ditambahkan", error);
                                     this.ruanganEdit.loading = false;
                                 })
                         }
+
+                        const dataGanti = response.data.data
+                        const fasilitasArrayGanti = dataGanti.fasilitas.split(", ").filter(facilit => facilit);
+                        dataGanti.fasilitas = fasilitasArrayGanti;
+                        const index = this.allRoom.findIndex(room => room.RuanganID === dataGanti.RuanganID);
+                        if (index !== -1) {
+                            this.allRoom[index] = dataGanti;
+                        }
                         this.ruanganEdit.loading = false;
                         this.editActionRuangan = false;
+                        return
                     } else {
                         console.error("Error updating Ruangan:", response.data.message);
                         this.ruanganEdit.loading = false;
@@ -464,6 +483,14 @@ export default {
             axios.delete(`http://127.0.0.1:8000/api/ruangan/${RuanganID}`)
                 .then(response => {
                     console.log("Ruangan deleted successfully:", response.data);
+                    const dataHapus = response.data.dataHapus
+                    const fasilitasArrayHapus = dataHapus.fasilitas.split(", ").filter(facilit => facilit);
+                    dataHapus.fasilitas = fasilitasArrayHapus;
+                    const index = this.allRoom.findIndex(room => room.RuanganID === dataHapus.RuanganID);
+                    if (index !== -1) {
+                        this.allRoom[index] = dataHapus;
+                    }
+
                     this.ruanganHapus.loading = false;
                     this.dialogHapusRuangan = false;
                 }).catch(error => {
@@ -568,10 +595,7 @@ export default {
             }
 
             const facilitiesString = ruanganTambah.fasilitas;
-            const facilitiesArray = facilitiesString.split(/,/);
-            const fasilit = facilitiesArray.filter(facility => facility.trim());
-            //const postgresqlArrayString = `{"${fasilit.map(facility => `"${facility.trim()}"`).join('", "')}"}`;
-            console.log(fasilit)
+            const facilitiesArray = facilitiesString.split(", ").filter(facility => facility);
 
             const formData = new FormData();
 
@@ -617,19 +641,31 @@ export default {
                                 console.log("Foto ditambahkan successfully:", res.data);
                                 this.ruanganTambah.loading = false;
                                 this.dialogTambahRuangan = false
+                                const newData = res.data.dataTambah
+                                const facilitiesString = newData.fasilitas.split(", ").filter(facility => facility);
+                                newData.fasilitas = facilitiesString
+
+                                let index = 0;
+                                while (index < this.allRoom.length &&
+                                    this.allRoom[index].Nama_ruangan.toLowerCase() < newData.Nama_ruangan.toLowerCase()) {
+                                    index++;
+                                }
+
+                                this.allRoom.splice(index, 0, newData);
+
+                                this.ruanganTambah.Kapasitas = null,
+                                    this.ruanganTambah.Kategori = null,
+                                    this.ruanganTambah.Lokasi = null,
+                                    this.ruanganTambah.Nama_ruangan = null,
+                                    this.ruanganTambah.fasilitas = null,
+                                    this.ruanganTambah.Status = null,
+                                    this.ruanganTambah.foto = null
+                                formData.delete('foto[]')
                             }).catch(error => {
                                 console.error("Foto gagal ditambahkan", error);
                                 this.ruanganTambah.loading = false;
                             })
                     }
-                    this.ruanganTambah.Kapasitas = null,
-                        this.ruanganTambah.Kategori = null,
-                        this.ruanganTambah.Lokasi = null,
-                        this.ruanganTambah.Nama_ruangan = null,
-                        this.ruanganTambah.fasilitas = null,
-                        this.ruanganTambah.Status = null,
-                        this.ruanganTambah.foto = null
-                    formData.delete('foto[]')
                 })
                 .catch(Error => {
                     console.error("Data tidak berhasil dimasukkan ke tabel Ruangan", Error);

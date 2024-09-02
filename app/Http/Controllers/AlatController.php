@@ -18,22 +18,22 @@ class AlatController extends Controller
     {
         $alat = Alat::all()->where('Status', 'Tersedia');
         $alatReturn = [];
-        foreach ($alat as $tool){
+        foreach ($alat as $tool) {
             $gambar = [];
             $alatid = $tool->AlatID;
             $detail = Detail_Alat::where('AlatID', $alatid)->get();
-            foreach ($detail as $det){
-                if ($det->Foto !== null){
+            foreach ($detail as $det) {
+                if ($det->Foto !== null) {
                     $image = explode(':', $det->Foto);
                     $gambar[] = $image;
                 }
             }
 
             $gambarGabung = [];
-            foreach ($gambar as $img){
+            foreach ($gambar as $img) {
                 $gambarGabung = array_merge($gambarGabung, $img);
             }
-            
+
             $fixRecord = [
                 'AlatID' => $tool->AlatID,
                 'KodeAlat' => $tool->KodeAlat,
@@ -66,20 +66,35 @@ class AlatController extends Controller
             $surat = false;
         }
 
-        Alat::create([
+        $alat = Alat::create([
             'KodeAlat' => $input['kodeAlat'],
             'Nama' => $input['namaAlat'],
             'Status' => $input['statusAlat'],
             'Jumlah_ketersediaan' => 0,
             'WajibSurat' => $surat
         ]);
-        return response()->json(['status' => true, 'message' => "Tambahkan Alat Success"]);
+
+        $newalat = [
+            'Nama' => $alat->Nama,
+            'KodeAlat' => $alat->KodeAlat,
+            'AlatID' => $alat->AlatID,
+            'JumlahAlat' => 0,
+            'JumlahRusak' => 0,
+            'StatusAlat' => $alat->Status,
+            'detailAlat' => [],
+            'WajibSurat' => $input['wajibSurat']
+        ];
+
+        return response()->json(['status' => true, 'message' => "Tambahkan Alat Success", 'data' => $newalat]);
     }
 
     //edit data alat 
     public function update(UpdateAlatRequest $request, $AlatID)
     {
         $alat = Alat::where('AlatID', $AlatID)->first();
+        $detailAlat = Detail_Alat::where('AlatID', $AlatID)->get();
+        $jumlahAlat = count($detailAlat);
+        $jumlahRusak = $detailAlat->where('Status_Kebergunaan', 'Rusak')->count();
 
         if ($alat === null) {
             return response()->json(['error' => 'Alat not found'], 404);
@@ -104,7 +119,39 @@ class AlatController extends Controller
         $alat->WajibSurat = $surat;
         $alat->save();
 
-        return response()->json(['message' => 'Alat berhasil diperbarui', 'data' => $alat]);
+        $newalat = [
+            'Nama' => $alat->Nama,
+            'KodeAlat' => $alat->KodeAlat,
+            'AlatID' => $alat->AlatID,
+            'JumlahAlat' => $jumlahAlat,
+            'JumlahRusak' => $jumlahRusak,
+            'StatusAlat' => $alat->Status,
+            'detailAlat' => [],
+            'WajibSurat' => $request['wajibSurat']
+        ];
+
+        foreach ($detailAlat as $detail) {
+            $DetailAlatID = $detail->DetailAlatID;
+            $kodeDetailAlat = $detail->KodeDetailAlat;
+            $namaDetailAlat = $detail->Nama_alat;
+            $statusKebergunaan = $detail->Status_Kebergunaan;
+            $statusPeminjaman = $detail->Status_Peminjaman;
+            $foto = $detail->Foto;
+
+            $recordPerDetail = [
+                'KodeDetailAlat' => $kodeDetailAlat,
+                'DetailAlatID' => $DetailAlatID,
+                'NamaDetailAlat' => $namaDetailAlat,
+                'StatusKebergunaan' => $statusKebergunaan,
+                'StatusPeminjaman' => $statusPeminjaman,
+                'Foto' => $foto,
+                'AlatID' => $detail->AlatID
+            ];
+
+            $newalat['detailAlat'][] = $recordPerDetail;
+        }
+
+        return response()->json(['message' => 'Alat berhasil diperbarui', 'data' => $newalat]);
     }
 
     //hapus data alat
@@ -112,6 +159,8 @@ class AlatController extends Controller
     {
         $alat = Alat::find($AlatID);
         $detailAlat = Detail_Alat::where('AlatID', $AlatID)->get();
+        $jumlahAlat = count($detailAlat);
+        $jumlahRusak = $detailAlat->where('Status_Kebergunaan', 'Rusak')->count();
         $semuaRusak = true;
 
         foreach ($detailAlat as $detail) {
@@ -124,7 +173,45 @@ class AlatController extends Controller
         if ($semuaRusak) {
             $alat->Status = 'Tidak Tersedia';
             $alat->save();
-            return response()->json(['message' => 'Alat berhasil dihapus'], 204);
+
+            if ($alat->WajibSurat === true) {
+                $surat = 'Perlu Surat';
+            } elseif ($alat->WajibSurat === false) {
+                $surat = 'Tidak Perlu Surat';
+            }
+
+            $newalat = [
+                'Nama' => $alat->Nama,
+                'KodeAlat' => $alat->KodeAlat,
+                'AlatID' => $alat->AlatID,
+                'JumlahAlat' => $jumlahAlat,
+                'JumlahRusak' => $jumlahRusak,
+                'StatusAlat' => $alat->Status,
+                'detailAlat' => [],
+                'WajibSurat' => $surat
+            ];
+
+            foreach ($detailAlat as $detail) {
+                $DetailAlatID = $detail->DetailAlatID;
+                $kodeDetailAlat = $detail->KodeDetailAlat;
+                $namaDetailAlat = $detail->Nama_alat;
+                $statusKebergunaan = $detail->Status_Kebergunaan;
+                $statusPeminjaman = $detail->Status_Peminjaman;
+                $foto = $detail->Foto;
+
+                $recordPerDetail = [
+                    'KodeDetailAlat' => $kodeDetailAlat,
+                    'DetailAlatID' => $DetailAlatID,
+                    'NamaDetailAlat' => $namaDetailAlat,
+                    'StatusKebergunaan' => $statusKebergunaan,
+                    'StatusPeminjaman' => $statusPeminjaman,
+                    'Foto' => $foto,
+                    'AlatID' => $detail->AlatID
+                ];
+
+                $newalat['detailAlat'][] = $recordPerDetail;
+            }
+            return response()->json(['message' => 'Alat berhasil dihapus', 'data' => $newalat]);
         } else {
             return 'Gagal';
         }
@@ -185,6 +272,10 @@ class AlatController extends Controller
             $semuaData[] = $recordData;
         }
 
+        usort($semuaData, function ($a, $b) {
+            return strcmp($a['Nama'], $b['Nama']);
+        });
+
         return $semuaData;
     }
 
@@ -200,20 +291,20 @@ class AlatController extends Controller
             $dataBulan = [];
 
             for ($i = 1; $i <= 12; $i++) {
-                $bulanString = str_pad($i, 2, '0', STR_PAD_LEFT); 
-                $namaBulan = date('F', strtotime("01-$bulanString-2024")); 
-            
+                $bulanString = str_pad($i, 2, '0', STR_PAD_LEFT);
+                $namaBulan = date('F', strtotime("01-$bulanString-2024"));
+
                 $dataBulan[$bulanString] = [
                     'nama_bulan' => $namaBulan,
                     'jumlah_peminjaman' => 0,
                 ];
             }
-            
+
             foreach ($peminjamanalat as $peminjaman) {
-                $bulan = date('m', strtotime($peminjaman->Tanggal_pakai_awal));            
+                $bulan = date('m', strtotime($peminjaman->Tanggal_pakai_awal));
                 $dataBulan[$bulan]['jumlah_peminjaman']++;
             }
-            
+
             ksort($dataBulan);
 
             $record = [

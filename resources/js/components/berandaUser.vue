@@ -47,7 +47,8 @@
 
                             <td style="width: 50px;"> {{ item.namaruangan }} </td>
 
-                            <td style="width: 50px;"> {{ item.tanggalawal }} </td>
+                            <td style="width: 50px;"> {{ new Date(item.tanggalawal).toLocaleTimeString('un-US', 
+                                { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'}) }} </td>
 
                             <td style="width: 500px;"> {{ item.keterangan }} </td>
 
@@ -172,7 +173,8 @@
 
                             <td style="width: 50px; "> {{ item.namaalat }} </td>
 
-                            <td style="width: 50px; "> {{ item.tanggalawal }} </td>
+                            <td style="width: 50px; "> {{ new Date(item.tanggalawal).toLocaleTimeString('un-US', 
+                                { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'}) }} </td>
 
                             <td style="width: 50px; "> {{ item.jumlahPinjam }} </td>
 

@@ -64,9 +64,19 @@ class DetailAlatController extends Controller
         $detailalat->KodeDetailAlat = $request->get('kodeDetailAlat');
         $detailalat->save();
 
-        return response()->json(['message' => 'Detail alat berhasil diperbarui', 'data' => $detailalat]);
+        $newDetailAlat = [
+            'KodeDetailAlat' => $detailalat->KodeDetailAlat,
+            'DetailAlatID' => $detailalat->DetailAlatID,
+            'NamaDetailAlat' => $detailalat->Nama_alat,
+            'StatusKebergunaan' => $detailalat->Status_Kebergunaan,
+            'StatusPeminjaman' => $detailalat->Status_Peminjaman,
+            'Foto' => $detailalat->Foto,
+            'AlatID' => $detailalat->AlatID
+        ];
+
+        return response()->json(['message' => 'Detail alat berhasil diperbarui', 'data' => $newDetailAlat]);
     }
-    
+
     //hapus data
     public function delete($DetailAlatID)
     {
@@ -76,7 +86,8 @@ class DetailAlatController extends Controller
     }
 
     //tambah foto, edit foto
-    public function tambahFoto(StoreDetail_AlatRequest $request, $DetailAlatID){
+    public function tambahFoto(StoreDetail_AlatRequest $request, $DetailAlatID)
+    {
         $data = $request->file('foto');
         $namaData = [];
 
@@ -90,7 +101,7 @@ class DetailAlatController extends Controller
             Storage::makeDirectory($directory);
         }
 
-        foreach ($data as $foto){
+        foreach ($data as $foto) {
             $fileInfo = [
                 'originalName' => $foto->getClientOriginalName(),
                 'size' => $foto->getSize(),
@@ -105,6 +116,16 @@ class DetailAlatController extends Controller
         $detailalat->Foto = $namaDataString;
         $detailalat->save();
 
-        return response()->json(['message' => 'File uploaded successfully!']);
+        $newDetailAlat = [
+            'KodeDetailAlat' => $detailalat->KodeDetailAlat,
+            'DetailAlatID' => $detailalat->DetailAlatID,
+            'NamaDetailAlat' => $detailalat->Nama_alat,
+            'StatusKebergunaan' => $detailalat->Status_Kebergunaan,
+            'StatusPeminjaman' => $detailalat->Status_Peminjaman,
+            'Foto' => $detailalat->Foto,
+            'AlatID' => $detailalat->AlatID
+        ];
+
+        return response()->json(['message' => 'File uploaded successfully!', 'dataTambah' => $newDetailAlat]);
     }
 }
