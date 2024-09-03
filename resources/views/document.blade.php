@@ -6,6 +6,7 @@
 </head>
 
 <body>
+    <h2>Tanda Terima</h2>
     <h2>Peminjaman Ruangan dan Alat LAB FTI UKDW</h2>
     @if (count($peminjamanDataRuangan) > 0)
         @if ($role == 'Mahasiswa' || $role == 'Petugas')

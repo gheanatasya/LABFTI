@@ -21,7 +21,10 @@
 
     <router-link to="loginPage"
       style="font-size: 20px; font-family:Lexend-Medium; position: absolute; top: 20px; right: 20px; color: white; text-decoration: none;">Login</router-link>
-    <div style="text-align:center; color:white; font-family:Lexend-Medium; font-size: 25px; margin-top: 40px;">
+      <div style="text-align:center; color:white; font-family:Lexend-Medium; font-size: 25px; margin-top: 40px;">
+        Peminjaman Ruangan dan Alat LAB FTI UKDW
+      </div>
+    <div style="text-align:center; color:white; font-family:Lexend-Regular; font-size: 20px; margin-top: 10px;">
       Untuk melakukan peminjaman, silahkan <router-link to="loginPage" style="color:white">Login</router-link> terlebih
       dahulu.
     </div>

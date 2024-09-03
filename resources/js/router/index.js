@@ -16,6 +16,8 @@ import editProfil from '../components/editProfil.vue'
 import rekomendasiRuangan from '../components/rekomendasiRuangan.vue'
 import afterRegistration from '../components/afterRegistration.vue'
 import alat from '../components/alat.vue'
+import resetPassword from '../components/resetPassword.vue'
+import confirmNewPass from '../components/confirmNewPass.vue'
 
 const routes = [
     {
@@ -102,6 +104,16 @@ const routes = [
         path: '/daftarRuangan',
         name: 'daftarRuangan',
         component: daftarRuangan
+    },
+    {
+        path: '/resetPassword',
+        name: 'resetPassword',
+        component: resetPassword
+    },
+    {
+        path: '/confirmNewPass/:token/:email',
+        name: 'confirmNewPass',
+        component: confirmNewPass
     },
 ]
 

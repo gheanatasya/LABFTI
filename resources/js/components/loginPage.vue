@@ -14,18 +14,23 @@
                     Password Anda salah.</div>
                 <v-form @submit.prevent="login" method="post">
                     <v-sheet
-                        style="font-family:Lexend-Regular; margin-left: 200px; margin-right: 200px; margin-top: 30px;"
+                        style="font-family:Lexend-Regular; margin-left: 200px; margin-right: 200px; margin-top: 30px; margin-bottom: -30px;"
                         height="200px" class="px-4 py-3">
                         <v-text-field variant="outlined" v-model="email" label="Email" type="email"
                             required></v-text-field>
-                        <div v-if="validation.email" style="margin-top: -15px; margin-bottom: 20px; color:red;"
-                            class="alert alert-danger">Email required!</div>
+                        <!-- <div v-if="validation.email" style="margin-top: -15px; margin-bottom: 20px; color:red;"
+                            class="alert alert-danger">Email required!</div> -->
                         <v-text-field variant="outlined" v-model="password" label="Password"
                             :append-inner-icon="show ? 'mdi-eye' : 'mdi-eye-off'" :type="show ? 'text' : 'password'"
                             @click:append-inner="show = !show" required></v-text-field>
-                        <div v-if="validation.password" style="margin-top: -15px; margin-bottom: 20px; color:red;"
-                            class="alert alert-danger">Password required!</div>
+                        <!-- <div v-if="validation.password" style="margin-top: -15px; margin-bottom: 20px; color:red;"
+                            class="alert alert-danger">Password required!</div> -->
                     </v-sheet>
+
+                    <div>
+                        <router-link style="color: rgb(2, 39, 10, 0.9); font-family: Lexend-Regular; margin-left: 220px; margin-top: -100px;"
+                        to="/resetPassword">Lupa password?</router-link>
+                    </div>
 
                     <v-btn :loading="loading" @click="login"
                         style="margin-top: 30px; margin-left: 370px; font-family: Lexend-Medium; background-color: rgb(2, 39, 10, 0.9); color: white; width: 200px; border-radius: 20px; font-size: 17px;">
@@ -67,6 +72,12 @@ export default {
     methods: {
         login() {
             this.loading = true
+            if (this.email === "" || this.password === "") {
+                alert("Email dan Password harus diisi")
+                this.loading = false
+                return;
+            }
+
             if (this.email && this.password) {
                 axios.get('http://localhost:8000/sanctum/csrf-cookie')
                     .then(response => {

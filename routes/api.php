@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AboutEmailController;
 use App\Http\Controllers\AlatController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\DetailAlatController;
 use App\Http\Controllers\DokumenController;
 use App\Http\Controllers\FakultasController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\PeminjamController;
 use App\Http\Controllers\PersetujuanController;
 use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\ProgramStudiController;
+use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\RuanganController;
 use App\Http\Controllers\UserController;
 use App\Models\Instansi;
@@ -38,6 +40,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('send', [NotificationController::class, 'sendnotification']);
+Route::post('/password-reset-link', [ResetPasswordController::class, 'sendResetLink']);
+Route::post('/resetPassword', [ResetPasswordController::class, 'resetPassword']);
 
 //route login
 Route::post('/login', [LoginController::class, 'login']);
