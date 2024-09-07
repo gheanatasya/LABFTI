@@ -132,8 +132,8 @@ async function initializeCalendar() {
         sic: {
           colorName: 'sic',
           lightColors: {
-            main: '#f9d71c',
-            container: '#fff5aa',
+            main: '#F44336',
+            container: '#FFCDD2',
             onContainer: '#594800',
           },
           darkColors: {
@@ -145,8 +145,8 @@ async function initializeCalendar() {
         byte: {
           colorName: 'byte',
           lightColors: {
-            main: '#f91c45',
-            container: '#ffd2dc',
+            main: '#9C27B0',
+            container: '#E1BEE7',
             onContainer: '#59000d',
           },
           darkColors: {
@@ -158,8 +158,8 @@ async function initializeCalendar() {
         debug: {
           colorName: 'debug',
           lightColors: {
-            main: '#1cf9b0',
-            container: '#dafff0',
+            main: '#E91E63',
+            container: '#F8BBD0',
             onContainer: '#004d3d',
           },
           darkColors: {
@@ -171,8 +171,8 @@ async function initializeCalendar() {
         firewall: {
           colorName: 'firewall',
           lightColors: {
-            main: '#1c7df9',
-            container: '#d2e7ff',
+            main: '#F57F17',
+            container: '#FFFF8D',
             onContainer: '#002859',
           },
           darkColors: {
@@ -184,8 +184,8 @@ async function initializeCalendar() {
         gateway: {
           colorName: 'gateway',
           lightColors: {
-            main: '#fab802',
-            container: '#f0e0b4',
+            main: '#FFEB3B',
+            container: '#FFF9C4',
             onContainer: '#002859',
           },
           darkColors: {
@@ -197,8 +197,8 @@ async function initializeCalendar() {
         interface: {
           colorName: 'interface',
           lightColors: {
-            main: '#b04105',
-            container: '#ab826c',
+            main: '#4CAF50',
+            container: '#C8E6C9',
             onContainer: '#002859',
           },
           darkColors: {
@@ -210,8 +210,8 @@ async function initializeCalendar() {
         hypertext: {
           colorName: 'hypertext',
           lightColors: {
-            main: '#b0920b',
-            container: '#b5ad8b',
+            main: '#76FF03',
+            container: '#CCFF90',
             onContainer: '#002859',
           },
           darkColors: {
@@ -223,8 +223,8 @@ async function initializeCalendar() {
         java: {
           colorName: 'java',
           lightColors: {
-            main: '#87c208',
-            container: '#c2d49b',
+            main: '#673AB7',
+            container: '#D1C4E9',
             onContainer: '#002859',
           },
           darkColors: {
@@ -236,8 +236,8 @@ async function initializeCalendar() {
         kernel: {
           colorName: 'kernel',
           lightColors: {
-            main: '#37ed09',
-            container: '#c2f2b6',
+            main: '#2196F3',
+            container: '#BBDEFB',
             onContainer: '#002859',
           },
           darkColors: {
@@ -249,8 +249,8 @@ async function initializeCalendar() {
         mobile: {
           colorName: 'mobile',
           lightColors: {
-            main: '#09e845',
-            container: '#b9f0c7',
+            main: '#795548',
+            container: '#D7CCC8',
             onContainer: '#002859',
           },
           darkColors: {
@@ -262,8 +262,8 @@ async function initializeCalendar() {
         bigdata: {
           colorName: 'bigdata',
           lightColors: {
-            main: '#0771a6',
-            container: '#91abb8',
+            main: '#FF5722',
+            container: '#FFCCBC',
             onContainer: '#002859',
           },
           darkColors: {
@@ -275,8 +275,8 @@ async function initializeCalendar() {
         ai: {
           colorName: 'ai',
           lightColors: {
-            main: '#47024f',
-            container: '#6c5b6e',
+            main: '#607D8B',
+            container: '#CFD8DC',
             onContainer: '#002859',
           },
           darkColors: {
@@ -288,8 +288,8 @@ async function initializeCalendar() {
         mis: {
           colorName: 'mis',
           lightColors: {
-            main: '#590308',
-            container: '#a38c8e',
+            main: '#880E4F',
+            container: '#FF80AB',
             onContainer: '#002859',
           },
           darkColors: {
@@ -301,8 +301,8 @@ async function initializeCalendar() {
         alat: {
           colorName: 'alat',
           lightColors: {
-            main: '#fc0892', //bar kecil disamping kiri
-            container: '#f5c9e2', //warna dalam kotak
+            main: '#E65100', //bar kecil disamping kiri
+            container: '#FFB74D', //warna dalam kotak
             onContainer: '#002859', //tulisan didalam 
           },
           darkColors: {
