@@ -161,6 +161,11 @@
                             </div>
                         </div>
 
+                        <p style="margin-left: 303px; margin-right: -80px;">Nomor Handphone Yang Dapat Dihubungi</p>
+
+                        <v-text-field label="No. Handphone" v-model="Nohp" variant="outlined" clearable
+                            style="width: 505px; margin-left: 303px; margin-top: 5px;"></v-text-field>
+
                         <v-checkbox label="Apabila terjadi kerusakan alat atau kehilangan alat 
                         maka bersedia untuk ganti rugi sesuai dengan persyaratan yang telah ditentukan." value="true"
                             style="margin-left: 295px; margin-right: -80px;" v-model="ketentuan"></v-checkbox>
@@ -255,6 +260,7 @@ export default {
         const loading = ref(false);
         const dialog = ref(false);
         const ketentuan = ref(false);
+        const Nohp = ref('');
 
         const form = reactive([
             {
@@ -278,7 +284,7 @@ export default {
                 keterangan: '',
                 dokumen: null,
                 loading: false,
-                tambahformbaru: 0
+                tambahformbaru: 0,
             }
         ])
 
@@ -327,7 +333,7 @@ export default {
                 dokumen: null,
                 daftarAlat: [],
                 loading: false,
-                tambahformbaru: 0
+                tambahformbaru: 0,
             })
             form[index].tambahformbaru = form[index].tambahformbaru + 1;
             console.log('form baru ditambahkan');
@@ -367,7 +373,7 @@ export default {
                     detailRuangan: [],
                     loading: false,
                     datatabrak: [],
-                    tambahformbaru: 0
+                    tambahformbaru: 0,
                 })
             }
         }
@@ -419,7 +425,7 @@ export default {
                     console.log(form[i].dokumen);
                     if ((form[i].tanggalSelesai === '') || (form[i].tanggalAwal === '') || (form[i].alat.length === 0) || (form[i].alat.length === 1 && form[i].alat[0].nama === '')
                         || (form[i].selectedOptionPersonal === '') || (form[i].selectedOptionOrganisation === '') || (form[i].selectedOptionEksternal === '')
-                        || (form[i].keterangan === '')) {
+                        || (form[i].keterangan === '') || (Nohp.value === '')) {
                         alert('Terdapat data yang kosong!');
                         loading.value = false;
                         return
@@ -486,6 +492,13 @@ export default {
                             return
                         }
                     }
+
+                    const nohpRegex = /^(08)[0-9]{9,12}$/;
+                    if (!nohpRegex.test(Nohp.value)) {
+                        alert('Nomo HP tidak valid!')
+                        loading.value = false;
+                        return
+                    }
                 }
 
                 for (let i = 0; i < form.length; i++) {
@@ -510,7 +523,8 @@ export default {
                         alat: form[i].alat,
                         keterangan: form[i].keterangan,
                         dokumen: null,
-                        UserID: UserID
+                        UserID: UserID,
+                        Nohp: Nohp.value
                     };
 
                     try {
@@ -566,7 +580,8 @@ export default {
                             form[i].keterangan = '',
                             form[i].dokumen = null,
                             form[i].loading = false,
-                            form[i].tambahformbaru = 0
+                            form[i].tambahformbaru = 0,
+                            Nohp.value = ''
                     } catch (error) {
                         console.error('Error menyimpan data peminjaman alat', error);
                         loading.value = false;
@@ -590,7 +605,8 @@ export default {
                             form[i].keterangan = '',
                             form[i].dokumen = null,
                             form[i].loading = false,
-                            form[i].tambahformbaru = 0
+                            form[i].tambahformbaru = 0,
+                            Nohp.value = ''
                     }
                 }
                 loading.value = false;
@@ -716,7 +732,7 @@ export default {
             }
         }
 
-        return { form, loading, dialog, ketentuan, addNewForm, removeForm, fetchAlat, saveItem, tambahAlat, hapusAlat, fetchAlatDosen, fetchAlat }
+        return { form, loading, dialog, ketentuan, addNewForm, removeForm, fetchAlat, saveItem, tambahAlat, hapusAlat, fetchAlatDosen, fetchAlat, Nohp }
     },
     data() {
         return {

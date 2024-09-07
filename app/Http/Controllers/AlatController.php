@@ -269,11 +269,16 @@ class AlatController extends Controller
                 $recordData['detailAlat'][] = $recordPerDetail;
             }
 
+            usort($recordData['detailAlat'], function ($a, $b) {
+                return strcmp($a['KodeDetailAlat'], $b['KodeDetailAlat']);
+            });
+
             $semuaData[] = $recordData;
         }
 
+        
         usort($semuaData, function ($a, $b) {
-            return strcmp($a['Nama'], $b['Nama']);
+            return strcmp($a['KodeAlat'], $b['KodeAlat']);
         });
 
         return $semuaData;

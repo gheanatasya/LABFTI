@@ -69,6 +69,7 @@ class PeminjamanRuanganBridgeController extends Controller
         $peminjaman = Peminjaman::create([
             'PeminjamID' => $peminjamID,
             'Tanggal_pinjam' => date('d-m-Y'),
+            'No_HP' => $request['Nohp']
         ]);
 
         $peminjamanid = $peminjaman->PeminjamanID;
@@ -615,6 +616,7 @@ class PeminjamanRuanganBridgeController extends Controller
 
         foreach ($peminjaman as $booking) {
             $peminjamanID = $booking->PeminjamanID;
+            $nohp = $booking->No_HP;
             $tanggalpinjam = $booking->Tanggal_pinjam;
             $peminjamID = $booking->PeminjamID;
             $peminjam = Peminjam::where('PeminjamID', $peminjamID)->first();
@@ -751,7 +753,8 @@ class PeminjamanRuanganBridgeController extends Controller
                     'koordinator' => $koord,
                     'path' => $path,
                     'namadokumen' => $namadokumen,
-                    'rolepeminjam' => $rolepeminjam
+                    'rolepeminjam' => $rolepeminjam,
+                    'nohp' => $nohp
                 ];
 
                 $totalsemuapeminjaman[] = $recordDataRoom;
@@ -773,6 +776,7 @@ class PeminjamanRuanganBridgeController extends Controller
         foreach ($peminjaman as $booking) {
             $keterangan = $booking->Keterangan;
             $peminjamanID = $booking->PeminjamanID;
+            $nohp = $booking->No_HP;
             $peminjamID = $booking->PeminjamID;
             $tanggalpinjam = $booking->Tanggal_pinjam;
             $peminjam = Peminjam::where('PeminjamID', $peminjamID)->first();
@@ -895,7 +899,8 @@ class PeminjamanRuanganBridgeController extends Controller
                     'koordinator' => $koord,
                     'path' => $path,
                     'namadokumen' => $namadokumen,
-                    'rolepeminjam' => $rolepeminjam
+                    'rolepeminjam' => $rolepeminjam,
+                    'nohp' => $nohp,
                 ];
 
                 $totalsemuapeminjaman[] = $recordDataAlat;
@@ -916,6 +921,7 @@ class PeminjamanRuanganBridgeController extends Controller
 
         foreach ($peminjaman as $booking) {
             $peminjamanID = $booking->PeminjamanID;
+            $nohp = $booking->No_HP;
             $tanggalpinjam = $booking->Tanggal_pinjam;
             $peminjamID = $booking->PeminjamID;
             $peminjam = Peminjam::where('PeminjamID', $peminjamID)->first();
@@ -1051,7 +1057,8 @@ class PeminjamanRuanganBridgeController extends Controller
                     'koordinator' => $koord,
                     'path' => $path,
                     'namadokumen' => $namadokumen,
-                    'rolepeminjam' => $rolepeminjam
+                    'rolepeminjam' => $rolepeminjam,
+                    'nohp' => $nohp
                 ];
 
                 if ($isEksternal) {
@@ -1090,6 +1097,7 @@ class PeminjamanRuanganBridgeController extends Controller
                     foreach ($peminjaman as $booking) {
                         $peminjamanID = $booking->PeminjamanID;
                         $tanggalpinjam = $booking->Tanggal_pinjam;
+                        $nohp = $booking->No_HP;
                         $peminjamanruangan = Peminjaman_Ruangan_Bridge::where('PeminjamanID', $peminjamanID)->get();
                         foreach ($peminjamanruangan as $data) {
                             $peminjamanruanganid = $data->PeminjamanRuanganID;
@@ -1221,7 +1229,8 @@ class PeminjamanRuanganBridgeController extends Controller
                                 'koordinator' => $koord,
                                 'path' => $path,
                                 'namadokumen' => $namadokumen,
-                                'rolepeminjam' => $rolepeminjam
+                                'rolepeminjam' => $rolepeminjam,
+                                'nohp' => $nohp
                             ];
                         }
                         $totalsemuapeminjaman[] = $recordDataRoom;
@@ -1245,6 +1254,7 @@ class PeminjamanRuanganBridgeController extends Controller
         foreach ($peminjaman as $booking) {
             $peminjamanID = $booking->PeminjamanID;
             $tanggalpinjam = $booking->Tanggal_pinjam;
+            $nohp = $booking->No_HP;
             $peminjamID = $booking->PeminjamID;
             $peminjam = Peminjam::where('PeminjamID', $peminjamID)->first();
             $namapeminjam = $peminjam->Nama;
@@ -1382,7 +1392,8 @@ class PeminjamanRuanganBridgeController extends Controller
                     'koordinator' => $koord,
                     'path' => $path,
                     'namadokumen' => $namadokumen,
-                    'rolepeminjam' => $rolepeminjam
+                    'rolepeminjam' => $rolepeminjam,
+                    'nohp' => $nohp
                 ];
 
                 if ($isOrganisation) {
@@ -1405,6 +1416,7 @@ class PeminjamanRuanganBridgeController extends Controller
         foreach ($peminjaman as $booking) {
             $keterangan = $booking->Keterangan;
             $peminjamanID = $booking->PeminjamanID;
+            $nohp = $booking->No_HP;
             $peminjamID = $booking->PeminjamID;
             $tanggalpinjam = $booking->Tanggal_pinjam;
             $peminjam = Peminjam::where('PeminjamID', $peminjamID)->first();
@@ -1522,7 +1534,8 @@ class PeminjamanRuanganBridgeController extends Controller
                     'koordinator' => $koord,
                     'path' => $path,
                     'namadokumen' => $namadokumen,
-                    'rolepeminjam' => $rolepeminjam
+                    'rolepeminjam' => $rolepeminjam,
+                    'nohp' => $nohp
                 ];
 
                 if ($isEksternal) {
@@ -1547,6 +1560,7 @@ class PeminjamanRuanganBridgeController extends Controller
             $keterangan = $booking->Keterangan;
             $peminjamanID = $booking->PeminjamanID;
             $peminjamID = $booking->PeminjamID;
+            $nohp = $booking->No_HP;
             $tanggalpinjam = $booking->Tanggal_pinjam;
             $peminjam = Peminjam::where('PeminjamID', $peminjamID)->first();
             $namapeminjam = $peminjam->Nama;
@@ -1663,7 +1677,8 @@ class PeminjamanRuanganBridgeController extends Controller
                     'koordinator' => $koord,
                     'path' => $path,
                     'namadokumen' => $namadokumen,
-                    'rolepeminjam' => $rolepeminjam
+                    'rolepeminjam' => $rolepeminjam,
+                    'nohp' => $nohp
                 ];
 
                 if ($isOrganisation) {
@@ -1703,6 +1718,7 @@ class PeminjamanRuanganBridgeController extends Controller
                     foreach ($peminjaman as $booking) {
                         $peminjamanID = $booking->PeminjamanID;
                         $tanggalpinjam = $booking->Tanggal_pinjam;
+                        $nohp = $booking->No_HP;
                         $peminjamanalat = Peminjaman_Alat_Bridge::where('PeminjamanID', $peminjamanID)->get();
                         foreach ($peminjamanalat as $data) {
                             $peminjamanalatid = $data->Peminjaman_Alat_ID;
@@ -1812,7 +1828,8 @@ class PeminjamanRuanganBridgeController extends Controller
                                 'koordinator' => $koord,
                                 'path' => $path,
                                 'namadokumen' => $namadokumen,
-                                'rolepeminjam' => $rolepeminjam
+                                'rolepeminjam' => $rolepeminjam,
+                                'nohp' => $nohp
                             ];
 
                             if ($isOrganisation) {

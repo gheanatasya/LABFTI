@@ -92,7 +92,7 @@
                                 </p>
                             </td>
 
-                            <td style="width: 200px;"> {{ ruangan.namapeminjam }} </td>
+                            <td style="width: 200px;"> {{ ruangan.namapeminjam }} ({{ ruangan.nohp }}) </td>
 
                             <td style="width: 500px;"> {{ ruangan.tanggalpinjamFormat }} </td>
 
@@ -267,7 +267,7 @@
 
                             <td style="width: 50px;"> {{ alat.jumlahPinjam }} </td>
 
-                            <td style="width: 50px;"> {{ alat.namapeminjam }} </td>
+                            <td style="width: 50px;"> {{ alat.namapeminjam }} ({{ alat.nohp }})</td>
 
                             <td style="width: 500px;"> {{ alat.tanggalpinjamFormat }} </td>
 
@@ -790,8 +790,6 @@ export default {
                     console.error("Error konfirmasi failed:", error);
                     this.loadingRuangan = false;
                 });
-
-            this.loadingRuangan = false;
         },
         confirmAlat(alat) {
             this.loadingAlat = true;
@@ -827,7 +825,6 @@ export default {
                     console.error("Error konfirmasi failed:", error);
                     this.loadingAlat = false;
                 });
-            this.loadingAlat = false;
         },
         confirmAlat2(alat) {
             this.loadingAlat2 = true;
@@ -871,7 +868,7 @@ export default {
             //console.log('berhasil memperbarui');
             //}
             console.log('berhasil memperbarui semuanya');
-            this.loadingAlat2 = false;
+            //this.loadingAlat2 = false;
             this.konfirmasiTools = false;
             this.editActionAlat = false;
             this.loadingAlat = false;

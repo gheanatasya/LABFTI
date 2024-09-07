@@ -21,9 +21,9 @@
 
     <router-link to="loginPage"
       style="font-size: 20px; font-family:Lexend-Medium; position: absolute; top: 20px; right: 20px; color: white; text-decoration: none;">Login</router-link>
-      <div style="text-align:center; color:white; font-family:Lexend-Medium; font-size: 25px; margin-top: 40px;">
-        Peminjaman Ruangan dan Alat LAB FTI UKDW
-      </div>
+    <div style="text-align:center; color:white; font-family:Lexend-Medium; font-size: 25px; margin-top: 40px;">
+      Peminjaman Ruangan dan Alat LAB FTI UKDW
+    </div>
     <div style="text-align:center; color:white; font-family:Lexend-Regular; font-size: 20px; margin-top: 10px;">
       Untuk melakukan peminjaman, silahkan <router-link to="loginPage" style="color:white">Login</router-link> terlebih
       dahulu.
@@ -33,50 +33,55 @@
       <div id="calendar" style="width: 1000px; float: left; margin-left: -80px; margin-right: 50px;"></div>
       <div style="float: clear; font-family:Lexend-Regular; font-size: 20px; color: white; margin-top: 30px;">
         <p style="margin-bottom: 10px;">Keterangan : </p>
-        <p
-          style="background-color: #fff5aa; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
-          SIC</p>
-        <p
-          style="background-color: #ffd2dc; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
-          Byte</p>
-        <p
-          style="background-color: #dafff0; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
-          Debug</p>
-        <p
-          style="background-color: #d2e7ff; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
-          Firewall</p>
-        <p
-          style="background-color: #f0e0b4; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
-          Gateway</p>
-        <p
-          style="background-color: #ab826c; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
-          Interface</p>
-        <p
-          style="background-color: #b5ad8b; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
-          Hypertext</p>
-        <p
-          style="background-color: #c2d49b; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
-          Java</p>
-        <p
-          style="background-color: #c2f2b6; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
-          Kernel</p>
-        <p
-          style="background-color: #b9f0c7; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
-          L.Mobile</p>
-        <p
-          style="background-color: #91abb8; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
-          L.BigData</p>
-        <p
-          style="background-color: #6c5b6e; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
-          L.AI</p>
-        <p
-          style="background-color: #a38c8e; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
-          L.MIS</p>
-        <p
-          style="background-color: #f5c9e2; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
+        <p v-for="(item, index) in dataRuangan" :key="index" @click="openInformation(item)" 
+          :style="{ backgroundColor: item.BackgroundColor, color: 'black', width: '120px', fontSize: '15px', paddingLeft: '20px', marginBottom: '5px', cursor: 'pointer' }">
+          {{ item.Nama_ruangan }}</p>
+          <p
+          style="background-color: #E65100; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
           Alat</p>
       </div>
     </v-container>
+
+    <v-dialog v-model="dialog" max-width="600" persistent>
+      <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 700px; height: 350px;">
+        <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;">
+          {{ dataPerRuangan.Nama_ruangan }}</v-card-title>
+        <v-card-text style="text-align: justify; justify-content:center; display: flex;">
+          <div style="width: 40%">
+            <v-img v-if="dataPerRuangan.Foto !== null"
+              :src="'../storage/' + dataPerRuangan.Foto[0]" style="width: 200px; height: 200px;"></v-img>
+            <v-img v-else src="../picture/no-image.png" style="width: 200px; height: 200px;"></v-img>
+          </div>
+
+          <p style="width: 60%" v-if="dataPerRuangan.Lokasi === 'Lab FTI 3' || dataPerRuangan.Lokasi === 'Fakultas'">{{
+            dataPerRuangan.Nama_ruangan }} adalah salah satu ruangan yang dimiliki oleh Laboratori Fakultas Teknologi
+            Informasi UKDW yang terletak pada
+            {{ dataPerRuangan.Lokasi }} di Gedung Agape Lantai 3. Ruangan ini biasanya digunakan sebagai {{
+              dataPerRuangan.Kategori }}. Adapun fasilitas yang terdapat pada ruangan
+            ini adalah {{ dataPerRuangan.fasilitas }}.
+          </p>
+
+          <p style="width: 60%" v-else-if="dataPerRuangan.Lokasi === 'Lab FTI 2'">{{ dataPerRuangan.Nama_ruangan }}
+            adalah salah satu ruangan yang dimiliki oleh Laboratori Fakultas Teknologi Informasi UKDW yang terletak pada
+            {{ dataPerRuangan.Lokasi }} di Gedung Agape Lantai 2. Ruangan ini biasanya digunakan sebagai {{
+              dataPerRuangan.Kategori }}. Adapun fasilitas yang terdapat pada ruangan
+            ini adalah {{ dataPerRuangan.fasilitas }}.
+          </p>
+
+          <p style="width: 60%" v-else-if="dataPerRuangan.Lokasi === 'Lab FTI 4'">{{ dataPerRuangan.Nama_ruangan }}
+            adalah salah satu ruangan yang dimiliki oleh Laboratori Fakultas Teknologi Informasi UKDW yang terletak pada
+            {{ dataPerRuangan.Lokasi }} di Gedung Agape Lantai 4. Ruangan ini biasanya digunakan sebagai {{
+              dataPerRuangan.Kategori }}. Adapun fasilitas yang terdapat pada ruangan
+            ini adalah {{ dataPerRuangan.fasilitas }}.
+          </p>
+        </v-card-text>
+
+        <v-card-actions style="justify-content:center;">
+          <v-btn style="position: absolute; bottom: 0; right: 0; margin-bottom: 20px; margin-right: 30px;"
+            @click="dialog = false">Tutup</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -91,7 +96,7 @@ import {
 import '@schedule-x/theme-default/dist/index.css'
 import axios from 'axios';
 import { createEventModalPlugin } from '@schedule-x/event-modal'
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
 const overlay = ref(true);
 const today = new Date();
@@ -315,8 +320,41 @@ async function initializeCalendar() {
   }
 }
 
+const dialog = ref(false)
+const dataRuangan = ref([])
+const dataPerRuangan = ref([])
+const openInformation = (ruangan) => {
+  dialog.value = true
+  dataPerRuangan.value = ruangan
+  console.log(dataPerRuangan.value)
+};
+
+async function getDataRuangan() {
+  try {
+    const response = await axios.get('http://127.0.0.1:8000/api/ruangan');
+    dataRuangan.value = response.data;
+    //overlay.value = false;
+    console.log(dataRuangan.value);
+  } catch (error) {
+    console.error('Error fetching ruangan data:', error);
+  }
+}
+
+onMounted(() => {
+  Promise.all([
+    getDataRuangan()
+  ])
+    .then(() => {
+      overlay.value = false;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+});
+
 initializeCalendar().then((calendarApp) => {
   calendarApp.render(document.getElementById('calendar'));
-  overlay.value = false;
+  //overlay.value = false;
 });
+
 </script>

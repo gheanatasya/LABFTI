@@ -40,6 +40,9 @@ class PDFController extends Controller
         $fakultas = Fakultas::find($fakultasId);
         $namafakultas = $fakultas ? $fakultas->Nama_fakultas : '';
 
+        $PEMINJAMAN = Peminjaman::where('PeminjamanID', $desiredPeminjamanID)->first();
+        $Nohp = $PEMINJAMAN->No_HP;
+
         $peminjamID = $peminjam->PeminjamID;
         $PeminjamanRuangan = Peminjaman_Ruangan_Bridge::where('Peminjaman_Ruangan_ID', $peminjamanruanganid)->first();
 
@@ -86,7 +89,7 @@ class PDFController extends Controller
 
             $recordDataAlat = [];
 
-            $peminjamanalat = Peminjaman_Alat_Bridge::where('RuanganID', $ruanganid)
+            $peminjamanalat = Peminjaman_Alat_Bridge::where('PeminjamanID', $desiredPeminjamanID)
                 ->where('Tanggal_pakai_awal', $tanggalawal)
                 ->where('Tanggal_pakai_akhir', $tanggalakhir)
                 ->get();
@@ -194,7 +197,8 @@ class PDFController extends Controller
             'peminjamanDataRuangan' => $recordDataRuangan,
             'peminjamanDataAlat' => $recordDataAlat,
             'desiredPeminjamanID' => $desiredPeminjamanID,
-            'tanggaldownload' => date('d/m/Y')
+            'tanggaldownload' => date('d/m/Y'),
+            'Nohp' => $Nohp
         ];
 
         //dd($data);

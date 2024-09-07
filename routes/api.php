@@ -112,6 +112,7 @@ Route::post('/detail', [DetailAlatController::class, 'store']);
 Route::put('/detail/{DetailAlatID}', [DetailAlatController::class, 'update']);
 Route::delete('/detail/{DetailAlatID}', [DetailAlatController::class, 'delete']);
 Route::post('/detail/tambahFoto/{DetailAlatID}', [DetailAlatController::class, 'tambahFoto']);
+Route::post('/detail/editFoto/{DetailAlatID}', [DetailAlatController::class, 'editFoto']);
 
 // route untuk ruangan
 Route::get('/ruangan', [RuanganController::class, 'getAllRuangan']);
@@ -121,6 +122,7 @@ Route::put('/ruangan/{RuanganID}', [RuanganController::class, 'update']);
 Route::delete('/ruangan/{RuanganID}', [RuanganController::class, 'delete']);
 Route::get('/ruangantotalPerbulan', [RuanganController::class, 'totalPerbulan']);
 Route::post('/ruangan/tambahFoto/{RuanganID}', [RuanganController::class, 'tambahFoto']);
+Route::post('/ruangan/editFoto/{RuanganID}', [RuanganController::class, 'editFoto']);
 
 //route untuk peminjaman
 Route::get('/peminjaman', [PeminjamanController::class, 'getAllPeminjaman']);

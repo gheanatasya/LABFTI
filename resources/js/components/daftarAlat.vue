@@ -53,8 +53,8 @@
                 <thead style="font-family: Lexend-Regular; font-size: 15px;">
                     <tr>
                         <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">No</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Nama Alat</th>
                         <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Kode Alat</th>
+                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Nama Alat</th>
                         <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Jumlah</th>
                         <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Jumlah Rusak</th>
                         <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Status</th>
@@ -67,9 +67,9 @@
                         <td style="width: 20px; text-align: center;"> {{ (currentPageAlat - 1) * itemsPerPage + index +
                             1 }} </td>
 
-                        <td style="width: 150px;"> {{ alat.Nama }} </td>
+                        <td style="width: 150px;"> {{ alat.KodeAlat }} </td>
 
-                        <td style="width: 100px; text-align: center;"> {{ alat.KodeAlat }} </td>
+                        <td style="width: 100px; text-align: center;"> {{ alat.Nama }} </td>
 
                         <td style="width: 100px; text-align: center;"> {{ alat.JumlahAlat }} </td>
 
@@ -121,9 +121,9 @@
                         <thead style="font-family: Lexend-Regular; font-size: 15px;">
                             <tr>
                                 <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">No</th>
-                                <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1);">Nama Detail Alat
+                                <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1);">Kode Detail Alat
                                 </th>
-                                <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Kode Detail Alat
+                                <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Nama Detail Alat
                                 </th>
                                 <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Status
                                     Kebergunaan</th>
@@ -138,8 +138,8 @@
                                 style="background-color: white; font-family: 'Lexend-Regular; font-size: 15px;">
                                 <td style="width: 20px; text-align: center;"> {{ (currentPageDetailAlat - 1) *
                                     itemsPerPage + index + 1 }} </td>
-                                <td style="width: 150px;"> {{ detail.NamaDetailAlat }} </td>
-                                <td style="width: 150px; text-align: center;"> {{ detail.KodeDetailAlat }} </td>
+                                <td style="width: 150px;"> {{ detail.KodeDetailAlat }} </td>
+                                <td style="width: 150px; text-align: center;"> {{ detail.NamaDetailAlat }} </td>
                                 <td style="width: 200px; text-align: center;"> {{ detail.StatusKebergunaan }} </td>
                                 <td style="width: 200px; text-align: center;"> {{ detail.StatusPeminjaman }} </td>
                                 <td style="width: 500px;">
@@ -214,7 +214,7 @@
             <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 800px;">
                 <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;">
                     Edit Detail Alat</v-card-title>
-                <v-card-text style="text-align: center; margin-left: 40px;">
+                <v-card-text style="margin-left: 40px;">
                     <v-text-field label="Nama Detail Alat" v-model="this.detailalatEdit.namaDetailAlat"
                         variant="outlined" style="margin-right: 100px; margin-left:40px;"></v-text-field>
 
@@ -231,8 +231,12 @@
                         label="Status Peminjaman">
                     </v-select>
 
-                    <v-file-input label="Foto" variant="outlined" v-model="this.detailalatEdit.foto" multiple
+                    <v-file-input label="Tambah Foto" variant="outlined" v-model="this.detailalatEdit.foto" multiple
                         id="editFotoAlat" style="margin-right: 100px; margin-left:0px;"></v-file-input>
+
+                    <p @click="editFoto(this.detailalatEdit.fotoTampil)"
+                        style="font-family: Lexend-Regular; color: rgb(2, 39, 10, 1); font-size: 14px; text-transform: none; justify-content: left; margin-left: 40px; text-decoration: underline; margin-bottom: 15px;">
+                        Edit Foto Yang Sudah Ada</p>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
@@ -368,6 +372,36 @@
                 </v-btn>
             </v-container>
         </v-dialog>
+
+        <!-- tampilkan semua foto -->
+        <v-dialog v-model="dialogEditFoto" persistent max-width="800">
+            <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 800px;">
+                <v-card-actions class="d-flex justify-end">
+                    <v-icon @click="dialogEditFoto = false">mdi-close-circle</v-icon>
+                </v-card-actions>
+                <v-card-title style="font-family: 'Lexend-Medium'; text-align: center; margin-top: -50px;">Foto Detail
+                    Alat</v-card-title>
+                <v-card-text style="text-align: center; margin-left: 50px; margin-right: 50px;">
+                    <v-row cols="10" v-if="this.detailalatEdit.fotoTampil.length > 0">
+                        <v-col v-for="(gambar, index) in this.detailalatEdit.fotoTampil" :key="index" cols="4">
+                            <v-img :src="'../storage/' + gambar" max-width="300" height="200"
+                                style="text-align: center"></v-img>
+                            <div>
+                                <v-icon style="color: rgb(206, 0, 0, 0.91); font-size: 30px;"
+                                    @click="removeGambar(gambar)">mdi-delete-circle</v-icon>
+                            </div>
+                        </v-col>
+                    </v-row>
+
+                    <v-row cols="10" v-else>
+                        <v-col cols="4">
+                            <v-img src="../picture/no-image.png" max-width="300" height="200"
+                                style="text-align: center"></v-img>
+                        </v-col>
+                    </v-row>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
     </div>
 
     <footerPage></footerPage>
@@ -424,6 +458,7 @@ export default {
                 AlatID: null
             },
             editActionDetailAlat: false,
+            dialogEditFoto: false,
             detailalatEdit: {
                 namaDetailAlat: null,
                 kodeDetailAlat: null,
@@ -432,7 +467,8 @@ export default {
                 statusPeminjaman: null,
                 foto: null,
                 loading: false,
-                detailalatID: null
+                detailalatID: null,
+                fotoTampil: []
             },
             dialogHapusAlat: false,
             itemforHapusAlat: null,
@@ -484,16 +520,31 @@ export default {
         },
         editDataDetailAlat(namaDetailAlat, kodeDetailAlat, statusKebergunaan, statusPeminjaman, foto, detailalatID) {
             this.editActionDetailAlat = !this.editActionDetailAlat;
-            this.detailalatEdit = {
-                namaDetailAlat,
-                kodeDetailAlat,
-                statusKebergunaan,
-                statusPeminjaman,
-                foto,
-                loading: false,
-                detailalatID
+            if (foto !== null) {
+                const fotoArray = foto.split(":");
+                this.detailalatEdit = {
+                    namaDetailAlat,
+                    kodeDetailAlat,
+                    statusKebergunaan,
+                    statusPeminjaman,
+                    foto,
+                    loading: false,
+                    detailalatID,
+                    fotoTampil: fotoArray
+                }
+            } else {
+                this.detailalatEdit = {
+                    namaDetailAlat,
+                    kodeDetailAlat,
+                    statusKebergunaan,
+                    statusPeminjaman,
+                    foto,
+                    loading: false,
+                    detailalatID,
+                    fotoTampil: []
+                }
             }
-            //console.log(this.detailalatEdit)
+            console.log(this.detailalatEdit)
         },
         confirmDeleteAlat(KodeAlat, Nama, AlatID) {
             this.dialogHapusAlat = !this.dialogHapusAlat;
@@ -574,7 +625,7 @@ export default {
         },
         updateDetailAlat(namaDetailAlat, kodeDetailAlat, statusKebergunaan, statusPeminjaman, foto, detailalatID) {
             this.detailalatEdit.loading = true;
-            console.log(foto)
+            console.log(this.detailalatEdit)
 
             if (namaDetailAlat === '' || statusKebergunaan === '' || statusPeminjaman === '' || kodeDetailAlat === '') {
                 alert('Terdapat data yang belum diisi!');
@@ -583,6 +634,11 @@ export default {
             }
 
             const formData = new FormData();
+            if (this.detailalatEdit.fotoTampil.length > 0) {
+                for (let i = 0; i < this.detailalatEdit.fotoTampil.length; i++) {
+                    formData.append('fotoLama[]', this.detailalatEdit.fotoTampil[i]);
+                }
+            }
 
             if (foto !== null) {
                 const file = document.getElementById('editFotoAlat');
@@ -620,21 +676,21 @@ export default {
                 .then(response => {
                     if (response.status === 200) {
                         console.log("Detail alat updated successfully:", response.data);
-                        if (foto[0].name && foto[0].size && foto[0].type) {
-                            axios.post(`http://127.0.0.1:8000/api/detail/tambahFoto/${detailalatID}`, formData)
-                                .then(res => {
-                                    console.log("Foto ditambahkan successfully:", res.data);
-                                    const newData = res.data.dataTambah
-                                    const indexAlat = this.allData.findIndex(alat => alat.AlatID === newData.AlatID);
-                                    const indexDetailAlat = this.allData[indexAlat].detailAlat.findIndex(detailalat => detailalat.DetailAlatID === newData.DetailAlatID);
-                                    this.allData[indexAlat].detailAlat[indexDetailAlat] = newData;
+                        if (this.detailalatEdit.fotoTampil.length > 0 || foto !== null) {
+                        axios.post(`http://127.0.0.1:8000/api/detail/editFoto/${detailalatID}`, formData)
+                            .then(res => {
+                                console.log("Foto ditambahkan successfully:", res.data);
+                                const newData = res.data.dataTambah
+                                const indexAlat = this.allData.findIndex(alat => alat.AlatID === newData.AlatID);
+                                const indexDetailAlat = this.allData[indexAlat].detailAlat.findIndex(detailalat => detailalat.DetailAlatID === newData.DetailAlatID);
+                                this.allData[indexAlat].detailAlat[indexDetailAlat] = newData;
 
-                                    this.detailalatEdit.loading = false;
-                                    this.editActionDetailAlat = false;
-                                }).catch(error => {
-                                    console.error("Foto gagal ditambahkan", error);
-                                    this.detailalatEdit.loading = false;
-                                })
+                                this.detailalatEdit.loading = false;
+                                this.editActionDetailAlat = false;
+                            }).catch(error => {
+                                console.error("Foto gagal ditambahkan", error);
+                                this.detailalatEdit.loading = false;
+                            })
                         }
 
                         const newData = response.data.data
@@ -891,6 +947,16 @@ export default {
             const endIndex = startIndex + this.itemsPerPage;
             return this.itemforDetailAlat.slice(startIndex, endIndex);
         },
+        editFoto(foto) {
+            this.dialogEditFoto = true
+        },
+        removeGambar(gambar) {
+            const index = this.detailalatEdit.fotoTampil.indexOf(gambar);
+            if (index > -1) {
+                this.detailalatEdit.fotoTampil.splice(index, 1);
+            }
+            console.log(this.detailalatEdit.fotoTampil)
+        }
     },
     mounted() {
         Promise.all([

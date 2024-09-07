@@ -6,8 +6,13 @@
 </head>
 
 <body>
-    <h2>Tanda Terima</h2>
-    <h2>Peminjaman Ruangan dan Alat LAB FTI UKDW</h2>
+    <div class="header">
+        <img src="https://www.ukdw.ac.id/wp-content/uploads/2017/10/fti-ukdw.png" alt="Logo FTI UKDW">
+
+        <h2>Tanda Terima</h2>
+        <h2>Peminjaman Ruangan dan Alat LAB FTI UKDW</h2>
+    </div>
+
     @if (count($peminjamanDataRuangan) > 0)
         @if ($role == 'Mahasiswa' || $role == 'Petugas')
             @if ($peminjamanDataRuangan['organisasi'] === true)
@@ -16,6 +21,7 @@
                     <p>NIM : {{ $nim }}</p>
                     <p>Fakultas : {{ $namafakultas }}</p>
                     <p>Program Studi : {{ $namaprodi }}</p>
+                    <p>Nomor Peminjam : {{ $Nohp }}</p>
                 </div>
             @elseif ($peminjamanDataRuangan['eksternal'] === true)
                 <div>
@@ -23,6 +29,7 @@
                     <p>NIM : {{ $nim }}</p>
                     <p>Fakultas : {{ $namafakultas }}</p>
                     <p>Program Studi : {{ $namaprodi }}</p>
+                    <p>Nomor Peminjam : {{ $Nohp }}</p>
                 </div>
             @elseif ($peminjamanDataRuangan['personal'] === true)
                 <div>
@@ -30,6 +37,7 @@
                     <p>NIM : {{ $nim }}</p>
                     <p>Fakultas : {{ $namafakultas }}</p>
                     <p>Program Studi : {{ $namaprodi }}</p>
+                    <p>Nomor Peminjam : {{ $Nohp }}</p>
                 </div>
             @endif
         @elseif ($role == 'Staff')
@@ -38,24 +46,28 @@
                     <p>Peminjam : {{ $nama }} (Digunakan sebagai organisasi)</p>
                     <p>NIDN : {{ $nim }}</p>
                     <p>Instansi : {{ $namainstansi }}</p>
+                    <p>Nomor Peminjam : {{ $Nohp }}</p>
                 </div>
             @elseif ($peminjamanDataRuangan['eksternal'] === true)
                 <div>
                     <p>Peminjam : {{ $nama }} (Digunakan dengan pihak eksternal)</p>
                     <p>NIDN : {{ $nim }}</p>
                     <p>Instansi : {{ $namainstansi }}</p>
+                    <p>Nomor Peminjam : {{ $Nohp }}</p>
                 </div>
             @elseif ($peminjamanDataRuangan['personal'] === true)
                 <div>
                     <p>Peminjam : {{ $nama }}</p>
                     <p>NIDN : {{ $nim }}</p>
                     <p>Instansi : {{ $namainstansi }}</p>
+                    <p>Nomor Peminjam : {{ $Nohp }}</p>
                 </div>
             @else
                 <div>
                     <p>Peminjam : {{ $nama }}</p>
                     <p>NIDN : {{ $nim }}</p>
                     <p>Instansi : {{ $namainstansi }}</p>
+                    <p>Nomor Peminjam : {{ $Nohp }}</p>
                 </div>
             @endif
         @else
@@ -65,6 +77,7 @@
                     <p>NIDN : {{ $nim }}</p>
                     <p>Fakultas : {{ $namafakultas }}</p>
                     <p>Program Studi : {{ $namaprodi }}</p>
+                    <p>Nomor Peminjam : {{ $Nohp }}</p>
                 </div>
             @elseif ($peminjamanDataRuangan['eksternal'] === true)
                 <div>
@@ -72,6 +85,7 @@
                     <p>NIDN : {{ $nim }}</p>
                     <p>Fakultas : {{ $namafakultas }}</p>
                     <p>Program Studi : {{ $namaprodi }}</p>
+                    <p>Nomor Peminjam : {{ $Nohp }}</p>
                 </div>
             @elseif ($peminjamanDataRuangan['personal'] === true)
                 <div>
@@ -79,6 +93,7 @@
                     <p>NIDN : {{ $nim }}</p>
                     <p>Fakultas : {{ $namafakultas }}</p>
                     <p>Program Studi : {{ $namaprodi }}</p>
+                    <p>Nomor Peminjam : {{ $Nohp }}</p>
                 </div>
             @else
                 <div>
@@ -86,6 +101,7 @@
                     <p>NIDN : {{ $nim }}</p>
                     <p>Fakultas : {{ $namafakultas }}</p>
                     <p>Program Studi : {{ $namaprodi }}</p>
+                    <p>Nomor Peminjam : {{ $Nohp }}</p>
                 </div>
             @endif
         @endif
@@ -97,6 +113,7 @@
                     <p>NIM : {{ $nim }}</p>
                     <p>Fakultas : {{ $namafakultas }}</p>
                     <p>Program Studi : {{ $namaprodi }}</p>
+                    <p>Nomor Peminjam : {{ $Nohp }}</p>
                 </div>
             @elseif ($peminjamanDataAlat[0]['eksternal'] === true)
                 <div>
@@ -104,6 +121,7 @@
                     <p>NIM : {{ $nim }}</p>
                     <p>Fakultas : {{ $namafakultas }}</p>
                     <p>Program Studi : {{ $namaprodi }}</p>
+                    <p>Nomor Peminjam : {{ $Nohp }}</p>
                 </div>
             @elseif ($peminjamanDataAlat[0]['personal'] === true)
                 <div>
@@ -111,6 +129,7 @@
                     <p>NIM : {{ $nim }}</p>
                     <p>Fakultas : {{ $namafakultas }}</p>
                     <p>Program Studi : {{ $namaprodi }}</p>
+                    <p>Nomor Peminjam : {{ $Nohp }}</p>
                 </div>
             @endif
         @elseif ($role == 'Staff')
@@ -119,24 +138,28 @@
                     <p>Peminjam : {{ $nama }} (Digunakan sebagai organisasi)</p>
                     <p>NIDN : {{ $nim }}</p>
                     <p>Instansi : {{ $namainstansi }}</p>
+                    <p>Nomor Peminjam : {{ $Nohp }}</p>
                 </div>
             @elseif ($peminjamanDataAlat[0]['eksternal'] === true)
                 <div>
                     <p>Peminjam : {{ $nama }} (Digunakan dengan pihak eksternal)</p>
                     <p>NIDN : {{ $nim }}</p>
                     <p>Instansi : {{ $namainstansi }}</p>
+                    <p>Nomor Peminjam : {{ $Nohp }}</p>
                 </div>
             @elseif ($peminjamanDataAlat[0]['personal'] === true)
                 <div>
                     <p>Peminjam : {{ $nama }}</p>
                     <p>NIDN : {{ $nim }}</p>
                     <p>Instansi : {{ $namainstansi }}</p>
+                    <p>Nomor Peminjam : {{ $Nohp }}</p>
                 </div>
             @else
                 <div>
                     <p>Peminjam : {{ $nama }}</p>
                     <p>NIDN : {{ $nim }}</p>
                     <p>Instansi : {{ $namainstansi }}</p>
+                    <p>Nomor Peminjam : {{ $Nohp }}</p>
                 </div>
             @endif
         @else
@@ -146,6 +169,7 @@
                     <p>NIDN : {{ $nim }}</p>
                     <p>Fakultas : {{ $namafakultas }}</p>
                     <p>Program Studi : {{ $namaprodi }}</p>
+                    <p>Nomor Peminjam : {{ $Nohp }}</p>
                 </div>
             @elseif ($peminjamanDataAlat[0]['eksternal'] === true)
                 <div>
@@ -153,6 +177,7 @@
                     <p>NIDN : {{ $nim }}</p>
                     <p>Fakultas : {{ $namafakultas }}</p>
                     <p>Program Studi : {{ $namaprodi }}</p>
+                    <p>Nomor Peminjam : {{ $Nohp }}</p>
                 </div>
             @elseif ($peminjamanDataAlat[0]['personal'] === true)
                 <div>
@@ -160,6 +185,7 @@
                     <p>NIDN : {{ $nim }}</p>
                     <p>Fakultas : {{ $namafakultas }}</p>
                     <p>Program Studi : {{ $namaprodi }}</p>
+                    <p>Nomor Peminjam : {{ $Nohp }}</p>
                 </div>
             @else
                 <div>
@@ -167,6 +193,7 @@
                     <p>NIDN : {{ $nim }}</p>
                     <p>Fakultas : {{ $namafakultas }}</p>
                     <p>Program Studi : {{ $namaprodi }}</p>
+                    <p>Nomor Peminjam : {{ $Nohp }}</p>
                 </div>
             @endif
         @endif
@@ -257,6 +284,11 @@
             ruangan</p>
     @endif
 
+    <p id="pic">**Apabila terdapat pertanyaan dan pemberitahuan terkait peminjaman dapat menghubungi
+        0812-1234-5678
+        Via WhatsApp</p>
+
+    <br>
     <br>
     <div id="footer">
         <p>Yogyakarta, {{ $tanggaldownload }} </p>
@@ -298,6 +330,7 @@
 
     h2 {
         text-align: center;
+        font-size: 20px;
     }
 
     #tengah {
@@ -307,5 +340,24 @@
     #notes {
         font-size: 12px;
         font-style: italic;
+    }
+
+    #pic {
+        font-size: 13px;
+        font-style: bold;
+    }
+
+    img {
+        width: 70px;
+        height: 50px;
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+
+    .header {
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-start;
     }
 </style>

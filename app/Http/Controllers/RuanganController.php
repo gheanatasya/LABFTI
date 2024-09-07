@@ -21,7 +21,39 @@ class RuanganController extends Controller
                 $gambar = explode(':', $room->Foto);
                 $room->Foto = $gambar;
             }
-    
+
+            if ($room->Nama_ruangan === 'SIC'){
+                $backgroundcolor = '#F44336';
+            } else if ($room->Nama_ruangan === 'Debug'){
+                $backgroundcolor = '#E91E63';
+            } else if ($room->Nama_ruangan === 'Byte'){
+                $backgroundcolor = '#9c27b0';
+            } else if ($room->Nama_ruangan === 'Java'){
+                $backgroundcolor = '#673AB7';
+            } else if ($room->Nama_ruangan === 'Kernel'){
+                $backgroundcolor = '#2196F3';
+            } else if ($room->Nama_ruangan === 'Interface'){
+                $backgroundcolor = '#4CAF50';
+            } else if ($room->Nama_ruangan === 'Hypertext'){
+                $backgroundcolor = '#76FF03';
+            } else if ($room->Nama_ruangan === 'Gateway'){
+                $backgroundcolor = '#FFEB3B';
+            } else if ($room->Nama_ruangan === 'Firewall'){
+                $backgroundcolor = '#F57F17';
+            } else if ($room->Nama_ruangan === 'Lab. Big Data'){
+                $backgroundcolor = '#FF5722';
+            } else if ($room->Nama_ruangan === 'Lab. Mobile'){
+                $backgroundcolor = '#795548';
+            } else if ($room->Nama_ruangan === 'Lab. AI'){
+                $backgroundcolor = '#607D8B';
+            } else if ($room->Nama_ruangan === 'Lab. MIS'){
+                $backgroundcolor = '#880E4F';
+            } else if ($room->Nama_ruangan === 'Mulmed'){
+                $backgroundcolor = '#D500F9';
+            } else {
+                $backgroundcolor = '#0097A7';
+            }
+
             $fixRecord = [
                 'RuanganID' => $room->RuanganID,
                 'Kapasitas' => $room->Kapasitas,
@@ -30,16 +62,17 @@ class RuanganController extends Controller
                 'Nama_ruangan' => $room->Nama_ruangan,
                 'fasilitas' => $room->fasilitas,
                 'Status' => $room->Status,
-                'Foto' => $room->Foto
+                'Foto' => $room->Foto,
+                'BackgroundColor' => $backgroundcolor
             ];
 
             $ruanganReturn[] = $fixRecord;
         }
 
-        usort($ruanganReturn, function($a, $b) {
+        usort($ruanganReturn, function ($a, $b) {
             return strcmp($a['Nama_ruangan'], $b['Nama_ruangan']);
         });
-    
+
         return $ruanganReturn;
     }
     //ambil data sesuai id
@@ -176,6 +209,83 @@ class RuanganController extends Controller
         $ruangan->Foto = $namaDataString;
         $ruangan->save();
 
-        return response()->json(['message' => 'File uploaded successfully!', 'dataTambah' => $ruangan]);
+        if ($ruangan->Foto !== null) {
+            $gambar = explode(':', $ruangan->Foto);
+            $ruangan->Foto = $gambar;
+        };
+
+        $newRuangan = [
+            'RuanganID' => $ruangan->RuanganID,
+            'Kapasitas' => $ruangan->Kapasitas,
+            'Lokasi' => $ruangan->Lokasi,
+            'Kategori' => $ruangan->Kategori,
+            'Nama_ruangan' => $ruangan->Nama_ruangan,
+            'fasilitas' => $ruangan->fasilitas,
+            'Status' => $ruangan->Status,
+            'Foto' => $ruangan->Foto
+        ];
+
+        return response()->json(['message' => 'File uploaded successfully!', 'dataTambah' => $newRuangan]);
+    }
+
+    public function editFoto(StoreRuanganRequest $request, $RuanganID)
+    {
+        $data = $request->file('foto');
+        $fotolama = $request->get('fotoLama');
+        $namaData = [];
+
+        if (!empty($fotolama)) {
+            foreach ($fotolama as $pict) {
+                $namaData[] = $pict;
+            }
+        }
+
+        $ruangan = Ruangan::where('RuanganID', $RuanganID)->first();
+        $namaruangan = $ruangan->Nama_ruangan;
+        $directory = 'ruangan/' . $namaruangan;
+
+        if (!Storage::exists($directory)) {
+            Storage::makeDirectory($directory);
+        }
+
+        if (!empty($data)) {
+            foreach ($data as $foto) {
+                $fileInfo = [
+                    'originalName' => $foto->getClientOriginalName(),
+                    'size' => $foto->getSize(),
+                    'mimeType' => $foto->getClientMimeType(),
+                ];
+
+                $path = Storage::putFileAs($directory, $foto, $fileInfo['originalName']);
+                $namaData[] = $path;
+            };
+        };
+
+        if (empty($data) && empty($fotolama)) { //riskan
+            $ruangan->Foto = null;
+            $ruangan->save();
+        } else {
+            $namaDataString = implode(':', $namaData);
+            $ruangan->Foto = $namaDataString;
+            $ruangan->save();
+        };
+
+        if ($ruangan->Foto !== null) {
+            $gambar = explode(':', $ruangan->Foto);
+            $ruangan->Foto = $gambar;
+        };
+
+        $newRuangan = [
+            'RuanganID' => $ruangan->RuanganID,
+            'Kapasitas' => $ruangan->Kapasitas,
+            'Lokasi' => $ruangan->Lokasi,
+            'Kategori' => $ruangan->Kategori,
+            'Nama_ruangan' => $ruangan->Nama_ruangan,
+            'fasilitas' => $ruangan->fasilitas,
+            'Status' => $ruangan->Status,
+            'Foto' => $ruangan->Foto
+        ];
+
+        return response()->json(['message' => 'File uploaded successfully!', 'dataTambah' => $newRuangan]);
     }
 }

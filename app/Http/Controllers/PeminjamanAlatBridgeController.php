@@ -56,6 +56,7 @@ class PeminjamanAlatBridgeController extends Controller
         $peminjaman = Peminjaman::create([
             'PeminjamID' => $peminjamID,
             'Tanggal_pinjam' => date('d-m-Y'),
+            'No_HP' => $request['Nohp']
         ]);
         //dd($peminjaman);
         $peminjamanid = $peminjaman->PeminjamanID;

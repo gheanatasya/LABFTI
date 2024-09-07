@@ -60,7 +60,6 @@ class DetailAlatController extends Controller
         $detailalat->Nama_alat = $request->get('namaDetailAlat');
         $detailalat->Status_Kebergunaan = $request->get('statusKebergunaan');
         $detailalat->Status_Peminjaman = $request->get('statusPeminjaman');
-        $detailalat->Foto = $request->get('foto');
         $detailalat->KodeDetailAlat = $request->get('kodeDetailAlat');
         $detailalat->save();
 
@@ -115,6 +114,64 @@ class DetailAlatController extends Controller
         $namaDataString = implode(':', $namaData);
         $detailalat->Foto = $namaDataString;
         $detailalat->save();
+
+        $newDetailAlat = [
+            'KodeDetailAlat' => $detailalat->KodeDetailAlat,
+            'DetailAlatID' => $detailalat->DetailAlatID,
+            'NamaDetailAlat' => $detailalat->Nama_alat,
+            'StatusKebergunaan' => $detailalat->Status_Kebergunaan,
+            'StatusPeminjaman' => $detailalat->Status_Peminjaman,
+            'Foto' => $detailalat->Foto,
+            'AlatID' => $detailalat->AlatID
+        ];
+
+        return response()->json(['message' => 'File uploaded successfully!', 'dataTambah' => $newDetailAlat]);
+    }
+
+    public function editFoto(StoreDetail_AlatRequest $request, $DetailAlatID)
+    {
+        $data = $request->file('foto');
+        $fotolama = $request->get('fotoLama');
+        //return $fotolama;
+        $namaData = [];
+
+        if (!empty($fotolama)) {
+            foreach ($fotolama as $pict) {
+                $namaData[] = $pict;
+            }
+        }
+
+        $detailalat = Detail_Alat::where('DetailAlatID', $DetailAlatID)->first();
+        $alatid = $detailalat->AlatID;
+        $alat = Alat::where('AlatID', $alatid)->first();
+        $namaalat = $alat->Nama;
+        $directory = 'alat/' . $namaalat;
+
+        if (!Storage::exists($directory)) {
+            Storage::makeDirectory($directory);
+        }
+
+        if (!empty($data)) {
+            foreach ($data as $foto) {
+                $fileInfo = [
+                    'originalName' => $foto->getClientOriginalName(),
+                    'size' => $foto->getSize(),
+                    'mimeType' => $foto->getClientMimeType(),
+                ];
+
+                $path = Storage::putFileAs($directory, $foto, $fileInfo['originalName']);
+                $namaData[] = $path;
+            };
+        };
+
+        if (empty($fotolama) && empty($data)) {
+            $detailalat->Foto = null;
+            $detailalat->save();
+        } else {
+            $namaDataString = implode(':', $namaData);
+            $detailalat->Foto = $namaDataString;
+            $detailalat->save();
+        }
 
         $newDetailAlat = [
             'KodeDetailAlat' => $detailalat->KodeDetailAlat,

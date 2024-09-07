@@ -138,7 +138,6 @@
                 </v-combobox>
 
                 <div>
-
                   <v-text-field type="number" label="Jumlah" v-model="alatItem.jumlahPinjam" variant="outlined"
                     clearable v-if="alatItem.maxValue = item.itemsAll.find(item => item.NamaAlat === alatItem.nama)"
                     min="0" :max="alatItem.maxValue.Jumlah_ketersediaan"
@@ -172,6 +171,11 @@
                   Peminjaman</v-btn>
               </div>
             </div>
+
+            <p style="margin-left: 303px; margin-right: -80px;">Nomor Handphone Yang Dapat Dihubungi</p>
+
+            <v-text-field label="No. Handphone" v-model="Nohp" variant="outlined" clearable
+              style="margin-left: 303px; margin-right: -90px;"></v-text-field>
             <v-btn @click="saveItem()" id="simpan" :loading="loading"
               style="margin-left: 430px; margin-top: -5px; border-radius: 20px; font-size: 15px; width: 250px;"
               color="primary">
@@ -264,6 +268,7 @@ export default {
   setup() {
     const loading = ref(false);
     const dialog = ref(false);
+    const Nohp = ref('');
 
     const form = reactive([
       {
@@ -295,7 +300,7 @@ export default {
         detailRuangan: [],
         loading: false,
         datatabrak: [],
-        tambahformbaru: 0
+        tambahformbaru: 0,
       }
     ])
 
@@ -352,7 +357,7 @@ export default {
         detailRuangan: [],
         loading: false,
         datatabrak: [],
-        tambahformbaru: 0
+        tambahformbaru: 0,
       })
       form[index].tambahformbaru = form[index].tambahformbaru + 1;
       console.log('form baru ditambahkan');
@@ -392,7 +397,7 @@ export default {
           detailRuangan: [],
           loading: false,
           datatabrak: [],
-          tambahformbaru: 0
+          tambahformbaru: 0,
         })
       }
     }
@@ -436,7 +441,7 @@ export default {
         console.log(form[i].dokumen);
         if ((form[i].tanggalSelesai === '') || (form[i].tanggalAwal === '') || (form[i].selectedRuangan === '')
           || (form[i].selectedOptionPersonal === '') || (form[i].selectedOptionOrganisation === '') || (form[i].selectedOptionEksternal === '')
-          || (form[i].keterangan === '')) {
+          || (form[i].keterangan === '') || (Nohp.value === '')) {
           aman.value = false;
           alert('Terdapat data yang kosong!');
           loading.value = false;
@@ -499,6 +504,13 @@ export default {
             return
           }
         }
+
+        const nohpRegex = /^(08)[0-9]{9,12}$/;
+        if (!nohpRegex.test(Nohp.value)) {
+          alert('Nomor HP tidak valid!')
+          loading.value = false;
+          return
+        }
       }
 
       //console.log(form);
@@ -524,7 +536,8 @@ export default {
           alat: form[i].alat,
           keterangan: form[i].keterangan,
           dokumen: null,
-          UserID: UserID
+          UserID: UserID,
+          Nohp: Nohp.value
         };
 
         //dataSend.push(dataToSave);
@@ -616,6 +629,7 @@ export default {
             form[i].loading = false,
             form[i].datatabrak = [],
             form[i].tambahformbaru = 0
+            Nohp.value = ''
         } catch (error) {
           console.error('Error menyimpan data peminjaman ruangan', error);
           loading.value = false;
@@ -647,7 +661,8 @@ export default {
             form[i].detailRuangan = [],
             form[i].loading = false,
             form[i].datatabrak = [],
-            form[i].tambahformbaru = 0
+            form[i].tambahformbaru = 0,
+            Nohp.value = ''
         }
       }
       loading.value = false;
@@ -841,7 +856,7 @@ export default {
       }
     }
 
-    return { form, loading, dialog, addNewForm, removeForm, fetchAlat, fetchAlatDosen, saveItem, availableRoom, availableRoomDosen, tambahAlat, hapusAlat };
+    return { form, loading, dialog, Nohp, addNewForm, removeForm, fetchAlat, fetchAlatDosen, saveItem, availableRoom, availableRoomDosen, tambahAlat, hapusAlat };
   },
   data() {
     return {
