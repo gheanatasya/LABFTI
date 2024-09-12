@@ -17,7 +17,7 @@
             </v-card-text>
 
             <v-card-actions style="justify-content:center;">
-                <v-btn :loading="this.loading" @click="resetPassword(this.email, this.password, this.konfpass)" style="bottom: 20px; right: 0px; background-color: rgb(2,39, 10, 0.9); color: white;
+                <v-btn :loading="this.loading" @click="resetPassword(this.email, this.password, this.konfpass)" style="bottom: 20px; right: 0px; background-color: #0D47A1; color: white;
             border-radius: 5px; width: 200px;">Reset Password</v-btn>
             </v-card-actions>
         </v-card>

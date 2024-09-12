@@ -15,7 +15,7 @@
                         Memuat halaman  
                     </v-col>
                     <v-col cols="6">
-                        <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
+                        <v-progress-linear color="#0D47A1" height="6" indeterminate rounded></v-progress-linear>
                     </v-col>
                 </v-row>
             </v-container>

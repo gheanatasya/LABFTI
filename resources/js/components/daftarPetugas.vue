@@ -8,7 +8,7 @@
                     Memuat halaman
                 </v-col>
                 <v-col cols="6">
-                    <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
+                    <v-progress-linear color="#0D47A1" height="6" indeterminate rounded></v-progress-linear>
                 </v-col>
             </v-row>
         </v-container>
@@ -30,7 +30,7 @@
             <v-spacer></v-spacer>
 
             <v-col>
-                <v-btn style="text-transform: none; font-family: Lexend-Regular; background-color: rgb(2,39, 10, 0.9); color:white;
+                <v-btn style="text-transform: none; font-family: Lexend-Regular; background-color: #0D47A1; color:white;
                     margin-right: 50px;" @click="this.tambahActionPetugas = true"><v-icon>mdi-plus</v-icon>Tambah
                     Petugas
                 </v-btn>
@@ -43,21 +43,21 @@
             <v-table style="height: 400px;">
                 <thead style="font-family: Lexend-Regular; font-size: 15px;">
                     <tr>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">No</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Nama Petugas</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">NIM</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Email</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Program Studi</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Tgl Bekerja</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Tgl Berhenti</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Foto</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Action</th>
+                        <th class="text-center" style="background-color: #BBDEFB">No</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Nama Petugas</th>
+                        <th class="text-center" style="background-color: #BBDEFB">NIM</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Email</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Program Studi</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Tgl Bekerja</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Tgl Berhenti</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Foto</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Action</th>
                     </tr>
                 </thead>
                 <tbody v-if="this.filteredPetugas.length > 0">
-                    <tr v-for="(petugas, index) in filteredPetugas" :key="index"
+                    <tr v-for="(petugas, index) in paginatedPetugas" :key="index"
                         style="background-color: white; font-family: 'Lexend-Regular; font-size: 15px;">
-                        <td style="width: 20px; text-align: center;"> {{ index + 1 }} </td>
+                        <td style="width: 20px; text-align: center;"> {{ (currentPagePetugas - 1) * itemsPerPage + index + 1 }} </td>
 
                         <td style="width: 150px;"> {{ petugas.Nama }} </td>
 
@@ -67,9 +67,11 @@
 
                         <td style="width: 100px; text-align: center;"> {{ petugas.Prodi }} </td>
 
-                        <td style="width: 100px; text-align: center;"> {{ new Date(petugas.Tgl_Bekerja).toLocaleDateString('id-ID') }} </td>
+                        <td style="width: 100px; text-align: center;"> {{ new
+                            Date(petugas.Tgl_Bekerja).toLocaleDateString('id-ID') }} </td>
 
-                        <td v-if="petugas.Tgl_Berhenti !== null" style="width: 100px; text-align: center;"> {{ new Date(petugas.Tgl_Berhenti).toLocaleDateString('id-ID') }} </td>
+                        <td v-if="petugas.Tgl_Berhenti !== null" style="width: 100px; text-align: center;"> {{ new
+                            Date(petugas.Tgl_Berhenti).toLocaleDateString('id-ID') }} </td>
                         <td v-else style="width: 100px; text-align: center;"> {{ petugas.Tgl_Berhenti }} </td>
 
                         <td style="width: 100px; text-align: center;">
@@ -80,10 +82,10 @@
                         </td>
 
                         <td style="width: 100px; font-size: 25px; text-align: center;">
-                            <v-icon style="color: rgb(2, 39, 10, 1);"
+                            <v-icon style="color: #0D47A1;"
                                 @click="konfirmasieditDataPetugas(petugas.Nama, petugas.NIM, petugas.Email, petugas.Prodi, petugas.Tgl_Bekerja, petugas.Tgl_Berhenti, petugas.Foto, petugas.UserID)">mdi-pencil-circle</v-icon>
-                            <v-icon @click="konfirmasiHapusPetugas(petugas.UserID, petugas.Nama)"
-                                style="color: rgb(206, 0, 0, 0.91);">mdi-delete-circle</v-icon>
+                            <!-- <v-icon @click="konfirmasiHapusPetugas(petugas.UserID, petugas.Nama)"
+                                style="color: rgb(206, 0, 0, 0.91);">mdi-delete-circle</v-icon> -->
                         </td>
                     </tr>
                 </tbody>
@@ -135,12 +137,11 @@
                         style="margin-right: 100px; margin-left:0px;"></v-file-input>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
-                    <v-btn
-                        style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
+                    <v-btn style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
                         @click="editActionPetugas = false">Batal</v-btn>
                     <v-btn :loading="this.loadingEdit"
                         @click="updatePetugas(petugasEdit.Nama, petugasEdit.NIM, petugasEdit.Email, petugasEdit.Prodi, petugasEdit.Tgl_Bekerja, petugasEdit.Tgl_Berhenti, petugasEdit.Foto, petugasEdit.UserID)"
-                        style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
+                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Simpan</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -153,11 +154,10 @@
                 <v-card-text style="text-align: center;">Yakin ingin menghapus {{
                     petugasHapus.Nama }} ?</v-card-text>
                 <v-card-actions style="justify-content:center;">
-                    <v-btn
-                        style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
+                    <v-btn style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
                         @click="dialogHapusPetugas = false">Batal</v-btn>
                     <v-btn :loading="this.loadingHapus"
-                        style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;"
+                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;"
                         @click="deletePetugas(petugasHapus.UserID), this.loadingHapus = true">Hapus</v-btn>
                 </v-card-actions>
             </v-card>
@@ -196,10 +196,10 @@
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
-                        style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
+                        style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
                         @click="tambahActionPetugas = false">Batal</v-btn>
                     <v-btn @click="tambahPetugas(petugasTambah)" :loading="this.loadingTambah"
-                        style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
+                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Simpan</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -251,7 +251,9 @@ export default {
             overlay: true,
             loadingTambah: false,
             loadingHapus: false,
-            loadingEdit: false
+            loadingEdit: false,
+            itemsPerPage: 5,
+            currentPagePetugas: 1,
         }
     },
     methods: {
@@ -298,18 +300,17 @@ export default {
             const formData = new FormData();
 
             if (Foto.name && Foto.size && Foto.type) {
+                if (imageRegex1.test(Foto.name) || imageRegex2.test(Foto.name) || imageRegex3.test(Foto.name)) {
+                    console.log('file aman')
+                } else {
+                    alert('File harus berupa gambar!');
+                    this.loadingEdit = false
+                    return
+                }
                 const file = document.getElementById('editFotoPetugas');
                 formData.append('foto', file.files[0]);
                 formData.append('userid', UserID);
                 //console.log('ada')
-            }
-
-            if (imageRegex1.test(Foto.name) || imageRegex2.test(Foto.name) || imageRegex3.test(Foto.name)) {
-                console.log('file aman')
-            } else {
-                alert('File harus berupa gambar!');
-                this.loadingEdit = false
-                return
             }
 
             const updateData = {
@@ -496,7 +497,10 @@ export default {
                     this.petugasTambah.Tgl_Berhenti = null
                     this.loadingTambah = false;
                 });
-        }
+        },
+        updateCurrentPagePetugas(val) {
+            this.currentPagePetugas = val;
+        },
     },
     mounted() {
         Promise.all([
@@ -514,7 +518,14 @@ export default {
             return this.allPetugas.filter(petugas => {
                 return petugas.Nama.toLowerCase().includes(this.searchPetugas.toLowerCase());
             });
-        }
+        },
+        paginatedPetugas() {
+            const startIndex = (this.currentPagePetugas - 1) * this.itemsPerPage;
+            const endIndex = startIndex + this.itemsPerPage;
+            return this.filteredPetugas.slice(startIndex,
+                endIndex);
+        },
+
     },
 }
 </script>

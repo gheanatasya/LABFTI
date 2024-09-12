@@ -46,7 +46,7 @@
                             style="grid-column: span 1; height: 50px; margin-right: 50px;"></v-text-field>
                     </v-sheet>
                     <v-btn @click="addUser" :loading="loading"
-                        style="margin-top: 30px; margin-left: 330px; font-family: Lexend-Medium; background-color: rgb(2, 39, 10, 0.9); color: white; width: 300px; border-radius: 20px; font-size: 17px;">
+                        style="margin-top: 30px; margin-left: 330px; font-family: Lexend-Medium; background-color: #0D47A1; color: white; width: 300px; border-radius: 20px; font-size: 17px;">
                         <span v-if="!loading">Buat Akun</span>
                         <span v-else>Loading...</span>
                     </v-btn>
@@ -55,7 +55,7 @@
 
             <div>
                 <p style="margin-top: 30px; margin-left: 100px;font-family:Lexend-Regular;">Sudah memiliki akun?
-                    <router-link style="color: rgb(2, 39, 10, 0.9); font-family: Lexend-Bold"
+                    <router-link style="color: #0D47A1; font-family: Lexend-Bold"
                         to="/loginPage">Login</router-link>
                 </p>
             </div>

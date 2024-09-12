@@ -15,7 +15,7 @@
                     @click="navigateBackLogin()"><v-icon style="font-size: 30px;">mdi-arrow-left</v-icon></v-btn>
                 <v-btn :loading="this.loading"
                     @click="resetPasswordLinkSend(this.email)"
-                    style="bottom: 18px; right: 0px; background-color: rgb(2,39, 10, 0.9); color: white;
+                    style="bottom: 18px; right: 0px; background-color: #0D47A1; color: white;
             border-radius: 5px; width: 300px;">Kirim link reset password</v-btn>
             </v-card-actions>
         </v-card>

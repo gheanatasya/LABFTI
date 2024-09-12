@@ -15,7 +15,7 @@
                         Memuat halaman
                     </v-col>
                     <v-col cols="6">
-                        <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
+                        <v-progress-linear color="#0D47A1" height="6" indeterminate rounded></v-progress-linear>
                     </v-col>
                 </v-row>
             </v-container>
@@ -37,7 +37,7 @@
 
             <v-container style="width:55%;">
                 <v-sheet
-                    style=" background-color: rgb(3, 138, 33, 0.1); font-family: Lexend-Regular; margin-right: 80px;margin-top: -50px; border-radius: 10px;">
+                    style=" background-color: #BBDEFB; font-family: Lexend-Regular; margin-right: 80px;margin-top: -50px; border-radius: 10px;">
                     <v-text-field label="Nama Lengkap" v-model="this.user.Nama" variant="outlined"
                         style="margin-right: 50px; margin-left:40px; padding-top: 30px;"></v-text-field>
 
@@ -75,22 +75,22 @@
                         style="margin-right: 50px; margin-left:40px; color: rgb(0, 0, 0, 0.5);"></v-text-field>
 
                     <p @click="dialogEmail(this.user.Email)"
-                        style="color: #10511B; text-decoration: underline; cursor: pointer; margin-right: 50px; margin-left:40px;">
+                        style="color: #0D47A1; text-decoration: underline; cursor: pointer; margin-right: 50px; margin-left:40px;">
                         Ubah
                         email?</p>
 
                     <p @click="dialogPassword(this.password)"
-                        style="color: #10511B; text-decoration: underline; cursor: pointer; margin-right: 50px; margin-left:40px;">
+                        style="color: #0D47A1; text-decoration: underline; cursor: pointer; margin-right: 50px; margin-left:40px;">
                         Ubah
                         password?</p>
 
                     <div style="display: flex; justify-content: center;">
                         <v-btn :to="'profil'"
-                            style="margin-right: 20px;margin-top: 10px; margin-left: 420px; margin-bottom: 50px; font-family: Lexend-Bold; border: 3px solid rgb(2, 39, 10, 0.9);
-                            box-shadow: none;background-color: none; color: rgb(2, 39, 10, 0.9); width: 150px; border-radius: 20px; font-size: 17px;">Batal</v-btn>
+                            style="margin-right: 20px;margin-top: 10px; margin-left: 420px; margin-bottom: 50px; font-family: Lexend-Bold; border: 3px solid #0D47A1;
+                            box-shadow: none;background-color: none; color: #0D47A1; width: 150px; border-radius: 20px; font-size: 17px;">Batal</v-btn>
                         <v-btn @click="updateNama(this.user.Nama)" :loading="loading"
                             style="margin-top: 10px; margin-right: 50px; margin-bottom: 50px; font-family: Lexend-Medium; 
-                        background-color: rgb(2, 39, 10, 0.9); color: white; width: 150px; border-radius: 20px; font-size: 17px;">Simpan</v-btn>
+                        background-color: #0D47A1; color: white; width: 150px; border-radius: 20px; font-size: 17px;">Simpan</v-btn>
                     </div>
                 </v-sheet>
 
@@ -105,10 +105,10 @@
                         </v-card-text>
                         <v-card-actions style="justify-content:center;">
                             <v-btn
-                                style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
+                                style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
                                 @click="ubahEmail = false">Batal</v-btn>
                             <v-btn @click="updateEmail(this.email)" :loading="loadingEmail"
-                                style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Ubah</v-btn>
+                                style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Ubah</v-btn>
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
@@ -126,10 +126,10 @@
                         </v-card-text>
                         <v-card-actions style="justify-content:center;">
                             <v-btn
-                                style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
+                                style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
                                 @click="ubahPassword = false">Batal</v-btn>
                             <v-btn @click="updatePassword(this.password)" :loading="loadingPassword"
-                                style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Ubah</v-btn>
+                                style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Ubah</v-btn>
                         </v-card-actions>
                     </v-card>
                 </v-dialog>

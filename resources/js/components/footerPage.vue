@@ -1,6 +1,6 @@
 <template>
-    <div class="flex" style="color:white; padding-top: 30px;">
-        <div class="d-flex w-100 align-center px-4" style="background-color: rgb(52, 116, 59, 0.8); padding-top: 20px; padding-bottom: 20px;">
+    <div class="flex" style="color:black; padding-top: 30px;">
+        <div class="d-flex w-100 align-center px-4" style="background-color: #BBDEFB; padding-top: 20px; padding-bottom: 20px;">
             <div>
                 <v-icon style="margin-top: 8px;">mdi-map-marker-outline</v-icon>
                 <br>
@@ -30,12 +30,12 @@
             <div>
                 <v-btn v-bind:href="'https://www.instagram.com/ftiukdw'"
                     style="border-radius: 50%; box-shadow: none; height: 60px; width: 0px; margin-top: 120px;">
-                    <v-icon style="color:rgb(52, 116, 59, 0.8); font-size: 40px;">mdi-instagram</v-icon>
+                    <v-icon style="color: #0D47A1; font-size: 40px;">mdi-instagram</v-icon>
                 </v-btn>
             </div>
         </div>
         <div class="px-4 py-2 text-center w-100"
-            style="background-color: rgb(2,39,10,0.9); color: white; font-family: 'Lexend-Regular';">
+            style="background-color: #0D47A1; color: white; font-family: 'Lexend-Regular';">
             Copyright &copy; 2024
         </div>
     </div>

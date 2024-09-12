@@ -17,22 +17,22 @@
             <v-card-text style="text-align: center;">
                 <v-text-field type="datetime-local" label="Tanggal Pakai Awal" v-model="tanggalAwal" clearable
                     variant="outlined"
-                    style="background-color: rgb(3, 138, 33, 0.3); color: black; height: 56px; margin-bottom: 25px;"></v-text-field>
+                    style="background-color: #BBDEFB; color: black; height: 56px; margin-bottom: 25px;"></v-text-field>
 
                 <v-text-field type="datetime-local" label="Tanggal Selesai" v-model="tanggalSelesai" clearable
                     variant="outlined"
-                    style="background-color: rgb(3, 138, 33, 0.3); color: black; height: 56px; margin-bottom: 25px;"></v-text-field>
+                    style="background-color: #BBDEFB; color: black; height: 56px; margin-bottom: 25px;"></v-text-field>
 
                 <v-select v-model="selectedKapasitas" :items="kapasitas" label="Kapasitas" variant="outlined" clearable
-                    style="background-color: rgb(3, 138, 33, 0.3); color: black; height: 56px; margin-bottom: 25px;">
+                    style="background-color: #BBDEFB; color: black; height: 56px; margin-bottom: 25px;">
                 </v-select>
 
                 <v-select v-model="selectedLokasi" :items="lokasi" label="Lokasi" variant="outlined" clearable
-                    style="background-color: rgb(3, 138, 33, 0.3); color: black; height: 56px; margin-bottom: 25px;">
+                    style="background-color: #BBDEFB; color: black; height: 56px; margin-bottom: 25px;">
                 </v-select>
 
                 <v-select v-model="selectedKategori" :items="kategori" label="Kategori" variant="outlined" clearable
-                    style="background-color: rgb(3, 138, 33, 0.3); color: black; height: 56px; margin-bottom: 25px;">
+                    style="background-color: #BBDEFB; color: black; height: 56px; margin-bottom: 25px;">
                 </v-select>
 
             </v-card-text>
@@ -42,7 +42,7 @@
                         style="font-size: 30px;">mdi-arrow-left</v-icon></v-btn>
                 <v-btn :loading="this.loading"
                     @click="jadwalPeminjaman(tanggalAwal, tanggalSelesai, selectedKapasitas, selectedKategori, selectedLokasi)"
-                    style="bottom: 20px; right: 0px; background-color: rgb(2,39, 10, 0.9); color: white;
+                    style="bottom: 20px; right: 0px; background-color: #0D47A1; color: white;
                 border-radius: 20px; width: 150px;">Terapkan</v-btn>
             </v-card-actions>
         </v-card>
@@ -56,7 +56,7 @@
                 <v-row cols="10">
                     <v-col v-for="(room, index) in this.fixRooms" :key="index" cols="5" style="margin-left: 0px;">
                         <v-card
-                            style="width: 300px; background-color: rgb(3, 138, 33, 0.3); border-radius: 20px; margin-left: 25px;">
+                            style="width: 300px; background-color: #BBDEFB; border-radius: 20px; margin-left: 25px;">
                             <v-img :src="this.picture" style="width: 40%; height: 100%; margin-left: 90px;"
                                 cover></v-img>
                             <v-card-text style="font-size: 18px;">
@@ -65,10 +65,10 @@
                             </v-card-text>
                             <v-card-actions>
                                 <div style="position: absolute; bottom: 0; right: 60px; margin-bottom: 0px;">
-                                    <v-btn style="background-color: rgb(2,39, 10, 0.9); color: white; border-radius: 20px; margin-left: 90px; width: 130px; height: 25px; margin-bottom: -10px;
+                                    <v-btn style="background-color: #0D47A1; color: white; border-radius: 20px; margin-left: 90px; width: 130px; height: 25px; margin-bottom: -10px;
                             font-size: 10px;" @click="pinjamRuang(room.Nama_ruangan)">Pinjam Ruangan</v-btn>
                                     <br>
-                                    <v-btn @click="navigateToRuangan" style="color: rgb(2,39, 10, 0.9); margin-left: 90px; background: none;
+                                    <v-btn @click="navigateToRuangan" style="color: #0D47A1; margin-left: 90px; background: none;
                                 text-decoration: underline; box-shadow: none; font-size: 12px;
                                 ">L<p style="text-transform: lowercase;">ihat detail ruangan>>
                                         </p></v-btn>

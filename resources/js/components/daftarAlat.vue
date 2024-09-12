@@ -11,7 +11,7 @@
                     Memuat halaman
                 </v-col>
                 <v-col cols="6">
-                    <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
+                    <v-progress-linear color="#0D47A1" height="6" indeterminate rounded></v-progress-linear>
                 </v-col>
             </v-row>
         </v-container>
@@ -33,13 +33,13 @@
 
             <v-col>
                 <v-btn @click="this.grafikDialog = true"
-                    style="text-transform: none; font-family: Lexend-Regular; background-color: rgb(2,39, 10, 0.9); color:white;">
+                    style="text-transform: none; font-family: Lexend-Regular; background-color: #0D47A1; color:white;">
                     <v-icon>mdi-chart-line</v-icon>
                     Grafik Peminjaman</v-btn>
             </v-col>
 
             <v-col>
-                <v-btn style="text-transform: none; font-family: Lexend-Regular; background-color: rgb(2,39, 10, 0.9); color:white;
+                <v-btn style="text-transform: none; font-family: Lexend-Regular; background-color: #0D47A1; color:white;
                     margin-right: 50px;" @click="this.dialogTambahAlat = true"><v-icon>mdi-plus</v-icon>Tambah
                     Alat
                 </v-btn>
@@ -52,13 +52,13 @@
             <v-table style="height: 400px;">
                 <thead style="font-family: Lexend-Regular; font-size: 15px;">
                     <tr>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">No</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Kode Alat</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Nama Alat</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Jumlah</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Jumlah Rusak</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Status</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Action</th>
+                        <th class="text-center" style="background-color: #BBDEFB">No</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Kode Alat</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Nama Alat</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Jumlah</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Jumlah Rusak</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Status</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Action</th>
                     </tr>
                 </thead>
                 <tbody v-if="this.filteredTools.length > 0">
@@ -78,7 +78,7 @@
                         <td style="width: 100px; text-align: center;"> {{ alat.StatusAlat }} </td>
 
                         <td style="width: 100px; font-size: 25px; text-align: center;">
-                            <v-icon style="color: rgb(2, 39, 10, 1);"
+                            <v-icon style="color: #0D47A1;"
                                 @click="editDataAlat(alat.Nama, alat.KodeAlat, alat.StatusAlat, alat.AlatID, alat.WajibSurat)">mdi-pencil-circle</v-icon>
                             <v-icon style="color: rgb(206, 0, 0, 0.91);"
                                 @click="confirmDeleteAlat(alat.KodeAlat, alat.Nama, alat.AlatID)">mdi-delete-circle</v-icon>
@@ -112,7 +112,7 @@
                     <v-icon @click="expanded = false">mdi-close-circle</v-icon>
                 </v-card-actions>
                 <v-card-text style="margin-top: -30px; margin-left: 20px; margin-right: 50px;">
-                    <v-btn style="text-transform: none; font-family: Lexend-Regular; background-color: rgb(2,39, 10, 0.9); color:white;
+                    <v-btn style="text-transform: none; font-family: Lexend-Regular; background-color: #0D47A1; color:white;
                         margin-bottom: 20px;" @click="dialogTambahDetailAlat = true"><v-icon>mdi-plus</v-icon>Tambah
                         Detail
                         Alat
@@ -120,17 +120,17 @@
                     <v-table>
                         <thead style="font-family: Lexend-Regular; font-size: 15px;">
                             <tr>
-                                <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">No</th>
-                                <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1);">Kode Detail Alat
+                                <th class="text-center" style="background-color: #BBDEFB">No</th>
+                                <th class="text-center" style="background-color: #BBDEFB">Kode Detail Alat
                                 </th>
-                                <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Nama Detail Alat
+                                <th class="text-center" style="background-color: #BBDEFB">Nama Detail Alat
                                 </th>
-                                <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Status
+                                <th class="text-center" style="background-color: #BBDEFB">Status
                                     Kebergunaan</th>
-                                <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Status Peminjaman
+                                <th class="text-center" style="background-color: #BBDEFB">Status Peminjaman
                                 </th>
-                                <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Foto</th>
-                                <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Action</th>
+                                <th class="text-center" style="background-color: #BBDEFB">Foto</th>
+                                <th class="text-center" style="background-color: #BBDEFB">Action</th>
                             </tr>
                         </thead>
                         <tbody v-if="this.itemforDetailAlat.length > 0">
@@ -143,13 +143,13 @@
                                 <td style="width: 200px; text-align: center;"> {{ detail.StatusKebergunaan }} </td>
                                 <td style="width: 200px; text-align: center;"> {{ detail.StatusPeminjaman }} </td>
                                 <td style="width: 500px;">
-                                    <v-btn @click="morePicture(detail.Foto)" style="color: rgb(2,39, 10, 0.9); margin-left: 90px; background: none;
+                                    <v-btn @click="morePicture(detail.Foto)" style="color: #0D47A1; margin-left: 90px; background: none;
                                                 text-decoration: underline; box-shadow: none; 
                                                 ">L<p style="text-transform: lowercase;">ihat lebih banyak
                                             gambar>></p></v-btn>
                                 </td>
                                 <td style="width: 150px; font-size: 25px;">
-                                    <v-icon style="color: rgb(2, 39, 10, 1);"
+                                    <v-icon style="color: #0D47A1;"
                                         @click="editDataDetailAlat(detail.NamaDetailAlat, detail.KodeDetailAlat, detail.StatusKebergunaan, detail.StatusPeminjaman, detail.Foto, detail.DetailAlatID)">mdi-pencil-circle</v-icon>
                                 </td>
                             </tr>
@@ -159,7 +159,7 @@
                             <td></td>
                             <div class="py-1 text-center"
                                 style="content: center; margin-top: 60px; margin-left: 150px; margin-right: -50px;">
-                                <v-icon class="mb-6" color="primary" icon="mdi-alert-circle-outline" size="40"></v-icon>
+                                <v-icon class="mb-6" color="#0D47A1" icon="mdi-alert-circle-outline" size="40"></v-icon>
                                 <div class="text-h7 font-weight-bold">Tidak terdapat data detail alat.</div>
                             </div>
                             <td></td>
@@ -198,12 +198,12 @@
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
-                        style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
+                        style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
                         @click="editActionAlat = false">Batal</v-btn>
                     <v-btn
                         @click="updateAlat(alatEdit.namaAlat, alatEdit.kodeAlat, alatEdit.statusAlat, alatEdit.alatID, alatEdit.wajibSurat)"
                         :loading="this.alatEdit.loading"
-                        style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
+                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Simpan</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -235,16 +235,16 @@
                         id="editFotoAlat" style="margin-right: 100px; margin-left:0px;"></v-file-input>
 
                     <p @click="editFoto(this.detailalatEdit.fotoTampil)"
-                        style="font-family: Lexend-Regular; color: rgb(2, 39, 10, 1); font-size: 14px; text-transform: none; justify-content: left; margin-left: 40px; text-decoration: underline; margin-bottom: 15px;">
+                        style="font-family: Lexend-Regular; color: #0D47A1; font-size: 14px; text-transform: none; justify-content: left; margin-left: 40px; text-decoration: underline; margin-bottom: 15px;">
                         Edit Foto Yang Sudah Ada</p>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
-                        style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
+                        style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
                         @click="editActionDetailAlat = false">Batal</v-btn>
                     <v-btn :loading="this.detailalatEdit.loading"
                         @click="updateDetailAlat(detailalatEdit.namaDetailAlat, detailalatEdit.kodeDetailAlat, detailalatEdit.statusKebergunaan, detailalatEdit.statusPeminjaman, detailalatEdit.foto, detailalatEdit.detailalatID)"
-                        style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
+                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Simpan</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -258,10 +258,10 @@
                     itemforHapusAlat.Nama }}</strong>?</v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
-                        style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
+                        style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
                         @click="dialogHapusAlat = false">Batal</v-btn>
                     <v-btn :loading="this.itemforHapusAlat.loading"
-                        style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;"
+                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;"
                         @click="deleteAlat(itemforHapusAlat.AlatID)">Hapus</v-btn>
                 </v-card-actions>
             </v-card>
@@ -301,10 +301,10 @@
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
-                        style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
+                        style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
                         @click="dialogTambahAlat = false">Batal</v-btn>
                     <v-btn @click="tambahAlat(this.alatTambah)" :loading="this.alatTambah.loading"
-                        style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Tambah</v-btn>
+                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Tambah</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -334,10 +334,10 @@
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
-                        style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
+                        style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
                         @click="dialogTambahDetailAlat = false">Batal</v-btn>
                     <v-btn @click="tambahDetailAlat(detailalatTambah)" :loading="this.detailalatTambah.loading"
-                        style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Tambah</v-btn>
+                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Tambah</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>

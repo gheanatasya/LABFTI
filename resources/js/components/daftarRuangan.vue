@@ -11,7 +11,7 @@
                     Memuat halaman
                 </v-col>
                 <v-col cols="6">
-                    <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
+                    <v-progress-linear color="#0D47A1" height="6" indeterminate rounded></v-progress-linear>
                 </v-col>
             </v-row>
         </v-container>
@@ -32,12 +32,12 @@
             <v-spacer></v-spacer>
             <v-col>
                 <v-btn @click="this.grafikDialog = true"
-                    style="text-transform: none; font-family: Lexend-Regular; background-color: rgb(2,39, 10, 0.9); color:white;">
+                    style="text-transform: none; font-family: Lexend-Regular; background-color: #0D47A1; color:white;">
                     <v-icon>mdi-chart-line</v-icon>
                     Grafik Peminjaman</v-btn>
             </v-col>
             <v-col>
-                <v-btn style="text-transform: none; font-family: Lexend-Regular; background-color: rgb(2,39, 10, 0.9); color:white;
+                <v-btn style="text-transform: none; font-family: Lexend-Regular; background-color: #0D47A1; color:white;
                     margin-right: 50px;" @click="this.dialogTambahRuangan = true"><v-icon>mdi-plus</v-icon>Tambah
                     Ruangan
                 </v-btn>
@@ -50,16 +50,16 @@
             <v-table style="height: 400px;">
                 <thead style="font-family: Lexend-Regular; font-size: 15px;">
                     <tr>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">No</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Nama Ruangan</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Kode Ruangan</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Lokasi</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Kapasitas</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Kategori</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Fasilitas</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Status</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Foto</th>
-                        <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Action</th>
+                        <th class="text-center" style="background-color: #BBDEFB">No</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Nama Ruangan</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Kode Ruangan</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Lokasi</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Kapasitas</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Kategori</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Fasilitas</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Status</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Foto</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Action</th>
                     </tr>
                 </thead>
                 <tbody v-if="this.filteredRooms.length > 0">
@@ -88,7 +88,7 @@
                         <td style="width: 100px; text-align: center;"> {{ ruangan.Status }} </td>
 
                         <td style="width: 80px; text-align: center;">
-                            <v-btn @click="morePicture(ruangan.Foto)" style="color: rgb(2,39, 10, 0.9); margin-left: 40px; background: none;
+                            <v-btn @click="morePicture(ruangan.Foto)" style="color: #0D47A1; margin-left: 40px; background: none;
                                                 text-decoration: underline; box-shadow: none; 
                                                 ">L<p style="text-transform: lowercase;">ihat lebih banyak
                                     gambar>></p></v-btn>
@@ -96,7 +96,7 @@
 
                         <td style="width: 100px; font-size: 25px; text-align: center;">
                             <v-icon @click="editRuangan(ruangan)"
-                                style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                style="color: #0D47A1;">mdi-pencil-circle</v-icon>
                             <v-icon @click="konfirmasiHapusRuangan(ruangan.RuanganID, ruangan.Nama_ruangan)"
                                 style="color: rgb(206, 0, 0, 0.91);">mdi-delete-circle</v-icon>
                         </td>
@@ -162,16 +162,16 @@
                         id="editFotoRuangan" style="margin-right: 100px; margin-left:0px;"></v-file-input>
 
                     <p @click="editFoto()"
-                        style="font-family: Lexend-Regular; color: rgb(2, 39, 10, 1); font-size: 14px; text-transform: none; justify-content: left; margin-left: 40px; text-decoration: underline; margin-bottom: 15px;">
+                        style="font-family: Lexend-Regular; color: #0D47A1; font-size: 14px; text-transform: none; justify-content: left; margin-left: 40px; text-decoration: underline; margin-bottom: 15px;">
                         Edit Foto Yang Sudah Ada</p>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
-                        style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
+                        style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
                         @click="editActionRuangan = false">Batal</v-btn>
                     <v-btn :loading="this.ruanganEdit.loading"
                         @click="updateRuangan(ruanganEdit.RuanganID, ruanganEdit.Nama_ruangan, ruanganEdit.Lokasi, ruanganEdit.Kapasitas, ruanganEdit.Kategori, ruanganEdit.fasilitas, ruanganEdit.foto, ruanganEdit.Status)"
-                        style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
+                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Simpan</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -185,10 +185,10 @@
                     ruanganHapus.Nama_ruangan }}</strong>?</v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
-                        style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
+                        style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
                         @click="dialogHapusRuangan = false">Batal</v-btn>
                     <v-btn :loading="this.ruanganHapus.loading"
-                        style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;"
+                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;"
                         @click="deleteRuangan(ruanganHapus.RuanganID)">Hapus</v-btn>
                 </v-card-actions>
             </v-card>
@@ -248,10 +248,10 @@
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
-                        style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
+                        style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
                         @click="this.dialogTambahRuangan = false">Batal</v-btn>
                     <v-btn @click="tambahRuangan(ruanganTambah)" :loading="this.ruanganTambah.loading"
-                        style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Tambah</v-btn>
+                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Tambah</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>

@@ -11,7 +11,7 @@
             style="z-index: 1; position: fixed; width: 100%;"></headerDekanat>
 
         <router-link to="/berandaUser"
-            style="width: 200px; font-size:17px; color: rgb(2,39, 10, 0.9); margin-left: 20px; margin-top: 70px; font-family: 'Lexend-Regular'"><v-icon
+            style="width: 200px; font-size:17px; color: #0D47A1; margin-left: 20px; margin-top: 70px; font-family: 'Lexend-Regular'"><v-icon
                 style="font-size: 25px;">mdi-keyboard-backspace</v-icon> Beranda</router-link>
 
         <div style="height: 100%; display: flex;">
@@ -33,13 +33,13 @@
                                     v-if="User_role === 'Mahasiswa' || User_role === 'Petugas'"
                                     @click="availableRoom(item.tanggalAwal, item.tanggalSelesai, index), fetchAlat(item.tanggalAwal, item.tanggalSelesai, index)"
                                     style="width: 120px; margin-left: 10px; margin-top: 80px; font-size: 11px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
-                                    color="primary">
+                                    color="#0D47A1">
                                     Cek ruangan</v-btn>
 
                                 <v-btn :loading="item.loading" v-else
                                     @click="availableRoomDosen(item.tanggalAwal, item.tanggalSelesai, index), fetchAlatDosen(item.tanggalAwal, item.tanggalSelesai, index)"
                                     style="width: 120px; margin-left: 10px; margin-top: 80px; font-size: 11px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
-                                    color="primary">
+                                    color="#0D47A1">
                                     Cek ruangan</v-btn>
                             </div>
 
@@ -136,7 +136,7 @@
                                 style="display: flex; justify-content: space-between; margin-left: 320px; margin-right: 20px; margin-bottom: 50px; margin-top: 20px;">
                                 <v-btn @click="addNewForm(index)" id="tambah"
                                     style="margin-right: 10px; margin-left: -5px;" prepend-icon=mdi-plus-circle
-                                    color="primary">Tambah
+                                    color="#0D47A1">Tambah
                                     Peminjaman</v-btn>
                                 <v-btn @click="removeForm(index)" id="hapus" prepend-icon="mdi-minus-circle"
                                     color="error">Hapus
@@ -145,7 +145,7 @@
                         </div>
                         <v-btn @click="saveItem()" id="simpan" :loading="loading"
                             style="margin-left: 430px; margin-top: -5px; border-radius: 20px; font-size: 15px; width: 250px;"
-                            color="primary">
+                            color="#0D47A1">
                             Pinjam Ruangan </v-btn>
                     </v-form>
                 </div>
@@ -169,7 +169,7 @@
                         <v-hover>
                             <template v-slot:default="{ isHovering, props }">
                                 <div v-bind="props"
-                                    :style="{ backgroundColor: isHovering ? 'rgba(3, 138, 33, 0.4)' : 'rgb(3, 138, 33, 0.3)' }">
+                                    :style="{ backgroundColor: isHovering ? '#BBDEFB' : '#E3F2FD' }">
                                     <v-row align="center">
                                         <v-col cols="auto">
                                             <v-img :width="200" cover src="../picture/fti-ukdw.png"></v-img>

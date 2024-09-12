@@ -28,12 +28,12 @@
                     </v-sheet>
 
                     <div>
-                        <router-link style="color: rgb(2, 39, 10, 0.9); font-family: Lexend-Regular; margin-left: 220px; margin-top: -100px;"
+                        <router-link style="color: #0D47A1; font-family: Lexend-Regular; margin-left: 220px; margin-top: -100px;"
                         to="/resetPassword">Lupa password?</router-link>
                     </div>
 
                     <v-btn :loading="loading" @click="login"
-                        style="margin-top: 30px; margin-left: 370px; font-family: Lexend-Medium; background-color: rgb(2, 39, 10, 0.9); color: white; width: 200px; border-radius: 20px; font-size: 17px;">
+                        style="margin-top: 30px; margin-left: 370px; font-family: Lexend-Medium; background-color: #0D47A1; color: white; width: 200px; border-radius: 20px; font-size: 17px;">
                         <span v-if="!loading">Login</span>
                         <span v-else>Loading...</span>
                     </v-btn>
@@ -42,7 +42,7 @@
 
             <div>
                 <p style="margin-left: 220px; margin-top: 80px; font-family:Lexend-Regular;">Belum memiliki akun?
-                    <router-link style="color: rgb(2, 39, 10, 0.9); font-family: Lexend-Bold;"
+                    <router-link style="color: #0D47A1; font-family: Lexend-Bold;"
                         to="/registrationPage">Daftar</router-link>
                 </p>
             </div>

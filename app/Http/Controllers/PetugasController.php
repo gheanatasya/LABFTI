@@ -49,7 +49,7 @@ class PetugasController extends Controller
             $allRecordPetugas[] = $record;
         }
 
-        usort($allRecordPetugas, function($a, $b) {
+        usort($allRecordPetugas, function ($a, $b) {
             return strcmp($a['NIM'], $b['NIM']);
         });
 
@@ -70,17 +70,32 @@ class PetugasController extends Controller
             'Tgl_Berhenti' => 'required',
         ]); */
 
-        $petugas->Tgl_Bekerja = $request->get('Tgl_Bekerja');
-        $petugas->Tgl_Berhenti = $request->get('Tgl_Berhenti');
-        $petugas->save();
-        $user = User::where('UserID', $UserID)->first();
-        $nim = $user->NIM_NIDN;
-        if (substr($nim, 0, 2) === '71') {
-            $prodi = 'Informatika';
-        } elseif (substr($nim, 0, 2) === '72') {
-            $prodi = 'Sistem Informasi';
+        if ($request->get('Tgl_Berhenti') !== null) {
+            $petugas->Tgl_Berhenti = $request->get('Tgl_Berhenti');
+            $user = User::where('UserID', $UserID)->first();
+            $nim = $user->NIM_NIDN;
+            if (substr($nim, 0, 2) === '71') {
+                $prodi = 'Informatika';
+            } elseif (substr($nim, 0, 2) === '72') {
+                $prodi = 'Sistem Informasi';
+            } else {
+                $prodi = 'Prodi tidak dikenali';
+            }
+            $user->User_role = 'Mahasiswa';
+            $user->save();
+            $petugas->save();
         } else {
-            $prodi = 'Prodi tidak dikenali';
+            $petugas->Tgl_Bekerja = $request->get('Tgl_Bekerja');
+            $petugas->save();
+            $user = User::where('UserID', $UserID)->first();
+            $nim = $user->NIM_NIDN;
+            if (substr($nim, 0, 2) === '71') {
+                $prodi = 'Informatika';
+            } elseif (substr($nim, 0, 2) === '72') {
+                $prodi = 'Sistem Informasi';
+            } else {
+                $prodi = 'Prodi tidak dikenali';
+            }
         }
 
         $newPetugas = [
@@ -143,7 +158,8 @@ class PetugasController extends Controller
         return response()->json(['status' => true, 'message' => "Tambahkan Petugas Success", 'UserID' => $userid]);
     }
 
-    public function tambahFoto(StorePetugasRequest $request){
+    public function tambahFoto(StorePetugasRequest $request)
+    {
         $data = $request->file('foto');
         $userid = $request->input('userid');
 
@@ -183,7 +199,8 @@ class PetugasController extends Controller
         return response()->json(['message' => 'File uploaded successfully!', 'data' => $newPetugas]);
     }
 
-    public function editFoto(UpdatePetugasRequest $request){
+    public function editFoto(UpdatePetugasRequest $request)
+    {
         $data = $request->file('foto');
         $userid = $request->input('userid');
 
@@ -203,5 +220,4 @@ class PetugasController extends Controller
 
         return response()->json(['message' => 'File uploaded successfully!']);
     }
-
 }

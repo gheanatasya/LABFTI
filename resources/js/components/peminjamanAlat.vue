@@ -60,13 +60,13 @@
                                     v-if="User_role === 'Mahasiswa' || User_role === 'Petugas'"
                                     @click="fetchAlat(item.tanggalAwal, item.tanggalSelesai, index)"
                                     style="width: 120px; margin-left: 10px; margin-top: 80px; font-size: 11px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
-                                    color="primary">
+                                    color="#0D47A1">
                                     Cek Alat</v-btn>
 
                                 <v-btn :loading="item.loading" v-else
                                     @click="fetchAlatDosen(item.tanggalAwal, item.tanggalSelesai, index)"
                                     style="width: 120px; margin-left: 10px; margin-top: 80px; font-size: 11px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
-                                    color="primary">
+                                    color="#0D47A1">
                                     Cek Alat</v-btn>
                             </div>
 
@@ -153,7 +153,7 @@
                                 style="display: flex; justify-content: space-between; margin-left: 320px; margin-right: 20px; margin-bottom: 50px; margin-top: 20px;">
                                 <v-btn @click="addNewForm(index)" id="tambah"
                                     style="margin-right: 10px; margin-left: -5px;" prepend-icon=mdi-plus-circle
-                                    color="primary">Tambah
+                                    color="#0D47A1">Tambah
                                     Peminjaman</v-btn>
                                 <v-btn @click="removeForm(index)" id="hapus" prepend-icon="mdi-minus-circle"
                                     color="error">Hapus
@@ -172,7 +172,7 @@
 
                         <v-btn @click="saveItem" id="simpan" :loading="loading"
                             style="margin-left: 430px; margin-top: -5px; border-radius: 20px; font-size: 15px; width: 250px;"
-                            color="primary">
+                            color="#0D47A1">
                             Pinjam Alat </v-btn>
                     </v-form>
                 </div>
@@ -191,15 +191,15 @@
                         alat yang tersedia.
                     </p>
                     <v-card v-if="item.itemsAll.length > 0"
-                        style="border-radius: 10px; background-color: rgb(3, 138, 33, 0.3); box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3)">
+                        style="border-radius: 10px; background-color: #E3F2FD; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3)">
                         <v-table style="overflow: hidden;">
                             <thead style="font-family: Lexend-Regular; font-size: 15px;">
                                 <tr>
                                     <th class="text-center"
-                                        style="background-color: rgb(3, 138, 33, 0.1); width: 20px;">No</th>
-                                    <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Nama Alat
+                                        style="background-color: #BBDEFB; width: 20px;">No</th>
+                                    <th class="text-center" style="background-color: #BBDEFB">Nama Alat
                                     </th>
-                                    <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Jumlah
+                                    <th class="text-center" style="background-color: #BBDEFB">Jumlah
                                     </th>
                                 </tr>
                             </thead>

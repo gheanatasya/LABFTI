@@ -1,5 +1,5 @@
 <template>
-  <div style="background-color: #34743B; height: 100%">
+  <div style="background-color: #BBDEFB; height: 100%">
     <v-overlay v-model="overlay" style="background-color: white; z-index: 0">
       <v-container style="height: 660px; margin-left: 440px;">
         <v-row align-content="center" class="fill-height" justify="center">
@@ -7,31 +7,31 @@
             Memuat halaman
           </v-col>
           <v-col cols="6">
-            <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
+            <v-progress-linear color="#0D47A1" height="6" indeterminate rounded></v-progress-linear>
           </v-col>
         </v-row>
       </v-container>
     </v-overlay>
 
     <v-container id="logo"
-      style="background-color: #10511B; display: flex; justify-content: space-between; width: 30%;">
+      style="background-color: #0D47A1; display: flex; justify-content: space-between; width: 30%;">
       <v-img :width="90" :height="70" src="../picture/logo-ukdw.png"></v-img>
       <v-img :width="20" :height="70" src="../picture/fti-ukdw.png"></v-img>
     </v-container>
 
     <router-link to="loginPage"
-      style="font-size: 20px; font-family:Lexend-Medium; position: absolute; top: 20px; right: 20px; color: white; text-decoration: none;">Login</router-link>
-    <div style="text-align:center; color:white; font-family:Lexend-Medium; font-size: 25px; margin-top: 40px;">
+      style="font-size: 20px; font-family:Lexend-Medium; position: absolute; top: 20px; right: 20px; color: black; text-decoration: none;">Login</router-link>
+    <div style="text-align:center; color:black; font-family:Lexend-Medium; font-size: 25px; margin-top: 40px;">
       Peminjaman Ruangan dan Alat LAB FTI UKDW
     </div>
-    <div style="text-align:center; color:white; font-family:Lexend-Regular; font-size: 20px; margin-top: 10px;">
-      Untuk melakukan peminjaman, silahkan <router-link to="loginPage" style="color:white">Login</router-link> terlebih
+    <div style="text-align:center; color:black; font-family:Lexend-Regular; font-size: 20px; margin-top: 10px;">
+      Untuk melakukan peminjaman, silahkan <router-link to="loginPage" style="color:black">Login</router-link> terlebih
       dahulu.
     </div>
 
     <v-container style="height: 700px; display: flex;">
       <div id="calendar" style="width: 1000px; float: left; margin-left: -80px; margin-right: 50px;"></div>
-      <div style="float: clear; font-family:Lexend-Regular; font-size: 20px; color: white; margin-top: 30px;">
+      <div style="float: clear; font-family:Lexend-Regular; font-size: 20px; color: black; margin-top: 30px;">
         <p style="margin-bottom: 10px;">Keterangan : </p>
         <p v-for="(item, index) in dataRuangan" :key="index" @click="openInformation(item)" 
           :style="{ backgroundColor: item.BackgroundColor, color: 'black', width: '120px', fontSize: '15px', paddingLeft: '20px', marginBottom: '5px', cursor: 'pointer' }">

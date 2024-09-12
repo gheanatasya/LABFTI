@@ -15,7 +15,7 @@
                         Memuat halaman
                     </v-col>
                     <v-col cols="6">
-                        <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
+                        <v-progress-linear color="#0D47A1" height="6" indeterminate rounded></v-progress-linear>
                     </v-col>
                 </v-row>
             </v-container>
@@ -32,12 +32,12 @@
                 <v-table style="overflow: hidden; height: 400px;">
                     <thead style="font-family: Lexend-Regular; font-size: 15px;">
                         <tr>
-                            <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">No</th>
-                            <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Ruangan</th>
-                            <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Waktu Penggunaan</th>
-                            <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Keterangan</th>
-                            <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Status</th>
-                            <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">Action</th>
+                            <th class="text-center" style="background-color: #BBDEFB">No</th>
+                            <th class="text-center" style="background-color: #BBDEFB">Ruangan</th>
+                            <th class="text-center" style="background-color: #BBDEFB">Waktu Penggunaan</th>
+                            <th class="text-center" style="background-color: #BBDEFB">Keterangan</th>
+                            <th class="text-center" style="background-color: #BBDEFB">Status</th>
+                            <th class="text-center" style="background-color: #BBDEFB">Action</th>
                         </tr>
                     </thead>
                     <tbody v-if="this.ruanganbridge.length > 0">
@@ -54,7 +54,7 @@
 
                             <td style="text-align: center;">
                                 <v-chip v-if="item.status === 'Diterima'"
-                                    style="background-color: rgb(2, 39, 10, 1); color: white;"
+                                    style="background-color: #0D47A1; color: white;"
                                     @click="openInformationRoom(item.histori)">{{ item.status }}</v-chip>
 
                                 <v-chip v-if="item.status === 'Ditolak'"
@@ -68,7 +68,7 @@
 
                             <td style="width: 110px; font-size: 25px;"> <v-icon v-if="item.status === 'Diterima'"
                                     @click="downloadPDF(this.UserID, item.peminjamanid, item.peminjamanruanganid, 0)"
-                                    style="color: rgb(2, 39, 10, 1)">mdi-download-circle</v-icon>
+                                    style="color: #0D47A1">mdi-download-circle</v-icon>
 
                                 <v-icon v-else style="color: rgb(0, 0, 0, 0.5)">mdi-download-circle</v-icon>
 
@@ -126,10 +126,10 @@
                     itemToDelete.namaruangan }}</strong>?</v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
-                        style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
+                        style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
                         @click="dialogVisible = false">Batal</v-btn>
                     <v-btn :loading="this.itemToDelete.loading"
-                        style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;"
+                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;"
                         @click="deletePeminjamanRuangan(itemToDelete.peminjamanruanganid, itemToDelete.peminjamanid)">Hapus</v-btn>
                 </v-card-actions>
             </v-card>
@@ -143,25 +143,25 @@
                 <v-table style="font-family: Lexend-Regular; height: 400px;" fixed-header>
                     <thead>
                         <tr>
-                            <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">
+                            <th class="text-center" style="background-color: #BBDEFB">
                                 No
                             </th>
-                            <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">
+                            <th class="text-center" style="background-color: #BBDEFB">
                                 Alat
                             </th>
-                            <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">
+                            <th class="text-center" style="background-color: #BBDEFB">
                                 Waktu Penggunaan
                             </th>
-                            <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">
+                            <th class="text-center" style="background-color: #BBDEFB">
                                 Jumlah Pinjam
                             </th>
-                            <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">
+                            <th class="text-center" style="background-color: #BBDEFB">
                                 Keterangan
                             </th>
-                            <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">
+                            <th class="text-center" style="background-color: #BBDEFB">
                                 Status
                             </th>
-                            <th class="text-center" style="background-color: rgb(3, 138, 33, 0.1)">
+                            <th class="text-center" style="background-color: #BBDEFB">
                                 Action
                             </th>
                         </tr>
@@ -182,7 +182,7 @@
 
                             <td style="text-align: center;">
                                 <v-chip v-if="item.status === 'Diterima'"
-                                    style="background-color: rgb(2, 39, 10, 1); color: white;"
+                                    style="background-color: #0D47A1; color: white;"
                                     @click="openInformationTool(item.histori)">{{ item.status }}</v-chip>
                                 <v-chip v-if="item.status === 'Ditolak'"
                                     style="background-color: rgb(234, 8, 8, 0.91); color: white;"
@@ -194,7 +194,7 @@
 
                             <td style="width: 110px; font-size: 25px;"> <v-icon v-if="item.status === 'Diterima'"
                                     @click="downloadPDF(this.UserID, item.peminjamanid, 0, item.peminjamanalatid)"
-                                    style="color: rgb(2, 39, 10, 1)">mdi-download-circle</v-icon>
+                                    style="color: #0D47A1">mdi-download-circle</v-icon>
 
                                 <v-icon v-else style="color: rgb(0, 0, 0, 0.5)">mdi-download-circle</v-icon>
 

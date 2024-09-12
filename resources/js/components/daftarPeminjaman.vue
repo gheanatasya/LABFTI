@@ -13,7 +13,7 @@
                     Memuat halaman
                 </v-col>
                 <v-col cols="6">
-                    <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
+                    <v-progress-linear color="#0D47A1" height="6" indeterminate rounded></v-progress-linear>
                 </v-col>
             </v-row>
         </v-container>
@@ -56,32 +56,32 @@
                 <v-table style="height: 500px; width: 2500px;" fixed-header>
                     <thead style="font-family: Lexend-Regular; font-size: 15px;">
                         <tr>
-                            <th class="text-center" style="background-color: rgb(2,39,10,0.9); color: white;">No</th>
-                            <th class="text-center" style="background-color: rgb(2,39,10,0.9); color: white;">Nama
+                            <th class="text-center" style="background-color: #BBDEFB; color: black;">No</th>
+                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Nama
                                 Ruangan</th>
-                            <th class="text-center" style="background-color: rgb(2,39,10,0.9); color: white;">Add On
+                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Add On
                             </th>
-                            <th class="text-center" style="background-color: rgb(2,39,10,0.9); color: white;">Peminjam
+                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Peminjam
                             </th>
-                            <th class="text-center" style="background-color: rgb(2,39,10,0.9); color: white;">Tgl.
+                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Tgl.
                                 Pinjam</th>
-                            <th class="text-center" style="background-color: rgb(2,39,10,0.9); color: white;">Tgl. Pakai
+                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Tgl. Pakai
                             </th>
-                            <th class="text-center" style="background-color: rgb(2,39,10,0.9); color: white;">Dokumen
+                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Dokumen
                             </th>
-                            <th class="text-center" style="background-color: rgb(2,39,10,0.9); color: white;">Keterangan
+                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Keterangan
                             </th>
-                            <th class="text-center" style="background-color: rgb(2,39,10,0.9); color: white;">Status
+                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Status
                             </th>
-                            <th class="text-center" style="background-color: rgb(2,39,10,0.9); color: white;">Action
+                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Action
                             </th>
 
                         </tr>
                     </thead>
                     <tbody v-if="filteredRooms.length > 0">
-                        <tr v-for="(ruangan, index) in filteredRooms" :key="index"
+                        <tr v-for="(ruangan, index) in paginatedRooms" :key="index"
                             style="background-color: white; font-family: 'Lexend-Regular; font-size: 15px;">
-                            <td style="width: 20px;"> {{ index + 1 }} </td>
+                            <td style="width: 20px;"> {{ (currentPageRuangan - 1) * itemsPerPage + index + 1 }} </td>
 
                             <td style="width: 200px;"> {{ ruangan.namaruangan }} </td>
 
@@ -111,8 +111,13 @@
                                 <p v-for="(histori, index) in ruangan.histori" :key="index"
                                     style="font-family: Lexend-Regular;">
                                     {{ index + 1 }}. {{ histori.Namastatus }} oleh {{ histori.Acc_by }} pada tanggal {{
-                                        histori.Tanggal_acc }}
-                                    <span>({{ histori.Catatan }})</span>
+                                        new Date(histori.Tanggal_acc).toLocaleTimeString('id-ID',
+                                        {
+                                            year:
+                                                'numeric', month:
+                                                'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                        }) }}
+                                    <span v-if="histori.Catatan !== 'null'">({{ histori.Catatan }})</span>
                                 </p>
                             </td>
 
@@ -120,58 +125,58 @@
                                 <!-- eksternal -->
                                 <v-icon @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Dekan') && (ruangan.eksternal === true) && (ruangan.dekan === true || ruangan.dekan === false || ruangan.dekan === null)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Kepala Lab') && (ruangan.eksternal === true) && (ruangan.dekan === true)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Koordinator Lab') && (ruangan.eksternal === true) && (ruangan.dekan === true) && (ruangan.kepala === true)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Petugas') && (ruangan.eksternal === true) && (ruangan.dekan === true) && (ruangan.kepala === true) && (ruangan.koordinator === true)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <!-- organisasi -->
                                 <v-icon @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Wakil Dekan 3') && (ruangan.organisasi === true) && (ruangan.wd3 === true || ruangan.wd3 === false || ruangan.wd3 === null)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Kepala Lab') && (ruangan.organisasi === true) && (ruangan.wd3 === true)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Koordinator Lab') && (ruangan.organisasi === true) && (ruangan.wd3 === true) && (ruangan.kepala === true)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Petugas') && (ruangan.organisasi === true) && (ruangan.wd3 === true) && (ruangan.kepala === true) && (ruangan.koordinator === true)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <!-- diluar fakultas -->
                                 <v-icon @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Wakil Dekan 2') && (ruangan.email != null) && (ruangan.wd2 === true || ruangan.wd2 === false || ruangan.wd2 === null)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Kepala Lab') && (ruangan.email != null) && (ruangan.wd2 === true)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Koordinator Lab') && (ruangan.email != null) && (ruangan.wd2 === true) && (ruangan.kepala === true)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Petugas') && (ruangan.email != null) && (ruangan.wd2 === true) && (ruangan.kepala === true) && (ruangan.koordinator === true)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <!-- personal -->
                                 <v-icon @click="persetujuanRuangan(ruangan)"
-                                    v-if="(this.User_role === 'Petugas') && (ruangan.personal === true)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    v-if="(this.User_role === 'Petugas' || this.User_role === 'Koordinator Lab') && (ruangan.personal === true)"
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <!-- <v-icon v-else style="color: rgb(30, 30, 30, 0.7);">mdi-pencil-circle</v-icon> -->
                             </td>
@@ -194,6 +199,8 @@
                         <td></td>
                     </tbody>
                 </v-table>
+                <v-pagination v-model="currentPageRuangan" :length="Math.ceil(filteredTools.length / itemsPerPage)"
+                    @change="updateCurrentPageRuangan"></v-pagination>
             </v-card>
         </v-container>
     </div>
@@ -235,33 +242,33 @@
                 <v-table style="height: 500px; width: 1800px;" fixed-header>
                     <thead style="font-family: Lexend-Regular; font-size: 15px;">
                         <tr>
-                            <th class="text-center" style="background-color: rgb(2,39,10,0.9); color: white;">No</th>
-                            <th class="text-center" style="background-color: rgb(2,39,10,0.9); color: white;">Nama Alat
+                            <th class="text-center" style="background-color: #BBDEFB; color: black;">No</th>
+                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Nama Alat
                             </th>
-                            <th class="text-center" style="background-color: rgb(2,39,10,0.9); color: white;">Jumlah
+                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Jumlah
                                 Pinjam
                             </th>
-                            <th class="text-center" style="background-color: rgb(2,39,10,0.9); color: white;">Peminjam
+                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Peminjam
                             </th>
-                            <th class="text-center" style="background-color: rgb(2,39,10,0.9); color: white;">Tgl.
+                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Tgl.
                                 Pinjam
                             </th>
-                            <th class="text-center" style="background-color: rgb(2,39,10,0.9); color: white;">Tgl. Pakai
+                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Tgl. Pakai
                             </th>
-                            <th class="text-center" style="background-color: rgb(2,39,10,0.9); color: white;">Dokumen
+                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Dokumen
                             </th>
-                            <th class="text-center" style="background-color: rgb(2,39,10,0.9); color: white;">Keterangan
+                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Keterangan
                             </th>
-                            <th class="text-center" style="background-color: rgb(2,39,10,0.9); color: white;">Status
+                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Status
                             </th>
-                            <th class="text-center" style="background-color: rgb(2,39,10,0.9); color: white;">Action
+                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Action
                             </th>
                         </tr>
                     </thead>
                     <tbody v-if="this.filteredTools.length > 0">
-                        <tr v-for="(alat, index) in filteredTools" :key="index"
+                        <tr v-for="(alat, index) in paginatedTools" :key="index"
                             style=" font-family: 'Lexend-Regular; font-size: 15px;">
-                            <td style="width: 20px;"> {{ index + 1 }} </td>
+                            <td style="width: 20px;"> {{ (currentPageAlat - 1) * itemsPerPage + index + 1 }} </td>
 
                             <td style="width: 50px;"> {{ alat.namaalat }} </td>
 
@@ -285,8 +292,13 @@
                                 <p v-for="(histori, index) in alat.histori" :key="index"
                                     style="font-family: Lexend-Regular;">
                                     {{ index + 1 }}. {{ histori.Namastatus }} oleh {{ histori.Acc_by }} pada tanggal {{
-                                        histori.Tanggal_acc }}
-                                    <italic>({{ histori.Catatan }})</italic>
+                                        new Date(histori.Tanggal_acc).toLocaleTimeString('id-ID',
+                                        {
+                                            year:
+                                                'numeric', month:
+                                                'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                        }) }}
+                                    <span v-if="histori.Catatan !== 'null'">({{ histori.Catatan }})</span>
                                 </p>
                             </td>
 
@@ -294,58 +306,58 @@
                                 <!-- eksternal -->
                                 <v-icon @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Dekanat') && (alat.eksternal === true) && (alat.dekan === true || alat.dekan === false || alat.dekan === null)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Kepala Lab') && (alat.eksternal === true) && (alat.dekan === true)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Koordinator Lab') && (alat.eksternal === true) && (alat.dekan === true) && (alat.kepala === true)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Petugas') && (alat.eksternal === true) && (alat.dekan === true) && (alat.kepala === true) && (ruangan.koordinator === true)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <!-- organisasi -->
                                 <v-icon @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Wakil Dekan 3') && (alat.organisasi === true) && (alat.wd3 === true || alat.wd3 === false || alat.wd3 === null)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Kepala Lab') && (alat.organisasi === true) && (alat.wd3 === true)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Koordinator Lab') && (alat.organisasi === true) && (alat.wd3 === true) && (alat.kepala === true)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Petugas') && (alat.organisasi === true) && (alat.wd3 === true) && (alat.kepala === true) && (ruangan.koordinator === true)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <!-- diluar fakultas -->
                                 <v-icon @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Wakil Dekan 2') && (alat.email != null) && (alat.wd2 === true || alat.wd2 === false || alat.wd2 === null)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Kepala Lab') && (alat.email != null) && (alat.wd2 === true)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Koordinator Lab') && (alat.email != null) && (alat.wd2 === true) && (alat.kepala === true)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <v-icon @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Petugas') && (alat.email != null) && (alat.wd2 === true) && (alat.kepala === true) && (ruangan.koordinator === true)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <!-- personal -->
                                 <v-icon @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Petugas') && (alat.personal === true)"
-                                    style="color: rgb(2, 39, 10, 1);">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <!-- <v-icon v-else style="color: rgb(30, 30, 30, 0.7);">mdi-pencil-circle</v-icon> -->
                             </td>
@@ -368,6 +380,8 @@
                         <td></td>
                     </tbody>
                 </v-table>
+                <v-pagination v-model="currentPageAlat" :length="Math.ceil(filteredTools.length / itemsPerPage)"
+                    @change="updateCurrentPageAlat"></v-pagination>
             </v-card>
 
             <!-- edit persetujuan alat -->
@@ -410,11 +424,10 @@
                             label="Catatan" row-height="25" rows="5" variant="outlined" auto-grow shaped></v-textarea>
                     </v-card-text>
                     <v-card-actions style="justify-content:center;">
-                        <v-btn
-                            style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
+                        <v-btn style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
                             @click="editActionAlat = false, this.loadingAlat = false">Batal</v-btn>
                         <v-btn @click="konfirmasiAlatLebih(alat)" :loading="this.loadingAlat"
-                            style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
+                            style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Simpan</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -456,12 +469,10 @@
                             label="Catatan" row-height="25" rows="5" variant="outlined" auto-grow shaped></v-textarea>
                     </v-card-text>
                     <v-card-actions style="justify-content:center;">
-                        <v-btn
-                            style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
+                        <v-btn style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
                             @click="editActionRuangan = false, this.loadingRuangan = false">Batal</v-btn>
-                        <v-btn @click="confirmRuangan(ruangan)"
-                            :loading="this.loadingRuangan"
-                            style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;">Simpan</v-btn>
+                        <v-btn @click="confirmRuangan(ruangan)" :loading="this.loadingRuangan"
+                            style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Simpan</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -534,6 +545,7 @@ export default {
             loadingAlat: false,
             loadingRuangan: false,
             loadingAlat2: false,
+
         }
     },
     methods: {
@@ -753,7 +765,7 @@ export default {
                     console.log(error)
                     this.loadingAlat = true;
                 })
-                this.loadingAlat = true;
+            this.loadingAlat = true;
         },
         confirmRuangan(ruangan) {
             this.loadingRuangan = true;
@@ -828,14 +840,14 @@ export default {
         },
         confirmAlat2(alat) {
             this.loadingAlat2 = true;
-            if(alat.currentStatus === '' || alat.currentStatus === null) {
+            if (alat.currentStatus === '' || alat.currentStatus === null) {
                 alert('Tidak ada status yang dipilih!');
                 this.loadingAlat2 = false
                 this.konfirmasiTools = false
                 this.loadingAlat = false
                 return
             }
-            
+
             const pengecekan = this.allPeminjamanAlat.filter(data => data.peminjamanid === alat.peminjamanid);
 
             //for (let i = 0; i < pengecekan.length; i++) {
@@ -903,6 +915,12 @@ export default {
                 console.error()
             }
         },
+        updateCurrentPageAlat(val) {
+            this.currentPageAlat = val;
+        },
+        updateCurrentPageRuangan(val) {
+            this.currentPageDetailAlat = val;
+        },
     },
     mounted() {
         Promise.all([
@@ -948,7 +966,19 @@ export default {
             }
 
             return filteredTools;
-        }
+        },
+        paginatedRooms() {
+            const startIndex = (this.currentPageRuangan - 1) * this.itemsPerPage;
+            const endIndex = startIndex + this.itemsPerPage;
+            return this.filteredRooms.slice(startIndex,
+                endIndex);
+        },
+        paginatedTools() {
+            const startIndex = (this.currentPageAlat - 1) * this.itemsPerPage;
+            const endIndex = startIndex + this.itemsPerPage;
+            return this.filteredTools.slice(startIndex,
+                endIndex);
+        },
     },
 }
 </script>

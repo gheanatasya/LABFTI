@@ -1,20 +1,20 @@
 <template>
     <v-card>
-        <v-toolbar style="background-color: rgb(2,39,10,0.9); font-family: 'Lexend-Regular'">
+        <v-toolbar style="background-color: #0D47A1; font-family: 'Lexend-Regular'">
             <v-toolbar-title>
                 <router-link to="/beranda" style="cursor: pointer">
-                    <v-img :width="80" cover src="fti-ukdw.png"></v-img>
+                    <v-img :width="80" cover src="../picture/fti-ukdw.png"></v-img>
                 </router-link>
             </v-toolbar-title>
             <v-toolbar-items class="flex-grow-1 justify-center" style="color: white">
-                <v-btn flat v-for="menu in menusCenter" :key="menu.title" :to="menu.route">
+                <v-btn flat v-for="menu in menusCenter" :key="menu.title" :to="menu.route" style="text-transform: none;">
                     {{ menu.title }}
                 </v-btn>
             </v-toolbar-items>
             <v-spacer></v-spacer>
             <v-toolbar-items class="hidden-xs-only" style="color: white">
                 <template v-for="menu1 in menusLeft" :key="menu1.title">
-                    <v-menu v-if="menu1.title === 'Pengaturan'">
+                    <v-menu v-if="menu1.title === 'Pengaturan'" style="text-transform: none;">
                         <template v-slot:activator="{ on, props }">
                             <v-btn flat v-on="on" v-bind="props">
                                 <v-icon left dark>{{ menu1.icon }}</v-icon>
@@ -24,10 +24,10 @@
                             <v-list-item v-for="(item, i) in menu1.submenus" :key="i">
                                 <v-list-item-title>
                                     <v-icon>{{ item.icon }}</v-icon>
-                                    <v-btn flat @click="logout" v-if="item.title === 'Logout'">
+                                    <v-btn flat @click="logout" v-if="item.title === 'Logout'" style="text-transform: none;">
                                         {{ item.title }}
                                     </v-btn>
-                                    <v-btn :to="item.route" v-else flat>
+                                    <v-btn :to="item.route" v-else flat style="text-transform: none;">
                                         {{ item.title }}
                                     </v-btn>
                                 </v-list-item-title>
@@ -43,13 +43,13 @@
                             </v-btn>
                         </template>
 
-                        <v-list style="width: 600px;">
+                        <v-list style="width: 600px; height: 500px;">
                             <v-list-item v-for="(item, i) in this.allNotifications" :key="i">
                                 <!-- new booking -->
                                 <v-hover v-if="item.data.newbooking">
                                     <template v-slot:default="{ isHovering, props }" v-if="item.read_at === null">
                                         <v-list-item-title v-if="item.read_at === null" v-bind="props" :style="{
-                                            backgroundColor: isHovering ? 'rgba(3, 138, 33, 0.4)' : 'rgb(3, 138, 33, 0.3)',
+                                            backgroundColor: isHovering ? '#BBDEFB' : '#E3F2FD',
                                             cursor: 'pointer',
                                             paddingLeft: '10px',
                                             borderBottom: '1px solid rgb(0, 0, 0, 0.1)',
@@ -63,7 +63,7 @@
                                             <div style="margin-right: 20px; text-align: justify;"
                                                 v-if="item.data.subject === 'Status Peminjaman'">
                                                 <h4>{{ item.data.subject }}</h4>
-                                                <p @click="readNotification(item.id)">Peminjaman ruangan {{
+                                                <p v-if="item.data.catatan !== 'null'" @click="readNotification(item.id)">Peminjaman ruangan {{
                                                     item.data.detailruangan.namaruangan }}
                                                     untuk tanggal <br>{{ new
                                                         Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
@@ -81,7 +81,7 @@
                                                                 }) }} <br>telah {{
                                                         item.data.namastatus
                                                     }}
-                                                    oleh {{ item.data.accby }} pada {{ new
+                                                    oleh {{ item.data.accby }} <br> pada {{ new
                                                         Date(item.created_at).toLocaleTimeString('id-ID',
                                                             {
                                                                 year:
@@ -90,6 +90,32 @@
                                                             }) }}. <br>Catatan :
                                                     {{
                                                         item.data.catatan }}
+                                                </p>
+                                                <p v-else @click="readNotification(item.id)">Peminjaman ruangan {{
+                                                    item.data.detailruangan.namaruangan }}
+                                                    untuk tanggal <br>{{ new
+                                                        Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
+                                                            {
+                                                                year:
+                                                                    'numeric', month:
+                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                            }) }} <br>- {{
+                                                        new
+                                                            Date(item.data.detailruangan.tanggalakhir).toLocaleTimeString('id-ID',
+                                                                {
+                                                                    year:
+                                                                        'numeric', month:
+                                                                        'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                                }) }} <br>telah {{
+                                                        item.data.namastatus
+                                                    }}
+                                                    oleh {{ item.data.accby }} <br> pada {{ new
+                                                        Date(item.created_at).toLocaleTimeString('id-ID',
+                                                            {
+                                                                year:
+                                                                    'numeric', month:
+                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                            }) }}.
                                                 </p>
                                             </div>
 
@@ -100,7 +126,7 @@
                                                     dilakukan!
                                                     <br>
                                                     Ruangan {{ item.data.detailruangan.namaruangan }} akan dipinjam pada
-                                                    tanggal
+                                                    tanggal <br>
                                                     {{ new
                                                         Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
                                                             {
@@ -148,7 +174,7 @@
                                                 </p>
                                             </div>
 
-                                            <v-icon size="small" style="color: rgb(2,39,10,0.9);">mdi-circle</v-icon>
+                                            <v-icon size="small" style="color: #0D47A1;">mdi-circle</v-icon>
                                         </v-list-item-title>
                                     </template>
                                 </v-hover>
@@ -170,7 +196,7 @@
                                             <div style="margin-right: 20px; text-align: justify;"
                                                 v-if="item.data.subject === 'Status Peminjaman'">
                                                 <h4>{{ item.data.subject }}</h4>
-                                                <p @click="readNotification(item.id)">Peminjaman ruangan {{
+                                                <p v-if="item.data.catatan !== 'null'" @click="readNotification(item.id)">Peminjaman ruangan {{
                                                     item.data.detailruangan.namaruangan }}
                                                     untuk tanggal <br>{{ new
                                                         Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
@@ -189,7 +215,7 @@
                                                     }} <br>telah {{
                                                         item.data.namastatus
                                                     }}
-                                                    oleh {{ item.data.accby }} pada {{ new
+                                                    oleh {{ item.data.accby }} <br> pada {{ new
                                                         Date(item.created_at).toLocaleTimeString('id-ID',
                                                             {
                                                                 year:
@@ -198,6 +224,33 @@
                                                             }) }}. <br>Catatan :
                                                     {{
                                                         item.data.catatan }}
+                                                </p>
+                                                <p v-else @click="readNotification(item.id)">Peminjaman ruangan {{
+                                                    item.data.detailruangan.namaruangan }}
+                                                    untuk tanggal <br>{{ new
+                                                        Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
+                                                            {
+                                                                year:
+                                                                    'numeric', month:
+                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                            }) }}<br>- {{
+                                                        new
+                                                            Date(item.data.detailruangan.tanggalakhir).toLocaleTimeString('id-ID',
+                                                                {
+                                                                    year:
+                                                                        'numeric', month:
+                                                                        'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                                })
+                                                    }} <br>telah {{
+                                                        item.data.namastatus
+                                                    }}
+                                                    oleh {{ item.data.accby }} <br> pada {{ new
+                                                        Date(item.created_at).toLocaleTimeString('id-ID',
+                                                            {
+                                                                year:
+                                                                    'numeric', month:
+                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                            }) }}.
                                                 </p>
                                             </div>
 
@@ -208,7 +261,7 @@
                                                     dilakukan!
                                                     <br>
                                                     Ruangan {{ item.data.detailruangan.namaruangan }} akan dipinjam pada
-                                                    tanggal
+                                                    tanggal <br>
                                                     {{ new
                                                         Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
                                                             {
@@ -263,7 +316,7 @@
                                 <v-hover v-if="item.data.statusacc">
                                     <template v-slot:default="{ isHovering3, props3 }" v-if="item.read_at === null">
                                         <v-list-item-title v-if="item.read_at === null" v-bind="props3" :style="{
-                                            backgroundColor: isHovering3 ? 'rgba(3, 138, 33, 0.4)' : 'rgb(3, 138, 33, 0.3)',
+                                            backgroundColor: isHovering3 ? '#BBDEFB' : '#E3F2FD',
                                             cursor: 'pointer',
                                             paddingLeft: '10px',
                                             borderBottom: '1px solid rgb(0, 0, 0, 0.1)',
@@ -276,7 +329,7 @@
                                         }">
                                             <div style="margin-right: 20px; text-align: justify;">
                                                 <h4>{{ item.data.subject }}</h4>
-                                                <p @click="readNotification(item.id)">Peminjaman ruangan {{
+                                                <p v-if="item.data.catatan !== 'null'" @click="readNotification(item.id)">Peminjaman ruangan {{
                                                     item.data.detailruangan.namaruangan }}
                                                     untuk tanggal <br>{{ new
                                                         Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
@@ -294,7 +347,7 @@
                                                                 }) }} <br>telah {{
                                                         item.data.namastatus
                                                     }}
-                                                    oleh {{ item.data.accby }} pada {{ new
+                                                    oleh {{ item.data.accby }} <br> pada {{ new
                                                         Date(item.created_at).toLocaleTimeString('id-ID',
                                                             {
                                                                 year:
@@ -304,8 +357,34 @@
                                                     {{
                                                         item.data.catatan }}
                                                 </p>
+                                                <p v-else @click="readNotification(item.id)">Peminjaman ruangan {{
+                                                    item.data.detailruangan.namaruangan }}
+                                                    untuk tanggal <br>{{ new
+                                                        Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
+                                                            {
+                                                                year:
+                                                                    'numeric', month:
+                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                            }) }} - {{
+                                                        new
+                                                            Date(item.data.detailruangan.tanggalakhir).toLocaleTimeString('id-ID',
+                                                                {
+                                                                    year:
+                                                                        'numeric', month:
+                                                                        'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                                }) }} <br>telah {{
+                                                        item.data.namastatus
+                                                    }}
+                                                    oleh {{ item.data.accby }} <br> pada {{ new
+                                                        Date(item.created_at).toLocaleTimeString('id-ID',
+                                                            {
+                                                                year:
+                                                                    'numeric', month:
+                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                            }) }}.
+                                                </p>
                                             </div>
-                                            <v-icon size="small" style="color: rgb(2,39,10,0.9);">mdi-circle</v-icon>
+                                            <v-icon size="small" style="color: #0D47A1;">mdi-circle</v-icon>
                                         </v-list-item-title>
                                     </template>
                                 </v-hover>
@@ -326,7 +405,7 @@
                                         }">
                                             <div style="margin-right: 20px; text-align: justify;">
                                                 <h4>{{ item.data.subject }}</h4>
-                                                <p @click="readNotification(item.id)">Peminjaman ruangan {{
+                                                <p v-if="item.data.catatan !== 'null'" @click="readNotification(item.id)">Peminjaman ruangan {{
                                                     item.data.detailruangan.namaruangan }}
                                                     untuk tanggal <br>{{ new
                                                         Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
@@ -345,7 +424,7 @@
                                                     }} <br>telah {{
                                                         item.data.namastatus
                                                     }}
-                                                    oleh {{ item.data.accby }} pada {{ new
+                                                    oleh {{ item.data.accby }} <br> pada {{ new
                                                         Date(item.created_at).toLocaleTimeString('id-ID',
                                                             {
                                                                 year:
@@ -354,6 +433,33 @@
                                                             }) }}. <br>Catatan :
                                                     {{
                                                         item.data.catatan }}
+                                                </p>
+                                                <p v-else @click="readNotification(item.id)">Peminjaman ruangan {{
+                                                    item.data.detailruangan.namaruangan }}
+                                                    untuk tanggal <br>{{ new
+                                                        Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
+                                                            {
+                                                                year:
+                                                                    'numeric', month:
+                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                            }) }} - {{
+                                                        new
+                                                            Date(item.data.detailruangan.tanggalakhir).toLocaleTimeString('id-ID',
+                                                                {
+                                                                    year:
+                                                                        'numeric', month:
+                                                                        'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                                })
+                                                    }} <br>telah {{
+                                                        item.data.namastatus
+                                                    }}
+                                                    oleh {{ item.data.accby }} <br> pada {{ new
+                                                        Date(item.created_at).toLocaleTimeString('id-ID',
+                                                            {
+                                                                year:
+                                                                    'numeric', month:
+                                                                    'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                            }) }}.
                                                 </p>
                                             </div>
                                         </v-list-item-title>
@@ -373,7 +479,7 @@
                             Logout
                         </v-col>
                         <v-col cols="6">
-                            <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
+                            <v-progress-linear color="#0D47A1" height="6" indeterminate rounded></v-progress-linear>
                         </v-col>
                     </v-row>
                 </v-container>

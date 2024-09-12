@@ -15,7 +15,7 @@
                         Memuat halaman
                     </v-col>
                     <v-col cols="6">
-                        <v-progress-linear color="primary" height="6" indeterminate rounded></v-progress-linear>
+                        <v-progress-linear color="#0D47A1" height="6" indeterminate rounded></v-progress-linear>
                     </v-col>
                 </v-row>
             </v-container>
@@ -38,7 +38,7 @@
 
             <v-container style="width:60%;">
                 <v-sheet
-                    style=" background-color: rgb(3, 138, 33, 0.1); font-family: Lexend-Regular; margin-right: 80px;margin-top: -50px; border-radius: 10px;">
+                    style=" background-color: #BBDEFB; font-family: Lexend-Regular; margin-right: 80px;margin-top: -50px; border-radius: 10px;">
                     <v-text-field label="Nama Lengkap" :model-value="this.user.Nama" variant="outlined" readonly
                         style="margin-right: 50px; margin-left:40px; padding-top: 30px;"></v-text-field>
 
@@ -73,7 +73,7 @@
 
                     <v-btn @click="editprofil"
                         style="margin-top: 10px; margin-left: 420px; margin-bottom: 50px; font-family: Lexend-Medium; 
-                    background-color: rgb(2, 39, 10, 0.9); color: white; width: 150px; border-radius: 20px; font-size: 17px;">Edit</v-btn>
+                    background-color: #0D47A1; color: white; width: 150px; border-radius: 20px; font-size: 17px;">Edit</v-btn>
 
                 </v-sheet>
             </v-container>
