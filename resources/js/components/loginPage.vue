@@ -1,6 +1,6 @@
 <template>
     <div style="height: 100%; width: 100%; display: flex;">
-        <v-container style="height: 100%; width: 38%; float: left; margin: 0; padding: 0;">
+        <v-container style="height: 100%; width: 45%; float: left; margin: 0; padding: 0;">
             <v-img src="../picture/regis-login.jpeg" cover></v-img>
         </v-container>
 

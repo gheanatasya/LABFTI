@@ -432,6 +432,12 @@ export default {
                             return;
                         }
 
+                        if (form[i].alat[j].jumlahPinjam === 0 || form[i].alat[j].jumlahPinjam < 0 || !Number.isInteger(form[i].alat[j].jumlahPinjam)) {
+                                alert('Jumlah pinjam alat tidak valid! Pada form ke - ' + (i + 1));
+                                loading.value = false;
+                                return;
+                            }
+
                         if (form[i].alat[j].maxValue.WajibSurat === true && form[i].dokumen === null) {
                             alert('Alat ' + form[i].alat[j].nama + ' memerlukan surat peminjaman! Silahkan mengupload surat pendukung peminjaman alat atau lakukan peminjaman alat secara terpisah.');
                             loading.value = false;

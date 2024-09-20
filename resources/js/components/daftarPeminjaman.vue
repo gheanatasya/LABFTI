@@ -175,7 +175,7 @@
 
                                 <!-- personal -->
                                 <v-icon @click="persetujuanRuangan(ruangan)"
-                                    v-if="(this.User_role === 'Petugas' || this.User_role === 'Koordinator Lab') && (ruangan.personal === true)"
+                                    v-if="(this.User_role === 'Petugas') && (ruangan.personal === true)"
                                     style="color: #0D47A1;">mdi-pencil-circle</v-icon>
 
                                 <!-- <v-icon v-else style="color: rgb(30, 30, 30, 0.7);">mdi-pencil-circle</v-icon> -->

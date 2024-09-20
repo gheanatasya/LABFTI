@@ -31,7 +31,7 @@
                     <v-row style="margin-left: -60px; margin-right: 150px;">
                         <v-col v-for="(tool, index) in filteredTools" :key="index" cols="4">
                             <v-card style="font-family: 'Lexend-Regular'; height: 80%; margin-left: 100px; margin-bottom: 100px; margin-right: -100px;
-                            background-color: rgb(30, 30, 30, 0.15); border-radius: 0px;">
+                            background-color: #E3F2FD; border-radius: 0px;">
                                 <div
                                     style="display: flex; align-items: center; grid-column: span 2; width: 100%; height: 100%;">
                                     <div style="font-family: Lexend-Regular'; width: 50%; margin-left: 20px; margin-top: -80px;"
@@ -42,15 +42,15 @@
 
                                         <div style="position: absolute; bottom: 0; left: 0; margin-bottom: 10px;">
                                             <br>
-                                            <v-btn @click="morePicture(tool.Nama, tool.Foto)" style="color: rgb(2,39, 10, 0.9); margin-left: 0px; background: none;
+                                            <v-btn @click="morePicture(tool.Nama, tool.Foto)" style="color: #0D47A1; margin-left: 0px; background: none;
                                                 text-decoration: underline; box-shadow: none; font-size: 12px;
                                                 ">L<p style="text-transform: lowercase;">ihat lebih banyak
                                                     gambar>></p></v-btn>
                                         </div>
                                     </div>
                                     <v-img v-if="tool.Foto.length > 0" :src="'../storage/' + tool.Foto[0]"
-                                        style="width: 40%; height: 100%;" cover></v-img>
-                                    <v-img v-else src="../storage/ruangan/no-image.png" style="width: 40%; height: 100%;"
+                                        style="width: 200px; height: 400px;" cover></v-img>
+                                    <v-img v-else src="../storage/ruangan/no-image.png" style="width: 200px; height: 400px;"
                                         cover></v-img>
                                 </div>
                             </v-card>
@@ -115,7 +115,7 @@ export default {
     methods: {
         async getAllDataofTools() {
             try {
-                await axios.get("http://127.0.0.1:8000/api/alat/")
+                await axios.get("http://127.0.0.1:8000/api/alat")
                     .then(response => {
                         this.allToolsData = response.data
                         console.log(this.allToolsData);

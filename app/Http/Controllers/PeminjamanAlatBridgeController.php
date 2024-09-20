@@ -460,7 +460,7 @@ class PeminjamanAlatBridgeController extends Controller
             }
         }
 
-        usort($alltoolsbooking, function($a, $b) {
+        usort($alltoolsbooking, function ($a, $b) {
             return strcmp($b['tanggalawal'], $a['tanggalawal']);
         });
         return $alltoolsbooking;
@@ -469,7 +469,7 @@ class PeminjamanAlatBridgeController extends Controller
     //cek jadwal tabrakan
     public function jadwalAlat($Tanggal_pakai_awal, $Tanggal_pakai_akhir)
     {
-        $peminjamanalat = Peminjaman_Alat_Bridge::where('Tanggal_pakai_awal', "<=", $Tanggal_pakai_awal)
+        /* $peminjamanalat = Peminjaman_Alat_Bridge::where('Tanggal_pakai_awal', "<=", $Tanggal_pakai_awal)
             ->where('Tanggal_pakai_akhir', ">=", $Tanggal_pakai_akhir)
             ->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
                 $query->where('Tanggal_pakai_awal', '>', $Tanggal_pakai_awal)
@@ -477,7 +477,10 @@ class PeminjamanAlatBridgeController extends Controller
             })->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
                 $query->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_awal)
                     ->where('Tanggal_pakai_akhir', '>', $Tanggal_pakai_akhir);
-            })->get();
+            })->get(); */
+
+        $peminjamanalat = Peminjaman_Alat_Bridge::where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_akhir)
+            ->where('Tanggal_pakai_akhir', '>=', $Tanggal_pakai_awal)->get();
 
         $daftarAlatTabrakan = [];
 
@@ -488,27 +491,30 @@ class PeminjamanAlatBridgeController extends Controller
             $ALAT = Alat::where('AlatID', $alatid)->first();
             $namaAlat = $ALAT->Nama;
             $surat = $ALAT->WajibSurat;
+            $ketersediaan = $ALAT->Status;
 
-            foreach ($daftarAlatTabrakan as &$existingAlat) {
-                if ($existingAlat['AlatID'] === $alatid) {
-                    $found = true;
-                    $newtotal = $existingAlat['Jumlah_pinjam'] + $jumlahpinjam;
-                    $existingAlat['Jumlah_pinjam'] = $newtotal;
-                    break;
+            if ($ketersediaan === 'Tersedia') {
+                foreach ($daftarAlatTabrakan as &$existingAlat) {
+                    if ($existingAlat['AlatID'] === $alatid) {
+                        $found = true;
+                        $newtotal = $existingAlat['Jumlah_pinjam'] + $jumlahpinjam;
+                        $existingAlat['Jumlah_pinjam'] = $newtotal;
+                        break;
+                    }
                 }
-            }
 
-            if ($found === false) {
-                $daftarAlatTabrakan[] = [
-                    'AlatID' => $alatid,
-                    'Jumlah_pinjam' => $jumlahpinjam,
-                    'NamaAlat' => $namaAlat,
-                    'WajibSurat' => $surat
-                ];
+                if ($found === false) {
+                    $daftarAlatTabrakan[] = [
+                        'AlatID' => $alatid,
+                        'Jumlah_pinjam' => $jumlahpinjam,
+                        'NamaAlat' => $namaAlat,
+                        'WajibSurat' => $surat
+                    ];
+                }
             }
         }
 
-        $allAlat = Alat::all();
+        $allAlat = Alat::where('Status', 'Tersedia')->get();
         $daftarAlat = [];
         foreach ($allAlat as $alat) {
             $alatid = $alat->AlatID;
@@ -518,7 +524,8 @@ class PeminjamanAlatBridgeController extends Controller
                 'AlatID' => $alatid,
                 'Jumlah_ketersediaan' => $jumlah,
                 'NamaAlat' => $nama,
-                'WajibSurat' => $alat->WajibSurat
+                'WajibSurat' => $alat->WajibSurat,
+                'Status' => $alat->Status
             ];
         }
 
@@ -528,7 +535,8 @@ class PeminjamanAlatBridgeController extends Controller
                 'AlatID' => $tool1['AlatID'],
                 'Jumlah_ketersediaan' => $tool1['Jumlah_ketersediaan'],
                 'NamaAlat' => $tool1['NamaAlat'],
-                'WajibSurat' => $tool1['WajibSurat']
+                'WajibSurat' => $tool1['WajibSurat'],
+                'Status' => $tool1['Status']
             ];
 
             foreach ($daftarAlatTabrakan as $tool2) {
@@ -543,7 +551,7 @@ class PeminjamanAlatBridgeController extends Controller
             }
         }
 
-        usort($fixAlat, function($a, $b) {
+        usort($fixAlat, function ($a, $b) {
             return strcmp($a['NamaAlat'], $b['NamaAlat']);
         });
 
@@ -553,7 +561,7 @@ class PeminjamanAlatBridgeController extends Controller
     //cek jadwal tabrakan untuk dosen
     public function jadwalAlatforDosen($Tanggal_pakai_awal, $Tanggal_pakai_akhir)
     {
-        $peminjamanalat = Peminjaman_Alat_Bridge::orWhere(function ($query) {
+        /* $peminjamanalat = Peminjaman_Alat_Bridge::orWhere(function ($query) {
             $query->where('Prioritas', 1)->whereNotNull('DokumenID');
         })
             ->orWhere(function ($query) {
@@ -566,7 +574,21 @@ class PeminjamanAlatBridgeController extends Controller
             })->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
                 $query->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_awal)
                     ->where('Tanggal_pakai_akhir', '>', $Tanggal_pakai_akhir);
-            })->get();
+            })->get(); */
+
+        $peminjamanalatpertama = Peminjaman_Alat_Bridge::where('Prioritas', 2)
+            ->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_akhir)
+            ->where('Tanggal_pakai_akhir', '>=', $Tanggal_pakai_awal)
+            ->get();
+
+        $peminjamanalatlagi = Peminjaman_Alat_Bridge::where('Prioritas', 1)->whereNotNull('DokumenID')
+            ->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_akhir)
+            ->where('Tanggal_pakai_akhir', '>=', $Tanggal_pakai_awal)
+            ->get();
+
+        $peminjamanalat = $peminjamanalatpertama->merge($peminjamanalatlagi);
+
+        //return response()->json([$peminjamanalatpertama, $peminjamanalatlagi, $peminjamanalat]);
 
         $daftarAlatTabrakan = [];
 
@@ -577,27 +599,30 @@ class PeminjamanAlatBridgeController extends Controller
             $ALAT = Alat::where('AlatID', $alatid)->first();
             $namaAlat = $ALAT->Nama;
             $surat = $ALAT->WajibSurat;
+            $ketersediaan = $ALAT->Status;
 
-            foreach ($daftarAlatTabrakan as &$existingAlat) {
-                if ($existingAlat['AlatID'] === $alatid) {
-                    $found = true;
-                    $newtotal = $existingAlat['Jumlah_pinjam'] + $jumlahpinjam;
-                    $existingAlat['Jumlah_pinjam'] = $newtotal;
-                    break;
+            if ($ketersediaan === 'Tersedia') {
+                foreach ($daftarAlatTabrakan as &$existingAlat) {
+                    if ($existingAlat['AlatID'] === $alatid) {
+                        $found = true;
+                        $newtotal = $existingAlat['Jumlah_pinjam'] + $jumlahpinjam;
+                        $existingAlat['Jumlah_pinjam'] = $newtotal;
+                        break;
+                    }
                 }
-            }
 
-            if ($found === false) {
-                $daftarAlatTabrakan[] = [
-                    'AlatID' => $alatid,
-                    'Jumlah_pinjam' => $jumlahpinjam,
-                    'NamaAlat' => $namaAlat,
-                    'WajibSurat' => $surat
-                ];
+                if ($found === false) {
+                    $daftarAlatTabrakan[] = [
+                        'AlatID' => $alatid,
+                        'Jumlah_pinjam' => $jumlahpinjam,
+                        'NamaAlat' => $namaAlat,
+                        'WajibSurat' => $surat
+                    ];
+                }
             }
         }
 
-        $allAlat = Alat::all();
+        $allAlat = Alat::where('Status', 'Tersedia')->get();
         $daftarAlat = [];
         foreach ($allAlat as $alat) {
             $alatid = $alat->AlatID;
@@ -607,7 +632,8 @@ class PeminjamanAlatBridgeController extends Controller
                 'AlatID' => $alatid,
                 'Jumlah_ketersediaan' => $jumlah,
                 'NamaAlat' => $nama,
-                'WajibSurat' => $alat->WajibSurat
+                'WajibSurat' => $alat->WajibSurat,
+                'Status' => $alat->Status
             ];
         }
 
@@ -630,7 +656,7 @@ class PeminjamanAlatBridgeController extends Controller
             }
         }
 
-        usort($fixAlat, function($a, $b) {
+        usort($fixAlat, function ($a, $b) {
             return strcmp($a['NamaAlat'], $b['NamaAlat']);
         });
 

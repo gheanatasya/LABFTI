@@ -13,7 +13,7 @@ class ProgramStudiController extends Controller
     // mengambil semua data pada db
     public function getAllProdi()
     {
-        return Program_Studi::all();
+        return Program_Studi::all()->unique('Nama_prodi');
     }
     //ambil data sesuai id
     public function show($ProdiID)

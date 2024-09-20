@@ -525,7 +525,7 @@ class PeminjamanRuanganBridgeController extends Controller
             }
         }
 
-        usort($allroombooking, function($a, $b) {
+        usort($allroombooking, function ($a, $b) {
             return strcmp($b['tanggalawal'], $a['tanggalawal']);
         });
 
@@ -579,15 +579,17 @@ class PeminjamanRuanganBridgeController extends Controller
     public function jadwalPeminjaman($Tanggal_pakai_awal, $Tanggal_pakai_akhir)
     {
         //$statuspeminjaman = Status_Peminjaman::whereNot('StatusID', 7)->get();
-        $peminjamanruangan = Peminjaman_Ruangan_Bridge::where('Tanggal_pakai_awal', "<=", $Tanggal_pakai_awal)
-            ->where('Tanggal_pakai_akhir', ">=", $Tanggal_pakai_akhir)
+        /* $peminjamanruangan = Peminjaman_Ruangan_Bridge::where('Tanggal_pakai_awal', "<", $Tanggal_pakai_awal)
+            ->where('Tanggal_pakai_akhir', ">", $Tanggal_pakai_akhir)
             ->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
                 $query->where('Tanggal_pakai_awal', '>', $Tanggal_pakai_awal)
-                    ->where('Tanggal_pakai_akhir', '<=', $Tanggal_pakai_akhir);
+                    ->where('Tanggal_pakai_akhir', '<', $Tanggal_pakai_akhir);
             })->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
-                $query->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_awal)
+                $query->where('Tanggal_pakai_awal', '<', $Tanggal_pakai_awal)
                     ->where('Tanggal_pakai_akhir', '>', $Tanggal_pakai_akhir);
-            })->pluck('RuanganID')->unique();
+            })->pluck('RuanganID')->unique(); */
+        $peminjamanruangan = Peminjaman_Ruangan_Bridge::where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_akhir)
+            ->where('Tanggal_pakai_akhir', '>=', $Tanggal_pakai_awal)->pluck('RuanganID')->unique();
 
         $dataruangan = Ruangan::pluck('RuanganID', 'Nama_ruangan');
         $ruangan = $dataruangan->diff($peminjamanruangan);
@@ -601,11 +603,11 @@ class PeminjamanRuanganBridgeController extends Controller
             $detailRoom[] = $ambildata;
         }
 
-        usort($detailRoom, function($a, $b) {
+        usort($detailRoom, function ($a, $b) {
             return strcmp($a['Nama_ruangan'], $b['Nama_ruangan']);
         });
 
-        return response()->json(['availableRoom' => $array, 'detailRuangan' => $detailRoom]);
+        return response()->json(['availableRoom' => $array, 'detailRuangan' => $detailRoom, 'dataruangan' => $dataruangan, 'peminjamanruangan' => $peminjamanruangan]);
     }
 
     //ambil semua data peminjaman untuk admin 
@@ -761,7 +763,7 @@ class PeminjamanRuanganBridgeController extends Controller
             }
         }
 
-        usort($totalsemuapeminjaman, function($a, $b) {
+        usort($totalsemuapeminjaman, function ($a, $b) {
             return strcmp($b['tanggalpinjam'], $a['tanggalpinjam']);
         });
 
@@ -907,7 +909,7 @@ class PeminjamanRuanganBridgeController extends Controller
             }
         }
 
-        usort($totalsemuapeminjaman, function($a, $b) {
+        usort($totalsemuapeminjaman, function ($a, $b) {
             return strcmp($b['tanggalpinjam'], $a['tanggalpinjam']);
         });
 
@@ -1066,7 +1068,7 @@ class PeminjamanRuanganBridgeController extends Controller
                 }
             }
         }
-        usort($totalsemuapeminjaman, function($a, $b) {
+        usort($totalsemuapeminjaman, function ($a, $b) {
             return strcmp($b['tanggalpinjam'], $a['tanggalpinjam']);
         });
 
@@ -1239,7 +1241,7 @@ class PeminjamanRuanganBridgeController extends Controller
             }
         }
 
-        usort($totalsemuapeminjaman, function($a, $b) {
+        usort($totalsemuapeminjaman, function ($a, $b) {
             return strcmp($b['tanggalpinjam'], $a['tanggalpinjam']);
         });
 
@@ -1401,7 +1403,7 @@ class PeminjamanRuanganBridgeController extends Controller
                 }
             }
         }
-        usort($totalsemuapeminjaman, function($a, $b) {
+        usort($totalsemuapeminjaman, function ($a, $b) {
             return strcmp($b['tanggalpinjam'], $a['tanggalpinjam']);
         });
 
@@ -1544,7 +1546,7 @@ class PeminjamanRuanganBridgeController extends Controller
             }
         }
 
-        usort($totalsemuapeminjaman, function($a, $b) {
+        usort($totalsemuapeminjaman, function ($a, $b) {
             return strcmp($b['tanggalpinjam'], $a['tanggalpinjam']);
         });
 
@@ -1687,7 +1689,7 @@ class PeminjamanRuanganBridgeController extends Controller
             }
         }
 
-        usort($totalsemuapeminjaman, function($a, $b) {
+        usort($totalsemuapeminjaman, function ($a, $b) {
             return strcmp($b['tanggalpinjam'], $a['tanggalpinjam']);
         });
 
@@ -1838,7 +1840,7 @@ class PeminjamanRuanganBridgeController extends Controller
                         }
                     }
 
-                    usort($totalsemuapeminjaman, function($a, $b) {
+                    usort($totalsemuapeminjaman, function ($a, $b) {
                         return strcmp($b['tanggalpinjam'], $a['tanggalpinjam']);
                     });
 
@@ -2323,7 +2325,7 @@ class PeminjamanRuanganBridgeController extends Controller
     public function jadwalPeminjamanforDosen($Tanggal_pakai_awal, $Tanggal_pakai_akhir)
     {
         //$statuspeminjaman = Status_Peminjaman::whereNot('StatusID', 7)->get();
-        $peminjamanruangan = Peminjaman_Ruangan_Bridge::orWhere(function ($query) {
+        /* $peminjamanruangan = Peminjaman_Ruangan_Bridge::orWhere(function ($query) {
             $query->where('Prioritas', 1)->whereNotNull('DokumenID');
         })
             ->orWhere(function ($query) {
@@ -2337,7 +2339,20 @@ class PeminjamanRuanganBridgeController extends Controller
                 $query->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_awal)
                     ->where('Tanggal_pakai_akhir', '>', $Tanggal_pakai_akhir);
             })
+            ->pluck('RuanganID')->unique(); */
+        $peminjamanruanganpertama = Peminjaman_Ruangan_Bridge::where('Prioritas', 2)
+            ->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_akhir)
+            ->where('Tanggal_pakai_akhir', '>=', $Tanggal_pakai_awal)
             ->pluck('RuanganID')->unique();
+
+        $peminjamanruanganlagi = Peminjaman_Ruangan_Bridge::where('Prioritas', 1)->whereNotNull('DokumenID')
+            ->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_akhir)
+            ->where('Tanggal_pakai_akhir', '>=', $Tanggal_pakai_awal)
+            ->pluck('RuanganID')->unique();
+
+        $peminjamanruangan = $peminjamanruanganpertama->merge($peminjamanruanganlagi);
+
+        //return response()->json([$peminjamanruangan, $peminjamanruanganpertama, $peminjamanruanganlagi]);
 
         $dataruangan = Ruangan::pluck('RuanganID', 'Nama_ruangan');
         $ruangan = $dataruangan->diff($peminjamanruangan);
@@ -2385,17 +2400,17 @@ class PeminjamanRuanganBridgeController extends Controller
             $datatabrak[] = $data;
         }
 
-        usort($detailRoom, function($a, $b) {
+        usort($detailRoom, function ($a, $b) {
             return strcmp($a['Nama_ruangan'], $b['Nama_ruangan']);
         });
 
-        return response()->json(['availableRoom' => $array, 'detailRuangan' => $detailRoom, 'datatabrak' => $datatabrak]);
+        return response()->json(['availableRoom' => $array, 'detailRuangan' => $detailRoom, 'datatabrak' => $datatabrak, 'peminjamanruangan' => $peminjamanruangan]);
     }
 
     // cek jadwal tabrakan untuk rekomendasi ruangan
     public function jadwalPeminjamanforRekomendasiDosen($Tanggal_pakai_awal, $Tanggal_pakai_akhir, $Kapasitas, $Kategori, $Lokasi)
     {
-        $peminjamanruangan = Peminjaman_Ruangan_Bridge::orWhere(function ($query) {
+        /* $peminjamanruangan = Peminjaman_Ruangan_Bridge::orWhere(function ($query) {
             $query->where('Prioritas', 1)->whereNotNull('DokumenID');
         })
             ->orWhere(function ($query) {
@@ -2409,7 +2424,19 @@ class PeminjamanRuanganBridgeController extends Controller
                 $query->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_awal)
                     ->where('Tanggal_pakai_akhir', '>', $Tanggal_pakai_akhir);
             })
+            ->pluck('RuanganID')->unique(); */
+
+        $peminjamanruanganpertama = Peminjaman_Ruangan_Bridge::where('Prioritas', 2)
+            ->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_akhir)
+            ->where('Tanggal_pakai_akhir', '>=', $Tanggal_pakai_awal)
             ->pluck('RuanganID')->unique();
+
+        $peminjamanruanganlagi = Peminjaman_Ruangan_Bridge::where('Prioritas', 1)->whereNotNull('DokumenID')
+            ->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_akhir)
+            ->where('Tanggal_pakai_akhir', '>=', $Tanggal_pakai_awal)
+            ->pluck('RuanganID')->unique();
+
+        $peminjamanruangan = $peminjamanruanganpertama->merge($peminjamanruanganlagi);
 
         $dataruangan = Ruangan::pluck('RuanganID', 'Nama_ruangan');
         $ruangan = $dataruangan->diff($peminjamanruangan);
@@ -2463,7 +2490,7 @@ class PeminjamanRuanganBridgeController extends Controller
             $datatabrak[] = $data;
         }
 
-        usort($detailRoom, function($a, $b) {
+        usort($detailRoom, function ($a, $b) {
             return strcmp($a['Nama_ruangan'], $b['Nama_ruangan']);
         });
 
@@ -2473,15 +2500,8 @@ class PeminjamanRuanganBridgeController extends Controller
     // cek jadwal tabrakan untuk rekomendasi 
     public function jadwalPeminjamanforRekomendasi($Tanggal_pakai_awal, $Tanggal_pakai_akhir, $Kapasitas, $Kategori, $Lokasi)
     {
-        $peminjamanruangan = Peminjaman_Ruangan_Bridge::where('Tanggal_pakai_awal', "<=", $Tanggal_pakai_awal)
-            ->where('Tanggal_pakai_akhir', ">=", $Tanggal_pakai_akhir)
-            ->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
-                $query->where('Tanggal_pakai_awal', '>', $Tanggal_pakai_awal)
-                    ->where('Tanggal_pakai_akhir', '<=', $Tanggal_pakai_akhir);
-            })->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
-                $query->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_awal)
-                    ->where('Tanggal_pakai_akhir', '>', $Tanggal_pakai_akhir);
-            })->pluck('RuanganID')->unique();
+        $peminjamanruangan = Peminjaman_Ruangan_Bridge::where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_akhir)
+            ->where('Tanggal_pakai_akhir', '>=', $Tanggal_pakai_awal)->pluck('RuanganID')->unique();
 
         $dataruangan = Ruangan::pluck('RuanganID', 'Nama_ruangan');
         $ruangan = $dataruangan->diff($peminjamanruangan);
@@ -2501,7 +2521,7 @@ class PeminjamanRuanganBridgeController extends Controller
                 $room->Kapasitas === $Kapasitas;
         });
 
-        usort($detailRoom, function($a, $b) {
+        usort($detailRoom, function ($a, $b) {
             return strcmp($a['Nama_ruangan'], $b['Nama_ruangan']);
         });
 
@@ -2540,7 +2560,8 @@ class PeminjamanRuanganBridgeController extends Controller
         $peminjam->notify(new NewMessage($title, $body));
         $peminjam->notify(new CancelNotification($dataEmail));
 
-/*         $peminjamanruangan->delete();
- */        return response()->json(['message' => 'Peminjaman ruangan telah dibatalkan.']);
+        /*         $peminjamanruangan->delete();
+ */
+        return response()->json(['message' => 'Peminjaman ruangan telah dibatalkan.']);
     }
 }

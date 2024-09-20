@@ -46,6 +46,24 @@
 
                             <v-list style="width: 600px; height: 500px;">
                                 <v-list-item v-for="(item, i) in this.allNotifications" :key="i">
+                                    <!-- <v-list-item-title v-if="this.allNotifications.length === 0">
+                                    <div style="margin-right: 20px; text-align: justify;">
+                                        <h4>{{ item.data.subject }}</h4>
+                                        <p @click="readNotification(item.id)">Mohon maaf peminjaman ruangan {{
+                                            item.data.Nama_ruangan }}
+                                            yang kamu lakukan <br>untuk tanggal {{ new
+                                                Date(item.data.tanggalAwal).toLocaleTimeString('id-ID',
+                                                    {
+                                                        year:
+                                                            'numeric', month:
+                                                            'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+                                                    }) }} 
+                                            pada LAB FTI <br>Universitas Kristen Duta Wacana telah dibatalkan. <br>Silahkan lakukan peminjaman
+                                            ruangan yang lain. Terimakasih.
+                                        </p>
+                                    </div>
+                                </v-list-item-title> -->
+
                                     <!-- status acc peminjaman -->
                                     <v-hover v-if="item.data.statusacc">
                                         <template v-slot:default="{ isHovering, props }" v-if="item.read_at === null">

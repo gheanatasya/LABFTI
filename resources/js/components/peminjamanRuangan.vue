@@ -466,7 +466,7 @@ export default {
               return;
             }
 
-            if (form[i].alat[j].jumlahPinjam == 0 || form[i].alat[j].jumlahPinjam < 0) {
+            if (form[i].alat[j].jumlahPinjam === 0 || form[i].alat[j].jumlahPinjam < 0) {
               alert('Jumlah pinjam alat tidak valid! Pada form ke - ' + (i + 1));
               loading.value = false;
               return;

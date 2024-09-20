@@ -23,13 +23,39 @@ class UserController extends Controller
     }
     //tambah data
     public function store(StoreUserRequest $request)
-    {
+    {   
         $input = $request->all();
+        
+        $awalanNIM = substr($input['NIM_NIDN'], 0, 2);
+        $domainEmail = substr($input['email'], strpos($input['email'], '@') + 1);
+
+        if (($awalanNIM === '71' || $awalanNIM === '72') && ($domainEmail === 'ti.ukdw.ac.id' || $domainEmail === 'si.ukdw.ac.id') && ($input['fakultas'] !== 'Lainnya') && ($input['prodi'] !== 'Lainnya') && ($input['instansi'] === 'Lainnya')) {
+            $user_role = 'Mahasiswa';
+            $user_priority = 1;
+        } else if (($domainEmail === 'ti.ukdw.ac.id' || $domainEmail === 'si.ukdw.ac.id') && ($awalanNIM !== '71' || $awalanNIM !== '72') && ($input['fakultas'] !== 'Lainnya') && ($input['prodi'] !== 'Lainnya') && ($input['instansi'] === 'Lainnya')) {
+            $user_role = 'Dosen';
+            $user_priority = 2;
+        } else if ($input['prodi'] === 'Pegawai Pendukung Akademik' && $input['fakultas'] !== 'Lainnya' && $input['instansi'] === 'Lainnya'){
+            $user_role = 'Staff';
+            $user_priority = 2;
+        } else if ($domainEmail === 'students.ukdw.ac.id' && $input['prodi'] !== 'Lainnya' && $input['fakultas'] !== 'Lainnya' && $input['instansi'] === 'Lainnya'){
+            $user_role = 'Mahasiswa';
+            $user_priority = 1;
+        } else if ($domainEmail === 'staff.ukdw.ac.id' && $input['prodi'] !== 'Lainnya' && $input['fakultas'] !== 'Lainnya' && $input['instansi'] === 'Lainnya'){
+            $user_role = 'Dosen';
+            $user_priority = 2;
+        } else if ($domainEmail === 'staff.ukdw.ac.id' && $input['fakultas'] === 'Lainnya' && $input['prodi'] === 'Lainnya' && $input['instansi'] !== 'Lainnya'){
+            $user_role = 'Staff';
+            $user_priority = 2;
+        } else {
+            return;
+        }
+
         $data = [
             'NIM_NIDN' => $input['NIM_NIDN'],
             'Email' => $input['email'],
-            'User_role' => $input['user_role'],
-            'User_priority' => $input['user_priority']
+            'User_role' => $user_role,
+            'User_priority' => $user_priority
         ];
         $data['Password'] = Hash::make($input['password']);
         $user = User::create($data);

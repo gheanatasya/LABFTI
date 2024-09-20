@@ -38,7 +38,12 @@ class ResetPasswordController extends Controller
 
             return response([
                 'success'   => true,
-                'message' => ['Reset password link sent to your email.']
+                'message' => ['Reset password link telah dikirimkan ke email.']
+            ]);
+        } else {
+            return response([
+                'success'   => false,
+                'message' => ['Email tidak ditemukan.']
             ]);
         }
     }

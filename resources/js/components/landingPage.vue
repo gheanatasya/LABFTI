@@ -19,18 +19,16 @@
       <v-img :width="20" :height="70" src="../picture/fti-ukdw.png"></v-img>
     </v-container>
 
-    <router-link to="loginPage"
-      style="font-size: 20px; font-family:Lexend-Medium; position: absolute; top: 20px; right: 20px; color: black; text-decoration: none;">Login</router-link>
     <div style="text-align:center; color:black; font-family:Lexend-Medium; font-size: 25px; margin-top: 40px;">
       Peminjaman Ruangan dan Alat LAB FTI UKDW
     </div>
     <div style="text-align:center; color:black; font-family:Lexend-Regular; font-size: 20px; margin-top: 10px;">
-      Untuk melakukan peminjaman, silahkan <router-link to="loginPage" style="color:black">Login</router-link> terlebih
+      Untuk melakukan peminjaman, silahkan <router-link to="loginPage" style="color:#0D47A1; font-family: Lexend-Bold">Login</router-link> terlebih
       dahulu.
     </div>
 
-    <v-container style="height: 700px; display: flex;">
-      <div id="calendar" style="width: 1000px; float: left; margin-left: -80px; margin-right: 50px;"></div>
+    <v-container style="height: 100%; display: flex;">
+      <div id="calendar" style="width: 1000px; height: 700px; float: left; margin-left: -80px; margin-right: 50px;"></div>
       <div style="float: clear; font-family:Lexend-Regular; font-size: 20px; color: black; margin-top: 30px;">
         <p style="margin-bottom: 10px;">Keterangan : </p>
         <p v-for="(item, index) in dataRuangan" :key="index" @click="openInformation(item)" 
@@ -82,6 +80,8 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <footerPage></footerPage>
   </div>
 </template>
 
@@ -97,6 +97,7 @@ import '@schedule-x/theme-default/dist/index.css'
 import axios from 'axios';
 import { createEventModalPlugin } from '@schedule-x/event-modal'
 import { ref, onMounted } from 'vue';
+import footerPage from '../components/footerPage.vue'
 
 const overlay = ref(true);
 const today = new Date();

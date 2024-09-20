@@ -59,7 +59,7 @@
                     <v-row>
                         <v-col v-for="(room, index) in filteredData" :key="index" cols="5">
                             <v-card style="font-family: 'Lexend-Regular'; height: 80%; margin-left: 100px; margin-bottom: 100px; margin-right: -100px;
-                            background-color: rgb(30, 30, 30, 0.15); border-radius: 0px;">
+                            background-color: #E3F2FD; border-radius: 0px;">
                                 <div
                                     style="display: flex; align-items: center; grid-column: span 2; width: 100%; height: 100%;">
                                     <div style="font-family: Lexend-Regular'; width: 60%; margin-left: 20px; margin-top: -80px;"
@@ -80,16 +80,16 @@
 
                                         <div style="position: absolute; bottom: 0; left: 0; margin-bottom: 10px;">
                                             <v-btn @click="morePicture(room.Nama_ruangan, room.Lokasi, room.Foto)"
-                                                style="color: rgb(2,39, 10, 0.9); margin-left: 90px; background: none;
+                                                style="color:#0D47A1; margin-left: 90px; background: none;
                                                 text-decoration: underline; box-shadow: none; 
                                                 ">L<p style="text-transform: lowercase;">ihat lebih banyak
                                                     gambar>></p></v-btn>
                                         </div>
                                     </div>
                                     <v-img v-if="room.Foto != null" :src="'../storage/' + room.Foto[0]"
-                                        style="width: 40%; height: 100%;" cover></v-img>
+                                        style="width: 200px; height: 400px;" cover></v-img>
                                     <v-img v-else src="../storage/ruangan/no-image.png"
-                                        style="width: 40%; height: 100%;" cover></v-img>
+                                        style="width: 200px; height: 400px;" cover></v-img>
                                 </div>
                             </v-card>
                         </v-col>

@@ -20,8 +20,9 @@ class Detail_Alat extends Model
     /*     return $this->hasMany(Peminjaman_Alat_Bridge::class, 'DetailAlatID', 'DetailAlatID'); */
     /* } */
 
-    public $timestamps = false;
+    //public $timestamps = false;
     protected $table = 'detail_alat';
     protected $primaryKey = 'DetailAlatID';
-    protected $fillable = ['DetailAlatID', 'AlatID', 'Nama_alat', 'Status_Kebergunaan', 'Status_Peminjaman', 'Foto', 'KodeDetailAlat'];
+    public $incrementing = true;
+    protected $fillable = ['AlatID', 'Nama_alat', 'Status_Kebergunaan', 'Status_Peminjaman', 'Foto', 'KodeDetailAlat'];
 }
