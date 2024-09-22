@@ -198,6 +198,8 @@ Route::get('/notifikasiRead/{id}/{UserID}', [NotificationController::class, 'mar
 Route::get('/notifikasiTest/{Peminjaman_Ruangan_ID}', [NotificationController::class, 'testRuangan']);
 Route::get('/notifikasiNewRoom/{Peminjaman_Ruangan_ID}', [NotificationController::class, 'newBookingNotificationRuangan']);
 Route::get('/notifikasiNewTools/{Peminjaman_Alat_ID}', [NotificationController::class, 'newBookingNotificationAlat']);
+Route::delete('/deleteAll/{UserID}', [NotificationController::class, 'deleteAll']);
+
 
 
 

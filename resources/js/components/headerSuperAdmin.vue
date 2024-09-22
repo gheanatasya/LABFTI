@@ -10,7 +10,8 @@
                 <template v-for="menu in menusCenter" :key="menu.title">
                     <v-menu v-if="menu.title === 'Peminjaman'" style="text-transform: none;">
                         <template v-slot:activator="{ on, props }">
-                            <v-btn :to="menu.route" flat v-on="on" v-bind="props" @click="menu.isOpen = !menu.isOpen" style="text-transform: none;">
+                            <v-btn :to="menu.route" flat v-on="on" v-bind="props" @click="menu.isOpen = !menu.isOpen"
+                                style="text-transform: none;">
                                 {{ menu.title }}
                                 <v-icon>{{ menu.isOpen ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
                             </v-btn>
@@ -43,7 +44,8 @@
                             <v-list-item v-for="(item, i) in menu1.submenus" :key="i">
                                 <v-list-item-title>
                                     <v-icon>{{ item.icon }}</v-icon>
-                                    <v-btn flat @click="logout" v-if="item.title === 'Logout'" style="text-transform: none;">
+                                    <v-btn flat @click="logout" v-if="item.title === 'Logout'"
+                                        style="text-transform: none;">
                                         {{ item.title }}
                                     </v-btn>
                                     <v-btn :to="item.route" v-else flat style="text-transform: none;">
@@ -62,7 +64,13 @@
                             </v-btn>
                         </template>
 
-                        <v-list style="width: 600px; height: 500px;">
+                        <v-list style="width: 600px; height: 500px;" v-if="this.getData === false && this.allNotifications.length > 0">
+                            <v-list-item style="margin-bottom: -10px;">
+                                <v-btn @click="deleteAll(this.UserID)" style="color: #0D47A1; margin-left: 90px; background: none;
+                            text-decoration: underline; box-shadow: none; text-transform: none; position: absolute; right: 0; margin-right: 5px; top: 0;
+                            ">Hapus Semua Pemberitahuan</v-btn>
+                            </v-list-item>
+
                             <v-list-item v-for="(item, i) in this.allNotifications" :key="i">
                                 <!-- new booking -->
                                 <v-hover v-if="item.data.newbooking">
@@ -82,8 +90,9 @@
                                             <div style="margin-right: 20px; text-align: justify;"
                                                 v-if="item.data.subject === 'Status Peminjaman'">
                                                 <h4>{{ item.data.subject }}</h4>
-                                                <p v-if="item.data.catatan !== 'null'" @click="readNotification(item.id)">Peminjaman ruangan {{
-                                                    item.data.detailruangan.namaruangan }}
+                                                <p v-if="item.data.catatan !== 'null'"
+                                                    @click="readNotification(item.id)">Peminjaman ruangan {{
+                                                        item.data.detailruangan.namaruangan }}
                                                     untuk tanggal <br>{{ new
                                                         Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
                                                             {
@@ -215,8 +224,9 @@
                                             <div style="margin-right: 20px; text-align: justify;"
                                                 v-if="item.data.subject === 'Status Peminjaman'">
                                                 <h4>{{ item.data.subject }}</h4>
-                                                <p v-if="item.data.catatan !== 'null'" @click="readNotification(item.id)">Peminjaman ruangan {{
-                                                    item.data.detailruangan.namaruangan }}
+                                                <p v-if="item.data.catatan !== 'null'"
+                                                    @click="readNotification(item.id)">Peminjaman ruangan {{
+                                                        item.data.detailruangan.namaruangan }}
                                                     untuk tanggal <br>{{ new
                                                         Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
                                                             {
@@ -348,8 +358,9 @@
                                         }">
                                             <div style="margin-right: 20px; text-align: justify;">
                                                 <h4>{{ item.data.subject }}</h4>
-                                                <p v-if="item.data.catatan !== 'null'" @click="readNotification(item.id)">Peminjaman ruangan {{
-                                                    item.data.detailruangan.namaruangan }}
+                                                <p v-if="item.data.catatan !== 'null'"
+                                                    @click="readNotification(item.id)">Peminjaman ruangan {{
+                                                        item.data.detailruangan.namaruangan }}
                                                     untuk tanggal <br>{{ new
                                                         Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
                                                             {
@@ -403,8 +414,7 @@
                                                             }) }}.
                                                 </p>
                                             </div>
-                                            <v-icon size="small"
-                                                style="color: #0D47A1;">mdi-circle</v-icon>
+                                            <v-icon size="small" style="color: #0D47A1;">mdi-circle</v-icon>
                                         </v-list-item-title>
                                     </template>
                                 </v-hover>
@@ -425,8 +435,9 @@
                                         }">
                                             <div style="margin-right: 20px; text-align: justify;">
                                                 <h4>{{ item.data.subject }}</h4>
-                                                <p v-if="item.data.catatan !== 'null'" @click="readNotification(item.id)">Peminjaman ruangan {{
-                                                    item.data.detailruangan.namaruangan }}
+                                                <p v-if="item.data.catatan !== 'null'"
+                                                    @click="readNotification(item.id)">Peminjaman ruangan {{
+                                                        item.data.detailruangan.namaruangan }}
                                                     untuk tanggal <br>{{ new
                                                         Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
                                                             {
@@ -487,6 +498,23 @@
                                 </v-hover>
                             </v-list-item>
                         </v-list>
+
+                        <v-list style="width: 600px; height: 500px;" v-if="this.allNotifications.length === 0 && this.getData === false">
+                            <p
+                                style="color: #0D47A1; font-size: 25px; font-family: Lexend-Regular; margin-left: 20px; margin-top: 20px; margin-bottom: 10px;">
+                                Tidak ada pemberitahuan</p>
+                        </v-list>
+
+                        <v-list style="width: 600px; height: 500px;" v-if="this.getData === true">
+                            <v-row align-content="center" class="fill-height" justify="center">
+                                <v-col class="text-subtitle-1 text-center" cols="12"
+                                    style="font-family: Lexend-Regular;">
+                                    Tunggu sebentar ya...
+                                </v-col>
+                                <v-col cols="1">
+                                    <v-progress-circular color="#0D47A1" indeterminate></v-progress-circular> </v-col>
+                            </v-row>
+                        </v-list>
                     </v-menu>
                 </template>
             </v-toolbar-items>
@@ -515,7 +543,7 @@ export default {
         return {
             menusCenter: [
                 { title: 'Beranda', route: 'berandaUser' },
-                { title: 'Peminjaman', submenus: [{ title: 'Peminjaman Ruangan & Alat', route: 'peminjamanRuangan' }, { title: 'Peminjaman Alat', route: 'peminjamanAlat' }], isOpen: false, },
+                { title: 'Peminjaman', submenus: [{ title: 'Peminjaman Ruangan', route: 'peminjamanRuangan' }, { title: 'Peminjaman Alat', route: 'peminjamanAlat' }], isOpen: false, },
                 { title: 'Daftar Alat', route: 'daftarAlat' },
                 { title: 'Daftar Ruangan', route: 'daftarRuangan' },
                 { title: 'Daftar Peminjaman', route: 'daftarPeminjaman' },
@@ -530,6 +558,7 @@ export default {
             UserID: localStorage.getItem('UserID'),
             unread: 0,
             overlay: false,
+            getData: undefined
         }
     },
     methods: {
@@ -554,11 +583,13 @@ export default {
                 });
         },
         getNotification() {
+            this.getData = true;
             axios.get(`http://127.0.0.1:8000/api/notifikasi/${this.UserID}`)
                 .then((response) => {
                     this.allNotifications = response.data.data;
                     this.unread = response.data.unread;
                     console.log(this.allNotifications);
+                    this.getData = false
                 })
                 .catch((error) => {
                     console.log(error)
@@ -570,6 +601,15 @@ export default {
                     console.log(response.data);
                 })
                 .catch((error) => {
+                    console.log(error)
+                })
+        },
+        deleteAll(UserID) {
+            axios.delete(`http://127.0.0.1:8000/api/deleteAll/${UserID}`)
+                .then((response) => {
+                    console.log(response.data);
+                    this.getNotification();
+                }).catch((error) => {
                     console.log(error)
                 })
         }

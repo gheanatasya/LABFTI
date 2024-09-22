@@ -23,32 +23,32 @@ class RuanganController extends Controller
             }
 
             if ($room->Nama_ruangan === 'SIC'){
-                $backgroundcolor = '#F44336';
+                $backgroundcolor = '#FFCDD2';
             } else if ($room->Nama_ruangan === 'Debug'){
-                $backgroundcolor = '#E91E63';
+                $backgroundcolor = '#F8BBD0';
             } else if ($room->Nama_ruangan === 'Byte'){
-                $backgroundcolor = '#9c27b0';
+                $backgroundcolor = '#E1BEE7';
             } else if ($room->Nama_ruangan === 'Java'){
-                $backgroundcolor = '#673AB7';
+                $backgroundcolor = '#D1C4E9';
             } else if ($room->Nama_ruangan === 'Kernel'){
-                $backgroundcolor = '#2196F3';
+                $backgroundcolor = '#E3F2FD';
             } else if ($room->Nama_ruangan === 'Interface'){
-                $backgroundcolor = '#4CAF50';
+                $backgroundcolor = '#C8E6C9';
             } else if ($room->Nama_ruangan === 'Hypertext'){
-                $backgroundcolor = '#76FF03';
+                $backgroundcolor = '#CCFF90';
             } else if ($room->Nama_ruangan === 'Gateway'){
-                $backgroundcolor = '#FFEB3B';
+                $backgroundcolor = '#FFF9C4';
             } else if ($room->Nama_ruangan === 'Firewall'){
-                $backgroundcolor = '#F57F17';
+                $backgroundcolor = '#FFFF8D';
             } else if ($room->Nama_ruangan === 'Lab. Big Data'){
-                $backgroundcolor = '#FF5722';
+                $backgroundcolor = '#FFCCBC';
             } else if ($room->Nama_ruangan === 'Lab. Mobile'){
-                $backgroundcolor = '#795548';
+                $backgroundcolor = '#D7CCC8';
             } else if ($room->Nama_ruangan === 'Lab. AI'){
-                $backgroundcolor = '#607D8B';
+                $backgroundcolor = '#CFD8DC';
             } else if ($room->Nama_ruangan === 'Lab. MIS'){
-                $backgroundcolor = '#880E4F';
-            } else if ($room->Nama_ruangan === 'Mulmed'){
+                $backgroundcolor = '#FF80AB';
+            } else if ($room->Nama_ruangan === 'Multimedia'){
                 $backgroundcolor = '#D500F9';
             } else {
                 $backgroundcolor = '#0097A7';
@@ -138,6 +138,14 @@ class RuanganController extends Controller
         $ruangan = Ruangan::find($RuanganID);
         $ruangan->Status = 'Tidak Tersedia';
         $ruangan->save();
+        $namaruangan = $ruangan->Nama_ruangan;
+        $directory = 'ruangan/' . $namaruangan;
+
+        /* if (deleteDirectory($directory)) {
+            $message = 'Ruangan dan direktori berhasil dihapus!';
+        } else {
+            $message = 'Gagal menghapus direktori. Pastikan direktori ada dan kosong.';
+        } */
 
         return response()->json(['message' => 'Ruangan berhasil dihapus', 'dataHapus' => $ruangan]);
     }

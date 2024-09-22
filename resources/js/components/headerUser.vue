@@ -8,7 +8,8 @@
                     </router-link>
                 </v-toolbar-title>
                 <v-toolbar-items class="flex-grow-1 justify-center" style="color: white">
-                    <v-btn flat v-for="menu in menusCenter" :key="menu.title" :to="menu.to" style="text-transform: none;">
+                    <v-btn flat v-for="menu in menusCenter" :key="menu.title" :to="menu.to"
+                        style="text-transform: none;">
                         {{ menu.title }}
                     </v-btn>
                 </v-toolbar-items>
@@ -25,7 +26,8 @@
                                 <v-list-item v-for="(item, i) in menu1.submenus" :key="i">
                                     <v-list-item-title>
                                         <v-icon>{{ item.icon }}</v-icon>
-                                        <v-btn flat @click="logout" v-if="item.title === 'Logout'" style="text-transform: none;">
+                                        <v-btn flat @click="logout" v-if="item.title === 'Logout'"
+                                            style="text-transform: none;">
                                             {{ item.title }}
                                         </v-btn>
                                         <v-btn :to="item.to" v-else flat style="text-transform: none;">
@@ -44,7 +46,13 @@
                                 </v-btn>
                             </template>
 
-                            <v-list style="width: 600px; height: 500px;">
+                            <v-list style="width: 600px; height: 500px;" v-if="this.getData === false && this.allNotifications.length > 0">
+                                <v-list-item style="margin-bottom: -10px;">
+                                    <v-btn @click="deleteAll(this.UserID)" style="color: #0D47A1; margin-left: 90px; background: none;
+                                text-decoration: underline; box-shadow: none; text-transform: none; position: absolute; right: 0; margin-right: 5px; top: 0;
+                                ">Hapus Semua Pemberitahuan</v-btn>
+                                </v-list-item>
+
                                 <v-list-item v-for="(item, i) in this.allNotifications" :key="i">
                                     <!-- <v-list-item-title v-if="this.allNotifications.length === 0">
                                     <div style="margin-right: 20px; text-align: justify;">
@@ -81,8 +89,9 @@
                                             }">
                                                 <div style="margin-right: 20px; text-align: justify;">
                                                     <h4>{{ item.data.subject }}</h4>
-                                                    <p v-if="item.data.catatan !== 'null'" @click="readNotification(item.id)">Peminjaman ruangan {{
-                                                        item.data.detailruangan.namaruangan }}
+                                                    <p v-if="item.data.catatan !== 'null'"
+                                                        @click="readNotification(item.id)">Peminjaman ruangan {{
+                                                            item.data.detailruangan.namaruangan }}
                                                         untuk tanggal <br>{{ new
                                                             Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
                                                                 {
@@ -136,8 +145,7 @@
                                                                 }) }}.
                                                     </p>
                                                 </div>
-                                                <v-icon size="small"
-                                                    style="color: #0D47A1;">mdi-circle</v-icon>
+                                                <v-icon size="small" style="color: #0D47A1;">mdi-circle</v-icon>
                                             </v-list-item-title>
                                         </template>
                                     </v-hover>
@@ -158,8 +166,9 @@
                                             }">
                                                 <div style="margin-right: 20px; text-align: justify;">
                                                     <h4>{{ item.data.subject }}</h4>
-                                                    <p v-if="item.data.catatan !== 'null'" @click="readNotification(item.id)">Peminjaman ruangan {{
-                                                        item.data.detailruangan.namaruangan }}
+                                                    <p v-if="item.data.catatan !== 'null'"
+                                                        @click="readNotification(item.id)">Peminjaman ruangan {{
+                                                            item.data.detailruangan.namaruangan }}
                                                         untuk tanggal <br>{{ new
                                                             Date(item.data.detailruangan.tanggalawal).toLocaleTimeString('id-ID',
                                                                 {
@@ -236,21 +245,22 @@
                                             }">
                                                 <div style="margin-right: 20px; text-align: justify;">
                                                     <h4>{{ item.data.subject }}</h4>
-                                                    <p @click="readNotification(item.id)">Mohon maaf peminjaman ruangan {{
-                                                        item.data.Nama_ruangan }}
+                                                    <p @click="readNotification(item.id)">Mohon maaf peminjaman ruangan
+                                                        {{
+                                                            item.data.Nama_ruangan }}
                                                         yang kamu lakukan <br>untuk tanggal {{ new
                                                             Date(item.data.tanggalAwal).toLocaleTimeString('id-ID',
                                                                 {
                                                                     year:
                                                                         'numeric', month:
                                                                         'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
-                                                                }) }} 
-                                                        pada LAB FTI <br>Universitas Kristen Duta Wacana telah dibatalkan. <br>Silahkan lakukan peminjaman
+                                                                }) }}
+                                                        pada LAB FTI <br>Universitas Kristen Duta Wacana telah
+                                                        dibatalkan. <br>Silahkan lakukan peminjaman
                                                         ruangan yang lain. Terimakasih.
                                                     </p>
                                                 </div>
-                                                <v-icon size="small"
-                                                    style="color: #0D47A1;">mdi-circle</v-icon>
+                                                <v-icon size="small" style="color: #0D47A1;">mdi-circle</v-icon>
                                             </v-list-item-title>
                                         </template>
                                     </v-hover>
@@ -271,16 +281,18 @@
                                             }">
                                                 <div style="margin-right: 20px; text-align: justify;">
                                                     <h4>{{ item.data.subject }}</h4>
-                                                    <p @click="readNotification(item.id)">Mohon maaf peminjaman ruangan {{
-                                                        item.data.Nama_ruangan }}
+                                                    <p @click="readNotification(item.id)">Mohon maaf peminjaman ruangan
+                                                        {{
+                                                            item.data.Nama_ruangan }}
                                                         yang kamu lakukan <br>untuk tanggal {{ new
                                                             Date(item.data.tanggalAwal).toLocaleTimeString('id-ID',
                                                                 {
                                                                     year:
                                                                         'numeric', month:
                                                                         'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
-                                                                }) }} 
-                                                        pada LAB FTI <br>Universitas Kristen Duta Wacana telah dibatalkan. <br>Silahkan lakukan peminjaman
+                                                                }) }}
+                                                        pada LAB FTI <br>Universitas Kristen Duta Wacana telah
+                                                        dibatalkan. <br>Silahkan lakukan peminjaman
                                                         ruangan yang lain. Terimakasih.
                                                     </p>
                                                 </div>
@@ -288,6 +300,23 @@
                                         </template>
                                     </v-hover>
                                 </v-list-item>
+                            </v-list>
+
+                            <v-list style="width: 600px; height: 500px;" v-if="this.allNotifications.length === 0 && this.getData === false">
+                                <p
+                                    style="color: #0D47A1; font-size: 25px; font-family: Lexend-Regular; margin-left: 20px; margin-top: 20px; margin-bottom: 10px;">
+                                    Tidak ada pemberitahuan</p>
+                            </v-list>
+    
+                            <v-list style="width: 600px; height: 500px;" v-if="this.getData === true">
+                                <v-row align-content="center" class="fill-height" justify="center">
+                                    <v-col class="text-subtitle-1 text-center" cols="12"
+                                        style="font-family: Lexend-Regular;">
+                                        Tunggu sebentar ya...
+                                    </v-col>
+                                    <v-col cols="1">
+                                        <v-progress-circular color="#0D47A1" indeterminate></v-progress-circular> </v-col>
+                                </v-row>
                             </v-list>
                         </v-menu>
                     </template>
@@ -322,7 +351,7 @@ export default {
                 { title: 'Ruangan', to: 'ruangan' },
                 { title: 'Alat', to: 'alat' },
                 { title: 'Beranda', to: 'berandaUser' },
-                { title: 'Peminjaman Ruangan & Alat', to: 'peminjamanRuangan' },
+                { title: 'Peminjaman Ruangan', to: 'peminjamanRuangan' },
                 { title: 'Peminjaman Alat', to: 'peminjamanAlat' },
             ],
             menusLeft: [
@@ -333,6 +362,7 @@ export default {
             allNotifications: [],
             unread: 0,
             overlay: false,
+            getData: undefined,
         }
     },
     mounted() {
@@ -381,11 +411,13 @@ export default {
                 });
         },
         getNotification() {
+            this.getData = true;
             axios.get(`http://127.0.0.1:8000/api/notifikasi/${this.UserID}`)
                 .then((response) => {
                     this.allNotifications = response.data.data;
                     this.unread = response.data.unread;
                     console.log(this.allNotifications);
+                    this.getData = false;
                 })
                 .catch((error) => {
                     console.log(error)
@@ -395,8 +427,18 @@ export default {
             axios.get(`http://127.0.0.1:8000/api/notifikasiRead/${id}/${this.UserID}`)
                 .then((response) => {
                     console.log(response.data);
+                    this.getNotification();
                 })
                 .catch((error) => {
+                    console.log(error)
+                })
+        },
+        deleteAll(UserID) {
+            axios.delete(`http://127.0.0.1:8000/api/deleteAll/${UserID}`)
+                .then((response) => {
+                    console.log(response.data);
+                    this.getNotification();
+                }).catch((error) => {
                     console.log(error)
                 })
         }

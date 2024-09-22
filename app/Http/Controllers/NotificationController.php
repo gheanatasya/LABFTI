@@ -71,4 +71,10 @@ class NotificationController extends Controller
             'message' => 'Persetujuan ruangan berhasil diperbarui', 'data' => $Peminjaman_Ruangan_ID,
         ]);
     }
+
+    public function deleteAll($UserID){
+        $peminjam = Peminjam::where('UserID', $UserID)->first();
+        $peminjam->notifications()->delete();
+        return 'success';
+    }
 }

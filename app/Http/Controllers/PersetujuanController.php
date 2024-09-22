@@ -51,6 +51,9 @@ class PersetujuanController extends Controller
 
         $peminjamanalat = Peminjaman_Alat_Bridge::where('PeminjamanID', $peminjamanid)->get();
 
+        $dataUpdateRuangan = [];
+        $dataUpdateAlat = [];
+
         if ($User_role === 'Dekan') {
             if ($NamaStatus === 'Diterima') {
                 $persetujuan->Dekan_Approve = true;
@@ -129,6 +132,10 @@ class PersetujuanController extends Controller
                 'Acc_by' => $User_role,
                 'Catatan' => $Catatan
             ]);
+
+            $dataUpdateRuangan = [
+                'catatan' 
+            ]
         }
 
         if ($peminjamanalat != null) {
@@ -256,7 +263,8 @@ class PersetujuanController extends Controller
 
         return response()->json([
             'message' => 'Persetujuan ruangan berhasil diperbarui', 'data' => $Peminjaman_Ruangan_ID,
-            'status' => $statusid, 'activitylog' => $activitylog
+            'status' => $statusid, 'activitylog' => $activitylog,
+            'dataUpdate'
         ]);
     }
 

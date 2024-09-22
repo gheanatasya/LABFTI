@@ -23,18 +23,20 @@
       Peminjaman Ruangan dan Alat LAB FTI UKDW
     </div>
     <div style="text-align:center; color:black; font-family:Lexend-Regular; font-size: 20px; margin-top: 10px;">
-      Untuk melakukan peminjaman, silahkan <router-link to="loginPage" style="color:#0D47A1; font-family: Lexend-Bold">Login</router-link> terlebih
+      Untuk melakukan peminjaman, silahkan <router-link to="loginPage"
+        style="color:#0D47A1; font-family: Lexend-Bold">Login</router-link> terlebih
       dahulu.
     </div>
 
     <v-container style="height: 100%; display: flex;">
-      <div id="calendar" style="width: 1000px; height: 700px; float: left; margin-left: -80px; margin-right: 50px;"></div>
+      <div id="calendar" style="width: 1000px; height: 700px; float: left; margin-left: -80px; margin-right: 50px;">
+      </div>
       <div style="float: clear; font-family:Lexend-Regular; font-size: 20px; color: black; margin-top: 30px;">
         <p style="margin-bottom: 10px;">Keterangan : </p>
-        <p v-for="(item, index) in dataRuangan" :key="index" @click="openInformation(item)" 
+        <p v-for="(item, index) in dataRuangan" :key="index" @click="openInformation(item)"
           :style="{ backgroundColor: item.BackgroundColor, color: 'black', width: '120px', fontSize: '15px', paddingLeft: '20px', marginBottom: '5px', cursor: 'pointer' }">
           {{ item.Nama_ruangan }}</p>
-          <p
+        <p
           style="background-color: #E65100; color: black; width: 120px; font-size: 15px; padding-left: 20px; margin-bottom: 5px;">
           Alat</p>
       </div>
@@ -46,8 +48,8 @@
           {{ dataPerRuangan.Nama_ruangan }}</v-card-title>
         <v-card-text style="text-align: justify; justify-content:center; display: flex;">
           <div style="width: 40%">
-            <v-img v-if="dataPerRuangan.Foto !== null"
-              :src="'../storage/' + dataPerRuangan.Foto[0]" style="width: 200px; height: 200px;"></v-img>
+            <v-img v-if="dataPerRuangan.Foto !== null" :src="'../storage/' + dataPerRuangan.Foto[0]"
+              style="width: 200px; height: 200px;"></v-img>
             <v-img v-else src="../picture/no-image.png" style="width: 200px; height: 200px;"></v-img>
           </div>
 
@@ -75,7 +77,10 @@
         </v-card-text>
 
         <v-card-actions style="justify-content:center;">
-          <v-btn style="position: absolute; bottom: 0; right: 0; margin-bottom: 20px; margin-right: 30px;"
+          <!-- <v-btn @click="filter(dataPerRuangan.Nama_ruangan)" style="color: #0D47A1; margin-left: 90px; background: none;
+          text-decoration: underline; box-shadow: none; text-transform: none;
+          ">Tampilkan Peminjaman {{ dataPerRuangan.Nama_ruangan }} saja.</v-btn> --> <v-btn
+            style="position: absolute; bottom: 0; right: 0; margin-bottom: 20px; margin-right: 30px;"
             @click="dialog = false">Tutup</v-btn>
         </v-card-actions>
       </v-card>
@@ -92,13 +97,15 @@ import {
   viewDay,
   viewWeek,
   viewMonthAgenda,
+  createViewDay
 } from '@schedule-x/calendar'
 import '@schedule-x/theme-default/dist/index.css'
 import axios from 'axios';
 import { createEventModalPlugin } from '@schedule-x/event-modal'
 import { ref, onMounted } from 'vue';
 import footerPage from '../components/footerPage.vue'
-
+/* import { createCalendarControlsPlugin } from '@schedule-x/calendar-controls'
+ */
 const overlay = ref(true);
 const today = new Date();
 const year = today.getFullYear();
@@ -115,11 +122,11 @@ async function initializeCalendar() {
     const allEvents = [...response.data.peminjamanruangan, ...response.data.peminjamanalat];
 
     const events = allEvents.map((event) => ({
-      title: event.title,
+      title: event.desc,
       start: event.start,
       end: event.end,
       id: event.id,
-      description: event.desc,
+      description: event.title,
       calendarId: event.calendarId
     }));
 
@@ -129,6 +136,11 @@ async function initializeCalendar() {
       defaultView: viewDay.name,
       events: events,
       plugins: [createEventModalPlugin()],
+      dayBoundaries: {
+        start: '06:00', //kurangin sejam dari jam yang diinginkan karena pluginnya nanti nambah sejam dari jam yg diinginkan
+        end: '22:00',
+      },
+      locale: 'id-ID',
       calendars: {
         sic: {
           colorName: 'sic',
@@ -238,7 +250,7 @@ async function initializeCalendar() {
           colorName: 'kernel',
           lightColors: {
             main: '#2196F3',
-            container: '#BBDEFB',
+            container: '#E3F2FD',
             onContainer: '#002859',
           },
           darkColors: {
@@ -330,6 +342,8 @@ const openInformation = (ruangan) => {
   console.log(dataPerRuangan.value)
 };
 
+/* const filter = (Nama) => {} */
+
 async function getDataRuangan() {
   try {
     const response = await axios.get('http://127.0.0.1:8000/api/ruangan');
@@ -341,12 +355,19 @@ async function getDataRuangan() {
   }
 }
 
+const ruanganDone = ref(false)
+const kalenderDone = ref(false)
+
 onMounted(() => {
   Promise.all([
-    getDataRuangan()
+    getDataRuangan(),
   ])
     .then(() => {
-      overlay.value = false;
+      //overlay.value = false;
+      ruanganDone.value = true;
+      if (kalenderDone.value === true && ruanganDone.value === true) {
+        overlay.value = false;
+      }
     })
     .catch((error) => {
       console.error(error);
@@ -355,7 +376,9 @@ onMounted(() => {
 
 initializeCalendar().then((calendarApp) => {
   calendarApp.render(document.getElementById('calendar'));
+  kalenderDone.value = true;
   //overlay.value = false;
 });
+
 
 </script>

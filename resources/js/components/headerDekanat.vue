@@ -43,7 +43,13 @@
                             </v-btn>
                         </template>
 
-                        <v-list style="width: 600px; height: 500px;">
+                        <v-list style="width: 600px; height: 500px;" v-if="this.getData === false && this.allNotifications.length > 0">
+                            <v-list-item style="margin-bottom: -10px;">
+                                <v-btn @click="deleteAll(this.UserID)" style="color: #0D47A1; margin-left: 90px; background: none;
+                            text-decoration: underline; box-shadow: none; text-transform: none; position: absolute; right: 0; margin-right: 5px; top: 0;
+                            ">Hapus Semua Pemberitahuan</v-btn>
+                            </v-list-item>
+
                             <v-list-item v-for="(item, i) in this.allNotifications" :key="i">
                                 <!-- new booking -->
                                 <v-hover v-if="item.data.newbooking">
@@ -467,6 +473,23 @@
                                 </v-hover>
                             </v-list-item>
                         </v-list>
+
+                        <v-list style="width: 600px; height: 500px;" v-if="this.allNotifications.length === 0 && this.getData === false">
+                            <p
+                                style="color: #0D47A1; font-size: 25px; font-family: Lexend-Regular; margin-left: 20px; margin-top: 20px; margin-bottom: 10px;">
+                                Tidak ada pemberitahuan</p>
+                        </v-list>
+
+                        <v-list style="width: 600px; height: 500px;" v-if="this.getData === true">
+                            <v-row align-content="center" class="fill-height" justify="center">
+                                <v-col class="text-subtitle-1 text-center" cols="12"
+                                    style="font-family: Lexend-Regular;">
+                                    Tunggu sebentar ya...
+                                </v-col>
+                                <v-col cols="1">
+                                    <v-progress-circular color="#0D47A1" indeterminate></v-progress-circular> </v-col>
+                            </v-row>
+                        </v-list>
                     </v-menu>
                 </template>
             </v-toolbar-items>
@@ -499,7 +522,7 @@ export default {
                 { title: 'Ruangan', route: 'ruangan' },
                 { title: 'Alat', route: 'alat' },
                 { title: 'Beranda', route: 'berandaUser' },
-                { title: 'Peminjaman Ruangan & Alat', route: 'peminjamanRuangan' },
+                { title: 'Peminjaman Ruangan', route: 'peminjamanRuangan' },
                 { title: 'Peminjaman Alat', route: 'peminjamanAlat' },
                 { title: 'Daftar Peminjaman', route: 'daftarPeminjaman' },
             ],
@@ -512,6 +535,7 @@ export default {
             UserID: localStorage.getItem('UserID'),
             unread: 0,
             overlay: false,
+            getData: undefined
         }
     },
     mounted() {
@@ -562,11 +586,13 @@ export default {
                 });
         },
         getNotification() {
+            this.getData = true
             axios.get(`http://127.0.0.1:8000/api/notifikasi/${this.UserID}`)
                 .then((response) => {
                     this.allNotifications = response.data.data;
                     this.unread = response.data.unread;
                     console.log(this.allNotifications);
+                    this.getData = false
                 })
                 .catch((error) => {
                     console.log(error)
@@ -578,6 +604,15 @@ export default {
                     console.log(response.data);
                 })
                 .catch((error) => {
+                    console.log(error)
+                })
+        },
+        deleteAll(UserID) {
+            axios.delete(`http://127.0.0.1:8000/api/deleteAll/${UserID}`)
+                .then((response) => {
+                    console.log(response.data);
+                    this.getNotification();
+                }).catch((error) => {
                     console.log(error)
                 })
         }

@@ -199,7 +199,7 @@
                         <td></td>
                     </tbody>
                 </v-table>
-                <v-pagination v-model="currentPageRuangan" :length="Math.ceil(filteredTools.length / itemsPerPage)"
+                <v-pagination v-model="currentPageRuangan" :length="Math.ceil(filteredRooms.length / itemsPerPage)"
                     @change="updateCurrentPageRuangan"></v-pagination>
             </v-card>
         </v-container>
