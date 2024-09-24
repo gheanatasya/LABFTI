@@ -24,32 +24,46 @@ class RuanganController extends Controller
 
             if ($room->Nama_ruangan === 'SIC'){
                 $backgroundcolor = '#FFCDD2';
+                $calendarId = 'sic';
             } else if ($room->Nama_ruangan === 'Debug'){
                 $backgroundcolor = '#F8BBD0';
+                $calendarId = 'debug';
             } else if ($room->Nama_ruangan === 'Byte'){
                 $backgroundcolor = '#E1BEE7';
+                $calendarId = 'byte';
             } else if ($room->Nama_ruangan === 'Java'){
                 $backgroundcolor = '#D1C4E9';
+                $calendarId = 'java';
             } else if ($room->Nama_ruangan === 'Kernel'){
                 $backgroundcolor = '#E3F2FD';
+                $calendarId = 'kernel';
             } else if ($room->Nama_ruangan === 'Interface'){
                 $backgroundcolor = '#C8E6C9';
+                $calendarId = 'interface';
             } else if ($room->Nama_ruangan === 'Hypertext'){
                 $backgroundcolor = '#CCFF90';
+                $calendarId = 'hypertext';
             } else if ($room->Nama_ruangan === 'Gateway'){
                 $backgroundcolor = '#FFF9C4';
+                $calendarId = 'gateway';
             } else if ($room->Nama_ruangan === 'Firewall'){
                 $backgroundcolor = '#FFFF8D';
+                $calendarId = 'firewall';
             } else if ($room->Nama_ruangan === 'Lab. Big Data'){
                 $backgroundcolor = '#FFCCBC';
+                $calendarId = 'bigdata';
             } else if ($room->Nama_ruangan === 'Lab. Mobile'){
                 $backgroundcolor = '#D7CCC8';
+                $calendarId = 'mobile';
             } else if ($room->Nama_ruangan === 'Lab. AI'){
                 $backgroundcolor = '#CFD8DC';
+                $calendarId = 'ai';
             } else if ($room->Nama_ruangan === 'Lab. MIS'){
                 $backgroundcolor = '#FF80AB';
+                $calendarId = 'mis';
             } else if ($room->Nama_ruangan === 'Multimedia'){
                 $backgroundcolor = '#D500F9';
+                $calendarId = 'multimedia';
             } else {
                 $backgroundcolor = '#0097A7';
             }
@@ -63,7 +77,8 @@ class RuanganController extends Controller
                 'fasilitas' => $room->fasilitas,
                 'Status' => $room->Status,
                 'Foto' => $room->Foto,
-                'BackgroundColor' => $backgroundcolor
+                'BackgroundColor' => $backgroundcolor,
+                'calendarId' => $calendarId
             ];
 
             $ruanganReturn[] = $fixRecord;

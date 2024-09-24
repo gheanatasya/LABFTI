@@ -133,9 +133,9 @@ class PersetujuanController extends Controller
                 'Catatan' => $Catatan
             ]);
 
-            $dataUpdateRuangan = [
+            /* $dataUpdateRuangan = [
                 'catatan' 
-            ]
+            ] */
         }
 
         if ($peminjamanalat != null) {

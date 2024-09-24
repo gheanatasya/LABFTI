@@ -21,15 +21,15 @@
             </v-container>
         </v-overlay>
 
-        <p style="font-size: 35px; font-family: Lexend-Medium; text-align: center; margin-top: 20px;">Halo,
+        <p style="font-size: 35px; font-family: Lexend-Medium; text-align: center;">Halo,
             {{ this.user.Nama }} ! </p>
 
-        <p style="font-family: Lexend-Bold; margin-left: 40px; margin-top: 30px; font-size: 20px;"> Peminjaman
+        <p style="font-family: Lexend-Bold; margin-left: 40px; margin-top: 10px; font-size: 20px;"> Peminjaman
             Ruangan Yang Sedang Anda Lakukan : </p>
 
         <v-container>
             <v-card class="tabelPinjamRuangan">
-                <v-table style="overflow: hidden; height: 400px;">
+                <v-table style="overflow: hidden; height: 350px;">
                     <thead style="font-family: Lexend-Regular; font-size: 15px;">
                         <tr>
                             <th class="text-center" style="background-color: #BBDEFB">No</th>
@@ -126,21 +126,21 @@
                     itemToDelete.namaruangan }}</strong>?</v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
-                        style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
-                        @click="dialogVisible = false">Batal</v-btn>
+                        style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px; text-transform: none;"
+                        @click="dialogVisible = false">Tidak</v-btn>
                     <v-btn :loading="this.itemToDelete.loading"
-                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;"
-                        @click="deletePeminjamanRuangan(itemToDelete.peminjamanruanganid, itemToDelete.peminjamanid)">Hapus</v-btn>
+                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px; text-transform: none;"
+                        @click="deletePeminjamanRuangan(itemToDelete.peminjamanruanganid, itemToDelete.peminjamanid)">Ya</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
 
-        <p style="font-family: Lexend-Bold; margin-left: 40px; margin-top: 40px; font-size: 20px;"> Peminjaman
+        <p style="font-family: Lexend-Bold; margin-left: 40px; margin-top: 20px; font-size: 20px;"> Peminjaman
             Alat Yang Sedang Anda Lakukan : </p>
 
         <v-container>
             <v-card class="tabelPinjamAlat">
-                <v-table style="font-family: Lexend-Regular; height: 400px;" fixed-header>
+                <v-table style="font-family: Lexend-Regular; height: 350px;" fixed-header>
                     <thead>
                         <tr>
                             <th class="text-center" style="background-color: #BBDEFB">
@@ -252,11 +252,11 @@
                     itemToDeleteAlat.namaalat }}</strong>?</v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
-                        style="background-color: rgb(2, 39, 10, 0.9); color: white; border-radius: 20px; width: 100px;"
-                        @click="dialogVisibleAlat = false">Batal</v-btn>
+                        style="background-color: #01579B; color: white; border-radius: 20px; width: 100px; text-transform: none;"
+                        @click="dialogVisibleAlat = false">Tidak</v-btn>
                     <v-btn :loading="itemToDeleteAlat.loading"
-                        style="border: 3px solid rgb(2, 39, 10, 0.9);  box-shadow: none; background-color: none; width: 100px; color: rgb(2, 39, 10, 0.9); border-radius: 20px;"
-                        @click="deletePeminjamanAlat(itemToDeleteAlat.peminjamanalatid, itemToDeleteAlat.peminjamanid)">Hapus</v-btn>
+                        style="border: 3px solid #01579B;  box-shadow: none; background-color: none; width: 100px; color: #01579B; border-radius: 20px; text-transform: none;"
+                        @click="deletePeminjamanAlat(itemToDeleteAlat.peminjamanalatid, itemToDeleteAlat.peminjamanid)">Ya</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -294,7 +294,7 @@ export default {
             dialogVisibleAlat: false,
             currentPageRuangan: 1,
             currentPageAlat: 1,
-            itemsPerPage: 6,
+            itemsPerPage: 5,
             no: '',
             peminjaman: [],
             ruanganbridge: [],

@@ -25,32 +25,48 @@
                             <div style="display: flex; align-items: center; grid-column: span 4; width: 130%;">
                                 <v-text-field type="datetime-local" label="Tanggal Pakai Awal"
                                     v-model="item.tanggalAwal" variant="outlined"
-                                    style="width: 280px; margin-left: 300px; margin-top: 100px; margin-right: 80px;"></v-text-field>
+                                    style="width: 280px; margin-left: 300px; margin-top: 100px; margin-right: 80px;">
+                                    <template v-slot:label>
+                                        Tanggal Pakai Awal <v-icon
+                                            style="color: red; font-size: 15px;">mdi-asterisk</v-icon>
+                                    </template>
+                                </v-text-field>
                                 <v-text-field type="datetime-local" label="Tanggal Selesai"
                                     v-model="item.tanggalSelesai" variant="outlined"
-                                    style="width: 300px; margin-left: -75px; margin-top: 100px; margin-right: 20px;"></v-text-field>
+                                    style="width: 300px; margin-left: -75px; margin-top: 100px; margin-right: 20px;">
+                                    <template v-slot:label>
+                                        Tanggal Selesai <v-icon
+                                            style="color: red; font-size: 15px;">mdi-asterisk</v-icon>
+                                    </template>
+                                </v-text-field>
                                 <v-btn :loading="item.loading"
                                     v-if="User_role === 'Mahasiswa' || User_role === 'Petugas'"
                                     @click="availableRoom(item.tanggalAwal, item.tanggalSelesai, index), fetchAlat(item.tanggalAwal, item.tanggalSelesai, index)"
-                                    style="width: 120px; margin-left: 10px; margin-top: 80px; font-size: 11px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
+                                    style="text-transform: none; width: 120px; margin-left: 10px; margin-top: 80px; font-size: 12px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
                                     color="#0D47A1">
                                     Cek ruangan</v-btn>
 
                                 <v-btn :loading="item.loading" v-else
                                     @click="availableRoomDosen(item.tanggalAwal, item.tanggalSelesai, index), fetchAlatDosen(item.tanggalAwal, item.tanggalSelesai, index)"
-                                    style="width: 120px; margin-left: 10px; margin-top: 80px; font-size: 11px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
+                                    style="text-transform: none; width: 120px; margin-left: 10px; margin-top: 80px; font-size: 12px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
                                     color="#0D47A1">
                                     Cek ruangan</v-btn>
                             </div>
 
                             <v-select v-model="item.selectedRuangan" :items="item.Ruangan" label="Ruangan"
-                                variant="outlined" clearable
-                                style="width: 300px; margin-left: 303px; margin-top: 8px;"></v-select>
+                                variant="outlined" clearable style="width: 300px; margin-left: 303px; margin-top: 8px;">
+                                <template v-slot:label>
+                                    Ruangan yang dipinjam <v-icon
+                                        style="color: red; font-size: 15px;">mdi-asterisk</v-icon>
+                                </template>
+                            </v-select>
 
                             <div style="margin-left: 303px; margin-right: -80px;">
-                                <label for="isPersonal">Apakah peminjaman dilakukan untuk keperluan pribadi (belajar,
+                                <label for="isPersonal">Apakah peminjaman dilakukan untuk keperluan pribadi (rapat,
+                                    belajar,
                                     skripsian, kerja
-                                    kelompok)?</label>
+                                    kelompok)? <v-icon
+                                        style="color: red; font-size: 15px;">mdi-asterisk</v-icon></label>
                                 <v-radio-group v-model="item.selectedOptionPersonal" id="isPersonal">
                                     <v-row>
                                         <v-col cols="auto">
@@ -63,7 +79,8 @@
                                 </v-radio-group>
 
                                 <label for="isOrganisation">Apakah peminjaman dilakukan untuk keperluan
-                                    organisasi?</label>
+                                    organisasi (contoh: BPMFTI, BEMFTI)? <v-icon
+                                        style="color: red; font-size: 15px;">mdi-asterisk</v-icon></label>
                                 <v-radio-group v-model="item.selectedOptionOrganisation" id="isOrganisation">
                                     <v-row>
                                         <v-col cols="auto">
@@ -77,7 +94,7 @@
 
                                 <label for="isEksternal">Apakah peminjaman digunakan bersama dengan pihak Eksternal /
                                     Luar
-                                    Kampus?</label>
+                                    Kampus? <v-icon style="color: red; font-size: 15px;">mdi-asterisk</v-icon></label>
                                 <v-radio-group v-model="item.selectedOptionEksternal" id="isEksternal">
                                     <v-row>
                                         <v-col cols="auto">
@@ -91,10 +108,13 @@
                             </div>
 
                             <v-textarea v-model="item.keterangan" style="margin-left: 303px; margin-right: -90px;"
-                                label="Keterangan" row-height="25" rows="5" variant="outlined" auto-grow
-                                shaped></v-textarea>
+                                label="Keterangan" row-height="25" rows="5" variant="outlined" auto-grow shaped>
+                                <template v-slot:label>
+                                    Keterangan <v-icon style="color: red; font-size: 15px;">mdi-asterisk</v-icon>
+                                </template>
+                            </v-textarea>
 
-                            <p style="margin-left: 303px; margin-right: -80px;">Tambahkan Add-on</p>
+                            <p style="margin-left: 303px; margin-right: -80px;">Tambahkan Add-on(opsional)</p>
 
                             <div v-for="(alatItem, alatIndex) in item.alat" :key="alatIndex"
                                 style="display: flex; align-items: center; grid-column: span 4; width: 145%;">
@@ -127,26 +147,30 @@
 
                             <v-file-input
                                 v-if="item.selectedOptionOrganisation === 'True' || item.selectedOptionEksternal === 'True'"
-                                type="file" accept="file/pdf" :no-icon="true" v-model="item.dokumen"
+                                type="file" accept="file/pdf" :prepend-inner-icon="'mdi-paperclip'" prepend-icon="" v-model="item.dokumen"
                                 style="width: 505px; margin-left: 303px; margin-top: 5px;" variant="outlined"
-                                label="Surat Peminjaman" ref="dokumenPendukung" :id="'dokumen-' + index"
-                                @change="handleFileChange(index)"></v-file-input>
+                                label="Surat Peminjaman" @change="handleDokumen(index)" ref="dokumenPendukung"
+                                :id="'dokumen-' + index">
+                                <template v-slot:label>
+                                    Surat Peminjaman <v-icon style="color: red; font-size: 15px;">mdi-asterisk</v-icon>
+                                </template>
+                            </v-file-input>
 
                             <div
-                                style="display: flex; justify-content: space-between; margin-left: 320px; margin-right: 20px; margin-bottom: 50px; margin-top: 20px;">
+                            style="margin-left: 380px; margin-right: 0px; margin-bottom: 50px; margin-top: 20px; text-align: center;">
                                 <v-btn @click="addNewForm(index)" id="tambah"
-                                    style="margin-right: 10px; margin-left: -5px;" prepend-icon=mdi-plus-circle
-                                    color="#0D47A1">Tambah
-                                    Peminjaman</v-btn>
-                                <v-btn @click="removeForm(index)" id="hapus" prepend-icon="mdi-minus-circle"
+                                    style="margin-right: 10px; margin-left: -5px; text-transform: none" prepend-icon=mdi-plus-circle
+                                    color="grey">Tambah Form</v-btn>
+                                <v-btn @click="removeForm(index)" id="hapus" prepend-icon="mdi-minus-circle" style="text-transform: none"
                                     color="error">Hapus
-                                    Peminjaman</v-btn>
+                                    Form</v-btn>
                             </div>
                         </div>
-                        <v-btn @click="saveItem()" id="simpan" :loading="loading"
-                            style="margin-left: 430px; margin-top: -5px; border-radius: 20px; font-size: 15px; width: 250px;"
-                            color="#0D47A1">
-                            Pinjam Ruangan </v-btn>
+
+                        <v-btn @click="dialogTambahNomor = true" id="simpan"
+                            style="margin-left: 430px; margin-top: -5px; border-radius: 20px; font-size: 15px; width: 250px; text-transform: none;"
+                            color="#01579B">
+                            Selanjutnya</v-btn>
                     </v-form>
                 </div>
             </v-container>
@@ -168,8 +192,7 @@
                         style="border-radius: 10px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); margin-bottom: 20px;">
                         <v-hover>
                             <template v-slot:default="{ isHovering, props }">
-                                <div v-bind="props"
-                                    :style="{ backgroundColor: isHovering ? '#BBDEFB' : '#E3F2FD' }">
+                                <div v-bind="props" :style="{ backgroundColor: isHovering ? '#BBDEFB' : '#E3F2FD' }">
                                     <v-row align="center">
                                         <v-col cols="auto">
                                             <v-img :width="200" cover src="../picture/fti-ukdw.png"></v-img>
@@ -210,6 +233,27 @@
                     </v-card-actions>
                 </v-card>
             </v-overlay>
+
+            <v-dialog style="justify-content:center;" v-model="dialogTambahNomor" persistent max-width="500">
+                <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 500px;">
+                    <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;"></v-card-title>
+                    <v-card-text>
+                        <p>Nomor Handphone Yang Dapat Dihubungi</p>
+                        <v-text-field label="No. Handphone" v-model="Nohp" variant="outlined" clearable><template
+                                v-slot:label>
+                                No. Handphone <v-icon style="color: red; font-size: 15px;">mdi-asterisk</v-icon>
+                            </template></v-text-field>
+                    </v-card-text>
+                    <v-card-actions style="justify-content:center;">
+                        <v-btn @click="dialogTambahNomor = false"
+                            style="position: absolute; top: 0; right: 0; margin-top: 10px;"><v-icon
+                                style="font-size: 30px;">mdi-close-circle</v-icon></v-btn>
+                        <v-btn @click="saveItem()" id="simpan" :loading="loading"
+                            style="background-color: #01579B; color: white; border-radius: 20px; font-size: 15px; text-transform: none; width: 200px;">
+                            Pinjam Ruangan </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
         </div>
 
         <footerPage></footerPage>
@@ -237,6 +281,8 @@ export default {
     setup() {
         const loading = ref(false);
         const dialog = ref(false);
+        const Nohp = ref('');
+        const dialogTambahNomor = ref(false);
 
         const form = reactive([
             {
@@ -273,7 +319,7 @@ export default {
         ])
 
         const addNewForm = (index) => {
-            if (form[index].tambahformbaru === 1) {
+            /* if (form[index].tambahformbaru === 1) {
                 alert('Form baru sudah ditambahkan sebelumnya!');
                 return
             } else if (form[index].selectedOptionPersonal === '' || form[index].selectedOptionOrganisation === '' || form[index].selectedOptionEksternal === '') {
@@ -294,7 +340,7 @@ export default {
             } else if (form[index].selectedOptionOrganisation === 'True' && form[index].selectedOptionEksternal === 'True') {
                 alert('Pilihlah salah satu dari peminjaman untuk Organisasi atau Eksternal!');
                 return
-            }
+            } */
 
             form.push({
                 dateDialogAwal: false,
@@ -380,6 +426,15 @@ export default {
 
             for (let i = 0; i < form.length; i++) {
                 const pdfRegex1 = /\.pdf$/i;
+                if ((form[i].tanggalSelesai === '') || (form[i].tanggalAwal === '') || (form[i].selectedRuangan === '')
+                    || (form[i].selectedOptionPersonal === '') || (form[i].selectedOptionOrganisation === '') || (form[i].selectedOptionEksternal === '')
+                    || (form[i].keterangan === '')) {
+                    aman.value = false;
+                    alert('Terdapat data yang kosong!');
+                    loading.value = false;
+                    return
+                }
+
                 if (form[i].selectedOptionPersonal === '' || form[i].selectedOptionOrganisation === '' || form[i].selectedOptionEksternal === '') {
                     alert('Pilihlah salah satu dari peminjaman untuk Personal, Organisasi, dan Eksternal!');
                     loading.value = false;
@@ -405,14 +460,7 @@ export default {
                     loading.value = false;
                     return
                 }
-                if ((form[i].tanggalSelesai === '') || (form[i].tanggalAwal === '') || (form[i].selectedRuangan === '')
-                    || (form[i].selectedOptionPersonal === '') || (form[i].selectedOptionOrganisation === '') || (form[i].selectedOptionEksternal === '')
-                    || (form[i].keterangan === '')) {
-                    aman.value = false;
-                    alert('Terdapat data yang kosong!');
-                    loading.value = false;
-                    return
-                }
+
                 if (form[i].selectedOptionEksternal === 'True' && form[i].dokumen === null) {
                     alert('Peminjaman dengan pihak Eksternal memerlukan surat pendukung peminjaman!');
                     loading.value = false;
@@ -432,11 +480,11 @@ export default {
                             return;
                         }
 
-                        if (form[i].alat[j].jumlahPinjam === 0 || form[i].alat[j].jumlahPinjam < 0 || !Number.isInteger(form[i].alat[j].jumlahPinjam)) {
-                                alert('Jumlah pinjam alat tidak valid! Pada form ke - ' + (i + 1));
-                                loading.value = false;
-                                return;
-                            }
+                        if (form[i].alat[j].jumlahPinjam === 0 || form[i].alat[j].jumlahPinjam < 0 || !Number.isInteger(Number(form[i].alat[j].jumlahPinjam))) {
+                            alert('Jumlah pinjam alat tidak valid! Pada form ke - ' + (i + 1));
+                            loading.value = false;
+                            return;
+                        }
 
                         if (form[i].alat[j].maxValue.WajibSurat === true && form[i].dokumen === null) {
                             alert('Alat ' + form[i].alat[j].nama + ' memerlukan surat peminjaman! Silahkan mengupload surat pendukung peminjaman alat atau lakukan peminjaman alat secara terpisah.');
@@ -470,6 +518,13 @@ export default {
                         return
                     }
                 }
+
+                const nohpRegex = /^(08)[0-9]{9,12}$/;
+                if (!nohpRegex.test(Nohp.value)) {
+                    alert('Nomor HP tidak valid!')
+                    loading.value = false;
+                    return
+                }
             }
 
             //console.log(form);
@@ -495,7 +550,8 @@ export default {
                     alat: form[i].alat,
                     keterangan: form[i].keterangan,
                     dokumen: null,
-                    UserID: UserID
+                    UserID: UserID,
+                    Nohp: Nohp.value
                 };
 
                 console.log(dataToSave);
@@ -556,9 +612,70 @@ export default {
                     }
                     console.log('Peminjaman saved successfully:', response.data);
                     dialog.value = true;
+                    dialogTambahNomor.value = false;
+                    form[i].dateDialogAwal = false,
+                        form[i].dateDialogAkhir = false,
+                        form[i].tanggalAwal = '',
+                        form[i].modal = false,
+                        form[i].tanggalSelesai = '',
+                        form[i].waktuPakai = null,
+                        form[i].waktuSelesai = null,
+                        form[i].Ruangan = [],
+                        form[i].selectedRuangan = '',
+                        form[i].isPersonal = '',
+                        form[i].isOrganisation = '',
+                        form[i].isEksternal = '',
+                        form[i].selectedOptionPersonal = '',
+                        form[i].selectedOptionEksternal = '',
+                        form[i].selectedOptionOrganisation = '',
+                        form[i].items = [],
+                        form[i].itemsAll = [],
+                        form[i].alat = reactive([{
+                            nama: '',
+                            jumlahPinjam: 0,
+                            maxValue: null,
+                        }]),
+                        form[i].selectedItems = '',
+                        form[i].keterangan = '',
+                        form[i].dokumen = null,
+                        form[i].detailRuangan = [],
+                        form[i].loading = false,
+                        form[i].datatabrak = [],
+                        form[i].tambahformbaru = 0
+                    Nohp.value = ''
                 } catch (error) {
                     console.error('Error menyimpan data peminjaman ruangan', error);
                     loading.value = false;
+                    form[i].dateDialogAwal = false,
+                        form[i].dateDialogAkhir = false,
+                        form[i].tanggalAwal = '',
+                        form[i].modal = false,
+                        form[i].tanggalSelesai = '',
+                        form[i].waktuPakai = null,
+                        form[i].waktuSelesai = null,
+                        form[i].Ruangan = [],
+                        form[i].selectedRuangan = '',
+                        form[i].isPersonal = '',
+                        form[i].isOrganisation = '',
+                        form[i].isEksternal = '',
+                        form[i].selectedOptionPersonal = '',
+                        form[i].selectedOptionEksternal = '',
+                        form[i].selectedOptionOrganisation = '',
+                        form[i].items = [],
+                        form[i].itemsAll = [],
+                        form[i].alat = reactive([{
+                            nama: '',
+                            jumlahPinjam: 0,
+                            maxValue: null,
+                        }]),
+                        form[i].selectedItems = '',
+                        form[i].keterangan = '',
+                        form[i].dokumen = null,
+                        form[i].detailRuangan = [],
+                        form[i].loading = false,
+                        form[i].datatabrak = [],
+                        form[i].tambahformbaru = 0,
+                        Nohp.value = ''
                 }
             }
             loading.value = false;
@@ -571,6 +688,9 @@ export default {
             } else if (tanggalAwal === '' || tanggalSelesai === '') {
                 form[index].loading = false;
                 return;
+            } else if (tanggalAwal === tanggalSelesai) {
+                form[index].loading = false;
+                return
             }
 
             try {
@@ -605,6 +725,9 @@ export default {
             } else if (tanggalAwal === '' || tanggalSelesai === '') {
                 form[index].loading = false;
                 return;
+            } else if (tanggalAwal === tanggalSelesai) {
+                form[index].loading = false;
+                return
             }
 
             try {
@@ -642,6 +765,10 @@ export default {
                 alert('Salah satu tanggal belum dipilih!');
                 form[index].loading = false;
                 return;
+            } else if (tanggalAwal === tanggalSelesai) {
+                alert('Tanggal tidak boleh sama persis!')
+                form[index].loading = false;
+                return
             }
 
             try {
@@ -676,6 +803,10 @@ export default {
                 alert('Salah satu tanggal belum dipilih!');
                 form[index].loading = false;
                 return;
+            } else if (tanggalAwal === tanggalSelesai) {
+                alert('Tanggal tidak boleh sama persis!')
+                form[index].loading = false;
+                return
             }
 
             try {
@@ -737,7 +868,7 @@ export default {
                 });
             }
         }
-        return { form, loading, dialog, addNewForm, removeForm, fetchAlat, fetchAlatDosen, saveItem, availableRoom, availableRoomDosen, tambahAlat, hapusAlat };
+        return { form, loading, dialog, dialogTambahNomor, Nohp, addNewForm, removeForm, fetchAlat, fetchAlatDosen, saveItem, availableRoom, availableRoomDosen, tambahAlat, hapusAlat };
     },
     data() {
         return {
@@ -758,6 +889,19 @@ export default {
             this.confirmBefore = false;
             this.$router.push('/berandaUser')
         },
+        resetDocumentIfBothFalse(newValue, oldValue) {
+            const index = this.form.findIndex(item => item === oldValue);
+            if (index !== -1 && this.form[index].selectedOptionOrganisation === 'False' && this.form[index].selectedOptionEksternal === 'False') {
+                this.form[index].dokumen = null;
+                console.log(this.form[index].dokumen)
+            }
+        },
+        handleDokumen(index) {
+            if (this.form[index].selectedOptionOrganisation === 'False' && this.form[index].selectedOptionEksternal === 'False') {
+                this.form[index].dokumen = null;
+                console.log(this.form[index].dokumen, 'berhasil')
+            }
+        }
     },
     mounted() {
         const { tanggalAwal, tanggalSelesai, Nama_ruangan } = this.$route.query;

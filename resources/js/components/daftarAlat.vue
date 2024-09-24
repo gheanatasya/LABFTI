@@ -144,8 +144,8 @@
                                 <td style="width: 200px; text-align: center;"> {{ detail.StatusPeminjaman }} </td>
                                 <td style="width: 500px;">
                                     <v-btn @click="morePicture(detail.Foto)" style="color: #0D47A1; margin-left: 90px; background: none;
-                                                text-decoration: underline; box-shadow: none; 
-                                                ">L<p style="text-transform: lowercase;">ihat lebih banyak
+                                                text-decoration: underline; box-shadow: none; text-transform: none;
+                                                ">L<p>ihat lebih banyak
                                             gambar>></p></v-btn>
                                 </td>
                                 <td style="width: 150px; font-size: 25px;">

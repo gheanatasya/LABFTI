@@ -2067,7 +2067,7 @@ class PeminjamanRuanganBridgeController extends Controller
             $peminjamanid = $tool->PeminjamanID;
             $peminjamanALAT = Peminjaman_Alat_Bridge::where('PeminjamanID', $peminjamanid)->get();
             $peminjamanALAT2 = Peminjaman_Alat_Bridge::where('PeminjamanID', $peminjamanid)->first();
-
+            
             if ($peminjamanALAT2 !== null) {
                 $tanggalawal = $peminjamanALAT2->Tanggal_pakai_awal;
                 $tanggalakhir = $peminjamanALAT2->Tanggal_pakai_akhir;
@@ -2253,6 +2253,62 @@ class PeminjamanRuanganBridgeController extends Controller
                             $peminjamanalat[] = $record;
                         }
                     } elseif ($petugas2 === true && $koordinator2 === true && $kepala2 === true) {
+                        $daftarAlat = [];
+
+                        if (count($peminjamanALAT) > 1) {
+                            foreach ($peminjamanALAT as $peralat) {
+                                $id = $peralat->Peminjaman_Alat_ID;
+                                $jumlahPinjam = $peralat->Jumlah_pinjam;
+                                $toolss = $peralat->AlatID;
+                                $alat = Alat::where('AlatID', $toolss)->first();
+                                $namaalat = $alat->Nama;
+
+                                $petugas = $persetujuan->Petugas_Approve;
+                                $koordinator = $persetujuan->Koordinator_Approve;
+                                $kepala = $persetujuan->Kepala_Approve;
+                                $wd2 = $persetujuan->WD2_Approve;
+                                $wd3 = $persetujuan->WD3_Approve;
+                                $dekan = $persetujuan->Dekan_Approve;
+
+                                $record = [
+                                    'namaalat' => $namaalat,
+                                    'jumlahPinjam' => $jumlahPinjam,
+                                    'peminjamanid' => $peminjamanid
+                                ];
+
+                                $daftarAlat[] = $record;
+                            };
+
+                            $collection = collect($daftarAlat);
+                            $desc = $collection->map(function ($item) {
+                                return $item['namaalat'] . ' : ' . $item['jumlahPinjam'];
+                            })->implode(', ');
+
+                            $record = [
+                                'id' => $peminjamanALAT2->Peminjaman_Alat_ID,
+                                'title' => $peminjamanALAT2->Keterangan,
+                                'start' => $tanggalawal_baru,
+                                'end' => $tanggalakhir_baru,
+                                'desc' => $desc,
+                                'calendarId' => 'alat'
+                            ];
+
+                            $peminjamanalat[] = $record;
+                        } else {
+                            $desc = $namaAlat2 . ' : ' . $jumlahPinjam2;
+                            $record = [
+                                'id' => $peminjamanALAT2->Peminjaman_Alat_ID,
+                                'title' => $peminjamanALAT2->Keterangan,
+                                'start' => $tanggalawal_baru,
+                                'end' => $tanggalakhir_baru,
+                                'desc' => $desc,
+                                'peminjamanid' => $peminjamanid,
+                                'calendarId' => 'alat'
+                            ];
+
+                            $peminjamanalat[] = $record;
+                        }
+                    } elseif ($petugas2 === true){
                         $daftarAlat = [];
 
                         if (count($peminjamanALAT) > 1) {

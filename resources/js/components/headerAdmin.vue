@@ -608,8 +608,6 @@ export default {
     data() {
         return {
             menusCenter: [
-                { title: 'Ruangan', route: 'ruangan' },
-                { title: 'Alat', route: 'alat' },
                 { title: 'Beranda', route: 'berandaUser' },
                 { title: 'Peminjaman', submenus: [{ title: 'Peminjaman Ruangan', route: 'peminjamanRuangan' }, { title: 'Peminjaman Alat', route: 'peminjamanAlat' }], isOpen: false, },
                 { title: 'Daftar Alat', route: 'daftarAlat' },

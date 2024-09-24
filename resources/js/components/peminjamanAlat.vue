@@ -28,7 +28,7 @@
 
     <div style="padding-top: 80px; height: 80%">
         <router-link to="/berandaUser"
-            style="width: 200px; font-size:17px; color: rgb(2,39, 10, 0.9); margin-left: 20px; margin-top: 70px; font-family: 'Lexend-Regular'"><v-icon
+            style="width: 200px; font-size:17px; color: #0D47A1; margin-left: 20px; margin-top: 70px; font-family: 'Lexend-Regular'"><v-icon
                 style="font-size: 25px;">mdi-keyboard-backspace</v-icon> Beranda</router-link>
 
         <div style="display: flex; height: 100%;">
@@ -42,10 +42,20 @@
                             <div style="display: flex; align-items: center; grid-column: span 4; width: 138%;">
                                 <v-text-field type="datetime-local" label="Tanggal Pakai Awal"
                                     v-model="item.tanggalAwal" variant="outlined"
-                                    style="width: 280px; margin-left: 300px; margin-top: 100px; margin-right: 80px;"></v-text-field>
+                                    style="width: 280px; margin-left: 300px; margin-top: 100px; margin-right: 80px;">
+                                    <template v-slot:label>
+                                        Tanggal Pakai Awal <v-icon
+                                            style="color: red; font-size: 15px;">mdi-asterisk</v-icon>
+                                    </template>
+                                </v-text-field>
                                 <v-text-field type="datetime-local" label="Tanggal Selesai"
                                     v-model="item.tanggalSelesai" variant="outlined"
-                                    style="width: 300px; margin-left: -75px; margin-top: 100px;"></v-text-field>
+                                    style="width: 300px; margin-left: -75px; margin-top: 100px;">
+                                    <template v-slot:label>
+                                        Tanggal Selesai <v-icon
+                                            style="color: red; font-size: 15px;">mdi-asterisk</v-icon>
+                                    </template>
+                                </v-text-field>
 
                                 <v-tooltip text="Perhatikan WAKTU PADA TANGGAL PAKAI AWAL adalah termasuk WAKTU PENGAMBILAN ALAT
                             dan WAKTU PADA TANGGAL SELESAI adalah WAKTU PENGEMBALIAN ALAT." location="end" :width="300"
@@ -71,57 +81,21 @@
                             </div>
 
                             <v-textarea v-model="item.keterangan" style="margin-left: 303px; margin-right: -80px;"
-                                label="Keterangan" row-height="25" rows="5" variant="outlined" auto-grow
-                                shaped></v-textarea>
-
-                            <div style="margin-left: 303px; margin-right: -80px;">
-                                <label for="isPersonal">Apakah peminjaman dilakukan untuk keperluan pribadi (belajar,
-                                    skripsian, kerja
-                                    kelompok)?</label>
-                                <v-radio-group v-model="item.selectedOptionPersonal" id="isPersonal">
-                                    <v-row>
-                                        <v-col cols="auto">
-                                            <v-radio label="Ya" value="True"></v-radio>
-                                        </v-col>
-                                        <v-col cols="auto">
-                                            <v-radio label="Tidak" value="False"></v-radio>
-                                        </v-col>
-                                    </v-row>
-                                </v-radio-group>
-
-                                <label for="isOrganisation">Apakah peminjaman dilakukan untuk keperluan
-                                    organisasi (contoh: BPMFTI, BEMFTI)?</label>
-                                <v-radio-group v-model="item.selectedOptionOrganisation" id="isOrganisation">
-                                    <v-row>
-                                        <v-col cols="auto">
-                                            <v-radio label="Ya" value="True"></v-radio>
-                                        </v-col>
-                                        <v-col cols="auto">
-                                            <v-radio label="Tidak" value="False"></v-radio>
-                                        </v-col>
-                                    </v-row>
-                                </v-radio-group>
-
-                                <label for="isEksternal">Apakah peminjaman digunakan bersama dengan pihak Eksternal /
-                                    Luar
-                                    Kampus?</label>
-                                <v-radio-group v-model="item.selectedOptionEksternal" id="isEksternal">
-                                    <v-row>
-                                        <v-col cols="auto">
-                                            <v-radio label="Ya" value="True"></v-radio>
-                                        </v-col>
-                                        <v-col cols="auto">
-                                            <v-radio label="Tidak" value="False"></v-radio>
-                                        </v-col>
-                                    </v-row>
-                                </v-radio-group>
-                            </div>
+                                label="Keterangan" row-height="25" rows="5" variant="outlined" auto-grow shaped>
+                                <template v-slot:label>
+                                    Keperluan Peminjaman <v-icon style="color: red; font-size: 15px;">mdi-asterisk</v-icon>
+                                </template>
+                            </v-textarea>
 
                             <div v-for="(alatItem, alatIndex) in item.alat" :key="alatIndex"
                                 style="display: flex; align-items: center; grid-column: span 4; width: 145%;">
                                 <v-combobox v-model="alatItem.nama" :items="item.items" label="Alat yang ingin dipinjam"
                                     clearable variant="outlined"
                                     style="margin-left: 303px; margin-right: -5px; width: 50px;">
+                                    <template v-slot:label>
+                                        Alat yang ingin dipinjam <v-icon
+                                            style="color: red; font-size: 15px;">mdi-asterisk</v-icon>
+                                    </template>
                                 </v-combobox>
 
                                 <div>
@@ -145,35 +119,75 @@
                                     <v-icon>mdi-minus-circle</v-icon></v-btn>
                             </div>
 
-                            <v-file-input type="file" accept="file/pdf" :no-icon="true" v-model="item.dokumen"
+                            <div style="margin-left: 303px; margin-right: -80px;">
+                                <label for="isPersonal">Apakah peminjaman dilakukan untuk keperluan pribadi (rapat,
+                                    belajar,
+                                    skripsian, kerja
+                                    kelompok)? <v-icon
+                                        style="color: red; font-size: 15px;">mdi-asterisk</v-icon></label>
+                                <v-radio-group v-model="item.selectedOptionPersonal" id="isPersonal">
+                                    <v-row>
+                                        <v-col cols="auto">
+                                            <v-radio label="Ya" value="True"></v-radio>
+                                        </v-col>
+                                        <v-col cols="auto">
+                                            <v-radio label="Tidak" value="False"></v-radio>
+                                        </v-col>
+                                    </v-row>
+                                </v-radio-group>
+
+                                <label for="isOrganisation">Apakah peminjaman dilakukan untuk keperluan
+                                    organisasi (contoh: BPMFTI, BEMFTI)? <v-icon
+                                        style="color: red; font-size: 15px;">mdi-asterisk</v-icon></label>
+                                <v-radio-group v-model="item.selectedOptionOrganisation" id="isOrganisation">
+                                    <v-row>
+                                        <v-col cols="auto">
+                                            <v-radio label="Ya" value="True"></v-radio>
+                                        </v-col>
+                                        <v-col cols="auto">
+                                            <v-radio label="Tidak" value="False"></v-radio>
+                                        </v-col>
+                                    </v-row>
+                                </v-radio-group>
+
+                                <label for="isEksternal">Apakah peminjaman digunakan bersama dengan pihak Eksternal /
+                                    Luar
+                                    Kampus? <v-icon style="color: red; font-size: 15px;">mdi-asterisk</v-icon></label>
+                                <v-radio-group v-model="item.selectedOptionEksternal" id="isEksternal">
+                                    <v-row>
+                                        <v-col cols="auto">
+                                            <v-radio label="Ya" value="True"></v-radio>
+                                        </v-col>
+                                        <v-col cols="auto">
+                                            <v-radio label="Tidak" value="False"></v-radio>
+                                        </v-col>
+                                    </v-row>
+                                </v-radio-group>
+                            </div>
+
+                            <v-file-input type="file" accept="file/pdf" v-model="item.dokumen" :prepend-inner-icon="'mdi-paperclip'" prepend-icon=""
                                 style="width: 505px; margin-left: 303px; margin-top: 5px;" variant="outlined"
                                 label="Surat Peminjaman" ref="dokumenPendukung" :id="'dokumen-' + index"></v-file-input>
 
                             <div
-                                style="display: flex; justify-content: space-between; margin-left: 320px; margin-right: 20px; margin-bottom: 50px; margin-top: 20px;">
+                                style="margin-left: 380px; margin-right: 0px; margin-bottom: 50px; margin-top: 20px; text-align: center;">
                                 <v-btn @click="addNewForm(index)" id="tambah"
                                     style="margin-right: 10px; margin-left: -5px;" prepend-icon=mdi-plus-circle
-                                    color="#0D47A1">Tambah
-                                    Peminjaman</v-btn>
+                                    color="grey">Tambah Form</v-btn>
                                 <v-btn @click="removeForm(index)" id="hapus" prepend-icon="mdi-minus-circle"
                                     color="error">Hapus
-                                    Peminjaman</v-btn>
+                                    Form</v-btn>
                             </div>
                         </div>
 
-                        <p style="margin-left: 303px; margin-right: -80px;">Nomor Handphone Yang Dapat Dihubungi</p>
-
-                        <v-text-field label="No. Handphone" v-model="Nohp" variant="outlined" clearable
-                            style="width: 505px; margin-left: 303px; margin-top: 5px;"></v-text-field>
-
                         <v-checkbox label="Apabila terjadi kerusakan alat atau kehilangan alat 
                         maka bersedia untuk ganti rugi sesuai dengan persyaratan yang telah ditentukan." value="true"
-                            style="margin-left: 295px; margin-right: -80px;" v-model="ketentuan"></v-checkbox>
+                            style="margin-left: 295px; margin-right: -80px; margin-top: -20px;" v-model="ketentuan"></v-checkbox>
 
-                        <v-btn @click="saveItem" id="simpan" :loading="loading"
-                            style="margin-left: 430px; margin-top: -5px; border-radius: 20px; font-size: 15px; width: 250px;"
-                            color="#0D47A1">
-                            Pinjam Alat </v-btn>
+                        <v-btn @click="dialogTambahNomor = true" id="simpan"
+                            style="margin-left: 430px; margin-top: -5px; border-radius: 20px; font-size: 15px; width: 250px; text-transform: none;"
+                            color="#01579B">
+                            Selanjutnya</v-btn>
                     </v-form>
                 </div>
             </v-container>
@@ -195,8 +209,7 @@
                         <v-table style="overflow: hidden;">
                             <thead style="font-family: Lexend-Regular; font-size: 15px;">
                                 <tr>
-                                    <th class="text-center"
-                                        style="background-color: #BBDEFB; width: 20px;">No</th>
+                                    <th class="text-center" style="background-color: #BBDEFB; width: 20px;">No</th>
                                     <th class="text-center" style="background-color: #BBDEFB">Nama Alat
                                     </th>
                                     <th class="text-center" style="background-color: #BBDEFB">Jumlah
@@ -234,6 +247,27 @@
                 </v-card-actions>
             </v-card>
         </v-overlay>
+
+        <v-dialog style="justify-content:center;" v-model="dialogTambahNomor" persistent max-width="500">
+            <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 500px;">
+                <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;"></v-card-title>
+                <v-card-text>
+                    <p>Nomor Handphone Yang Dapat Dihubungi</p>
+                    <v-text-field label="No. Handphone" v-model="Nohp" variant="outlined" clearable><template
+                            v-slot:label>
+                            No. Handphone <v-icon style="color: red; font-size: 15px;">mdi-asterisk</v-icon>
+                        </template></v-text-field>
+                </v-card-text>
+                <v-card-actions style="justify-content:center;">
+                    <v-btn @click="dialogTambahNomor = false"
+                        style="position: absolute; top: 0; right: 0; margin-top: 10px;"><v-icon
+                            style="font-size: 30px;">mdi-close-circle</v-icon></v-btn>
+                    <v-btn @click="saveItem()" id="simpan" :loading="loading"
+                        style="background-color: #01579B; color: white; border-radius: 20px; font-size: 15px; text-transform: none; width: 200px;">
+                        Pinjam Alat </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </div>
 
     <footerPage></footerPage>
@@ -261,6 +295,8 @@ export default {
         const dialog = ref(false);
         const ketentuan = ref(false);
         const Nohp = ref('');
+        const dialogTambahNomor = ref(false);
+
 
         const form = reactive([
             {
@@ -289,7 +325,7 @@ export default {
         ])
 
         const addNewForm = (index) => {
-            if (form[index].tambahformbaru === 1) {
+            /* if (form[index].tambahformbaru === 1) {
                 alert('Form baru sudah ditambahkan sebelumnya!');
                 return
             } else if (form[index].selectedOptionPersonal === '' || form[index].selectedOptionOrganisation === '' || form[index].selectedOptionEksternal === '') {
@@ -311,7 +347,7 @@ export default {
                 alert('Pilihlah salah satu dari peminjaman untuk Organisasi atau Eksternal!');
                 return
             }
-
+ */
             form.push({
                 tanggalAwal: '',
                 modal: false,
@@ -396,6 +432,14 @@ export default {
 
                 for (let i = 0; i < form.length; i++) {
                     const pdfRegex1 = /\.pdf$/i;
+                    if ((form[i].tanggalSelesai === '') || (form[i].tanggalAwal === '') || (form[i].alat.length === 0) || (form[i].alat.length === 1 && form[i].alat[0].nama === '')
+                        || (form[i].selectedOptionPersonal === '') || (form[i].selectedOptionOrganisation === '') || (form[i].selectedOptionEksternal === '')
+                        || (form[i].keterangan === '') || (Nohp.value === '')) {
+                        alert('Terdapat data yang kosong!');
+                        loading.value = false;
+                        return
+                    }
+
                     if (form[i].selectedOptionPersonal === '' || form[i].selectedOptionOrganisation === '' || form[i].selectedOptionEksternal === '') {
                         alert('Pilihlah salah satu dari peminjaman untuk Personal, Organisasi, dan Eksternal!');
                         loading.value = false;
@@ -423,13 +467,7 @@ export default {
                     }
 
                     console.log(form[i].dokumen);
-                    if ((form[i].tanggalSelesai === '') || (form[i].tanggalAwal === '') || (form[i].alat.length === 0) || (form[i].alat.length === 1 && form[i].alat[0].nama === '')
-                        || (form[i].selectedOptionPersonal === '') || (form[i].selectedOptionOrganisation === '') || (form[i].selectedOptionEksternal === '')
-                        || (form[i].keterangan === '') || (Nohp.value === '')) {
-                        alert('Terdapat data yang kosong!');
-                        loading.value = false;
-                        return
-                    }
+
                     if (form[i].selectedOptionEksternal === 'True' && form[i].dokumen === null) {
                         alert('Peminjaman dengan pihak Eksternal memerlukan surat pendukung peminjaman!');
                         loading.value = false;
@@ -450,7 +488,7 @@ export default {
                                 return;
                             }
 
-                            if (form[i].alat[j].jumlahPinjam === 0 || form[i].alat[j].jumlahPinjam < 0) {
+                            if (form[i].alat[j].jumlahPinjam === 0 || form[i].alat[j].jumlahPinjam < 0 || !Number.isInteger(Number(form[i].alat[j].jumlahPinjam))) {
                                 alert('Jumlah pinjam alat tidak valid! Pada form ke - ' + (i + 1));
                                 loading.value = false;
                                 return;
@@ -559,6 +597,7 @@ export default {
                             console.log('Peminjaman saved successfully: response2', response2.data);
                         }
                         dialog.value = true;
+                        dialogTambahNomor.value = false;
                         console.log('Peminjaman saved successfully:', response.data);
                         form[i].tanggalAwal = '',
                             form[i].modal = false,
@@ -732,7 +771,7 @@ export default {
             }
         }
 
-        return { form, loading, dialog, ketentuan, addNewForm, removeForm, fetchAlat, saveItem, tambahAlat, hapusAlat, fetchAlatDosen, fetchAlat, Nohp }
+        return { form, loading, dialog, ketentuan, dialogTambahNomor, addNewForm, removeForm, fetchAlat, saveItem, tambahAlat, hapusAlat, fetchAlatDosen, fetchAlat, Nohp }
     },
     data() {
         return {
