@@ -32,7 +32,7 @@
             <v-spacer></v-spacer>
 
             <v-col>
-                <v-btn @click="this.grafikDialog = true"
+                <v-btn @click="this.grafikDialog = true" 
                     style="text-transform: none; font-family: Lexend-Regular; background-color: #0D47A1; color:white;">
                     <v-icon>mdi-chart-line</v-icon>
                     Grafik Peminjaman</v-btn>
@@ -58,7 +58,7 @@
                         <th class="text-center" style="background-color: #BBDEFB">Jumlah</th>
                         <th class="text-center" style="background-color: #BBDEFB">Jumlah Rusak</th>
                         <th class="text-center" style="background-color: #BBDEFB">Status</th>
-                        <th class="text-center" style="background-color: #BBDEFB">Action</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Aksi</th>
                     </tr>
                 </thead>
                 <tbody v-if="this.filteredTools.length > 0">
@@ -80,8 +80,8 @@
                         <td style="width: 100px; font-size: 25px; text-align: center;">
                             <v-icon style="color: #0D47A1;"
                                 @click="editDataAlat(alat.Nama, alat.KodeAlat, alat.StatusAlat, alat.AlatID, alat.WajibSurat)">mdi-pencil-circle</v-icon>
-                            <v-icon style="color: rgb(206, 0, 0, 0.91);"
-                                @click="confirmDeleteAlat(alat.KodeAlat, alat.Nama, alat.AlatID)">mdi-delete-circle</v-icon>
+                            <!-- <v-icon style="color: rgb(206, 0, 0, 0.91);"
+                                @click="confirmDeleteAlat(alat.KodeAlat, alat.Nama, alat.AlatID)">mdi-delete-circle</v-icon> -->
                             <v-icon style="color:  rgb(0, 0, 0, 0.5);"
                                 @click="moreData(alat.detailAlat, alat.KodeAlat, alat.AlatID)">mdi-dots-horizontal-circle</v-icon>
                         </td>
@@ -130,7 +130,7 @@
                                 <th class="text-center" style="background-color: #BBDEFB">Status Peminjaman
                                 </th>
                                 <th class="text-center" style="background-color: #BBDEFB">Foto</th>
-                                <th class="text-center" style="background-color: #BBDEFB">Action</th>
+                                <th class="text-center" style="background-color: #BBDEFB">Aksi</th>
                             </tr>
                         </thead>
                         <tbody v-if="this.itemforDetailAlat.length > 0">
@@ -198,12 +198,12 @@
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
                     <v-btn
-                        style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
-                        @click="editActionAlat = false">Batal</v-btn>
-                    <v-btn
+                        @click="editActionAlat = false"
+                        style="text-transform: none; border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Batal</v-btn>
+                    <v-btn style="text-transform: none; background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
                         @click="updateAlat(alatEdit.namaAlat, alatEdit.kodeAlat, alatEdit.statusAlat, alatEdit.alatID, alatEdit.wajibSurat)"
                         :loading="this.alatEdit.loading"
-                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Simpan</v-btn>
+                        >Simpan</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -239,12 +239,11 @@
                         Edit Foto Yang Sudah Ada</p>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
-                    <v-btn
-                        style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
+                    <v-btn style="text-transform: none; border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;"
                         @click="editActionDetailAlat = false">Batal</v-btn>
-                    <v-btn :loading="this.detailalatEdit.loading"
+                    <v-btn :loading="this.detailalatEdit.loading" style="text-transform: none; background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
                         @click="updateDetailAlat(detailalatEdit.namaDetailAlat, detailalatEdit.kodeDetailAlat, detailalatEdit.statusKebergunaan, detailalatEdit.statusPeminjaman, detailalatEdit.foto, detailalatEdit.detailalatID)"
-                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Simpan</v-btn>
+                        >Simpan</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -300,11 +299,11 @@
                     </v-select>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
-                    <v-btn
-                        style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
+                    <v-btn style="text-transform: none; border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;"
                         @click="dialogTambahAlat = false">Batal</v-btn>
                     <v-btn @click="tambahAlat(this.alatTambah)" :loading="this.alatTambah.loading"
-                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Tambah</v-btn>
+                    style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;text-transform: none; "
+                    >Tambah</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -333,28 +332,28 @@
                         id="tambahFotoAlat" style="margin-right: 100px; margin-left:0px;"></v-file-input>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
-                    <v-btn
-                        style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
+                    <v-btn style="text-transform: none; border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;"
                         @click="dialogTambahDetailAlat = false">Batal</v-btn>
                     <v-btn @click="tambahDetailAlat(detailalatTambah)" :loading="this.detailalatTambah.loading"
-                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Tambah</v-btn>
+                    style="text-transform: none; background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
+                    >Tambah</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
 
         <!-- grafik peminjaman perbulan -->
-        <v-dialog style="justify-content:center;" v-model="grafikDialog" persistent max-width="500">
+        <v-dialog style="justify-content:center;" v-model="grafikDialog" persistent max-width="800">
             <v-card
-                style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 500px; height: 500px;">
+                style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 800px; height: 800px;">
                 <v-card-actions class="d-flex justify-end">
                     <v-icon @click="grafikDialog = false">mdi-close-circle</v-icon>
                 </v-card-actions>
                 <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;">
-                    Grafik Peminjaman Alat
+                    Grafik Peminjaman Alat <br>
+                    <v-btn @click="createChart()" :loading="this.loadinggrafik" style="text-transform: none;">Lihat Grafik</v-btn>
                 </v-card-title>
-                <v-card-text style="text-align: center;">
-                    <v-btn @click="createChart()" :loading="this.loadinggrafik">Lihat Grafik</v-btn>
-                    <canvas id="chart" max-width="300" height="200"></canvas>
+                <v-card-text>
+                    <canvas id="chart" max-width="400" height="200"></canvas>
                 </v-card-text>
             </v-card>
         </v-dialog>
@@ -899,15 +898,20 @@ export default {
                                 responsive: true,
                                 scales: {
                                     x: {
-                                        stacked: true,
                                         grid: {
                                             display: false,
                                         },
+                                        ticks: {
+                                            beginAtZero: true,
+                                        }
                                     },
                                     y: {
-                                        stacked: true,
                                         grid: {
                                             display: false,
+                                        },
+                                        ticks: {
+                                            beginAtZero: true,
+                                            stepSize: 5,
                                         },
                                     },
                                 },

@@ -59,7 +59,7 @@
                         @click:append="show = !show" style="margin-right: 50px; margin-left:40px;"></v-text-field> -->
 
                     <div v-if="this.user.Role === 'Staff'">
-                        <v-text-field label="Instansi" :model-value="this.user.Instansi" variant="outlined" readonly
+                        <v-text-field label="Unit" :model-value="this.user.Instansi" variant="outlined" readonly
                             style="margin-right: 50px; margin-left:40px; color: rgb(0, 0, 0, 0.5);"></v-text-field>
                     </div>
 

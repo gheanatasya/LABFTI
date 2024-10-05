@@ -51,7 +51,7 @@
                         <th class="text-center" style="background-color: #BBDEFB">Tgl Bekerja</th>
                         <th class="text-center" style="background-color: #BBDEFB">Tgl Berhenti</th>
                         <th class="text-center" style="background-color: #BBDEFB">Foto</th>
-                        <th class="text-center" style="background-color: #BBDEFB">Action</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Aksi</th>
                     </tr>
                 </thead>
                 <tbody v-if="this.filteredPetugas.length > 0">
@@ -137,11 +137,11 @@
                         style="margin-right: 100px; margin-left:0px;"></v-file-input>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
-                    <v-btn style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
-                        @click="editActionPetugas = false">Batal</v-btn>
+                    <v-btn 
+                        @click="editActionPetugas = false" style="text-transform: none; border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Batal</v-btn>
                     <v-btn :loading="this.loadingEdit"
                         @click="updatePetugas(petugasEdit.Nama, petugasEdit.NIM, petugasEdit.Email, petugasEdit.Prodi, petugasEdit.Tgl_Bekerja, petugasEdit.Tgl_Berhenti, petugasEdit.Foto, petugasEdit.UserID)"
-                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Simpan</v-btn>
+                        style="text-transform: none; background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;">Simpan</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -154,10 +154,10 @@
                 <v-card-text style="text-align: center;">Yakin ingin menghapus {{
                     petugasHapus.Nama }} ?</v-card-text>
                 <v-card-actions style="justify-content:center;">
-                    <v-btn style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
+                    <v-btn style="text-transform: none; background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
                         @click="dialogHapusPetugas = false">Batal</v-btn>
                     <v-btn :loading="this.loadingHapus"
-                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;"
+                        style="text-transform: none; border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;"
                         @click="deletePetugas(petugasHapus.UserID), this.loadingHapus = true">Hapus</v-btn>
                 </v-card-actions>
             </v-card>
@@ -195,11 +195,11 @@
                         style="margin-right: 100px; margin-left:0px;" id="fotoPetugasTambah"></v-file-input>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
-                    <v-btn
-                        style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
+                    <v-btn style="text-transform: none; border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;"
                         @click="tambahActionPetugas = false">Batal</v-btn>
                     <v-btn @click="tambahPetugas(petugasTambah)" :loading="this.loadingTambah"
-                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Simpan</v-btn>
+                    style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;text-transform: none; "
+                    >Tambah</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>

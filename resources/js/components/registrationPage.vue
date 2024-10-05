@@ -39,14 +39,14 @@
                             <v-select variant="outlined" v-model="this.selectedProdi" label="Prodi" :items="Prodi"
                                 style="height: 30px;"></v-select>
                         </div>
-                        <v-select variant="outlined" v-model="this.selectedInstansi" label="Instansi" :items="Instansi"
+                        <v-select variant="outlined" v-model="this.selectedInstansi" label="Unit" :items="Instansi"
                             style="margin-right: 20px; height: 50px;"></v-select>
                         <v-spacer></v-spacer>
                         <!-- <v-text-field variant="outlined" v-model="this.user_role" label="Role" :readonly="true"
                             style="grid-column: span 1; height: 50px; margin-right: 50px;"></v-text-field> -->
                     </v-sheet>
                     <v-btn @click="addUser" :loading="loading"
-                        style="margin-top: 30px; margin-left: 330px; font-family: Lexend-Medium; background-color: #0D47A1; color: white; width: 300px; border-radius: 20px; font-size: 17px;">
+                        style="text-transform: none; margin-top: 30px; margin-left: 330px; font-family: Lexend-Medium; background-color: #0D47A1; color: white; width: 300px; border-radius: 20px; font-size: 17px;">
                         <span v-if="!loading">Buat Akun</span>
                         <span v-else>Loading...</span>
                     </v-btn>

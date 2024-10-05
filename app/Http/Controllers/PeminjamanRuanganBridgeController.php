@@ -2067,7 +2067,7 @@ class PeminjamanRuanganBridgeController extends Controller
             $peminjamanid = $tool->PeminjamanID;
             $peminjamanALAT = Peminjaman_Alat_Bridge::where('PeminjamanID', $peminjamanid)->get();
             $peminjamanALAT2 = Peminjaman_Alat_Bridge::where('PeminjamanID', $peminjamanid)->first();
-            
+
             if ($peminjamanALAT2 !== null) {
                 $tanggalawal = $peminjamanALAT2->Tanggal_pakai_awal;
                 $tanggalakhir = $peminjamanALAT2->Tanggal_pakai_akhir;
@@ -2308,7 +2308,7 @@ class PeminjamanRuanganBridgeController extends Controller
 
                             $peminjamanalat[] = $record;
                         }
-                    } elseif ($petugas2 === true){
+                    } elseif ($petugas2 === true) {
                         $daftarAlat = [];
 
                         if (count($peminjamanALAT) > 1) {
@@ -2503,6 +2503,8 @@ class PeminjamanRuanganBridgeController extends Controller
 
         foreach ($array as $availableRoom) {
             $ambildata = Ruangan::where('Nama_ruangan', $availableRoom)->first();
+            $gambar = explode(':', $ambildata->Foto);
+            $ambildata->Foto = $gambar;
             $detailRoom[] = $ambildata;
         }
 
@@ -2568,6 +2570,8 @@ class PeminjamanRuanganBridgeController extends Controller
 
         foreach ($array as $availableRoom) {
             $ambildata = Ruangan::where('Nama_ruangan', $availableRoom)->first();
+            $gambar = explode(':', $ambildata->Foto);
+            $ambildata->Foto = $gambar;
             $detailRoom[] = $ambildata;
         }
 

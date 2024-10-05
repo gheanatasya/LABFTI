@@ -18,6 +18,8 @@ use App\Models\Status_Peminjaman;
 use App\Models\User;
 use App\Notifications\NewMessage;
 use App\Notifications\SendNotification;
+use DateTime;
+use DateTimeZone;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
@@ -102,8 +104,10 @@ class PersetujuanController extends Controller
                 $persetujuan->Petugas_Approve = false;
                 $persetujuan->save();
             } else if ($NamaStatus === 'Selesai') {
-                $newtanggalakhir = now();
+                $datetime = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
+                $newtanggalakhir = $datetime->format('Y-m-d H:i');
                 $peminjamanruangan->Tanggal_pakai_akhir = $newtanggalakhir;
+                $peminjamanruangan->save();
             } else if ($NamaStatus === 'Dibatalkan') {
                 $statuspeminjaman = Status_Peminjaman::where('Peminjaman_Ruangan_ID', $Peminjaman_Ruangan_ID)->first();
                 $statuspeminjamanid = $statuspeminjaman->Status_PeminjamanID;
@@ -113,6 +117,8 @@ class PersetujuanController extends Controller
                 $statuspeminjaman->delete();
                 $persetujuan->delete();
                 $peminjamanruangan->delete();
+                $peminjam->Total_batal = $peminjam->Total_batal + 1;
+                $peminjam->save();
             }
         }
 
@@ -120,7 +126,8 @@ class PersetujuanController extends Controller
         if ($statuspeminjaman !== null) {
             $status = Status::where('Nama_status', $NamaStatus)->first();
             $statusid = $status->StatusID;
-            $tanggalacc = now();
+            $datetime = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
+            $tanggalacc = $datetime->format('Y-m-d H:i');
             $statuspeminjaman->StatusID = $statusid;
             $statuspeminjaman->Tanggal_Acc = $tanggalacc;
             $statuspeminjaman->save();
@@ -128,7 +135,7 @@ class PersetujuanController extends Controller
             $activitylog = Activity_Log::create([
                 'Status_PeminjamanID' => $statuspeminjaman->Status_PeminjamanID,
                 'Nama_status' => $NamaStatus,
-                'Tanggal_Acc' => now(),
+                'Tanggal_Acc' => $tanggalacc,
                 'Acc_by' => $User_role,
                 'Catatan' => $Catatan
             ]);
@@ -199,7 +206,8 @@ class PersetujuanController extends Controller
                         $persetujuan->Petugas_Approve = false;
                         $persetujuan->save();
                     } else if ($NamaStatus === 'Selesai') {
-                        $newtanggalakhir = now();
+                        $datetime = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
+                        $newtanggalakhir = $datetime->format('Y-m-d H:i');
                         $alat->Tanggal_pakai_akhir = $newtanggalakhir;
                         $alat->save();
                     } else if ($NamaStatus === 'Dibatalkan') {
@@ -211,6 +219,8 @@ class PersetujuanController extends Controller
                             ->delete();
                         $statuspeminjaman->delete();
                         $alat->delete();
+                        $peminjam->Total_batal = $peminjam->Total_batal + 1;
+                        $peminjam->save();
                     }
                 }
 
@@ -218,7 +228,8 @@ class PersetujuanController extends Controller
                 if ($statuspeminjaman !== null) {
                     $status = Status::where('Nama_status', $NamaStatus)->first();
                     $statusid = $status->StatusID;
-                    $tanggalacc = now();
+                    $datetime = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
+                    $tanggalacc = $datetime->format('Y-m-d H:i');
                     $statuspeminjaman->StatusID = $statusid;
                     $statuspeminjaman->Tanggal_Acc = $tanggalacc;
                     $statuspeminjaman->save();
@@ -226,7 +237,7 @@ class PersetujuanController extends Controller
                     $activitylog = Activity_Log::create([
                         'Status_PeminjamanID' => $statuspeminjaman->Status_PeminjamanID,
                         'Nama_status' => $NamaStatus,
-                        'Tanggal_Acc' => now(),
+                        'Tanggal_Acc' => $tanggalacc,
                         'Acc_by' => $User_role,
                         'Catatan' => $Catatan
                     ]);
@@ -262,8 +273,10 @@ class PersetujuanController extends Controller
         $peminjam->notify(new NewMessage($title, $body));
 
         return response()->json([
-            'message' => 'Persetujuan ruangan berhasil diperbarui', 'data' => $Peminjaman_Ruangan_ID,
-            'status' => $statusid, 'activitylog' => $activitylog,
+            'message' => 'Persetujuan ruangan berhasil diperbarui',
+            'data' => $Peminjaman_Ruangan_ID,
+            'status' => $statusid,
+            'activitylog' => $activitylog,
             'dataUpdate'
         ]);
     }
@@ -349,7 +362,8 @@ class PersetujuanController extends Controller
                     $persetujuan->save();
                 } else if ($NamaStatus === 'Selesai') {
                     $peminjamanalat = Peminjaman_Alat_Bridge::where('Peminjaman_Alat_ID', $alat->Peminjaman_Alat_ID)->first();
-                    $newtanggalakhir = now();
+                    $datetime = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
+                    $newtanggalakhir = $datetime->format('Y-m-d H:i');
                     $peminjamanalat->Tanggal_pakai_akhir = $newtanggalakhir;
                     $peminjamanalat->save();
                 } else if ($NamaStatus === 'Dibatalkan') {
@@ -361,6 +375,8 @@ class PersetujuanController extends Controller
                         ->where('Status_PeminjamanID', $statuspeminjamanid)
                         ->delete();
                     $statuspeminjaman->delete();
+                    $peminjam->Total_batal = $peminjam->Total_batal + 1;
+                    $peminjam->save();
                     //$peminjamanalat->delete();
                 }
             }
@@ -368,7 +384,8 @@ class PersetujuanController extends Controller
             $statuspeminjaman = Status_Peminjaman::where('Peminjaman_Alat_ID', $alat->Peminjaman_Alat_ID)->first();
             $status = Status::where('Nama_status', $NamaStatus)->first();
             $statusid = $status->StatusID;
-            $tanggalacc = now();
+            $datetime = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
+            $tanggalacc = $datetime->format('Y-m-d H:i');
             $statuspeminjaman->StatusID = $statusid;
             $statuspeminjaman->Tanggal_Acc = $tanggalacc;
             $statuspeminjaman->save();
@@ -376,7 +393,7 @@ class PersetujuanController extends Controller
             $activitylog = Activity_Log::create([
                 'Status_PeminjamanID' => $statuspeminjaman->Status_PeminjamanID,
                 'Nama_status' => $NamaStatus,
-                'Tanggal_Acc' => now(),
+                'Tanggal_Acc' => $tanggalacc,
                 'Acc_by' => $User_role,
                 'Catatan' => $Catatan
             ]);
@@ -403,8 +420,8 @@ class PersetujuanController extends Controller
         ];
 
         $title = 'Konfirmasi Peminjaman Alat';
-        $body = 'Peminjaman alat' . ' ' . $daftarAlat[0]['namaalat'] . ' ' . 'sebanyak' . ' '. $daftarAlat[0]['jumlahPinjam'] . ' ' . 'telah' . ' ' . 
-        $NamaStatus . ' ' . 'oleh' . ' ' . $User_role;
+        $body = 'Peminjaman alat' . ' ' . $daftarAlat[0]['namaalat'] . ' ' . 'sebanyak' . ' ' . $daftarAlat[0]['jumlahPinjam'] . ' ' . 'telah' . ' ' .
+            $NamaStatus . ' ' . 'oleh' . ' ' . $User_role;
 
         Mail::to($email)->send(new ConfirmAcc($dataEmail));
         $peminjam->notify(new SendNotification($dataNotifikasi));
@@ -493,7 +510,8 @@ class PersetujuanController extends Controller
                 $persetujuan->save();
             } else if ($NamaStatus === 'Selesai') {
                 $peminjamanalat = Peminjaman_Alat_Bridge::where('Peminjaman_Alat_ID', $Peminjaman_Alat_ID)->first();
-                $newtanggalakhir = now();
+                $datetime = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
+                $newtanggalakhir = $datetime->format('Y-m-d H:i');
                 $peminjamanalat->Tanggal_pakai_akhir = $newtanggalakhir;
                 $peminjamanalat->save();
             } else if ($NamaStatus === 'Dibatalkan') {
@@ -506,13 +524,16 @@ class PersetujuanController extends Controller
                     ->delete();
                 $statuspeminjaman->delete();
                 $peminjamanalat->delete();
+                $peminjam->Total_batal = $peminjam->Total_batal + 1;
+                $peminjam->save();
             }
         }
 
         $statuspeminjaman = Status_Peminjaman::where('Peminjaman_Alat_ID', $Peminjaman_Alat_ID)->first();
         $status = Status::where('Nama_status', $NamaStatus)->first();
         $statusid = $status->StatusID;
-        $tanggalacc = now();
+        $datetime = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
+        $tanggalacc = $datetime->format('Y-m-d H:i');
         $statuspeminjaman->StatusID = $statusid;
         $statuspeminjaman->Tanggal_Acc = $tanggalacc;
         $statuspeminjaman->save();
@@ -520,7 +541,7 @@ class PersetujuanController extends Controller
         $activitylog = Activity_Log::create([
             'Status_PeminjamanID' => $statuspeminjaman->Status_PeminjamanID,
             'Nama_status' => $NamaStatus,
-            'Tanggal_Acc' => now(),
+            'Tanggal_Acc' => $tanggalacc,
             'Acc_by' => $User_role,
             'Catatan' => $Catatan
         ]);
@@ -552,12 +573,14 @@ class PersetujuanController extends Controller
         $peminjam->notify(new SendNotification($dataNotifikasi));
 
         return response()->json([
-            'message' => 'Persetujuan alat berhasil diperbarui', 'data' => $Peminjaman_Alat_ID,
+            'message' => 'Persetujuan alat berhasil diperbarui',
+            'data' => $Peminjaman_Alat_ID,
             'activitylog' => $activitylog
         ]);
     }
 
-    public function coba(){
+    public function coba()
+    {
         $peminjam = Peminjam::where('UserID', '338ffdaf-f4cc-4304-b463-20735996b588')->first();
         $title = 'halo';
         $body = 'is it work?';

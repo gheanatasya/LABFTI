@@ -492,6 +492,11 @@ class PeminjamanAlatBridgeController extends Controller
             $namaAlat = $ALAT->Nama;
             $surat = $ALAT->WajibSurat;
             $ketersediaan = $ALAT->Status;
+            if ($surat === true){
+                $stringsurat = 'Perlu Surat';
+            } else {
+                $stringsurat = 'Tidak Perlu Surat';
+            }
 
             if ($ketersediaan === 'Tersedia') {
                 foreach ($daftarAlatTabrakan as &$existingAlat) {
@@ -508,7 +513,8 @@ class PeminjamanAlatBridgeController extends Controller
                         'AlatID' => $alatid,
                         'Jumlah_pinjam' => $jumlahpinjam,
                         'NamaAlat' => $namaAlat,
-                        'WajibSurat' => $surat
+                        'WajibSurat' => $surat,
+                        'WajibSuratString' => $stringsurat
                     ];
                 }
             }
@@ -520,23 +526,38 @@ class PeminjamanAlatBridgeController extends Controller
             $alatid = $alat->AlatID;
             $jumlah = $alat->Jumlah_ketersediaan;
             $nama = $alat->Nama;
+
+            if ($alat->WajibSurat === true){
+                $stringsurat = 'Perlu Surat';
+            } else {
+                $stringsurat = 'Tidak Perlu Surat';
+            }
+
             $daftarAlat[] = [
                 'AlatID' => $alatid,
                 'Jumlah_ketersediaan' => $jumlah,
                 'NamaAlat' => $nama,
                 'WajibSurat' => $alat->WajibSurat,
-                'Status' => $alat->Status
+                'Status' => $alat->Status,
+                'WajibSuratString' => $stringsurat
             ];
         }
 
         $fixAlat = [];
         foreach ($daftarAlat as $tool1) {
+            if ($tool1['WajibSurat'] === true){
+                $stringsurat = 'Perlu Surat';
+            } else {
+                $stringsurat = 'Tidak Perlu Surat';
+            }
+
             $fixAlat[] = [
                 'AlatID' => $tool1['AlatID'],
                 'Jumlah_ketersediaan' => $tool1['Jumlah_ketersediaan'],
                 'NamaAlat' => $tool1['NamaAlat'],
                 'WajibSurat' => $tool1['WajibSurat'],
-                'Status' => $tool1['Status']
+                'Status' => $tool1['Status'],
+                'WajibSuratString' => $stringsurat
             ];
 
             foreach ($daftarAlatTabrakan as $tool2) {
@@ -600,6 +621,12 @@ class PeminjamanAlatBridgeController extends Controller
             $namaAlat = $ALAT->Nama;
             $surat = $ALAT->WajibSurat;
             $ketersediaan = $ALAT->Status;
+            
+            if ($surat === true){
+                $stringsurat = 'Perlu Surat';
+            } else {
+                $stringsurat = 'Tidak Perlu Surat';
+            }
 
             if ($ketersediaan === 'Tersedia') {
                 foreach ($daftarAlatTabrakan as &$existingAlat) {
@@ -616,7 +643,8 @@ class PeminjamanAlatBridgeController extends Controller
                         'AlatID' => $alatid,
                         'Jumlah_pinjam' => $jumlahpinjam,
                         'NamaAlat' => $namaAlat,
-                        'WajibSurat' => $surat
+                        'WajibSurat' => $surat,
+                        'WajibSuratString' => $stringsurat
                     ];
                 }
             }
@@ -628,22 +656,37 @@ class PeminjamanAlatBridgeController extends Controller
             $alatid = $alat->AlatID;
             $jumlah = $alat->Jumlah_ketersediaan;
             $nama = $alat->Nama;
+
+            if ($alat->WajibSurat === true){
+                $stringsurat = 'Perlu Surat';
+            } else {
+                $stringsurat = 'Tidak Perlu Surat';
+            }
+
             $daftarAlat[] = [
                 'AlatID' => $alatid,
                 'Jumlah_ketersediaan' => $jumlah,
                 'NamaAlat' => $nama,
                 'WajibSurat' => $alat->WajibSurat,
-                'Status' => $alat->Status
+                'Status' => $alat->Status,
+                'WajibSuratString' => $stringsurat
             ];
         }
 
         $fixAlat = [];
         foreach ($daftarAlat as $tool1) {
+            if ($tool1['WajibSurat'] === true){
+                $stringsurat = 'Perlu Surat';
+            } else {
+                $stringsurat = 'Tidak Perlu Surat';
+            }
+
             $fixAlat[] = [
                 'AlatID' => $tool1['AlatID'],
                 'Jumlah_ketersediaan' => $tool1['Jumlah_ketersediaan'],
                 'NamaAlat' => $tool1['NamaAlat'],
-                'WajibSurat' => $tool1['WajibSurat']
+                'WajibSurat' => $tool1['WajibSurat'],
+                'WajibSuratString' => $stringsurat
             ];
 
             foreach ($daftarAlatTabrakan as $tool2) {

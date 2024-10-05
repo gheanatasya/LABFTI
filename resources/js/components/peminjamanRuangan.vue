@@ -141,7 +141,7 @@
 
               <v-textarea v-model="item.keterangan" style="margin-left: 303px; margin-right: -90px;" label="Keterangan"
                 row-height="25" rows="5" variant="outlined" auto-grow shaped><template v-slot:label>
-                  Keperluan Peminjaman<v-icon style="color: red; font-size: 15px;">mdi-asterisk</v-icon>
+                  Alasan Peminjaman<v-icon style="color: red; font-size: 15px;">mdi-asterisk</v-icon>
                 </template></v-textarea>
 
               <p style="margin-left: 303px; margin-right: -80px;">Tambahkan Add-on (opsional)</p>

@@ -83,7 +83,7 @@
                             <v-textarea v-model="item.keterangan" style="margin-left: 303px; margin-right: -80px;"
                                 label="Keterangan" row-height="25" rows="5" variant="outlined" auto-grow shaped>
                                 <template v-slot:label>
-                                    Keperluan Peminjaman <v-icon style="color: red; font-size: 15px;">mdi-asterisk</v-icon>
+                                    Alasan Peminjaman <v-icon style="color: red; font-size: 15px;">mdi-asterisk</v-icon>
                                 </template>
                             </v-textarea>
 
@@ -198,7 +198,7 @@
                     style="border-radius: 10px; border: 1px solid; padding: 30px; margin-bottom: 750px; height: 550px; overflow-y: auto; margin-bottom: 280px;">
                     <p v-if="item.itemsAll.length > 0"
                         style="font-size: 25px; font-family: Lexend-Medium; margin-bottom: 20px;">
-                        Daftar Peralatan FTI UKDW</p>
+                        Daftar Alat Tersedia LAB FTI UKDW</p>
                     <p v-else
                         style="font-size: 25px; font-family: Lexend-Medium; margin-bottom: 20px; text-align: center; margin-top: 200px;">
                         Silahkan masukkan tanggal penggunaan alat untuk melihat
@@ -212,7 +212,9 @@
                                     <th class="text-center" style="background-color: #BBDEFB; width: 20px;">No</th>
                                     <th class="text-center" style="background-color: #BBDEFB">Nama Alat
                                     </th>
-                                    <th class="text-center" style="background-color: #BBDEFB">Jumlah
+                                    <th class="text-center" style="background-color: #BBDEFB;">Jumlah
+                                    </th>
+                                    <th class="text-center" style="background-color: #BBDEFB">Perlu Surat
                                     </th>
                                 </tr>
                             </thead>
@@ -221,8 +223,9 @@
                                     style="background-color: white; font-family: 'Lexend-Regular; font-size: 15px;">
                                     <td style="width: 20px; text-align: center;"> {{ index + 1 }}
                                     </td>
-                                    <td style="width: 50px; "> {{ alat.NamaAlat }} </td>
-                                    <td style="width: 50px; "> {{ alat.Jumlah_ketersediaan }} </td>
+                                    <td style="width: 40px; "> {{ alat.NamaAlat }} </td>
+                                    <td style="width: 20px; text-align: center;"> {{ alat.Jumlah_ketersediaan }} </td>
+                                    <td style="width: 50px; "> {{ alat.WajibSuratString }} </td>
                                 </tr>
                             </tbody>
                         </v-table>

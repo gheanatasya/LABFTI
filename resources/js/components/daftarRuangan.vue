@@ -52,14 +52,13 @@
                     <tr>
                         <th class="text-center" style="background-color: #BBDEFB">No</th>
                         <th class="text-center" style="background-color: #BBDEFB">Nama Ruangan</th>
-                        <th class="text-center" style="background-color: #BBDEFB">Kode Ruangan</th>
                         <th class="text-center" style="background-color: #BBDEFB">Lokasi</th>
                         <th class="text-center" style="background-color: #BBDEFB">Kapasitas</th>
                         <th class="text-center" style="background-color: #BBDEFB">Kategori</th>
                         <th class="text-center" style="background-color: #BBDEFB">Fasilitas</th>
                         <th class="text-center" style="background-color: #BBDEFB">Status</th>
                         <th class="text-center" style="background-color: #BBDEFB">Foto</th>
-                        <th class="text-center" style="background-color: #BBDEFB">Action</th>
+                        <th class="text-center" style="background-color: #BBDEFB">Aksi</th>
                     </tr>
                 </thead>
                 <tbody v-if="this.filteredRooms.length > 0">
@@ -69,8 +68,6 @@
                             + 1 }} </td>
 
                         <td style="width: 150px;"> {{ ruangan.Nama_ruangan }} </td>
-
-                        <td style="width: 100px; text-align: center;"> {{ ruangan.RuanganID }} </td>
 
                         <td style="width: 100px; text-align: center;"> {{ ruangan.Lokasi }} </td>
 
@@ -95,10 +92,9 @@
                         </td>
 
                         <td style="width: 100px; font-size: 25px; text-align: center;">
-                            <v-icon @click="editRuangan(ruangan)"
-                                style="color: #0D47A1;">mdi-pencil-circle</v-icon>
-                            <v-icon @click="konfirmasiHapusRuangan(ruangan.RuanganID, ruangan.Nama_ruangan)"
-                                style="color: rgb(206, 0, 0, 0.91);">mdi-delete-circle</v-icon>
+                            <v-icon @click="editRuangan(ruangan)" style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                            <!-- <v-icon @click="konfirmasiHapusRuangan(ruangan.RuanganID, ruangan.Nama_ruangan)"
+                                style="color: rgb(206, 0, 0, 0.91);">mdi-delete-circle</v-icon> -->
                         </td>
                     </tr>
                 </tbody>
@@ -166,12 +162,11 @@
                         Edit Foto Yang Sudah Ada</p>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
-                    <v-btn
-                        style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
-                        @click="editActionRuangan = false">Batal</v-btn>
+                    <v-btn 
+                        @click="editActionRuangan = false" style="text-transform: none; border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Batal</v-btn>
                     <v-btn :loading="this.ruanganEdit.loading"
                         @click="updateRuangan(ruanganEdit.RuanganID, ruanganEdit.Nama_ruangan, ruanganEdit.Lokasi, ruanganEdit.Kapasitas, ruanganEdit.Kategori, ruanganEdit.fasilitas, ruanganEdit.foto, ruanganEdit.Status)"
-                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Simpan</v-btn>
+                        style="text-transform: none; background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;">Simpan</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -184,11 +179,10 @@
                 <v-card-text style="text-align: center;">Yakin ingin menghapus ruangan <strong>{{
                     ruanganHapus.Nama_ruangan }}</strong>?</v-card-text>
                 <v-card-actions style="justify-content:center;">
-                    <v-btn
-                        style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
+                    <v-btn style="text-transform: none; background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
                         @click="dialogHapusRuangan = false">Batal</v-btn>
                     <v-btn :loading="this.ruanganHapus.loading"
-                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;"
+                        style="border: 3px solid #0D47A1;  box-shadow: none; text-transform: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;"
                         @click="deleteRuangan(ruanganHapus.RuanganID)">Hapus</v-btn>
                 </v-card-actions>
             </v-card>
@@ -247,28 +241,27 @@
                         id="tambahFotoRuangan" style="margin-right: 100px; margin-left:0px;"></v-file-input>
                 </v-card-text>
                 <v-card-actions style="justify-content:center;">
-                    <v-btn
-                        style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
+                    <v-btn style="text-transform: none; border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;"
                         @click="this.dialogTambahRuangan = false">Batal</v-btn>
                     <v-btn @click="tambahRuangan(ruanganTambah)" :loading="this.ruanganTambah.loading"
-                        style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Tambah</v-btn>
+                    style="text-transform: none; background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;">Tambah</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
 
         <!-- grafik peminjaman perbulan -->
-        <v-dialog style="justify-content:center;" v-model="grafikDialog" persistent max-width="500">
+        <v-dialog style="justify-content:center;" v-model="grafikDialog" persistent max-width="800">
             <v-card
-                style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 500px; height: 500px;">
+                style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 800px; height: 800px;">
                 <v-card-actions class="d-flex justify-end">
                     <v-icon @click="grafikDialog = false">mdi-close-circle</v-icon>
                 </v-card-actions>
                 <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;">
-                    Grafik Peminjaman Ruangan
+                    Grafik Peminjaman Ruangan <br>
+                    <v-btn @click="createChart()" :loading="this.loadinggrafik" style="text-transform: none;">Lihat Grafik</v-btn>
                 </v-card-title>
                 <v-card-text style="text-align: center;">
-                    <v-btn @click="createChart()" :loading="this.loadinggrafik">Lihat Grafik</v-btn>
-                    <canvas id="chart" max-width="300" height="200"></canvas>
+                    <canvas id="chart" max-width="400" height="200"></canvas>
                 </v-card-text>
             </v-card>
         </v-dialog>
@@ -478,25 +471,25 @@ export default {
                         console.log("Ruangan updated successfully:", response.data);
 
                         if (foto !== null || this.ruanganEdit.fotoTampil.length > 0) {
-                        axios.post(`http://127.0.0.1:8000/api/ruangan/editFoto/${RuanganID}`, formData)
-                            .then(res => {
-                                console.log("Foto ditambahkan successfully:", res.data);
+                            axios.post(`http://127.0.0.1:8000/api/ruangan/editFoto/${RuanganID}`, formData)
+                                .then(res => {
+                                    console.log("Foto ditambahkan successfully:", res.data);
 
-                                const dataGanti = res.data.dataTambah
-                                const fasilitasArrayGanti = dataGanti.fasilitas.split(", ").filter(facilit => facilit);
-                                dataGanti.fasilitas = fasilitasArrayGanti;
-                                console.log(dataGanti)
-                                const index = this.allRoom.findIndex(room => room.RuanganID === dataGanti.RuanganID);
-                                if (index !== -1) {
-                                    this.allRoom[index] = dataGanti;
-                                }
-                                this.ruanganEdit.loading = false;
-                                this.editActionRuangan = false;
-                                return
-                            }).catch(error => {
-                                console.error("Foto gagal ditambahkan", error);
-                                this.ruanganEdit.loading = false;
-                            })
+                                    const dataGanti = res.data.dataTambah
+                                    const fasilitasArrayGanti = dataGanti.fasilitas.split(", ").filter(facilit => facilit);
+                                    dataGanti.fasilitas = fasilitasArrayGanti;
+                                    console.log(dataGanti)
+                                    const index = this.allRoom.findIndex(room => room.RuanganID === dataGanti.RuanganID);
+                                    if (index !== -1) {
+                                        this.allRoom[index] = dataGanti;
+                                    }
+                                    this.ruanganEdit.loading = false;
+                                    this.editActionRuangan = false;
+                                    return
+                                }).catch(error => {
+                                    console.error("Foto gagal ditambahkan", error);
+                                    this.ruanganEdit.loading = false;
+                                })
                         }
 
                         const dataGanti = response.data.data
@@ -596,15 +589,20 @@ export default {
                                 responsive: true,
                                 scales: {
                                     x: {
-                                        stacked: true,
                                         grid: {
                                             display: false,
                                         },
+                                        ticks: {
+                                            beginAtZero: true,
+                                        }
                                     },
                                     y: {
-                                        stacked: true,
                                         grid: {
                                             display: false,
+                                        },
+                                        ticks: {
+                                            beginAtZero: true,
+                                            stepSize: 5,
                                         },
                                     },
                                 },
@@ -631,6 +629,7 @@ export default {
             this.ruanganTambah.loading = true;
             console.log(ruanganTambah)
             const regex = /^[a-zA-Z,\s]+$/;
+            const ruanganYangDicari = this.allRoom.find(room => room.Nama_ruangan === ruanganTambah.Nama_ruangan);
 
             if (this.ruanganTambah.Kapasitas === null || this.ruanganTambah.Kapasitas === null || this.ruanganTambah.Lokasi === null || this.ruanganTambah.Kategori === null || this.ruanganTambah.Nama_ruangan === null || this.ruanganTambah.fasilitas === null || this.ruanganTambah.Status === null || this.ruanganTambah.foto === null) {
                 alert('Terdapat data yang belum diisi!');
@@ -638,6 +637,10 @@ export default {
                 return
             } else if (!regex.test(this.ruanganTambah.fasilitas)) {
                 alert('Format fasilitas tidak sesuai placeholder!')
+                this.ruanganTambah.loading = false;
+                return
+            } else if (ruanganYangDicari) {
+                alert('Ruangan sudah ada!')
                 this.ruanganTambah.loading = false;
                 return
             }

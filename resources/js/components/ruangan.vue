@@ -28,7 +28,7 @@
                 <v-spacer></v-spacer>
 
                 <v-col>
-                    <p style="margin-left: 200px; font-size: 20px; margin-top: 10px;">
+                    <p style="margin-left: 200px; font-size: 18px; margin-top: 10px;">
                         <v-icon>mdi-filter-variant</v-icon>Filter
                     </p>
                 </v-col>
@@ -81,9 +81,9 @@
                                         <div style="position: absolute; bottom: 0; left: 0; margin-bottom: 10px;">
                                             <v-btn @click="morePicture(room.Nama_ruangan, room.Lokasi, room.Foto)"
                                                 style="color:#0D47A1; margin-left: 90px; background: none;
-                                                text-decoration: underline; box-shadow: none; 
-                                                ">L<p style="text-transform: lowercase;">ihat lebih banyak
-                                                    gambar>></p></v-btn>
+                                                text-decoration: underline; box-shadow: none; text-transform: none;
+                                                ">Lihat lebih banyak
+                                                    gambar>></v-btn>
                                         </div>
                                     </div>
                                     <v-img v-if="room.Foto != null" :src="'../storage/' + room.Foto[0]"

@@ -37,22 +37,25 @@
                             <th class="text-center" style="background-color: #BBDEFB">Waktu Penggunaan</th>
                             <th class="text-center" style="background-color: #BBDEFB">Keterangan</th>
                             <th class="text-center" style="background-color: #BBDEFB">Status</th>
-                            <th class="text-center" style="background-color: #BBDEFB">Action</th>
+                            <th class="text-center" style="background-color: #BBDEFB">Aksi</th>
                         </tr>
                     </thead>
                     <tbody v-if="this.ruanganbridge.length > 0">
                         <tr v-for="(item, index) in paginatedRuangan(currentPageRuangan)" :key="item.peminjamanid"
                             style="background-color: white; font-family: 'Lexend-Regular; font-size: 15px;">
-                            <td style="width: 20px;"> {{ (currentPageRuangan - 1) * itemsPerPage + index + 1 }} </td>
+                            <td style="width: 20px; text-align: center;"> {{ (currentPageRuangan - 1) * itemsPerPage + index + 1 }} </td>
 
                             <td style="width: 50px;"> {{ item.namaruangan }} </td>
 
-                            <td style="width: 50px;"> {{ new Date(item.tanggalawal).toLocaleTimeString('un-US', 
-                                { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'}) }} </td>
+                            <td style="width: 100px;"> {{ new Date(item.tanggalawal).toLocaleTimeString('un-US', 
+                                { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'}) }} - 
+                                {{ new Date(item.tanggalakhir).toLocaleTimeString('un-US', 
+                                { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'}) }}
+                            </td>
 
-                            <td style="width: 500px;"> {{ item.keterangan }} </td>
+                            <td style="width: 300px;"> {{ item.keterangan }} </td>
 
-                            <td style="text-align: center;">
+                            <td style="text-align: center; width: 100px;">
                                 <v-chip v-if="item.status === 'Diterima'"
                                     style="background-color: #0D47A1; color: white;"
                                     @click="openInformationRoom(item.histori)">{{ item.status }}</v-chip>
@@ -66,7 +69,7 @@
                                     @click="openInformationRoom(item.histori)">{{ item.status }}</v-chip>
                             </td>
 
-                            <td style="width: 110px; font-size: 25px;"> <v-icon v-if="item.status === 'Diterima'"
+                            <td style="width: 110px; font-size: 25px; text-align: center;"> <v-icon v-if="item.status === 'Diterima'"
                                     @click="downloadPDF(this.UserID, item.peminjamanid, item.peminjamanruanganid, 0)"
                                     style="color: #0D47A1">mdi-download-circle</v-icon>
 
@@ -162,25 +165,28 @@
                                 Status
                             </th>
                             <th class="text-center" style="background-color: #BBDEFB">
-                                Action
+                                Aksi
                             </th>
                         </tr>
                     </thead>
                     <tbody v-if="this.alatbridge.length > 0">
                         <tr v-for="(item, index) in paginatedAlat(currentPageAlat)" :key="item.peminjamanid"
                             style="font-family:'Lexend-Regular'; font-size: 15px; ">
-                            <td style="width: 20px;"> {{ (currentPageAlat - 1) * itemsPerPage + index + 1 }} </td>
+                            <td style="width: 20px; text-align: center;"> {{ (currentPageAlat - 1) * itemsPerPage + index + 1 }} </td>
 
                             <td style="width: 50px; "> {{ item.namaalat }} </td>
 
-                            <td style="width: 50px; "> {{ new Date(item.tanggalawal).toLocaleTimeString('un-US', 
-                                { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'}) }} </td>
+                            <td style="width: 130px; "> {{ new Date(item.tanggalawal).toLocaleTimeString('un-US', 
+                                { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'}) }} -
+                                {{ new Date(item.tanggalakhir).toLocaleTimeString('un-US', 
+                                { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'}) }}
+                            </td>
 
-                            <td style="width: 50px; "> {{ item.jumlahPinjam }} </td>
+                            <td style="width: 20px; text-align: center;"> {{ item.jumlahPinjam }} </td>
 
-                            <td style="width: 500px; "> {{ item.keterangan }} </td>
+                            <td style="width: 300px; "> {{ item.keterangan }} </td>
 
-                            <td style="text-align: center;">
+                            <td style="text-align: center; width: 100px;">
                                 <v-chip v-if="item.status === 'Diterima'"
                                     style="background-color: #0D47A1; color: white;"
                                     @click="openInformationTool(item.histori)">{{ item.status }}</v-chip>
@@ -192,7 +198,7 @@
                                     @click="openInformationTool(item.histori)">{{ item.status }}</v-chip>
                             </td>
 
-                            <td style="width: 110px; font-size: 25px;"> <v-icon v-if="item.status === 'Diterima'"
+                            <td style="width: 110px; font-size: 25px; text-align: center;"> <v-icon v-if="item.status === 'Diterima'"
                                     @click="downloadPDF(this.UserID, item.peminjamanid, 0, item.peminjamanalatid)"
                                     style="color: #0D47A1">mdi-download-circle</v-icon>
 

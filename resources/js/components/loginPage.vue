@@ -33,7 +33,7 @@
                     </div>
 
                     <v-btn :loading="loading" @click="login"
-                        style="margin-top: 30px; margin-left: 370px; font-family: Lexend-Medium; background-color: #0D47A1; color: white; width: 200px; border-radius: 20px; font-size: 17px;">
+                        style="text-transform: none; margin-top: 30px; margin-left: 370px; font-family: Lexend-Medium; background-color: #0D47A1; color: white; width: 200px; border-radius: 20px; font-size: 17px;">
                         <span v-if="!loading">Login</span>
                         <span v-else>Loading...</span>
                     </v-btn>

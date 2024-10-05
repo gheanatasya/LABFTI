@@ -38,8 +38,8 @@
             </v-card-text>
 
             <v-card-actions style="justify-content:center;">
-                <v-btn style="position: absolute; top: 0; left: 0; margin-top: 17px;" @click="navigateBackPeminjaman"><v-icon
-                        style="font-size: 30px;">mdi-arrow-left</v-icon></v-btn>
+                <v-btn style="position: absolute; top: 0; left: 0; margin-top: 17px;"
+                    @click="navigateBackPeminjaman"><v-icon style="font-size: 30px;">mdi-arrow-left</v-icon></v-btn>
                 <v-btn :loading="this.loading"
                     @click="jadwalPeminjaman(tanggalAwal, tanggalSelesai, selectedKapasitas, selectedKategori, selectedLokasi)"
                     style="bottom: 20px; right: 0px; background-color: #0D47A1; color: white;
@@ -57,32 +57,49 @@
                     <v-col v-for="(room, index) in this.fixRooms" :key="index" cols="5" style="margin-left: 0px;">
                         <v-card
                             style="width: 300px; background-color: #BBDEFB; border-radius: 20px; margin-left: 25px;">
-                            <v-img :src="this.picture" style="width: 40%; height: 100%; margin-left: 90px;"
+                            <v-img :src="'../storage/' + room.Foto[0]" style="width: 40%; height: 100%; margin-left: 90px;"
                                 cover></v-img>
                             <v-card-text style="font-size: 18px;">
                                 <p>{{ room.Nama_ruangan }}</p>
                                 <p>{{ room.Lokasi }}</p>
                             </v-card-text>
                             <v-card-actions>
-                                <div style="position: absolute; bottom: 0; right: 60px; margin-bottom: 0px;">
+                                <div
+                                    style="position: absolute; right: 60px; margin-bottom: 0px;">
                                     <v-btn style="background-color: #0D47A1; color: white; border-radius: 20px; margin-left: 90px; width: 130px; height: 25px; margin-bottom: -10px;
                             font-size: 10px;" @click="pinjamRuang(room.Nama_ruangan)">Pinjam Ruangan</v-btn>
                                     <br>
-                                    <v-btn @click="navigateToRuangan" style="color: #0D47A1; margin-left: 90px; background: none;
-                                text-decoration: underline; box-shadow: none; font-size: 12px;
-                                ">L<p style="text-transform: lowercase;">ihat detail ruangan>>
-                                        </p></v-btn>
+                                    <v-btn @click="navigateToRuangan(room.Nama_ruangan, room.Lokasi, room.Kapasitas, room.Kategori, room.fasilitas)" style="color: #0D47A1; margin-left: 90px; background: none;
+                                text-decoration: underline; box-shadow: none; font-size: 12px; text-transform: none;
+                                ">Lihat detail ruangan>></v-btn>
                                 </div>
                             </v-card-actions>
                         </v-card>
                     </v-col>
                 </v-row>
-
             </v-card-text>
             <v-card-actions style="justify-content:center;">
                 <v-btn style="position: absolute; top: 0; left: 0; margin-top: 17px;" @click="navigateBack"><v-icon
                         style="font-size: 30px;">mdi-arrow-left</v-icon></v-btn>
                 <v-btn @click="navigateToPeminjaman"
+                    style="position: absolute; top: 0; right: 0; margin-top: 17px;"><v-icon
+                        style="font-size: 30px;">mdi-close-circle</v-icon></v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="detailRuangan" max-width="400" persistent>
+        <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 400px; height: 250px;">
+            <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;">
+                {{ this.detailRoom.Nama_ruangan }}</v-card-title>
+            <v-card-text style="text-align: left;">
+                <p>Lokasi: {{ this.detailRoom.Lokasi }}</p>
+                <p>Kapasitas: {{ this.detailRoom.Kapasitas }}</p>
+                <p>Kategori: {{ this.detailRoom.Kategori }}</p>
+                <p>Fasilitas: {{ this.detailRoom.fasilitas }}</p>
+            </v-card-text> 
+            <v-card-actions style="justify-content:center;">
+                <v-btn @click="this.detailRuangan = false"
                     style="position: absolute; top: 0; right: 0; margin-top: 17px;"><v-icon
                         style="font-size: 30px;">mdi-close-circle</v-icon></v-btn>
             </v-card-actions>
@@ -123,6 +140,14 @@ export default {
             fixRooms: [],
             tanggalAwal: '',
             tanggalSelesai: '',
+            detailRuangan: false,
+            detailRoom: {
+                Nama_ruangan: '',
+                Lokasi: '',
+                Kapasitas: '',
+                Kategori: '',
+                fasilitas: ''
+            }
         }
     },
     methods: {
@@ -138,21 +163,27 @@ export default {
             this.roomAfterSelected = false;
             this.$router.push('/peminjamanRuangan')
         },
-        navigateToRuangan() {
-            this.roomAfterSelected = false;
-            this.$router.push('/ruangan')
+        navigateToRuangan(Nama_ruangan, Lokasi, Kapasitas, Kategori, fasilitas) {
+            this.detailRuangan = true
+            this.detailRoom = {
+                Nama_ruangan,
+                Lokasi,
+                Kapasitas,
+                Kategori,
+                fasilitas
+            }
         },
         async jadwalPeminjaman() {
             this.loading = true
-            if (this.tanggalAwal > this.tanggalSelesai){
+            if (this.tanggalAwal > this.tanggalSelesai) {
                 alert('Tanggal awal peminjaman melebihi tanggal selesai peminjaman!');
                 this.loading = false
                 return
-            } else if (this.tanggalAwal === '' || this.tanggalSelesai === '' || this.selectedKapasitas === null || this.selectedKategori === null || this.selectedLokasi === null){
+            } else if (this.tanggalAwal === '' || this.tanggalSelesai === '' || this.selectedKapasitas === null || this.selectedKategori === null || this.selectedLokasi === null) {
                 alert('Terdapat data yang kosong!')
                 this.loading = false
                 return
-            } 
+            }
 
             try {
                 if (this.User_role === 'Mahasiswa' || this.User_role === 'Petugas') {

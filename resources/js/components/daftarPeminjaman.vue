@@ -36,12 +36,12 @@
             </v-col>
 
             <v-col style="margin-right: -200px;">
-                <v-select v-if="User_role === 'Petugas'" label="Action" variant="outlined" clearable
+                <v-select v-if="User_role === 'Petugas'" label="Status Konfirmasi" variant="outlined" clearable
                     style="width: 280px;" :items="['Diproses', 'Diterima', 'Ditolak', 'Selesai', 'Dibatalkan']"
                     v-model="this.filterActionRuangan">
                 </v-select>
 
-                <v-select v-else label="Action" :items="['Diproses', 'Diterima', 'Ditolak']" style="width: 280px;"
+                <v-select v-else label="Status Konfirmasi" :items="['Diproses', 'Diterima', 'Ditolak']" style="width: 280px;"
                     clearable variant="outlined" v-model="this.filterActionRuangan">
                 </v-select>
             </v-col>
@@ -59,7 +59,7 @@
                             <th class="text-center" style="background-color: #BBDEFB; color: black;">No</th>
                             <th class="text-center" style="background-color: #BBDEFB; color: black;">Nama
                                 Ruangan</th>
-                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Add On
+                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Tambahan
                             </th>
                             <th class="text-center" style="background-color: #BBDEFB; color: black;">Peminjam
                             </th>
@@ -73,7 +73,7 @@
                             </th>
                             <th class="text-center" style="background-color: #BBDEFB; color: black;">Status
                             </th>
-                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Action
+                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Aksi
                             </th>
 
                         </tr>
@@ -81,33 +81,33 @@
                     <tbody v-if="filteredRooms.length > 0">
                         <tr v-for="(ruangan, index) in paginatedRooms" :key="index"
                             style="background-color: white; font-family: 'Lexend-Regular; font-size: 15px;">
-                            <td style="width: 20px;"> {{ (currentPageRuangan - 1) * itemsPerPage + index + 1 }} </td>
+                            <td> {{ (currentPageRuangan - 1) * itemsPerPage + index + 1 }} </td>
 
-                            <td style="width: 200px;"> {{ ruangan.namaruangan }} </td>
+                            <td style="width: 150px;"> {{ ruangan.namaruangan }} </td>
 
-                            <td style="width: 50px;">
+                            <td>
                                 <p v-for="(addon, index) in ruangan.alat" :key="index"
                                     style="font-family: Lexend-Regular;">
-                                    {{ index + 1 }}. {{ addon.namaalat }} : {{ addon.jumlahPinjam }}
+                                    {{ addon.namaalat }}({{ addon.jumlahPinjam }})
                                 </p>
                             </td>
 
-                            <td style="width: 200px;"> {{ ruangan.namapeminjam }} ({{ ruangan.nohp }}) </td>
+                            <td style="width: 150px;"> {{ ruangan.namapeminjam }}({{ ruangan.nohp }}) </td>
 
-                            <td style="width: 500px;"> {{ ruangan.tanggalpinjamFormat }} </td>
+                            <td style="width: 400px;"> {{ ruangan.tanggalpinjamFormat }} </td>
 
                             <td style="width: 500px;"> {{ ruangan.tanggalawalFormat }} - {{ ruangan.tanggalakhirFormat
                                 }}
                             </td>
 
-                            <td style="width: 500px;">
+                            <td style="width: 400px;">
                                 <a v-if="ruangan.path !== null" :href="'../storage/' + ruangan.path" target="_blank">{{
                                     ruangan.namadokumen }}</a>
                             </td>
 
-                            <td style="width: 700px;"> {{ ruangan.keterangan }} </td>
+                            <td style="width: 500px;"> {{ ruangan.keterangan }} </td>
 
-                            <td style="text-align: center; width: 700px;">
+                            <td style="text-align: left; width: 800px;">
                                 <p v-for="(histori, index) in ruangan.histori" :key="index"
                                     style="font-family: Lexend-Regular;">
                                     {{ index + 1 }}. {{ histori.Namastatus }} oleh {{ histori.Acc_by }} pada tanggal {{
@@ -121,62 +121,62 @@
                                 </p>
                             </td>
 
-                            <td style="width: 1000px; font-size: 25px;">
+                            <td style="text-align: center">
                                 <!-- eksternal -->
-                                <v-icon @click="persetujuanRuangan(ruangan)"
+                                <v-chip @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Dekan') && (ruangan.eksternal === true) && (ruangan.dekan === true || ruangan.dekan === false || ruangan.dekan === null)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
-                                <v-icon @click="persetujuanRuangan(ruangan)"
+                                <v-chip @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Kepala Lab') && (ruangan.eksternal === true) && (ruangan.dekan === true)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
-                                <v-icon @click="persetujuanRuangan(ruangan)"
+                                <v-chip @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Koordinator Lab') && (ruangan.eksternal === true) && (ruangan.dekan === true) && (ruangan.kepala === true)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
-                                <v-icon @click="persetujuanRuangan(ruangan)"
+                                <v-chip @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Petugas') && (ruangan.eksternal === true) && (ruangan.dekan === true) && (ruangan.kepala === true) && (ruangan.koordinator === true)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
                                 <!-- organisasi -->
-                                <v-icon @click="persetujuanRuangan(ruangan)"
+                                <v-chip @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Wakil Dekan 3') && (ruangan.organisasi === true) && (ruangan.wd3 === true || ruangan.wd3 === false || ruangan.wd3 === null)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
-                                <v-icon @click="persetujuanRuangan(ruangan)"
+                                <v-chip @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Kepala Lab') && (ruangan.organisasi === true) && (ruangan.wd3 === true)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
-                                <v-icon @click="persetujuanRuangan(ruangan)"
+                                <v-chip @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Koordinator Lab') && (ruangan.organisasi === true) && (ruangan.wd3 === true) && (ruangan.kepala === true)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
-                                <v-icon @click="persetujuanRuangan(ruangan)"
+                                <v-chip @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Petugas') && (ruangan.organisasi === true) && (ruangan.wd3 === true) && (ruangan.kepala === true) && (ruangan.koordinator === true)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
                                 <!-- diluar fakultas -->
-                                <v-icon @click="persetujuanRuangan(ruangan)"
+                                <v-chip @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Wakil Dekan 2') && (ruangan.email != null) && (ruangan.wd2 === true || ruangan.wd2 === false || ruangan.wd2 === null)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
-                                <v-icon @click="persetujuanRuangan(ruangan)"
+                                <v-chip @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Kepala Lab') && (ruangan.email != null) && (ruangan.wd2 === true)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
-                                <v-icon @click="persetujuanRuangan(ruangan)"
+                                <v-chip @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Koordinator Lab') && (ruangan.email != null) && (ruangan.wd2 === true) && (ruangan.kepala === true)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
-                                <v-icon @click="persetujuanRuangan(ruangan)"
+                                <v-chip @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Petugas') && (ruangan.email != null) && (ruangan.wd2 === true) && (ruangan.kepala === true) && (ruangan.koordinator === true)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
                                 <!-- personal -->
-                                <v-icon @click="persetujuanRuangan(ruangan)"
+                                <v-chip @click="persetujuanRuangan(ruangan)"
                                     v-if="(this.User_role === 'Petugas') && (ruangan.personal === true)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
                                 <!-- <v-icon v-else style="color: rgb(30, 30, 30, 0.7);">mdi-pencil-circle</v-icon> -->
                             </td>
@@ -222,12 +222,12 @@
             </v-col>
 
             <v-col style="margin-right: -200px;">
-                <v-select v-if="User_role === 'Petugas'" label="Action" variant="outlined" clearable
+                <v-select v-if="User_role === 'Petugas'" label="Status Konfirmasi" variant="outlined" clearable
                     style="width: 280px;" :items="['Diproses', 'Diterima', 'Ditolak', 'Selesai', 'Dibatalkan']"
                     v-model="this.filterActionAlat">
                 </v-select>
 
-                <v-select v-else label="Action" :items="['Diproses', 'Diterima', 'Ditolak']" style="width: 280px;"
+                <v-select v-else label="Status Konfirmasi" :items="['Diproses', 'Diterima', 'Ditolak']" style="width: 280px;"
                     clearable variant="outlined" v-model="this.filterActionAlat">
                 </v-select>
             </v-col>
@@ -261,18 +261,18 @@
                             </th>
                             <th class="text-center" style="background-color: #BBDEFB; color: black;">Status
                             </th>
-                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Action
+                            <th class="text-center" style="background-color: #BBDEFB; color: black;">Aksi
                             </th>
                         </tr>
                     </thead>
                     <tbody v-if="this.filteredTools.length > 0">
                         <tr v-for="(alat, index) in paginatedTools" :key="index"
                             style=" font-family: 'Lexend-Regular; font-size: 15px;">
-                            <td style="width: 20px;"> {{ (currentPageAlat - 1) * itemsPerPage + index + 1 }} </td>
+                            <td> {{ (currentPageAlat - 1) * itemsPerPage + index + 1 }} </td>
 
                             <td style="width: 50px;"> {{ alat.namaalat }} </td>
 
-                            <td style="width: 50px;"> {{ alat.jumlahPinjam }} </td>
+                            <td style="width: 50px; text-align: center;"> {{ alat.jumlahPinjam }} </td>
 
                             <td style="width: 50px;"> {{ alat.namapeminjam }} ({{ alat.nohp }})</td>
 
@@ -288,7 +288,7 @@
 
                             <td style="width: 500px;"> {{ alat.keterangan }} </td>
 
-                            <td style="text-align: center;">
+                            <td style="text-align: left; width: 800px;">
                                 <p v-for="(histori, index) in alat.histori" :key="index"
                                     style="font-family: Lexend-Regular;">
                                     {{ index + 1 }}. {{ histori.Namastatus }} oleh {{ histori.Acc_by }} pada tanggal {{
@@ -302,62 +302,62 @@
                                 </p>
                             </td>
 
-                            <td style="width: 700px; font-size: 25px;">
+                            <td style="text-align: center;">
                                 <!-- eksternal -->
-                                <v-icon @click="persetujuanAlat(alat)"
+                                <v-chip @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Dekanat') && (alat.eksternal === true) && (alat.dekan === true || alat.dekan === false || alat.dekan === null)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
-                                <v-icon @click="persetujuanAlat(alat)"
+                                <v-chip @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Kepala Lab') && (alat.eksternal === true) && (alat.dekan === true)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
-                                <v-icon @click="persetujuanAlat(alat)"
+                                <v-chip @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Koordinator Lab') && (alat.eksternal === true) && (alat.dekan === true) && (alat.kepala === true)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
-                                <v-icon @click="persetujuanAlat(alat)"
+                                <v-chip @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Petugas') && (alat.eksternal === true) && (alat.dekan === true) && (alat.kepala === true) && (ruangan.koordinator === true)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
                                 <!-- organisasi -->
-                                <v-icon @click="persetujuanAlat(alat)"
+                                <v-chip @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Wakil Dekan 3') && (alat.organisasi === true) && (alat.wd3 === true || alat.wd3 === false || alat.wd3 === null)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
-                                <v-icon @click="persetujuanAlat(alat)"
+                                <v-chip @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Kepala Lab') && (alat.organisasi === true) && (alat.wd3 === true)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
-                                <v-icon @click="persetujuanAlat(alat)"
+                                <v-chip @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Koordinator Lab') && (alat.organisasi === true) && (alat.wd3 === true) && (alat.kepala === true)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
-                                <v-icon @click="persetujuanAlat(alat)"
+                                <v-chip @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Petugas') && (alat.organisasi === true) && (alat.wd3 === true) && (alat.kepala === true) && (ruangan.koordinator === true)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
                                 <!-- diluar fakultas -->
-                                <v-icon @click="persetujuanAlat(alat)"
+                                <v-chip @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Wakil Dekan 2') && (alat.email != null) && (alat.wd2 === true || alat.wd2 === false || alat.wd2 === null)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
-                                <v-icon @click="persetujuanAlat(alat)"
+                                <v-chip @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Kepala Lab') && (alat.email != null) && (alat.wd2 === true)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
-                                <v-icon @click="persetujuanAlat(alat)"
+                                <v-chip @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Koordinator Lab') && (alat.email != null) && (alat.wd2 === true) && (alat.kepala === true)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
-                                <v-icon @click="persetujuanAlat(alat)"
+                                <v-chip @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Petugas') && (alat.email != null) && (alat.wd2 === true) && (alat.kepala === true) && (ruangan.koordinator === true)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
                                 <!-- personal -->
-                                <v-icon @click="persetujuanAlat(alat)"
+                                <v-chip @click="persetujuanAlat(alat)"
                                     v-if="(this.User_role === 'Petugas') && (alat.personal === true)"
-                                    style="color: #0D47A1;">mdi-pencil-circle</v-icon>
+                                    style="color: #0D47A1;">Berikan Konfirmasi</v-chip>
 
                                 <!-- <v-icon v-else style="color: rgb(30, 30, 30, 0.7);">mdi-pencil-circle</v-icon> -->
                             </td>
@@ -409,13 +409,13 @@
                             readonly label="Keterangan" row-height="25" rows="5" variant="outlined" auto-grow
                             shaped></v-textarea>
 
-                        <v-select v-if="User_role === 'Petugas'" label="Action"
+                        <v-select v-if="User_role === 'Petugas'" label="Status Konfirmasi"
                             :items="['Diproses', 'Diterima', 'Ditolak', 'Selesai', 'Dibatalkan']"
                             style="margin-right: 100px; margin-left:40px; border-radius: 50px;" variant="outlined"
                             v-model="this.alat.currentStatus">
                         </v-select>
 
-                        <v-select v-else label="Action" :items="['Diproses', 'Diterima', 'Ditolak']"
+                        <v-select v-else label="Status Konfirmasi" :items="['Diproses', 'Diterima', 'Ditolak']"
                             style="margin-right: 100px; margin-left:40px; border-radius: 50px;" variant="outlined"
                             v-model="this.alat.currentStatus">
                         </v-select>
@@ -424,10 +424,10 @@
                             label="Catatan" row-height="25" rows="5" variant="outlined" auto-grow shaped></v-textarea>
                     </v-card-text>
                     <v-card-actions style="justify-content:center;">
-                        <v-btn style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
-                            @click="editActionAlat = false, this.loadingAlat = false">Batal</v-btn>
+                        <v-btn 
+                        style="text-transform: none; border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;" @click="editActionAlat = false, this.loadingAlat = false">Batal</v-btn>
                         <v-btn @click="konfirmasiAlatLebih(alat)" :loading="this.loadingAlat"
-                            style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Simpan</v-btn>
+                        style="text-transform: none; background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;">Simpan</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -454,13 +454,13 @@
                             readonly label="Keterangan" row-height="25" rows="5" variant="outlined" auto-grow
                             shaped></v-textarea>
 
-                        <v-select v-if="User_role === 'Petugas'" label="Action"
+                        <v-select v-if="User_role === 'Petugas'" label="Status Konfirmasi"
                             :items="['Diproses', 'Diterima', 'Ditolak', 'Selesai', 'Dibatalkan']"
                             style="margin-right: 100px; margin-left:40px; border-radius: 50px;" variant="outlined"
                             v-model="this.ruangan.currentStatus">
                         </v-select>
 
-                        <v-select v-else label="Action" :items="['Diproses', 'Diterima', 'Ditolak']"
+                        <v-select v-else label="Status Konfirmasi" :items="['Diproses', 'Diterima', 'Ditolak']"
                             style="margin-right: 100px; margin-left:40px; border-radius: 50px;" variant="outlined"
                             v-model="this.ruangan.currentStatus">
                         </v-select>
@@ -469,10 +469,10 @@
                             label="Catatan" row-height="25" rows="5" variant="outlined" auto-grow shaped></v-textarea>
                     </v-card-text>
                     <v-card-actions style="justify-content:center;">
-                        <v-btn style="background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;"
-                            @click="editActionRuangan = false, this.loadingRuangan = false">Batal</v-btn>
+                        <v-btn 
+                            @click="editActionRuangan = false, this.loadingRuangan = false" style="text-transform: none; border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Batal</v-btn>
                         <v-btn @click="confirmRuangan(ruangan)" :loading="this.loadingRuangan"
-                            style="border: 3px solid #0D47A1;  box-shadow: none; background-color: none; width: 100px; color: #0D47A1; border-radius: 20px;">Simpan</v-btn>
+                        style="text-transform: none; background-color: #0D47A1; color: white; border-radius: 20px; width: 100px;">Simpan</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
