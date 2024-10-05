@@ -600,6 +600,8 @@ class PeminjamanRuanganBridgeController extends Controller
 
         foreach ($array as $availableRoom) {
             $ambildata = Ruangan::where('Nama_ruangan', $availableRoom)->first();
+            $gambar = explode(':', $ambildata->Foto);
+            $ambildata->Foto = $gambar;
             $detailRoom[] = $ambildata;
         }
 
@@ -2419,6 +2421,8 @@ class PeminjamanRuanganBridgeController extends Controller
 
         foreach ($array as $availableRoom) {
             $ambildata = Ruangan::where('Nama_ruangan', $availableRoom)->first();
+            $gambar = explode(':', $ambildata->Foto);
+            $ambildata->Foto = $gambar;
             $detailRoom[] = $ambildata;
         }
 

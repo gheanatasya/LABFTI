@@ -14,8 +14,8 @@
                     <v-col class="text-subtitle-1 text-center" cols="12" style="font-family: Lexend-Regular;">
                         Memuat halaman
                     </v-col>
-                    <v-col cols="6">
-                        <v-progress-linear color="#0D47A1" height="6" indeterminate rounded></v-progress-linear>
+                    <v-col cols="1">
+                        <v-progress-circular color="#0D47A1" indeterminate></v-progress-circular>
                     </v-col>
                 </v-row>
             </v-container>
@@ -86,10 +86,10 @@
 
                     <div style="display: flex; justify-content: center;">
                         <v-btn :to="'profil'"
-                            style="margin-right: 20px;margin-top: 10px; margin-left: 420px; margin-bottom: 50px; font-family: Lexend-Bold; border: 3px solid #0D47A1;
+                            style="text-transform: none; margin-right: 10px;margin-top: 10px; margin-left: 420px; margin-bottom: 50px; font-family: Lexend-Bold; border: 3px solid #0D47A1;
                             box-shadow: none;background-color: none; color: #0D47A1; width: 150px; border-radius: 20px; font-size: 17px;">Batal</v-btn>
                         <v-btn @click="updateNama(this.user.Nama)" :loading="loading"
-                            style="margin-top: 10px; margin-right: 50px; margin-bottom: 50px; font-family: Lexend-Medium; 
+                            style="text-transform: none; margin-top: 10px; margin-right: 100px; margin-bottom: 50px; font-family: Lexend-Medium; 
                         background-color: #0D47A1; color: white; width: 150px; border-radius: 20px; font-size: 17px;">Simpan</v-btn>
                     </div>
                 </v-sheet>

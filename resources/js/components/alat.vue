@@ -11,8 +11,8 @@
                     <v-col class="text-subtitle-1 text-center" cols="12" style="font-family: Lexend-Regular;">
                         Memuat halaman
                     </v-col>
-                    <v-col cols="6">
-                        <v-progress-linear color="#0D47A1" height="6" indeterminate rounded></v-progress-linear>
+                    <v-col cols="1">
+                        <v-progress-circular color="#0D47A1" indeterminate></v-progress-circular>
                     </v-col>
                 </v-row>
             </v-container>
@@ -43,14 +43,14 @@
                                         <div style="position: absolute; bottom: 0; left: 0; margin-bottom: 10px;">
                                             <br>
                                             <v-btn @click="morePicture(tool.Nama, tool.Foto)" style="color: #0D47A1; margin-left: 0px; background: none;
-                                                text-decoration: underline; box-shadow: none; font-size: 12px;
-                                                ">L<p style="text-transform: lowercase;">ihat lebih banyak
-                                                    gambar>></p></v-btn>
+                                                text-decoration: underline; box-shadow: none; font-size: 12px; text-transform: none;
+                                                ">Lihat lebih banyak
+                                                    gambar>></v-btn>
                                         </div>
                                     </div>
-                                    <v-img v-if="tool.Foto.length > 0" :src="'../storage/' + tool.Foto[0]"
-                                        style="width: 200px; height: 400px;" cover></v-img>
-                                    <v-img v-else src="../storage/ruangan/no-image.png" style="width: 200px; height: 400px;"
+                                    <v-img v-if="tool.Foto.length > 0" :src="'../storage/' + tool.Foto[0]" :width="200" :height="400"
+                                        cover></v-img>
+                                    <v-img v-else src="../storage/ruangan/no-image.png" :width="200" :height="400"
                                         cover></v-img>
                                 </div>
                             </v-card>

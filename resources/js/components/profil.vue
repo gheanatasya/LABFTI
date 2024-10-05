@@ -14,8 +14,8 @@
                     <v-col class="text-subtitle-1 text-center" cols="12" style="font-family: Lexend-Regular;">
                         Memuat halaman
                     </v-col>
-                    <v-col cols="6">
-                        <v-progress-linear color="#0D47A1" height="6" indeterminate rounded></v-progress-linear>
+                    <v-col cols="1">
+                        <v-progress-circular color="#0D47A1" indeterminate></v-progress-circular>
                     </v-col>
                 </v-row>
             </v-container>
@@ -73,7 +73,7 @@
 
                     <v-btn @click="editprofil"
                         style="margin-top: 10px; margin-left: 420px; margin-bottom: 50px; font-family: Lexend-Medium; 
-                    background-color: #0D47A1; color: white; width: 150px; border-radius: 20px; font-size: 17px;">Edit</v-btn>
+                    background-color: #0D47A1; color: white; width: 150px; border-radius: 20px; font-size: 17px; text-transform: none;">Edit</v-btn>
 
                 </v-sheet>
             </v-container>

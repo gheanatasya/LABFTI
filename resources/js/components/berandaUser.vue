@@ -1,10 +1,12 @@
 <template>
     <headerAdmin v-if="User_role === 'Petugas'" style="z-index: 1; position: fixed; width: 100%;"></headerAdmin>
-    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'" style="z-index: 1; position: fixed; width: 100%;">
+    <headerSuperAdmin v-if="User_role === 'Kepala Lab' || User_role === 'Koordinator Lab'"
+        style="z-index: 1; position: fixed; width: 100%;">
     </headerSuperAdmin>
     <headerDekanat v-if="User_role === 'Dekan' || User_role === 'Wakil Dekan 2' || User_role === 'Wakil Dekan 3'"
         style="z-index: 1; position: fixed; width: 100%;"></headerDekanat>
-    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'" style="z-index: 1; position: fixed; width: 100%;">
+    <headerUser v-if="User_role === 'Mahasiswa' || User_role === 'Dosen' || User_role === 'Staff'"
+        style="z-index: 1; position: fixed; width: 100%;">
     </headerUser>
 
     <div style="padding-top: 90px">
@@ -14,8 +16,8 @@
                     <v-col class="text-subtitle-1 text-center" cols="12" style="font-family: Lexend-Regular;">
                         Memuat halaman
                     </v-col>
-                    <v-col cols="6">
-                        <v-progress-linear color="#0D47A1" height="6" indeterminate rounded></v-progress-linear>
+                    <v-col cols="1">
+                        <v-progress-circular color="#0D47A1" indeterminate></v-progress-circular>
                     </v-col>
                 </v-row>
             </v-container>
@@ -43,14 +45,21 @@
                     <tbody v-if="this.ruanganbridge.length > 0">
                         <tr v-for="(item, index) in paginatedRuangan(currentPageRuangan)" :key="item.peminjamanid"
                             style="background-color: white; font-family: 'Lexend-Regular; font-size: 15px;">
-                            <td style="width: 20px; text-align: center;"> {{ (currentPageRuangan - 1) * itemsPerPage + index + 1 }} </td>
+                            <td style="width: 20px; text-align: center;"> {{ (currentPageRuangan - 1) * itemsPerPage +
+                                index + 1 }} </td>
 
                             <td style="width: 50px;"> {{ item.namaruangan }} </td>
 
-                            <td style="width: 100px;"> {{ new Date(item.tanggalawal).toLocaleTimeString('un-US', 
-                                { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'}) }} - 
-                                {{ new Date(item.tanggalakhir).toLocaleTimeString('un-US', 
-                                { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'}) }}
+                            <td style="width: 100px;"> {{ new Date(item.tanggalawal).toLocaleTimeString('un-US',
+                                {
+                                    year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute:
+                                        'numeric'
+                                }) }} -
+                                {{ new Date(item.tanggalakhir).toLocaleTimeString('un-US',
+                                    {
+                                        year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute:
+                                            'numeric'
+                                    }) }}
                             </td>
 
                             <td style="width: 300px;"> {{ item.keterangan }} </td>
@@ -69,7 +78,8 @@
                                     @click="openInformationRoom(item.histori)">{{ item.status }}</v-chip>
                             </td>
 
-                            <td style="width: 110px; font-size: 25px; text-align: center;"> <v-icon v-if="item.status === 'Diterima'"
+                            <td style="width: 110px; font-size: 25px; text-align: center;"> <v-icon
+                                    v-if="item.status === 'Diterima'"
                                     @click="downloadPDF(this.UserID, item.peminjamanid, item.peminjamanruanganid, 0)"
                                     style="color: #0D47A1">mdi-download-circle</v-icon>
 
@@ -84,7 +94,8 @@
                     <tbody v-else>
                         <td></td>
                         <td></td>
-                        <div class="py-1 text-center" style="content: center; margin-top: 60px; margin-left: 150px; margin-right: -50px;">
+                        <div class="py-1 text-center"
+                            style="content: center; margin-top: 60px; margin-left: 150px; margin-right: -50px;">
                             <v-icon class="mb-6" color="primary" icon="mdi-alert-circle-outline" size="40"></v-icon>
                             <div class="text-h7 font-weight-bold">Kamu belum melakukan peminjaman ruangan.</div>
                         </div>
@@ -106,12 +117,18 @@
                 </v-card-actions>
                 <v-card-text style="margin-top: -50px;">
                     <div v-if="(this.activitylog.length > 0)">
-                        <p v-for="(histori, index) in this.activitylog" :key="index"
-                            style="font-family: Lexend-Regular;">
-                            {{ index + 1 }}. {{ histori.Namastatus }} oleh {{ histori.Acc_by }} pada tanggal {{
-                                histori.Tanggal_accnew }}
-                            <italic>({{ histori.Catatan }})</italic>
-                        </p>
+                        <div v-for="(histori, index) in this.activitylog" :key="index">
+                            <p v-if="histori.Catatan !== 'null'" style="font-family: Lexend-Regular;">
+                                {{ index + 1 }}. {{ histori.Namastatus }} oleh {{ histori.Acc_by }} pada tanggal {{
+                                    histori.Tanggal_accnew }}
+                                ({{ histori.Catatan }})
+                            </p>
+
+                            <p v-else style="font-family: Lexend-Regular;">
+                                {{ index + 1 }}. {{ histori.Namastatus }} oleh {{ histori.Acc_by }} pada tanggal {{
+                                    histori.Tanggal_accnew }}
+                            </p>
+                        </div>
                     </div>
                     <div v-else>
                         <p style="font-family: Lexend-Regular; margin-right: 10px; text-align: center">Peminjaman sedang
@@ -172,14 +189,21 @@
                     <tbody v-if="this.alatbridge.length > 0">
                         <tr v-for="(item, index) in paginatedAlat(currentPageAlat)" :key="item.peminjamanid"
                             style="font-family:'Lexend-Regular'; font-size: 15px; ">
-                            <td style="width: 20px; text-align: center;"> {{ (currentPageAlat - 1) * itemsPerPage + index + 1 }} </td>
+                            <td style="width: 20px; text-align: center;"> {{ (currentPageAlat - 1) * itemsPerPage +
+                                index + 1 }} </td>
 
                             <td style="width: 50px; "> {{ item.namaalat }} </td>
 
-                            <td style="width: 130px; "> {{ new Date(item.tanggalawal).toLocaleTimeString('un-US', 
-                                { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'}) }} -
-                                {{ new Date(item.tanggalakhir).toLocaleTimeString('un-US', 
-                                { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'}) }}
+                            <td style="width: 130px; "> {{ new Date(item.tanggalawal).toLocaleTimeString('un-US',
+                                {
+                                    year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute:
+                                        'numeric'
+                                }) }} -
+                                {{ new Date(item.tanggalakhir).toLocaleTimeString('un-US',
+                                    {
+                                        year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute:
+                                            'numeric'
+                                    }) }}
                             </td>
 
                             <td style="width: 20px; text-align: center;"> {{ item.jumlahPinjam }} </td>
@@ -198,7 +222,8 @@
                                     @click="openInformationTool(item.histori)">{{ item.status }}</v-chip>
                             </td>
 
-                            <td style="width: 110px; font-size: 25px; text-align: center;"> <v-icon v-if="item.status === 'Diterima'"
+                            <td style="width: 110px; font-size: 25px; text-align: center;"> <v-icon
+                                    v-if="item.status === 'Diterima'"
                                     @click="downloadPDF(this.UserID, item.peminjamanid, 0, item.peminjamanalatid)"
                                     style="color: #0D47A1">mdi-download-circle</v-icon>
 
@@ -235,12 +260,20 @@
                 </v-card-actions>
                 <v-card-text style="margin-top: -50px;">
                     <div v-if="(this.activitylogAlat.length > 0)">
-                        <p v-for="(histori, index) in this.activitylogAlat" :key="index"
+                        <div v-for="(histori, index) in this.activitylogAlat" :key="index">
+                            <p v-if="histori.Catatan !== 'null'"
                             style="font-family: Lexend-Regular;">
-                            {{ index + 1 }}. {{ histori.Namastatus }} oleh {{ histori.Acc_by }} pada tanggal {{
-                                histori.Tanggal_accnew }}
-                            <italic>({{ histori.Catatan }})</italic>
-                        </p>
+                                {{ index + 1 }}. {{ histori.Namastatus }} oleh {{ histori.Acc_by }} pada tanggal {{
+                                    histori.Tanggal_accnew }}
+                                ({{ histori.Catatan }})
+                            </p>
+
+                            <p v-else
+                            style="font-family: Lexend-Regular;">
+                                {{ index + 1 }}. {{ histori.Namastatus }} oleh {{ histori.Acc_by }} pada tanggal {{
+                                    histori.Tanggal_accnew }}
+                            </p>
+                        </div>
                     </div>
                     <div v-else>
                         <p style="font-family: Lexend-Regular; margin-right: 10px; text-align: center">Peminjaman sedang

@@ -14,8 +14,8 @@
                     <v-col class="text-subtitle-1 text-center" cols="12" style="font-family: Lexend-Regular;">
                         Memuat halaman  
                     </v-col>
-                    <v-col cols="6">
-                        <v-progress-linear color="#0D47A1" height="6" indeterminate rounded></v-progress-linear>
+                    <v-col cols="1">
+                        <v-progress-circular color="#0D47A1" indeterminate></v-progress-circular>
                     </v-col>
                 </v-row>
             </v-container>
@@ -86,10 +86,10 @@
                                                     gambar>></v-btn>
                                         </div>
                                     </div>
-                                    <v-img v-if="room.Foto != null" :src="'../storage/' + room.Foto[0]"
-                                        style="width: 200px; height: 400px;" cover></v-img>
+                                    <v-img v-if="room.Foto != null" :src="'../storage/' + room.Foto[0]"  :width="200" :height="400"
+                                        cover></v-img>
                                     <v-img v-else src="../storage/ruangan/no-image.png"
-                                        style="width: 200px; height: 400px;" cover></v-img>
+                                        :width="200" :height="400" cover></v-img>
                                 </div>
                             </v-card>
                         </v-col>

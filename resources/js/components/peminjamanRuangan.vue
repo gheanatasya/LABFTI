@@ -87,7 +87,7 @@
                   Cek Ruangan</v-btn>
 
                 <v-btn :loading="item.loading" v-else
-                  @click="availableRoomDosen(item.tanggalAwal, item.tanggalSelesai, index), fetchAlatDosen(item.tanggalAwal, item.tanggalSelesai, index)"
+                  @click="availableRoomDosen(item.tanggalAwal, item.tanggalSelesai, index), fetchAlat(item.tanggalAwal, item.tanggalSelesai, index)"
                   style="text-transform: none; width: 120px; margin-left: 10px; margin-top: 80px; font-size: 12px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
                   color="#0D47A1">
                   Cek Ruangan</v-btn>
@@ -222,16 +222,15 @@
                 <div v-bind="props" :style="{ backgroundColor: isHovering ? '#BBDEFB' : '#E3F2FD' }">
                   <v-row align="center">
                     <v-col cols="auto">
-                      <v-img :width="200" cover src="../picture/fti-ukdw.png"></v-img>
+                      <v-img :width="200" :height="150" cover :src="'../storage/' + ruangan.Foto[0]"></v-img>
                     </v-col>
                     <v-col>
                       <div class="sebelah">
                         <p>{{ ruangan.Nama_ruangan }}</p>
-                        <p>{{ ruangan.Lokasi }} <v-icon icon="mdi-account"></v-icon> {{ ruangan.Kapasitas }} <v-icon
-                            icon="mdi-projector"></v-icon> Proyektor
+                        <p><v-icon icon="mdi-map-marker"></v-icon> {{ ruangan.Lokasi }} <v-icon icon="mdi-account"></v-icon> {{ ruangan.Kapasitas }}
                         </p>
                         <p> {{ ruangan.Kategori }} </p>
-                        <router-link to="/ruangan">Lihat detail</router-link>
+                        <p style="text-decoration: underline; cursor: pointer; color: #0D47A1" @click="tampilkanDetail(ruangan.Nama_ruangan, ruangan.Lokasi, ruangan.Kapasitas, ruangan.Kategori, ruangan.fasilitas)">Lihat selengkapnya >>></p>
                       </div>
                     </v-col>
                   </v-row>
@@ -278,6 +277,24 @@
           </v-card-actions>
         </v-card>
       </v-overlay>
+
+      <v-dialog v-model="detailRuangan" max-width="400" persistent>
+        <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 400px; height: 250px;">
+            <v-card-title style="font-family: 'Lexend-Medium'; text-align: center;">
+                {{ detailRoom.Nama_ruangan }}</v-card-title>
+            <v-card-text style="text-align: left;">
+                <p>Lokasi: {{ detailRoom.Lokasi }}</p>
+                <p>Kapasitas: {{ detailRoom.Kapasitas }}</p>
+                <p>Kategori: {{ detailRoom.Kategori }}</p>
+                <p>Fasilitas: {{ detailRoom.fasilitas }}</p>
+            </v-card-text> 
+            <v-card-actions style="justify-content:center;">
+                <v-btn @click="detailRuangan = false"
+                    style="position: absolute; top: 0; right: 0; margin-top: 17px;"><v-icon
+                        style="font-size: 30px;">mdi-close-circle</v-icon></v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
     </div>
 
     <footerPage></footerPage>
@@ -307,6 +324,14 @@ export default {
     const dialog = ref(false);
     const Nohp = ref('');
     const dialogTambahNomor = ref(false);
+    const detailRuangan = ref(false);
+    const detailRoom = ref({
+      Nama_ruangan: '',
+      Lokasi: '',
+      Kapasitas: '',
+      Kategori: '',
+      fasilitas: ''
+    })
 
     const form = reactive([
       {
@@ -895,7 +920,18 @@ export default {
       }
     }
 
-    return { form, loading, dialog, Nohp, dialogTambahNomor, addNewForm, removeForm, fetchAlat, fetchAlatDosen, saveItem, availableRoom, availableRoomDosen, tambahAlat, hapusAlat };
+    const tampilkanDetail = (Nama_ruangan, Lokasi, Kapasitas, Kategori, fasilitas) => {
+      detailRuangan.value = true;
+      detailRoom.value = {
+        Nama_ruangan,
+        Lokasi,
+        Kapasitas,
+        Kategori,
+        fasilitas
+      }
+    }
+
+    return { detailRuangan, detailRoom, form, loading, dialog, Nohp, dialogTambahNomor, tampilkanDetail, addNewForm, removeForm, fetchAlat, fetchAlatDosen, saveItem, availableRoom, availableRoomDosen, tambahAlat, hapusAlat };
   },
   data() {
     return {

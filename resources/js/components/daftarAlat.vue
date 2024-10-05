@@ -10,8 +10,8 @@
                 <v-col class="text-subtitle-1 text-center" cols="12" style="font-family: Lexend-Regular;">
                     Memuat halaman
                 </v-col>
-                <v-col cols="6">
-                    <v-progress-linear color="#0D47A1" height="6" indeterminate rounded></v-progress-linear>
+                <v-col cols="1">
+                    <v-progress-circular color="#0D47A1" indeterminate></v-progress-circular>
                 </v-col>
             </v-row>
         </v-container>

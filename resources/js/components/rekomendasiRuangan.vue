@@ -57,7 +57,7 @@
                     <v-col v-for="(room, index) in this.fixRooms" :key="index" cols="5" style="margin-left: 0px;">
                         <v-card
                             style="width: 300px; background-color: #BBDEFB; border-radius: 20px; margin-left: 25px;">
-                            <v-img :src="'../storage/' + room.Foto[0]" style="width: 40%; height: 100%; margin-left: 90px;"
+                            <v-img :src="'../storage/' + room.Foto[0]" :width="300" :height="200"
                                 cover></v-img>
                             <v-card-text style="font-size: 18px;">
                                 <p>{{ room.Nama_ruangan }}</p>

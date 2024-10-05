@@ -64,7 +64,7 @@
                             </v-btn>
                         </template>
 
-                        <v-list style="width: 600px; height: 500px;" v-if="this.getData === false && this.allNotifications.length > 0">
+                        <v-list style="font-family: 'Lexend-Regular'; width: 600px; height: 500px;" v-if="this.getData === false && this.allNotifications.length > 0">
                             <v-list-item style="margin-bottom: -10px;">
                                 <v-btn @click="deleteAll(this.UserID)" style="color: #0D47A1; margin-left: 90px; background: none;
                             text-decoration: underline; box-shadow: none; text-transform: none; position: absolute; right: 0; margin-right: 5px; top: 0;
@@ -509,7 +509,7 @@
                             <v-row align-content="center" class="fill-height" justify="center">
                                 <v-col class="text-subtitle-1 text-center" cols="12"
                                     style="font-family: Lexend-Regular;">
-                                    Tunggu sebentar ya...
+                                    
                                 </v-col>
                                 <v-col cols="1">
                                     <v-progress-circular color="#0D47A1" indeterminate></v-progress-circular> </v-col>

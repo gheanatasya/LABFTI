@@ -69,13 +69,13 @@
                                 <v-btn :loading="item.loading"
                                     v-if="User_role === 'Mahasiswa' || User_role === 'Petugas'"
                                     @click="fetchAlat(item.tanggalAwal, item.tanggalSelesai, index)"
-                                    style="width: 120px; margin-left: 10px; margin-top: 80px; font-size: 11px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
+                                    style="text-transform: none;width: 120px; margin-left: 10px; margin-top: 80px; font-size: 12px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
                                     color="#0D47A1">
                                     Cek Alat</v-btn>
 
                                 <v-btn :loading="item.loading" v-else
-                                    @click="fetchAlatDosen(item.tanggalAwal, item.tanggalSelesai, index)"
-                                    style="width: 120px; margin-left: 10px; margin-top: 80px; font-size: 11px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
+                                    @click="fetchAlat(item.tanggalAwal, item.tanggalSelesai, index)"
+                                    style="text-transform: none; width: 120px; margin-left: 10px; margin-top: 80px; font-size: 12px; border-radius: 20px; margin-right:20px; padding-left: 50px; padding-right: 50px;"
                                     color="#0D47A1">
                                     Cek Alat</v-btn>
                             </div>
