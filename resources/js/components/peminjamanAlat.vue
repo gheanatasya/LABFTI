@@ -87,7 +87,7 @@
                                 </template>
                             </v-textarea>
 
-                            <div v-for="(alatItem, alatIndex) in item.alat" :key="alatIndex"
+                            <!-- <div v-for="(alatItem, alatIndex) in item.alat" :key="alatIndex"
                                 style="display: flex; align-items: center; grid-column: span 4; width: 145%;">
                                 <v-combobox v-model="alatItem.nama" :items="item.items" label="Alat yang ingin dipinjam"
                                     clearable variant="outlined"
@@ -117,64 +117,38 @@
                                 <v-btn @click="hapusAlat(index, alatIndex)" style="font-size: 18px; margin-left: -90px; margin-right: 100px; border-radius: 50%; width: 60px; height: 60px; background-color: none; box-shadow: none;
                             margin-top: -18px;">
                                     <v-icon>mdi-minus-circle</v-icon></v-btn>
-                            </div>
+                            </div> -->
 
                             <div style="margin-left: 303px; margin-right: -80px;">
-                                <label for="isPersonal">Apakah peminjaman dilakukan untuk keperluan pribadi (rapat,
-                                    belajar,
-                                    skripsian, kerja
-                                    kelompok)? <v-icon
+                                <label for="keperluan">
+                                    Keperluan peminjaman untuk <v-icon
                                         style="color: red; font-size: 15px;">mdi-asterisk</v-icon></label>
-                                <v-radio-group v-model="item.selectedOptionPersonal" id="isPersonal">
+                                <v-radio-group v-model="item.selectedOption">
                                     <v-row>
                                         <v-col cols="auto">
-                                            <v-radio label="Ya" value="True"></v-radio>
+                                            <v-radio label="Personal" value="personalTrue"></v-radio>
                                         </v-col>
                                         <v-col cols="auto">
-                                            <v-radio label="Tidak" value="False"></v-radio>
-                                        </v-col>
-                                    </v-row>
-                                </v-radio-group>
-
-                                <label for="isOrganisation">Apakah peminjaman dilakukan untuk keperluan
-                                    organisasi (contoh: BPMFTI, BEMFTI)? <v-icon
-                                        style="color: red; font-size: 15px;">mdi-asterisk</v-icon></label>
-                                <v-radio-group v-model="item.selectedOptionOrganisation" id="isOrganisation">
-                                    <v-row>
-                                        <v-col cols="auto">
-                                            <v-radio label="Ya" value="True"></v-radio>
+                                            <v-radio label="Organisasi" value="organisationTrue"></v-radio>
                                         </v-col>
                                         <v-col cols="auto">
-                                            <v-radio label="Tidak" value="False"></v-radio>
-                                        </v-col>
-                                    </v-row>
-                                </v-radio-group>
-
-                                <label for="isEksternal">Apakah peminjaman digunakan bersama dengan pihak Eksternal /
-                                    Luar
-                                    Kampus? <v-icon style="color: red; font-size: 15px;">mdi-asterisk</v-icon></label>
-                                <v-radio-group v-model="item.selectedOptionEksternal" id="isEksternal">
-                                    <v-row>
-                                        <v-col cols="auto">
-                                            <v-radio label="Ya" value="True"></v-radio>
-                                        </v-col>
-                                        <v-col cols="auto">
-                                            <v-radio label="Tidak" value="False"></v-radio>
+                                            <v-radio label="Eksternal" value="eksternalTrue"></v-radio>
                                         </v-col>
                                     </v-row>
                                 </v-radio-group>
                             </div>
 
-                            <v-file-input type="file" accept="file/pdf" v-model="item.dokumen" :prepend-inner-icon="'mdi-paperclip'" prepend-icon=""
+                            <v-file-input type="file" accept="file/pdf" v-model="item.dokumen"
+                                :prepend-inner-icon="'mdi-paperclip'" prepend-icon=""
                                 style="width: 505px; margin-left: 303px; margin-top: 5px;" variant="outlined"
                                 label="Surat Peminjaman" ref="dokumenPendukung" :id="'dokumen-' + index"></v-file-input>
 
                             <div
                                 style="margin-left: 380px; margin-right: 0px; margin-bottom: 50px; margin-top: 20px; text-align: center;">
                                 <v-btn @click="addNewForm(index)" id="tambah"
-                                    style="margin-right: 10px; margin-left: -5px;" prepend-icon=mdi-plus-circle
+                                    style="margin-right: 10px; margin-left: -5px; text-transform: none" prepend-icon=mdi-plus-circle
                                     color="grey">Tambah Form</v-btn>
-                                <v-btn @click="removeForm(index)" id="hapus" prepend-icon="mdi-minus-circle"
+                                <v-btn @click="removeForm(index)" id="hapus" prepend-icon="mdi-minus-circle" style="text-transform: none"
                                     color="error">Hapus
                                     Form</v-btn>
                             </div>
@@ -182,7 +156,8 @@
 
                         <v-checkbox label="Apabila terjadi kerusakan alat atau kehilangan alat 
                         maka bersedia untuk ganti rugi sesuai dengan persyaratan yang telah ditentukan." value="true"
-                            style="margin-left: 295px; margin-right: -80px; margin-top: -20px;" v-model="ketentuan"></v-checkbox>
+                            style="margin-left: 295px; margin-right: -80px; margin-top: -20px;"
+                            v-model="ketentuan"></v-checkbox>
 
                         <v-btn @click="dialogTambahNomor = true" id="simpan"
                             style="margin-left: 430px; margin-top: -5px; border-radius: 20px; font-size: 15px; width: 250px; text-transform: none;"
@@ -193,7 +168,7 @@
             </v-container>
 
             <v-container
-                style="font-family: Lexend-Regular; width: 45%; margin-left: 300px; margin-right: 20px; margin-bottom: 0px; height: 400px;">
+                style="font-family: Lexend-Regular; width: 50%; margin-left: 300px; margin-right: 20px; margin-bottom: 0px; height: 400px;">
                 <div v-for="(item, index) in form" :key="'alattersedia-' + index" :id="'alattersedia-' + index"
                     style="border-radius: 10px; border: 1px solid; padding: 30px; margin-bottom: 750px; height: 550px; overflow-y: auto; margin-bottom: 280px;">
                     <p v-if="item.itemsAll.length > 0"
@@ -212,20 +187,41 @@
                                     <th class="text-center" style="background-color: #BBDEFB; width: 20px;">No</th>
                                     <th class="text-center" style="background-color: #BBDEFB">Nama Alat
                                     </th>
-                                    <th class="text-center" style="background-color: #BBDEFB;">Jumlah
+                                    <th class="text-center" style="background-color: #BBDEFB;">Stok
                                     </th>
                                     <th class="text-center" style="background-color: #BBDEFB">Perlu Surat
+                                    </th>
+                                    <th class="text-center" style="background-color: #BBDEFB">Jumlah Pinjam
+                                    </th>
+                                    <th class="text-center" style="background-color: #BBDEFB">Aksi
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="(alat, index) in item.itemsAll" :key="index"
+                                <tr v-for="(alatt, indexAlat) in item.itemsAll" :key="indexAlat"
                                     style="background-color: white; font-family: 'Lexend-Regular; font-size: 15px;">
-                                    <td style="width: 20px; text-align: center;"> {{ index + 1 }}
+                                    <td style="width: 20px; text-align: center;"> {{ indexAlat + 1 }}
                                     </td>
-                                    <td style="width: 40px; "> {{ alat.NamaAlat }} </td>
-                                    <td style="width: 20px; text-align: center;"> {{ alat.Jumlah_ketersediaan }} </td>
-                                    <td style="width: 50px; "> {{ alat.WajibSuratString }} </td>
+                                    <td style="width: 40px; "> {{ alatt.NamaAlat }} </td>
+                                    <td style="width: 20px; text-align: center;"> {{ alatt.Jumlah_ketersediaan }} </td>
+                                    <td style="width: 50px; "> {{ alatt.WajibSuratString }} </td>
+                                    <td style="width: 100px; ">
+                                        <v-text-field type="number" v-model="alatt.jumlahPinjam" variant="solo"
+                                            style="margin-top: 10px;" v-if="alatt.pinjam === false" min="1"
+                                            :max="alatt.Jumlah_ketersediaan"></v-text-field>
+
+                                        <v-text-field type="number" v-model="alatt.jumlahPinjam" variant="solo"
+                                            style="margin-top: 10px;" v-if="alatt.pinjam === true" min="1"
+                                            :max="alatt.Jumlah_ketersediaan" readonly></v-text-field>
+                                    </td>
+                                    <td style="width: 50px; ">
+                                        <v-chip v-if="alatt.pinjam === false"
+                                            @click="pilihAlat(alatt, index, indexAlat)"
+                                            style="color: #0D47A1;">Pilih</v-chip>
+                                        <v-chip v-if="alatt.pinjam === true"
+                                            @click="batalkanAlat(alatt, index, indexAlat)"
+                                            style="color: #0D47A1; border: 3px solid #0D47A1;  box-shadow: none; background-color: none;">Batal</v-chip>
+                                    </td>
                                 </tr>
                             </tbody>
                         </v-table>
@@ -312,6 +308,7 @@ export default {
                 selectedOptionPersonal: '',
                 selectedOptionEksternal: '',
                 selectedOptionOrganisation: '',
+                selectedOption: '',
                 items: [],
                 itemsAll: [],
                 daftarAlat: [],
@@ -361,6 +358,7 @@ export default {
                 selectedOptionPersonal: '',
                 selectedOptionEksternal: '',
                 selectedOptionOrganisation: '',
+                selectedOption: '',
                 items: [],
                 itemsAll: [],
                 alat: reactive([{
@@ -399,6 +397,7 @@ export default {
                     selectedOptionPersonal: '',
                     selectedOptionEksternal: '',
                     selectedOptionOrganisation: '',
+                    selectedOption: '',
                     items: [],
                     itemsAll: [],
                     alat: reactive([{
@@ -436,14 +435,14 @@ export default {
                 for (let i = 0; i < form.length; i++) {
                     const pdfRegex1 = /\.pdf$/i;
                     if ((form[i].tanggalSelesai === '') || (form[i].tanggalAwal === '') || (form[i].alat.length === 0) || (form[i].alat.length === 1 && form[i].alat[0].nama === '')
-                        || (form[i].selectedOptionPersonal === '') || (form[i].selectedOptionOrganisation === '') || (form[i].selectedOptionEksternal === '')
+                        || (form[i].selectedOption === '')
                         || (form[i].keterangan === '') || (Nohp.value === '')) {
                         alert('Terdapat data yang kosong!');
                         loading.value = false;
                         return
                     }
 
-                    if (form[i].selectedOptionPersonal === '' || form[i].selectedOptionOrganisation === '' || form[i].selectedOptionEksternal === '') {
+                    /* if (form[i].selectedOptionPersonal === '' || form[i].selectedOptionOrganisation === '' || form[i].selectedOptionEksternal === '') {
                         alert('Pilihlah salah satu dari peminjaman untuk Personal, Organisasi, dan Eksternal!');
                         loading.value = false;
                         return
@@ -467,16 +466,16 @@ export default {
                         alert('Pilihlah salah satu dari peminjaman untuk Organisasi atau Eksternal!');
                         loading.value = false;
                         return
-                    }
+                    } */
 
                     console.log(form[i].dokumen);
 
-                    if (form[i].selectedOptionEksternal === 'True' && form[i].dokumen === null) {
+                    if (form[i].selectedOption === 'eksternalTrue' && form[i].dokumen === null) {
                         alert('Peminjaman dengan pihak Eksternal memerlukan surat pendukung peminjaman!');
                         loading.value = false;
                         return
                     }
-                    if (form[i].selectedOptionOrganisation === 'True' && form[i].dokumen === null) {
+                    if (form[i].selectedOption === 'organisationTrue' && form[i].dokumen === null) {
                         alert('Peminjaman dengan pihak Organisasi memerlukan surat pendukung peminjaman!');
                         loading.value = false;
                         return
@@ -509,12 +508,12 @@ export default {
                         }
                     }
 
-                    if (form[i].selectedOptionEksternal === 'False' && form[i].selectedOptionOrganisation === 'False' && form[i].alat.length === total) {
+                    if (form[i].selectedOption === 'personalTrue' && form[i].alat.length === total) {
                         form[i].dokumen = null;
                         console.log('berhasil')
                     }
 
-                    if (form[i].selectedOptionEksternal === 'True' && form[i].dokumen !== null) {
+                    if (form[i].selectedOption === 'eksternalTrue' && form[i].dokumen !== null) {
                         if (pdfRegex1.test(form[i].dokumen.name)) {
                             console.log('aman')
                         } else {
@@ -524,7 +523,7 @@ export default {
                         }
                     }
 
-                    if (form[i].selectedOptionOrganisation === 'True' && form[i].dokumen !== null) {
+                    if (form[i].selectedOption === 'organisationTrue' && form[i].dokumen !== null) {
                         if (pdfRegex1.test(form[i].dokumen.name)) {
                             console.log('aman')
                         } else {
@@ -561,6 +560,7 @@ export default {
                         selectedOptionPersonal: form[i].selectedOptionPersonal,
                         selectedOptionEksternal: form[i].selectedOptionEksternal,
                         selectedOptionOrganisation: form[i].selectedOptionOrganisation,
+                        selectedOption: form[i].selectedOption,
                         alat: form[i].alat,
                         keterangan: form[i].keterangan,
                         dokumen: null,
@@ -611,6 +611,7 @@ export default {
                             form[i].selectedOptionPersonal = '',
                             form[i].selectedOptionEksternal = '',
                             form[i].selectedOptionOrganisation = '',
+                            form[i].selectedOption = '',
                             form[i].items = [],
                             form[i].itemsAll = [],
                             form[i].daftarAlat = [],
@@ -636,6 +637,7 @@ export default {
                             form[i].selectedOptionPersonal = '',
                             form[i].selectedOptionEksternal = '',
                             form[i].selectedOptionOrganisation = '',
+                            form[i].selectedOption = '',
                             form[i].items = [],
                             form[i].itemsAll = [],
                             form[i].daftarAlat = [],
@@ -657,6 +659,9 @@ export default {
 
         const fetchAlat = async (tanggalAwal, tanggalSelesai, index) => {
             form[index].loading = true;
+            const today = new Date();
+            const startDate = new Date(tanggalAwal);
+            const endDate = new Date(tanggalSelesai);
             if (tanggalAwal > tanggalSelesai) {
                 alert('Tanggal awal peminjaman melebihi tanggal selesai peminjaman!');
                 form[index].loading = false;
@@ -667,6 +672,10 @@ export default {
                 return;
             } else if (tanggalAwal === tanggalSelesai) {
                 alert('Tanggal tidak boleh sama persis!')
+                form[index].loading = false;
+                return
+            } else if (startDate < today || endDate < today) {
+                alert('Tidak boleh melebihi tanggal hari ini!');
                 form[index].loading = false;
                 return
             }
@@ -698,6 +707,9 @@ export default {
 
         const fetchAlatDosen = async (tanggalAwal, tanggalSelesai, index) => {
             form[index].loading = true;
+            const today = new Date();
+            const startDate = new Date(tanggalAwal);
+            const endDate = new Date(tanggalSelesai);
             if (tanggalAwal > tanggalSelesai) {
                 alert('Tanggal awal peminjaman melebihi tanggal selesai peminjaman!');
                 form[index].loading = false;
@@ -708,6 +720,10 @@ export default {
                 return;
             } else if (tanggalAwal === tanggalSelesai) {
                 alert('Tanggal tidak boleh sama persis!')
+                form[index].loading = false;
+                return
+            } else if (startDate < today || endDate < today) {
+                alert('Tidak boleh melebihi tanggal hari ini!');
                 form[index].loading = false;
                 return
             }
@@ -774,7 +790,47 @@ export default {
             }
         }
 
-        return { form, loading, dialog, ketentuan, dialogTambahNomor, addNewForm, removeForm, fetchAlat, saveItem, tambahAlat, hapusAlat, fetchAlatDosen, fetchAlat, Nohp }
+        const pilihAlat = (alat, index, indexAlat) => {
+            if (alat.jumlahPinjam > alat.Jumlah_ketersediaan) {
+                alert('Jumlah pinjam melebihi ketersediaan!');
+                return
+            }
+
+            if (alat.jumlahPinjam <= 0) {
+                alert('Jumlah pinjam harus lebih dari 0!');
+                return
+            }
+
+            if (!Number.isInteger(Number(alat.jumlahPinjam))) {
+                alert('Jumlah pinjam alat tidak valid!');
+                return
+            }
+
+            /* if (alat.WajibSurat === true && form[index].dokumen === null) {
+                alert('Alat ' + form[i].alat[j].nama + ' memerlukan surat peminjaman! Silahkan mengupload surat pendukung peminjaman alat atau lakukan peminjaman alat secara terpisah.');
+                loading.value = false;
+                return;
+            } */
+
+            form[index].itemsAll[indexAlat].pinjam = true;
+            form[index].alat.push({
+                nama: alat.NamaAlat,
+                jumlahPinjam: alat.jumlahPinjam,
+                maxValue: alat.Jumlah_ketersediaan
+            });
+        }
+
+        const batalkanAlat = (alat, index, indexAlat) => {
+            form[index].itemsAll[indexAlat].pinjam = false;
+
+            for (let i = 0; i < form[index].alat.length; i++) {
+                if (form[index].alat[i].nama === alat.NamaAlat) {
+                    form[index].alat.splice(i, 1);
+                }
+            }
+        }
+
+        return { form, loading, dialog, ketentuan, dialogTambahNomor, batalkanAlat, pilihAlat, addNewForm, removeForm, fetchAlat, saveItem, tambahAlat, hapusAlat, fetchAlatDosen, fetchAlat, Nohp }
     },
     data() {
         return {

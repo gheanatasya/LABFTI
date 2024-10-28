@@ -27,6 +27,7 @@ use App\Notifications\NewMessage;
 use DateTime;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class PeminjamanRuanganBridgeController extends Controller
 {
@@ -79,15 +80,29 @@ class PeminjamanRuanganBridgeController extends Controller
         $ruanganid = Ruangan::where('Nama_ruangan', $input['selectedRuangan'])->first();
         $idroom = $ruanganid->RuanganID;
 
+        if ($input['selectedOption'] === 'personalTrue'){
+            $keperluanpersonal = 'True';
+            $keperluanorganisasi = 'False';
+            $keperluaneksternal = 'False';
+        } else if ($input['selectedOption'] === 'organisationTrue'){
+            $keperluanpersonal = 'False';
+            $keperluanorganisasi = 'True';
+            $keperluaneksternal = 'False';
+        } else if ($input['selectedOption'] === 'eksternalTrue'){
+            $keperluanpersonal = 'False';
+            $keperluanorganisasi = 'False';
+            $keperluaneksternal = 'True';
+        } 
+
         $peminjaman_ruangan = Peminjaman_Ruangan_Bridge::create([
             'PeminjamanID' => $peminjamanid,
             'RuanganID' => $idroom,
             'Tanggal_pakai_awal' => $input['tanggalAwal'],
             'Tanggal_pakai_akhir' => $input['tanggalSelesai'],
             'Keterangan' => $input['keterangan'],
-            'Is_Personal' => $input['selectedOptionPersonal'],
-            'Is_Organisation' => $input['selectedOptionOrganisation'],
-            'Is_Eksternal' => $input['selectedOptionEksternal'],
+            'Is_Personal' => $keperluanpersonal,
+            'Is_Organisation' => $keperluanorganisasi,
+            'Is_Eksternal' => $keperluaneksternal,
             'DokumenID' => null,
             'Prioritas' => $nilaiprioritas
         ]);
@@ -282,9 +297,9 @@ class PeminjamanRuanganBridgeController extends Controller
             $dekan = $persetujuan->Dekan_Approve;
             $wd2 = $persetujuan->WD2_Approve;
             $wd3 = $persetujuan->WD3_Approve;
-            $kepala = $persetujuan->Kepala_Lab;
-            $koordinator = $persetujuan->Koordinator_Lab;
-            $petugas = $persetujuan->Petugas;
+            $kepala = $persetujuan->Kepala_Approve;
+            $koordinator = $persetujuan->Koordinator_Approve;
+            $petugas = $persetujuan->Petugas_Approve;
 
             if ($organisasi === true) {
                 if ($wd3 === true && $kepala === true && $koordinator === true && $petugas === true) {
@@ -568,7 +583,7 @@ class PeminjamanRuanganBridgeController extends Controller
             $daftarrelasi[] = $peminjamanalatid;
         }
 
-        if ($peminjaman) {
+        if (count($peminjaman) > 0) {
             return response()->json(['relasi' => true, 'daftarrelasi' => $daftarrelasi]);
         } else {
             return response()->json(['relasi' => false]);
@@ -578,16 +593,6 @@ class PeminjamanRuanganBridgeController extends Controller
     // cek jadwal tabrakan
     public function jadwalPeminjaman($Tanggal_pakai_awal, $Tanggal_pakai_akhir)
     {
-        //$statuspeminjaman = Status_Peminjaman::whereNot('StatusID', 7)->get();
-        /* $peminjamanruangan = Peminjaman_Ruangan_Bridge::where('Tanggal_pakai_awal', "<", $Tanggal_pakai_awal)
-            ->where('Tanggal_pakai_akhir', ">", $Tanggal_pakai_akhir)
-            ->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
-                $query->where('Tanggal_pakai_awal', '>', $Tanggal_pakai_awal)
-                    ->where('Tanggal_pakai_akhir', '<', $Tanggal_pakai_akhir);
-            })->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
-                $query->where('Tanggal_pakai_awal', '<', $Tanggal_pakai_awal)
-                    ->where('Tanggal_pakai_akhir', '>', $Tanggal_pakai_akhir);
-            })->pluck('RuanganID')->unique(); */
         $peminjamanruangan = Peminjaman_Ruangan_Bridge::where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_akhir)
             ->where('Tanggal_pakai_akhir', '>=', $Tanggal_pakai_awal)->pluck('RuanganID')->unique();
 
@@ -2382,22 +2387,6 @@ class PeminjamanRuanganBridgeController extends Controller
     // cek jadwal tabrakan untuk dosen
     public function jadwalPeminjamanforDosen($Tanggal_pakai_awal, $Tanggal_pakai_akhir)
     {
-        //$statuspeminjaman = Status_Peminjaman::whereNot('StatusID', 7)->get();
-        /* $peminjamanruangan = Peminjaman_Ruangan_Bridge::orWhere(function ($query) {
-            $query->where('Prioritas', 1)->whereNotNull('DokumenID');
-        })
-            ->orWhere(function ($query) {
-                $query->where('Prioritas', 2);
-            })->where('Tanggal_pakai_awal', "<=", $Tanggal_pakai_awal)
-            ->where('Tanggal_pakai_akhir', ">=", $Tanggal_pakai_akhir)
-            ->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
-                $query->where('Tanggal_pakai_awal', '>', $Tanggal_pakai_awal)
-                    ->where('Tanggal_pakai_akhir', '<=', $Tanggal_pakai_akhir);
-            })->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
-                $query->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_awal)
-                    ->where('Tanggal_pakai_akhir', '>', $Tanggal_pakai_akhir);
-            })
-            ->pluck('RuanganID')->unique(); */
         $peminjamanruanganpertama = Peminjaman_Ruangan_Bridge::where('Prioritas', 2)
             ->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_akhir)
             ->where('Tanggal_pakai_akhir', '>=', $Tanggal_pakai_awal)
@@ -2426,17 +2415,10 @@ class PeminjamanRuanganBridgeController extends Controller
             $detailRoom[] = $ambildata;
         }
 
-        $peminjamanruangan2 = Peminjaman_Ruangan_Bridge::where('Tanggal_pakai_awal', "<=", $Tanggal_pakai_awal)
-            ->where('Tanggal_pakai_akhir', ">=", $Tanggal_pakai_akhir)
+        $peminjamanruangan2 = Peminjaman_Ruangan_Bridge::where('Tanggal_pakai_awal', "<=", $Tanggal_pakai_akhir)
+            ->where('Tanggal_pakai_akhir', ">=", $Tanggal_pakai_awal)
             ->where('Prioritas', 1)
             ->where('DokumenID', null)
-            ->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
-                $query->where('Tanggal_pakai_awal', '>', $Tanggal_pakai_awal)
-                    ->where('Tanggal_pakai_akhir', '<=', $Tanggal_pakai_akhir);
-            })->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
-                $query->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_awal)
-                    ->where('Tanggal_pakai_akhir', '>', $Tanggal_pakai_akhir);
-            })
             ->get();
 
         $datatabrak = [];
@@ -2596,6 +2578,10 @@ class PeminjamanRuanganBridgeController extends Controller
     public function cancelPeminjaman($Peminjaman_Ruangan_ID)
     {
         $peminjamanruangan = Peminjaman_Ruangan_Bridge::where('Peminjaman_Ruangan_ID', $Peminjaman_Ruangan_ID)->first();
+        $statuspeminjaman = Status_Peminjaman::where('Peminjaman_Ruangan_ID', $Peminjaman_Ruangan_ID)->first();
+        $statuspeminjamanid = $statuspeminjaman->Status_PeminjamanID;
+        $activitylog = Activity_Log::where('Status_PeminjamanID', $statuspeminjamanid)->first();
+        $persetujuan = Persetujuan::where('Peminjaman_Ruangan_ID', $Peminjaman_Ruangan_ID)->first();
         $peminjamanid = $peminjamanruangan->PeminjamanID;
         $peminjaman = Peminjaman::where('PeminjamanID', $peminjamanid)->first();
         $peminjamid = $peminjaman->PeminjamID;
@@ -2619,13 +2605,23 @@ class PeminjamanRuanganBridgeController extends Controller
         Mail::to($email)->send(new CancelBooking($dataEmail));
 
         $title = 'Pembatalan Peminjaman Ruangan';
-        $body = 'Mohon maaf, peminjaman ruangan ' . $namaruangan . ' pada ' . $tanggalAwal . ' sampai dengan ' . $tanggalSelesai . ' telah dibatalkan. Silahkan melakukan peminjamanruangan yang lain. Terima kasih.';
+        $body = 'Mohon maaf, peminjaman ruangan ' . $namaruangan . ' pada ' . $tanggalAwal . ' sampai dengan ' . $tanggalSelesai . ' telah dibatalkan. Silahkan melakukan peminjaman ruangan yang lain. Terima kasih.';
 
         $peminjam->notify(new NewMessage($title, $body));
         $peminjam->notify(new CancelNotification($dataEmail));
 
-        /*         $peminjamanruangan->delete();
- */
+        if ($activitylog) {
+            $activitylogdelete = DB::table('activity_log')
+                    ->where('Status_PeminjamanID', $statuspeminjamanid)
+                    ->delete();
+        }
+
+        if ($persetujuan !== null){
+            $persetujuan->delete();
+        }
+        
+        $statuspeminjaman->delete();
+        $peminjamanruangan->delete();
         return response()->json(['message' => 'Peminjaman ruangan telah dibatalkan.']);
     }
 }

@@ -40,7 +40,6 @@ class LoginController extends Controller
             'User_role' => $role,
             'Total_batal' => $totalbatal
         ];
-
         return response($response, 201);
     }
 

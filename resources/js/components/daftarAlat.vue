@@ -221,7 +221,7 @@
                     <v-text-field label="Kode Detail Alat" v-model="this.detailalatEdit.kodeDetailAlat"
                         variant="outlined" style="margin-right: 100px; margin-left:40px;"></v-text-field>
 
-                    <v-select v-model="this.detailalatEdit.statusKebergunaan" :items="['Dapat Digunakan', 'Rusak']"
+                    <v-select v-model="this.detailalatEdit.statusKebergunaan" :items="['Dapat Digunakan', 'Tidak Dapat Digunakan', 'Rusak']"
                         persistent-hint variant="outlined" style="margin-right: 100px; margin-left:40px;"
                         label="Status Kebergunaan">
                     </v-select>
@@ -320,7 +320,7 @@
                         variant="outlined" style="margin-right: 100px; margin-left:40px;"></v-text-field>
                     <v-text-field label="Nama Detail Alat" v-model="this.detailalatTambah.namaDetailAlat"
                         variant="outlined" style="margin-right: 100px; margin-left:40px;"></v-text-field>
-                    <v-select v-model="this.detailalatTambah.statusKebergunaan" :items="['Dapat Digunakan', 'Rusak']"
+                    <v-select v-model="this.detailalatTambah.statusKebergunaan" :items="['Dapat Digunakan', 'Tidak Dapat Digunakan', 'Rusak']"
                         persistent-hint variant="outlined" style="margin-right: 100px; margin-left:40px;"
                         label="Status Kebergunaan">
                     </v-select>

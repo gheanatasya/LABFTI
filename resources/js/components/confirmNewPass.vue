@@ -36,8 +36,8 @@ export default {
             konfpass: '',
             dialogReset: true,
             loading: false,
-            show: true,
-            show1: true
+            show: false,
+            show1: false
         }
     },
     methods: {

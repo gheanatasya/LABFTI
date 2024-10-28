@@ -80,15 +80,29 @@ class PeminjamanAlatBridgeController extends Controller
                     ];
                     $detailalat[] = $datanotif;
 
+                    if ($input['selectedOption'] === 'personalTrue') {
+                        $keperluanpersonal = 'True';
+                        $keperluanorganisasi = 'False';
+                        $keperluaneksternal = 'False';
+                    } else if ($input['selectedOption'] === 'organisationTrue') {
+                        $keperluanpersonal = 'False';
+                        $keperluanorganisasi = 'True';
+                        $keperluaneksternal = 'False';
+                    } else if ($input['selectedOption'] === 'eksternalTrue') {
+                        $keperluanpersonal = 'False';
+                        $keperluanorganisasi = 'False';
+                        $keperluaneksternal = 'True';
+                    }
+
                     $peminjaman_alat = Peminjaman_Alat_Bridge::create([
                         'PeminjamanID' => $peminjamanid,
                         'AlatID' => $alatID,
                         'Tanggal_pakai_awal' => $input['tanggalAwal'],
                         'Tanggal_pakai_akhir' => $input['tanggalSelesai'],
                         'Jumlah_pinjam' => $jumlahpinjam,
-                        'Is_Personal' => $input['selectedOptionPersonal'],
-                        'Is_Organisation' => $input['selectedOptionOrganisation'],
-                        'Is_Eksternal' => $input['selectedOptionEksternal'],
+                        'Is_Personal' => $keperluanpersonal,
+                        'Is_Organisation' => $keperluanorganisasi,
+                        'Is_Eksternal' => $keperluaneksternal,
                         'DokumenID' => null,
                         'Keterangan' => $input['keterangan'],
                         'RuanganID' => null,
@@ -222,20 +236,22 @@ class PeminjamanAlatBridgeController extends Controller
             $dekan = $persetujuan->Dekan_Approve;
             $wd2 = $persetujuan->WD2_Approve;
             $wd3 = $persetujuan->WD3_Approve;
-            $kepala = $persetujuan->Kepala_Lab;
-            $koordinator = $persetujuan->Koordinator_Lab;
-            $petugas = $persetujuan->Petugas;
+            $kepala = $persetujuan->Kepala_Approve;
+            $koordinator = $persetujuan->Koordinator_Approve;
+            $petugas = $persetujuan->Petugas_Approve;
 
             if ($organisasi === true) {
                 if ($wd3 === true && $kepala === true && $koordinator === true && $petugas === true) {
-                    $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
-                    $peminjam->Total_batal + 1;
-                    $peminjam->Tanggal_batal_terakhir->$tanggalbatal;
+                    $peminjam = Peminjam::where('PeminjamID', $peminjamid)->first();
+                    $totalbtl = $peminjam->Total_batal;
+                    $peminjam->Total_batal = $totalbtl + 1;
+                    $peminjam->Tanggal_batal_terakhir = $tanggalbatal;
                     $peminjam->save();
                 } elseif ($wd3 === true || $kepala === true || $koordinator === true || $petugas === true) {
-                    $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
-                    $peminjam->Total_batal + 1;
-                    $peminjam->Tanggal_batal_terakhir->$tanggalbatal;
+                    $peminjam = Peminjam::where('PeminjamID', $peminjamid)->first();
+                    $totalbtl = $peminjam->Total_batal;
+                    $peminjam->Total_batal = $totalbtl + 1;
+                    $peminjam->Tanggal_batal_terakhir = $tanggalbatal;
                     $peminjam->save();
                 } /* else {
                     $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
@@ -245,14 +261,16 @@ class PeminjamanAlatBridgeController extends Controller
                 } */
             } elseif ($eksternal === true) {
                 if ($dekan === true && $kepala === true && $koordinator === true && $petugas === true) {
-                    $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
-                    $peminjam->Total_batal + 1;
-                    $peminjam->Tanggal_batal_terakhir->$tanggalbatal;
+                    $peminjam = Peminjam::where('PeminjamID', $peminjamid)->first();
+                    $totalbtl = $peminjam->Total_batal;
+                    $peminjam->Total_batal = $totalbtl + 1;
+                    $peminjam->Tanggal_batal_terakhir = $tanggalbatal;
                     $peminjam->save();
                 } elseif ($dekan === true || $kepala === true || $koordinator === true || $petugas === true) {
-                    $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
-                    $peminjam->Total_batal + 1;
-                    $peminjam->Tanggal_batal_terakhir->$tanggalbatal;
+                    $peminjam = Peminjam::where('PeminjamID', $peminjamid)->first();
+                    $totalbtl = $peminjam->Total_batal;
+                    $peminjam->Total_batal = $totalbtl + 1;
+                    $peminjam->Tanggal_batal_terakhir = $tanggalbatal;
                     $peminjam->save();
                 } /* else {
                     $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
@@ -262,9 +280,10 @@ class PeminjamanAlatBridgeController extends Controller
                 } */
             } elseif ($personal === true) {
                 if ($petugas === true) {
-                    $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
-                    $peminjam->Total_batal + 1;
-                    $peminjam->Tanggal_batal_terakhir->$tanggalbatal;
+                    $peminjam = Peminjam::where('PeminjamID', $peminjamid)->first();
+                    $totalbtl = $peminjam->Total_batal;
+                    $peminjam->Total_batal = $totalbtl + 1;
+                    $peminjam->Tanggal_batal_terakhir = $tanggalbatal;
                     $peminjam->save();
                 } /* elseif ($petugas === false) {
                     $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
@@ -278,20 +297,22 @@ class PeminjamanAlatBridgeController extends Controller
                     $peminjam->save();
                 } */
             } else {
-                $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
+                $peminjam = Peminjam::where('PeminjamID', $peminjamid)->first();
                 $userid = $peminjam->UserID;
                 $user = User::where('UserID', $userid)->first();
                 $role = $user->User_role;
                 if ($role === 'Staff' || $role === 'Dosen' || $role === 'Wakil Dekan 2' || $role === 'Wakil Dekan 3' || $role === 'Dekan' || $role === 'Kepala Lab' || $role === 'Koordinator Lab') {
                     if ($wd2 === true && $kepala === true && $koordinator === true && $petugas === true) {
-                        $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
-                        $peminjam->Total_batal + 1;
-                        $peminjam->Tanggal_batal_terakhir->$tanggalbatal;
+                        $peminjam = Peminjam::where('PeminjamID', $peminjamid)->first();
+                        $totalbtl = $peminjam->Total_batal;
+                        $peminjam->Total_batal = $totalbtl + 1;
+                        $peminjam->Tanggal_batal_terakhir = $tanggalbatal;
                         $peminjam->save();
                     } elseif ($wd2 === true || $kepala === true || $koordinator === true || $petugas === true) {
-                        $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
-                        $peminjam->Total_batal + 1;
-                        $peminjam->Tanggal_batal_terakhir->$tanggalbatal;
+                        $peminjam = Peminjam::where('PeminjamID', $peminjamid)->first();
+                        $totalbtl = $peminjam->Total_batal;
+                        $peminjam->Total_batal = $totalbtl + 1;
+                        $peminjam->Tanggal_batal_terakhir = $tanggalbatal;
                         $peminjam->save();
                     } /* else {
                         $peminjam = Peminjam::where('PeminjamID', $peminjamanid)->first();
@@ -469,16 +490,6 @@ class PeminjamanAlatBridgeController extends Controller
     //cek jadwal tabrakan
     public function jadwalAlat($Tanggal_pakai_awal, $Tanggal_pakai_akhir)
     {
-        /* $peminjamanalat = Peminjaman_Alat_Bridge::where('Tanggal_pakai_awal', "<=", $Tanggal_pakai_awal)
-            ->where('Tanggal_pakai_akhir', ">=", $Tanggal_pakai_akhir)
-            ->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
-                $query->where('Tanggal_pakai_awal', '>', $Tanggal_pakai_awal)
-                    ->where('Tanggal_pakai_akhir', '<=', $Tanggal_pakai_akhir);
-            })->orWhere(function ($query) use ($Tanggal_pakai_awal, $Tanggal_pakai_akhir) {
-                $query->where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_awal)
-                    ->where('Tanggal_pakai_akhir', '>', $Tanggal_pakai_akhir);
-            })->get(); */
-
         $peminjamanalat = Peminjaman_Alat_Bridge::where('Tanggal_pakai_awal', '<=', $Tanggal_pakai_akhir)
             ->where('Tanggal_pakai_akhir', '>=', $Tanggal_pakai_awal)->get();
 
@@ -492,7 +503,7 @@ class PeminjamanAlatBridgeController extends Controller
             $namaAlat = $ALAT->Nama;
             $surat = $ALAT->WajibSurat;
             $ketersediaan = $ALAT->Status;
-            if ($surat === true){
+            if ($surat === true) {
                 $stringsurat = 'Perlu Surat';
             } else {
                 $stringsurat = 'Tidak Perlu Surat';
@@ -527,7 +538,7 @@ class PeminjamanAlatBridgeController extends Controller
             $jumlah = $alat->Jumlah_ketersediaan;
             $nama = $alat->Nama;
 
-            if ($alat->WajibSurat === true){
+            if ($alat->WajibSurat === true) {
                 $stringsurat = 'Perlu Surat';
             } else {
                 $stringsurat = 'Tidak Perlu Surat';
@@ -545,7 +556,7 @@ class PeminjamanAlatBridgeController extends Controller
 
         $fixAlat = [];
         foreach ($daftarAlat as $tool1) {
-            if ($tool1['WajibSurat'] === true){
+            if ($tool1['WajibSurat'] === true) {
                 $stringsurat = 'Perlu Surat';
             } else {
                 $stringsurat = 'Tidak Perlu Surat';
@@ -557,7 +568,9 @@ class PeminjamanAlatBridgeController extends Controller
                 'NamaAlat' => $tool1['NamaAlat'],
                 'WajibSurat' => $tool1['WajibSurat'],
                 'Status' => $tool1['Status'],
-                'WajibSuratString' => $stringsurat
+                'WajibSuratString' => $stringsurat,
+                'jumlahPinjam' => 0,
+                'pinjam' => false
             ];
 
             foreach ($daftarAlatTabrakan as $tool2) {
@@ -621,8 +634,8 @@ class PeminjamanAlatBridgeController extends Controller
             $namaAlat = $ALAT->Nama;
             $surat = $ALAT->WajibSurat;
             $ketersediaan = $ALAT->Status;
-            
-            if ($surat === true){
+
+            if ($surat === true) {
                 $stringsurat = 'Perlu Surat';
             } else {
                 $stringsurat = 'Tidak Perlu Surat';
@@ -657,7 +670,7 @@ class PeminjamanAlatBridgeController extends Controller
             $jumlah = $alat->Jumlah_ketersediaan;
             $nama = $alat->Nama;
 
-            if ($alat->WajibSurat === true){
+            if ($alat->WajibSurat === true) {
                 $stringsurat = 'Perlu Surat';
             } else {
                 $stringsurat = 'Tidak Perlu Surat';
@@ -675,7 +688,7 @@ class PeminjamanAlatBridgeController extends Controller
 
         $fixAlat = [];
         foreach ($daftarAlat as $tool1) {
-            if ($tool1['WajibSurat'] === true){
+            if ($tool1['WajibSurat'] === true) {
                 $stringsurat = 'Perlu Surat';
             } else {
                 $stringsurat = 'Tidak Perlu Surat';

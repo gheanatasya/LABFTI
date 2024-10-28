@@ -18,13 +18,9 @@
                         height="200px" class="px-4 py-3">
                         <v-text-field variant="outlined" v-model="email" label="Email" type="email"
                             required></v-text-field>
-                        <!-- <div v-if="validation.email" style="margin-top: -15px; margin-bottom: 20px; color:red;"
-                            class="alert alert-danger">Email required!</div> -->
                         <v-text-field variant="outlined" v-model="password" label="Password"
                             :append-inner-icon="show ? 'mdi-eye' : 'mdi-eye-off'" :type="show ? 'text' : 'password'"
                             @click:append-inner="show = !show" required></v-text-field>
-                        <!-- <div v-if="validation.password" style="margin-top: -15px; margin-bottom: 20px; color:red;"
-                            class="alert alert-danger">Password required!</div> -->
                     </v-sheet>
 
                     <div>
@@ -81,40 +77,30 @@ export default {
             if (this.email && this.password) {
                 axios.get('http://localhost:8000/sanctum/csrf-cookie')
                     .then(response => {
-
-                        //debug cookie
                         console.log(response)
 
                         axios.post('http://localhost:8000/api/login', {
                             email: this.email,
                             password: this.password
                         }).then(res => {
-                            //debug login user 
                             console.log(res)
 
                             if (res.data.success) {
-                                //set localStorage
                                 localStorage.setItem("loggedIn", "true")
 
-                                //set localStorage Token
                                 localStorage.setItem("token", res.data.token)
 
-                                //save UserID
                                 localStorage.setItem("UserID", res.data.UserID);
 
-                                //save user role
                                 localStorage.setItem("User_role", res.data.User_role);
 
-                                //save total batal user 
                                 localStorage.setItem("Total_batal", res.data.Total_batal);
 
                                 localStorage.setItem("loginTime", Date.now());
 
-                                //change state
                                 this.loggedIn = true
                                 return this.$router.push({ name: 'berandaUser' })
                             } else {
-                                //set state login failed
                                 this.loginFailed = true
                                 this.loading = false
                             }
@@ -144,7 +130,6 @@ export default {
         }
     },
     
-    //check user already logged in
     mounted() {
         if (this.loggedIn) {
             return this.$router.push({ name: 'berandaUser' })

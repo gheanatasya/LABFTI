@@ -412,7 +412,7 @@ export default {
         },
         deletePeminjamanRuangan(peminjamanruanganid, PeminjamanID) {
             this.itemToDelete.loading = true;
-            console.log(peminjamanruanganid);
+            console.log(peminjamanruanganid, PeminjamanID);
             const tanggalhariini = new Date();
             console.log(tanggalhariini);
             const count = this.ruanganbridge.filter(item => item.peminjamanid === PeminjamanID).length;

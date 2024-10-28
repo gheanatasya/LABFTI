@@ -147,22 +147,22 @@
 
                             <v-file-input
                                 v-if="item.selectedOptionOrganisation === 'True' || item.selectedOptionEksternal === 'True'"
-                                type="file" accept="file/pdf" :prepend-inner-icon="'mdi-paperclip'" prepend-icon="" v-model="item.dokumen"
-                                style="width: 505px; margin-left: 303px; margin-top: 5px;" variant="outlined"
-                                label="Surat Peminjaman" @change="handleDokumen(index)" ref="dokumenPendukung"
-                                :id="'dokumen-' + index">
+                                type="file" accept="file/pdf" :prepend-inner-icon="'mdi-paperclip'" prepend-icon=""
+                                v-model="item.dokumen" style="width: 505px; margin-left: 303px; margin-top: 5px;"
+                                variant="outlined" label="Surat Peminjaman" @change="handleDokumen(index)"
+                                ref="dokumenPendukung" :id="'dokumen-' + index">
                                 <template v-slot:label>
                                     Surat Peminjaman <v-icon style="color: red; font-size: 15px;">mdi-asterisk</v-icon>
                                 </template>
                             </v-file-input>
 
                             <div
-                            style="margin-left: 380px; margin-right: 0px; margin-bottom: 50px; margin-top: 20px; text-align: center;">
+                                style="margin-left: 380px; margin-right: 0px; margin-bottom: 50px; margin-top: 20px; text-align: center;">
                                 <v-btn @click="addNewForm(index)" id="tambah"
-                                    style="margin-right: 10px; margin-left: -5px; text-transform: none" prepend-icon=mdi-plus-circle
-                                    color="grey">Tambah Form</v-btn>
-                                <v-btn @click="removeForm(index)" id="hapus" prepend-icon="mdi-minus-circle" style="text-transform: none"
-                                    color="error">Hapus
+                                    style="margin-right: 10px; margin-left: -5px; text-transform: none"
+                                    prepend-icon=mdi-plus-circle color="grey">Tambah Form</v-btn>
+                                <v-btn @click="removeForm(index)" id="hapus" prepend-icon="mdi-minus-circle"
+                                    style="text-transform: none" color="error">Hapus
                                     Form</v-btn>
                             </div>
                         </div>
@@ -414,6 +414,18 @@ export default {
                     tambahformbaru: 0
                 })
             }
+        }
+
+        const pilihRuangan = async (Nama_ruangan, index) => {
+            form[index].selectedRuangan = Nama_ruangan;
+            form[index].sudahDipilih = true;
+            console.log(form[index])
+        }
+
+        const batalkanRuangan = async (index) => {
+            form[index].selectedRuangan = '';
+            form[index].sudahDipilih = false;
+            console.log(form[index])
         }
 
         const saveItem = async () => {
