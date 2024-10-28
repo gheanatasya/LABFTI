@@ -51,6 +51,23 @@
       </v-card>
     </v-dialog>
 
+    <v-dialog v-model="cancelPersonal"
+      style="justify-content: center; background-color: rgb(2, 39, 10, 0.7); z-index: 0;" persistent max-width="500">
+      <v-card style="border-radius: 20px; font-family: 'Lexend-Regular'; padding: 10px; width: 500px; height: 250px;">
+        <v-card-title style="font-family: 'Lexend-Medium'; text-align: center; margin-top: 20px;">
+          Batas Maksimal Pembatalan Peminjaman
+        </v-card-title>
+        <v-card-text style="text-align: center;">
+          Mohon maaf, anda melewati batas maksimal pembatalan peminjaman personal!
+          Peminjaman tidak dapat dilakukan hingga minggu depan.
+          Atas perhatiannya kami ucapkan terima kasih.
+        </v-card-text>
+        <!-- <v-card-actions style="position: absolute; top: 0; right: 0; margin-right: -15px;">
+          <v-btn @click="navigateToBeranda"><v-icon style="font-size: 30px;">mdi-close-circle</v-icon></v-btn>
+        </v-card-actions> -->
+      </v-card>
+    </v-dialog>
+
     <router-link to="/berandaUser"
       style="width: 200px; font-size:17px; color: #0D47A1; margin-left: 20px; margin-top: 70px; font-family: 'Lexend-Regular'"><v-icon
         style="font-size: 25px;">mdi-keyboard-backspace</v-icon>Beranda</router-link>
@@ -342,6 +359,7 @@ export default {
   setup() {
     const loading = ref(false);
     const dialog = ref(false);
+    const cancelPersonal = ref(false);
     const Nohp = ref('');
     const dialogTambahNomor = ref(false);
     const detailRuangan = ref(false);
@@ -669,6 +687,12 @@ export default {
             },
           });
 
+          if (response.data.batasPersonal) {
+            cancelPersonal.value = true;
+            dialogTambahNomor.value = false;
+            return
+          }
+
           const peminjamanruanganid = response.data.peminjaman_ruangan_bridge[0]['Peminjaman_Ruangan_ID'];
           FORMDATA.append('peminjamanruanganid', peminjamanruanganid);
 
@@ -679,6 +703,7 @@ export default {
             }
             FORMDATA.append('totalalat', response.data.peminjaman_alat_bridge.length);
           }
+
           console.log(peminjamanruanganid);
 
           if (form[i].dokumen !== null) {
@@ -995,7 +1020,7 @@ export default {
       }
     }
 
-    return { detailRuangan, detailRoom, form, loading, dialog, Nohp, dialogTambahNomor, pilihRuangan, batalkanRuangan, tampilkanDetail, addNewForm, removeForm, fetchAlat, fetchAlatDosen, saveItem, availableRoom, availableRoomDosen, tambahAlat, hapusAlat };
+    return { cancelPersonal, detailRuangan, detailRoom, form, loading, dialog, Nohp, dialogTambahNomor, pilihRuangan, batalkanRuangan, tampilkanDetail, addNewForm, removeForm, fetchAlat, fetchAlatDosen, saveItem, availableRoom, availableRoomDosen, tambahAlat, hapusAlat };
   },
   data() {
     return {

@@ -67,6 +67,25 @@ class PeminjamanRuanganBridgeController extends Controller
             $nilaiprioritas = 2;
         }
 
+        if ($input['selectedOption'] === 'personalTrue') {
+            $lastReset = $peminjam->Tanggal_bataspersonal ?? now()->subWeek();
+
+            if (now()->diffInDays($lastReset) >= 7) {
+                $peminjam->Bataspersonal = 0;
+                $peminjam->Tanggal_bataspersonal = now();
+                $peminjam->save();
+            }
+
+            if ($peminjam->Bataspersonal < 3) {
+                $batas = $peminjam->Bataspersonal;
+                $newbatas = $batas + 1;
+                $peminjam->Bataspersonal = $newbatas;
+                $peminjam->save();
+            } else {
+                return response()->json(['batasPersonal' => 'Peminjaman personal hanya diperbolehkan 3 kali dalam seminggu.']);
+            }
+        }
+
         $peminjaman = Peminjaman::create([
             'PeminjamID' => $peminjamID,
             'Tanggal_pinjam' => date('d-m-Y'),
